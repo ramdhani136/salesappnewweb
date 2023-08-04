@@ -40,6 +40,7 @@ export enum DataAPI {
   BRANCH = "branch",
   GROUP = "customergroup",
   CUSTOMER = "customer",
+  CONTACT = "contact",
 }
 
 class RequestData implements IData {

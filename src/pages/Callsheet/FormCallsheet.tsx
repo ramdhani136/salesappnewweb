@@ -59,6 +59,13 @@ const FormCallsheetPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+  const [contact, setContact] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+
+  const [picPhone, setPicPhon] = useState<string>("");
+  const [picPosition, setPicPosition] = useState<string>("");
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -69,13 +76,18 @@ const FormCallsheetPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
   const [customerPage, setCustomerPage] = useState<Number>(1);
+  const [contactHasMore, setContactHasMore] = useState<boolean>(false);
+  const [contactPage, setContactPage] = useState<Number>(1);
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
   const [loadingGroup, setLoadingGroup] = useState<boolean>(true);
   const [loadingBranch, setLoadingBranch] = useState<boolean>(true);
+  const [loadingContact, setLoadingContact] = useState<boolean>(true);
   const [loadingCustomer, setLoadingCustomer] = useState<boolean>(true);
   const [customerMoreLoading, setCustomerMoreLoading] = useState<boolean>(true);
+  const [contactMoreLoading, setContactMoreLoading] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
   const [listGroup, setListGroup] = useState<IListInput[]>([]);
+  const [listContact, setListContact] = useState<IListInput[]>([]);
   const [listBranch, setListBranch] = useState<IListInput[]>([]);
   const [listCustomer, setListCustomer] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
@@ -87,6 +99,13 @@ const FormCallsheetPage: React.FC = () => {
     setLoadingCustomer(true);
   };
 
+  const contactReset = () => {
+    setListContact([]);
+    setContactHasMore(false);
+    setContactPage(1);
+    setLoadingContact(true);
+  };
+
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
@@ -96,11 +115,10 @@ const FormCallsheetPage: React.FC = () => {
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
           return {
-            name: item.name,
+            name: item.action,
             onClick: () => {
               onSave({
-                id_workflow: item.id_workflow,
-                id_state: item.nextstate.id,
+                nextState: item.nextState.id,
               });
             },
           };
@@ -273,6 +291,52 @@ const FormCallsheetPage: React.FC = () => {
       }
     }
   };
+
+  const getContact = async (search?: string): Promise<void> => {
+    if (!loadingCustomer) {
+      setContactMoreLoading(true);
+    } else {
+      setContactMoreLoading(false);
+    }
+
+    if (contactPage === 1) {
+      setListContact([]);
+    }
+
+    if (customer.valueData) {
+      try {
+        let filters: [String, String, String][] = [
+          ["customer", "=", customer.valueData],
+        ];
+
+        const result: any = await GetDataServer(DataAPI.CONTACT).FIND({
+          page: `${contactPage}`,
+          filters: filters,
+          limit: 10,
+          search: search ?? "",
+        });
+        if (result.data.length > 0) {
+          let listInput: IListInput[] = result.data.map((item: any) => {
+            return {
+              name: item.name,
+              value: item._id,
+            };
+          });
+
+          setListContact([...listContact, ...listInput]);
+          setContactHasMore(result.hasMore);
+          setContactPage(result.nextPage);
+        }
+        setLoadingContact(false);
+        setContactMoreLoading(false);
+      } catch (error) {
+        setContactHasMore(false);
+        setLoadingContact(false);
+        setContactMoreLoading(false);
+      }
+    }
+  };
+
   const onDelete = (): void => {
     if (id) {
       const progress = async (): Promise<void> => {
@@ -356,7 +420,6 @@ const FormCallsheetPage: React.FC = () => {
 
   return (
     <>
-    {console.log(listCustomer.length)}
       {Meta(metaData)}
       <div
         className="  max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
@@ -473,6 +536,11 @@ const FormCallsheetPage: React.FC = () => {
                           valueData: e.value,
                           valueInput: e.name,
                         });
+                        setGroup({ valueData: null, valueInput: "" });
+                        setCustomer({ valueData: null, valueInput: "" });
+                        getResetCustomer();
+                        setContact({ valueData: null, valueInput: "" });
+                        contactReset();
                         getGroup();
                       }}
                       onCLick={getBranch}
@@ -484,6 +552,8 @@ const FormCallsheetPage: React.FC = () => {
                         setGroup({ valueData: null, valueInput: "" });
                         setCustomer({ valueData: null, valueInput: "" });
                         getResetCustomer();
+                        setContact({ valueData: null, valueInput: "" });
+                        contactReset();
                       }}
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
@@ -502,6 +572,11 @@ const FormCallsheetPage: React.FC = () => {
                             valueData: e.value,
                             valueInput: e.name,
                           });
+
+                          setCustomer({ valueData: null, valueInput: "" });
+                          setContact({ valueData: null, valueInput: "" });
+                          contactReset();
+                          getResetCustomer();
                         }}
                         onCLick={getGroup}
                         list={listGroup}
@@ -510,6 +585,8 @@ const FormCallsheetPage: React.FC = () => {
                         onReset={() => {
                           setGroup({ valueData: null, valueInput: "" });
                           setCustomer({ valueData: null, valueInput: "" });
+                          setContact({ valueData: null, valueInput: "" });
+                          contactReset();
                           getResetCustomer();
                         }}
                         // disabled={!id ? false : true}
@@ -539,6 +616,8 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         onSelected={(e) => {
                           getResetCustomer();
+                          setContact({ valueData: null, valueInput: "" });
+                          contactReset();
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
@@ -557,6 +636,47 @@ const FormCallsheetPage: React.FC = () => {
                         onReset={() => {
                           getResetCustomer();
                           setCustomer({ valueData: null, valueInput: "" });
+                          setContact({ valueData: null, valueInput: "" });
+                          contactReset();
+                        }}
+                        // disabled={!id ? false : true}
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
+                    {customer.valueData && (
+                      <InputComponent
+                        infiniteScroll={{
+                          loading: contactMoreLoading,
+                          hasMore: contactHasMore,
+                          next: () => {
+                            getContact(`${contact.valueInput}`);
+                          },
+                          onSearch(e) {
+                            getContact(e);
+                          },
+                        }}
+                        loading={loadingContact}
+                        label="Contact"
+                        value={contact}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) => {
+                          contactReset();
+                          setLoadingContact(true);
+                          setContact({ ...naming, valueInput: e });
+                        }}
+                        onSelected={(e) => {
+                          contactReset();
+                          setContact({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        list={listContact}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() => {
+                          contactReset();
+                          setContact({ valueData: null, valueInput: "" });
                         }}
                         // disabled={!id ? false : true}
                         closeIconClass="top-[13.5px]"
