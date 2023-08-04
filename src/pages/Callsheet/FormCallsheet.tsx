@@ -16,6 +16,7 @@ import moment from "moment";
 import { AlertModal, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
+import NotesPage from "../notes/NotesPage";
 
 const FormCallsheetPage: React.FC = () => {
   const metaData = {
@@ -771,7 +772,7 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<>Halo</>}
+                  child={<NotesPage props={[]} />}
                 />
               )}
               <TimeLineVertical data={history} />
