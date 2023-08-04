@@ -260,7 +260,7 @@ const TableComponent: React.FC<Iprops> = ({
                   {data.map((item: any, index) => (
                     <tr
                       key={index}
-                      className={`text-[0.9em] border-b border-[#f4f6f5] hover:bg-gray-50 cursor-pointer ${
+                      className={`text-[0.9em] border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
                         item.checked && "bg-gray-200 border-gray-300 border"
                       }`}
                     >
