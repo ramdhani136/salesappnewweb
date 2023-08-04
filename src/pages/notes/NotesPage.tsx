@@ -47,7 +47,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic", accessor: "topic", className: "w-[30%]" },
+      { header: "Topic",  accessor: "topic", className: "w-[30%]" },
       { header: "Notes", accessor: "result", className: "w-[35%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
       // { header: "Stock", accessor: "actual_qty", className: "w-[6.5%]" },
@@ -89,7 +89,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       });
       if (result.data.length > 0) {
         const generateData = result.data.map(
-          (item: any, index: any): IDataTables => {
+          (item: any, ): IDataTables => {
             return {
               id: item._id,
               checked: false,
