@@ -64,8 +64,14 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [picPhone, setPicPhon] = useState<string>("");
-  const [picPosition, setPicPosition] = useState<string>("");
+  const [picPhone, setPicPhone] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [picPosition, setPicPosition] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -100,6 +106,8 @@ const FormCallsheetPage: React.FC = () => {
   };
 
   const contactReset = () => {
+    setPicPhone({ valueData: null, valueInput: "" });
+    setPicPosition({ valueData: null, valueInput: "" });
     setListContact([]);
     setContactHasMore(false);
     setContactPage(1);
@@ -150,6 +158,21 @@ const FormCallsheetPage: React.FC = () => {
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
+      });
+
+      setContact({
+        valueData: result.data.contact._id,
+        valueInput: result.data.contact.name,
+      });
+
+      setPicPhone({
+        valueData: result.data.contact.phone,
+        valueInput: result.data.contact.phone,
+      });
+
+      setPicPosition({
+        valueData: result.data.contact.position,
+        valueInput: result.data.contact.position,
       });
 
       setLoading(false);
@@ -320,6 +343,10 @@ const FormCallsheetPage: React.FC = () => {
             return {
               name: item.name,
               value: item._id,
+              other: {
+                phone: item.phone,
+                position: item.position,
+              },
             };
           });
 
@@ -506,6 +533,26 @@ const FormCallsheetPage: React.FC = () => {
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
                     />
+                    <Select
+                      title="Call Type"
+                      data={dataCallType}
+                      value={callType}
+                      setValue={setCallType}
+                      disabled={false}
+                    />
+                    <InputComponent
+                      label="Date"
+                      value={createdAt}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="date"
+                      onChange={(e) =>
+                        setCreatedAt({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
                     <InputComponent
                       label="Created By"
                       value={user}
@@ -518,13 +565,7 @@ const FormCallsheetPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <Select
-                      title="Call Type"
-                      data={dataCallType}
-                      value={callType}
-                      setValue={setCallType}
-                      disabled={false}
-                    />
+
                     <InputComponent
                       loading={loadingBranch}
                       label="Branch"
@@ -618,6 +659,7 @@ const FormCallsheetPage: React.FC = () => {
                           getResetCustomer();
                           setContact({ valueData: null, valueInput: "" });
                           contactReset();
+                          console.log(e);
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
@@ -666,6 +708,14 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         onSelected={(e) => {
                           contactReset();
+                          setPicPhone({
+                            valueData: e.other.phone,
+                            valueInput: e.other.phone,
+                          });
+                          setPicPosition({
+                            valueData: e.other.position,
+                            valueInput: e.other.position,
+                          });
                           setContact({
                             valueData: e.value,
                             valueInput: e.name,
@@ -682,19 +732,36 @@ const FormCallsheetPage: React.FC = () => {
                         closeIconClass="top-[13.5px]"
                       />
                     )}
-                    <InputComponent
-                      label="Date"
-                      value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
+                    {contact.valueData && (
+                      <>
+                        <InputComponent
+                          label="Phone"
+                          value={picPhone}
+                          className="h-[38px]  text-[0.93em] mb-3"
+                          type="text"
+                          onChange={(e) =>
+                            setCreatedAt({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          disabled
+                        />
+                        <InputComponent
+                          label="Position"
+                          value={picPosition}
+                          className="h-[38px]  text-[0.93em] mb-3"
+                          type="text"
+                          onChange={(e) =>
+                            setCreatedAt({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          disabled
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

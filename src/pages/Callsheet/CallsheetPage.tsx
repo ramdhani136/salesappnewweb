@@ -46,11 +46,9 @@ export const CallsheetPage: React.FC = (): any => {
     () => [
       { header: "Name", accessor: "name" },
       { header: "Customer", accessor: "customer" },
-      { header: "Type", accessor: "type" },
-
-      { header: "Group", accessor: "group" },
       { header: "Status", accessor: "workflowState" },
-
+      { header: "Type", accessor: "type" },
+      { header: "Group", accessor: "group" },
       { header: "", accessor: "updatedAt" },
     ],
     []

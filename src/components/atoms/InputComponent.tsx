@@ -12,6 +12,7 @@ export interface IListInput {
 export interface IValue {
   valueData: any;
   valueInput: String;
+  other?: any;
 }
 
 interface IInfiniteScroll {
@@ -77,7 +78,6 @@ const InputComponent: React.FC<IProps> = ({
   const [open, setOpen] = useState<boolean>(false);
   const [openRemark, setOpenRemark] = useState<boolean>(false);
 
-  
   useEffect(() => {
     let handler = (e: any) => {
       if (list) {
