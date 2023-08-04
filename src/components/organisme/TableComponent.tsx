@@ -249,7 +249,7 @@ const TableComponent: React.FC<Iprops> = ({
                     {columns.map((col, index) => (
                       <th
                         key={index}
-                        className="font-normal text-gray-500 text-[0.95em] text-left pb-3"
+                        className="font-normal text-gray-800 text-[0.92em] text-left pb-3 "
                       >
                         {col.header}
                       </th>
