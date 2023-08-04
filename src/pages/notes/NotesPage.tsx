@@ -106,13 +106,13 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
               result: <h4 className="mr-10">{item.result}</h4>,
               tags: (
                 <div className="p-2">
-                  <button className="border rounded-md bg-green-600 text-[0.8em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
                     Komplen
                   </button>
-                  <button className="border rounded-md bg-green-600 text-[0.8em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
                     Komplen
                   </button>
-                  <button className="border rounded-md bg-green-600 text-[0.8em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
                     Komplen
                   </button>
                 </div>
