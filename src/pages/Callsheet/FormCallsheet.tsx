@@ -217,14 +217,14 @@ const FormCallsheetPage: React.FC = () => {
       setCustomerMoreLoading(false);
     }
 
-    if(customerPage===1){
+    if (customerPage === 1) {
       setListCustomer([]);
     }
 
     if (branch.valueData && group.valueData) {
       try {
         let filters: [String, String, String][] = [
-          ["customerGroup", "=", group.valueData],
+          // ["customerGroup", "=", group.valueData],
         ];
 
         const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
@@ -241,7 +241,7 @@ const FormCallsheetPage: React.FC = () => {
             };
           });
 
-          setListCustomer([...listInput, ...listCustomer]);
+          setListCustomer([...listCustomer, ...listInput]);
           setCustomerHasMore(result.hasMore);
           setCustomerPage(result.nextPage);
         }
@@ -506,6 +506,10 @@ const FormCallsheetPage: React.FC = () => {
                           setCustomer({ ...naming, valueInput: e });
                         }}
                         onSelected={(e) => {
+                          setListCustomer([]);
+                          setCustomerHasMore(false);
+                          setCustomerPage(1);
+                          setLoadingCustomer(true);
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
