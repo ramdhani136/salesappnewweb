@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+em-emoji-picker {
+     
+
+       width:300px;
+       padding-left:10px;
+       
+      }
