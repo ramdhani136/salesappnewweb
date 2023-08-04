@@ -21,7 +21,7 @@ interface IAllow {
   manual: boolean;
 }
 
-const FormSchedulePage: React.FC = () => {
+const FormCallsheetPage: React.FC = () => {
   const metaData = {
     title: "New Schedule - Stock App Ekatunggal",
     description: "Halaman form schedule stock opname web system",
@@ -484,4 +484,4 @@ const FormSchedulePage: React.FC = () => {
   );
 };
 
-export default FormSchedulePage;
+export default FormCallsheetPage;

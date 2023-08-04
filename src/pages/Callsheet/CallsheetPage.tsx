@@ -1,6 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ButtonStatusComponent, IconButton, InfoDateComponent } from "../../components/atoms";
+import {
+  ButtonStatusComponent,
+  IconButton,
+  InfoDateComponent,
+} from "../../components/atoms";
 import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import AddIcon from "@mui/icons-material/Add";
@@ -44,9 +48,9 @@ export const CallsheetPage: React.FC = (): any => {
       { header: "Name", accessor: "name" },
       { header: "Status", accessor: "workflowState" },
       { header: "User", accessor: "user" },
-      { header: "Start Date", accessor: "startDate" },
-      { header: "Due Date", accessor: "dueDate" },
-      { header: "Warehouse", accessor: "warehouse" },
+      { header: "Type", accessor: "type" },
+      { header: "PIC", accessor: "pic" },
+      { header: "Group", accessor: "group" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -77,19 +81,25 @@ export const CallsheetPage: React.FC = (): any => {
                 <a href={`/callsheet/${item.name}`}>{item.name}</a>
               </b>
             ),
-            user: <div>{item.user.name}</div>,
-            startDate: moment(item.startDate).format("LL"),
-            dueDate: moment(item.dueDate).format("LL"),
+            user: <div>{item.createdBy.name}</div>,
+            group: <div>{item.customerGroup.name}</div>,
+            pic: <div>{item.contact ? item.contact.name : ""}</div>,
+            type: (
+              <div>
+                {item.type === "in" ? "Incoming Call" : "Outgoing Call"}
+              </div>
+            ),
+
             workflowState: (
               <ButtonStatusComponent
                 status={item.status}
                 name={item.workflowState}
               />
             ),
-            warehouse: item.warehouse,
+            // warehouse: item.warehouse,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt} className='-ml-14' />
+                <InfoDateComponent date={item.updatedAt} className="-ml-14" />
               </div>
             ),
           };
@@ -244,7 +254,6 @@ export const CallsheetPage: React.FC = (): any => {
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERCALLSHEET}
               onRefresh={onRefresh}
-
             />
           </>
         ) : (
