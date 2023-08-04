@@ -47,7 +47,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic",  accessor: "topic", className: "w-[30%]" },
+      { header: "Topic", accessor: "topic", className: "w-[30%]" },
       { header: "Notes", accessor: "result", className: "w-[35%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
       // { header: "Stock", accessor: "actual_qty", className: "w-[6.5%]" },
@@ -88,78 +88,73 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         search: search,
       });
       if (result.data.length > 0) {
-        const generateData = result.data.map(
-          (item: any, ): IDataTables => {
-            return {
-              id: item._id,
-              checked: false,
-              topic: (
-                <a href={`/notes/${props.name}/${item._id}`}>
-                  {item.topic.name}
-                </a>
-              ),
-              updatedAt: (
-                <div className="inline text-gray-600 text-[0.93em]">
-                  <InfoDateComponent date={item.updatedAt} className="-ml-9" />
-                </div>
-              ),
-              result: <h4 className="mr-10">{item.result}</h4>,
-              tags: (
-                <div className="p-2">
-                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
-                    Komplen
-                  </button>
-                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
-                    Komplen
-                  </button>
-                  <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
-                    Komplen
-                  </button>
-                </div>
-              ),
-              // // item_code: props.allow.manual ? (
-              // //   <h4 onClick={() => getItem(item)}>{item.item_code}</h4>
-              // // ) : (
-              // //   <a href={`/schedule/${props.name}/${item._id}`}>
-              // //     {item.item_code}
-              // //   </a>
-              // // ),
-              // code: `${item.item_code} - ${item.item_name}`,
+        const generateData = result.data.map((item: any): IDataTables => {
+          return {
+            id: item._id,
+            checked: false,
+            topic: (
+              <a href={`/notes/${props.name}/${item._id}`}>{item.topic.name}</a>
+            ),
+            updatedAt: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                <InfoDateComponent date={item.updatedAt} className="-ml-9" />
+              </div>
+            ),
+            result: <h4 className="mr-10">{item.result}</h4>,
+            tags: (
+              <div className="p-2">
+                {item.tags &&
+                  item.tags.map((i: any) => {
+                    return (
+                      <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                        {i.name}
+                      </button>
+                    );
+                  })}
+              </div>
+            ),
+            // // item_code: props.allow.manual ? (
+            // //   <h4 onClick={() => getItem(item)}>{item.item_code}</h4>
+            // // ) : (
+            // //   <a href={`/schedule/${props.name}/${item._id}`}>
+            // //     {item.item_code}
+            // //   </a>
+            // // ),
+            // code: `${item.item_code} - ${item.item_name}`,
 
-              // // item_name: props.allow.manual ? (
-              // //   <h4 onClick={() => getItem(item)}>{item.item_name}</h4>
-              // // ) : (
-              // //   <a href={`/schedule/${props.name}/${item._id}`}>
-              // //     {item.item_name}
-              // //   </a>
-              // // ),
-              // stocker: <div className="text-left">{item.stocker}</div>,
-              // uom: <div className="text-center">{item.stock_uom}</div>,
-              // status: (
-              //   <ButtonStatusComponent
-              //     status={item.status}
-              //     name={
-              //       item.status == 0
-              //         ? "Open"
-              //         : item.status == 1
-              //         ? "Completed"
-              //         : "Not Match"
-              //     }
-              //   />
-              // ),
-              // real_qty: (
-              //   <div className="text-center font-medium text-[0.96em]">
-              //     {item.real_qty.toLocaleString()}
-              //   </div>
-              // ),
-              // actual_qty: (
-              //   <div className="text-center font-medium text-[0.96em]">
-              //     {item.actual_qty.toLocaleString()}
-              //   </div>
-              // ),
-            };
-          }
-        );
+            // // item_name: props.allow.manual ? (
+            // //   <h4 onClick={() => getItem(item)}>{item.item_name}</h4>
+            // // ) : (
+            // //   <a href={`/schedule/${props.name}/${item._id}`}>
+            // //     {item.item_name}
+            // //   </a>
+            // // ),
+            // stocker: <div className="text-left">{item.stocker}</div>,
+            // uom: <div className="text-center">{item.stock_uom}</div>,
+            // status: (
+            //   <ButtonStatusComponent
+            //     status={item.status}
+            //     name={
+            //       item.status == 0
+            //         ? "Open"
+            //         : item.status == 1
+            //         ? "Completed"
+            //         : "Not Match"
+            //     }
+            //   />
+            // ),
+            // real_qty: (
+            //   <div className="text-center font-medium text-[0.96em]">
+            //     {item.real_qty.toLocaleString()}
+            //   </div>
+            // ),
+            // actual_qty: (
+            //   <div className="text-center font-medium text-[0.96em]">
+            //     {item.actual_qty.toLocaleString()}
+            //   </div>
+            // ),
+          };
+        });
 
         const genSort: any[] = result.filters.map((st: any): any => {
           return {
