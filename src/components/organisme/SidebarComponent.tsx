@@ -60,7 +60,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
           className="py-3 flex  justify-between items-center"
           onClick={() => setOpen(!open)}
         >
-          <h1 className={`${!open && "hidden duration-500"} ml-1 text-2xl`}>
+          <h1 className={`${!open && "hidden duration-500"} ml-1 text-xl`}>
             Sales Sytem
           </h1>
 
@@ -88,7 +88,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
               key={id}
               className="group flex items-center text-sm gap-3 p-2 hover:bg-[#323335] text-[#b2b3b6]  rounded-md"
             >
-              <menu.icon style={{ fontSize: 19 }} />
+              <menu.icon style={{ fontSize: 15 }} />
               <h2
                 style={{
                   transitionDelay: `${id + 3}00ms`,

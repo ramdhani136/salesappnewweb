@@ -80,6 +80,13 @@ const FormCallsheetPage: React.FC = () => {
   const [listCustomer, setListCustomer] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
+  const getResetCustomer = () => {
+    setListCustomer([]);
+    setCustomerHasMore(false);
+    setCustomerPage(1);
+    setLoadingCustomer(true);
+  };
+
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
@@ -109,6 +116,19 @@ const FormCallsheetPage: React.FC = () => {
 
       setCallType(result.data.type);
 
+      setBranch({
+        valueData: result.data.branch._id,
+        valueInput: result.data.branch.name,
+      });
+      setGroup({
+        valueData: result.data.customerGroup._id,
+        valueInput: result.data.customerGroup.name,
+      });
+      setCustomer({
+        valueData: result.data.customer._id,
+        valueInput: result.data.customer.name,
+      });
+
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -116,7 +136,6 @@ const FormCallsheetPage: React.FC = () => {
 
       setLoading(false);
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -224,7 +243,7 @@ const FormCallsheetPage: React.FC = () => {
     if (branch.valueData && group.valueData) {
       try {
         let filters: [String, String, String][] = [
-          // ["customerGroup", "=", group.valueData],
+          ["customerGroup", "=", group.valueData],
         ];
 
         const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
@@ -337,6 +356,7 @@ const FormCallsheetPage: React.FC = () => {
 
   return (
     <>
+    {console.log(listCustomer.length)}
       {Meta(metaData)}
       <div
         className="  max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
@@ -463,6 +483,7 @@ const FormCallsheetPage: React.FC = () => {
                         setBranch({ valueData: null, valueInput: "" });
                         setGroup({ valueData: null, valueInput: "" });
                         setCustomer({ valueData: null, valueInput: "" });
+                        getResetCustomer();
                       }}
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
@@ -489,6 +510,7 @@ const FormCallsheetPage: React.FC = () => {
                         onReset={() => {
                           setGroup({ valueData: null, valueInput: "" });
                           setCustomer({ valueData: null, valueInput: "" });
+                          getResetCustomer();
                         }}
                         // disabled={!id ? false : true}
                         closeIconClass="top-[13.5px]"
@@ -511,17 +533,12 @@ const FormCallsheetPage: React.FC = () => {
                         value={customer}
                         className="h-[38px]   text-[0.93em] mb-3"
                         onChange={(e) => {
-                          setListCustomer([]);
-                          setCustomerHasMore(false);
-                          setCustomerPage(1);
+                          getResetCustomer();
                           setLoadingCustomer(true);
                           setCustomer({ ...naming, valueInput: e });
                         }}
                         onSelected={(e) => {
-                          setListCustomer([]);
-                          setCustomerHasMore(false);
-                          setCustomerPage(1);
-                          setLoadingCustomer(true);
+                          getResetCustomer();
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
@@ -538,10 +555,7 @@ const FormCallsheetPage: React.FC = () => {
                         mandatoy
                         modalStyle="top-9 max-h-[160px]"
                         onReset={() => {
-                          setListCustomer([]);
-                          setCustomerHasMore(false);
-                          setCustomerPage(1);
-                          setLoadingCustomer(true);
+                          getResetCustomer();
                           setCustomer({ valueData: null, valueInput: "" });
                         }}
                         // disabled={!id ? false : true}
