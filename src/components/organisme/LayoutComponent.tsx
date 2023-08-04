@@ -66,7 +66,7 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
             <Child />
           </section>
         </div>
-        <ChatsComponent />
+        {/* <ChatsComponent /> */}
       </div>
     </>
   );

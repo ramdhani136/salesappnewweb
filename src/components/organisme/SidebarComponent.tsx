@@ -6,9 +6,9 @@ import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import CallIcon from '@mui/icons-material/Call';
 import LogoutIcon from "@mui/icons-material/Logout";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
+
 import { LocalStorage, LocalStorageType, useKey } from "../../utils";
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
@@ -23,7 +23,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
   const menus = [
     { name: "Dashboard", link: "/", icon: DashboardOutlinedIcon },
     { name: "Schedules", link: "/schedule", icon: AssignmentOutlinedIcon },
-    { name: "Callsheet", link: "/callsheet", icon: QrCode2Icon },
+    { name: "Callsheet", link: "/callsheet", icon: CallIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
     { name: "Role", link: "/roles", icon: AdminPanelSettingsOutlinedIcon },
     { name: "Permission", link: "/permission", icon: KeyOutlinedIcon },

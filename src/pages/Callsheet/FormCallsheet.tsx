@@ -51,6 +51,15 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: "",
   });
 
+  const [group, setGroup] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [customer, setCustomer] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -58,10 +67,17 @@ const FormCallsheetPage: React.FC = () => {
 
   const [callType, setCallType] = useState<string>("out");
   const [loading, setLoading] = useState<boolean>(true);
+  const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
+  const [customerPage, setCustomerPage] = useState<Number>(1);
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
+  const [loadingGroup, setLoadingGroup] = useState<boolean>(true);
   const [loadingBranch, setLoadingBranch] = useState<boolean>(true);
+  const [loadingCustomer, setLoadingCustomer] = useState<boolean>(true);
+  const [customerMoreLoading, setCustomerMoreLoading] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
+  const [listGroup, setListGroup] = useState<IListInput[]>([]);
   const [listBranch, setListBranch] = useState<IListInput[]>([]);
+  const [listCustomer, setListCustomer] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
@@ -166,6 +182,78 @@ const FormCallsheetPage: React.FC = () => {
     }
   };
 
+  const getGroup = async (): Promise<void> => {
+    if (branch.valueData) {
+      try {
+        const result: any = await GetDataServer(DataAPI.GROUP).FIND({});
+        if (result.data.length > 0) {
+          let listInput: IListInput[] = result.data.map((item: any) => {
+            return {
+              name: item.name,
+              value: item._id,
+            };
+          });
+
+          if (listInput.length === 1) {
+            setGroup({
+              valueData: listInput[0].value,
+              valueInput: listInput[0].name,
+            });
+          }
+
+          setListGroup(listInput);
+        }
+        setLoadingGroup(false);
+      } catch (error) {
+        setLoadingGroup(false);
+      }
+    }
+  };
+
+  const getCustomer = async (search?: string): Promise<void> => {
+    if (!loadingCustomer) {
+      setCustomerMoreLoading(true);
+    } else {
+      setCustomerMoreLoading(false);
+    }
+
+    if(customerPage===1){
+      setListCustomer([]);
+    }
+
+    if (branch.valueData && group.valueData) {
+      try {
+        let filters: [String, String, String][] = [
+          ["customerGroup", "=", group.valueData],
+        ];
+
+        const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
+          page: `${customerPage}`,
+          filters: filters,
+          limit: 10,
+          search: search ?? "",
+        });
+        if (result.data.length > 0) {
+          let listInput: IListInput[] = result.data.map((item: any) => {
+            return {
+              name: item.name,
+              value: item._id,
+            };
+          });
+
+          setListCustomer([...listInput, ...listCustomer]);
+          setCustomerHasMore(result.hasMore);
+          setCustomerPage(result.nextPage);
+        }
+        setLoadingCustomer(false);
+        setCustomerMoreLoading(false);
+      } catch (error) {
+        setCustomerHasMore(false);
+        setLoadingCustomer(false);
+        setCustomerMoreLoading(false);
+      }
+    }
+  };
   const onDelete = (): void => {
     if (id) {
       const progress = async (): Promise<void> => {
@@ -353,67 +441,97 @@ const FormCallsheetPage: React.FC = () => {
                           valueData: e.value,
                           valueInput: e.name,
                         });
+                        getGroup();
                       }}
                       onCLick={getBranch}
-                      list={listNaming}
+                      list={listBranch}
                       mandatoy
                       modalStyle="top-9 max-h-[160px]"
-                      onReset={() =>
-                        setBranch({ valueData: null, valueInput: "" })
-                      }
-                      // disabled={!id ? false : true}
-                      closeIconClass="top-[13.5px]"
-                    />
-                    {branch.valueData && (
-                      <InputComponent
-                        loading={loadingNaming}
-                        label="Group"
-                        value={naming}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) =>
-                          setNaming({ ...naming, valueInput: e })
-                        }
-                        onSelected={(e) => {
-                          setNaming({
-                            valueData: e.value,
-                            valueInput: e.name,
-                          });
-                        }}
-                        onCLick={getNaming}
-                        list={listNaming}
-                        mandatoy
-                        modalStyle="top-9 max-h-[160px]"
-                        onReset={() =>
-                          setNaming({ valueData: null, valueInput: "" })
-                        }
-                        // disabled={!id ? false : true}
-                        closeIconClass="top-[13.5px]"
-                      />
-                    )}
-                    <InputComponent
-                      loading={loadingNaming}
-                      label="Customer"
-                      value={naming}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) => setNaming({ ...naming, valueInput: e })}
-                      onSelected={(e) => {
-                        setNaming({
-                          valueData: e.value,
-                          valueInput: e.name,
-                        });
+                      onReset={() => {
+                        setBranch({ valueData: null, valueInput: "" });
+                        setGroup({ valueData: null, valueInput: "" });
+                        setCustomer({ valueData: null, valueInput: "" });
                       }}
-                      onCLick={getNaming}
-                      list={listNaming}
-                      mandatoy
-                      modalStyle="top-9 max-h-[160px]"
-                      onReset={() =>
-                        setNaming({ valueData: null, valueInput: "" })
-                      }
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
+                    {branch.valueData && (
+                      <InputComponent
+                        loading={loadingGroup}
+                        label="Group"
+                        value={group}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) => setGroup({ ...naming, valueInput: e })}
+                        onSelected={(e) => {
+                          setGroup({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        onCLick={getGroup}
+                        list={listGroup}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() => {
+                          setGroup({ valueData: null, valueInput: "" });
+                          setCustomer({ valueData: null, valueInput: "" });
+                        }}
+                        // disabled={!id ? false : true}
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
+                    {group.valueData && (
+                      <InputComponent
+                        infiniteScroll={{
+                          loading: customerMoreLoading,
+                          hasMore: customerHasMore,
+                          next: () => {
+                            getCustomer(`${customer.valueInput}`);
+                          },
+                          onSearch(e) {
+                            getCustomer(e);
+                          },
+                        }}
+                        loading={loadingCustomer}
+                        label="Customer"
+                        value={customer}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) => {
+                          setListCustomer([]);
+                          setCustomerHasMore(false);
+                          setCustomerPage(1);
+                          setLoadingCustomer(true);
+                          setCustomer({ ...naming, valueInput: e });
+                        }}
+                        onSelected={(e) => {
+                          setCustomer({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        // onCLick={() => {
+                        //   // setCustomerHasMore(false);
+                        //   // setCustomerPage(1);
+                        //   // setLoadingCustomer(true);
+                        //   // setListCustomer([]);
+                        //   // getCustomer();
+                        // }}
+                        list={listCustomer}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() => {
+                          setListCustomer([]);
+                          setCustomerHasMore(false);
+                          setCustomerPage(1);
+                          setLoadingCustomer(true);
+                          setCustomer({ valueData: null, valueInput: "" });
+                        }}
+                        // disabled={!id ? false : true}
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
                     <InputComponent
                       label="Date"
                       value={createdAt}

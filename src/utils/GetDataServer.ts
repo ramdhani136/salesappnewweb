@@ -14,7 +14,7 @@ interface IData {
   DELETE: (id: string | number) => Promise<boolean>;
 }
 
-interface IFindOption {
+export interface IFindOption {
   limit?: number;
   page?: number | String;
   fields?: String[];
@@ -38,6 +38,8 @@ export enum DataAPI {
   CALLSHEET = "callsheet",
   NAMING = "namingseries",
   BRANCH = "branch",
+  GROUP = "customergroup",
+  CUSTOMER = "customer",
 }
 
 class RequestData implements IData {
