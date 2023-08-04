@@ -14,7 +14,6 @@ import {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 export const CallsheetPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -46,11 +45,12 @@ export const CallsheetPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
-      { header: "Status", accessor: "workflowState" },
-      { header: "User", accessor: "user" },
+      { header: "Customer", accessor: "customer" },
       { header: "Type", accessor: "type" },
-      { header: "PIC", accessor: "pic" },
+
       { header: "Group", accessor: "group" },
+      { header: "Status", accessor: "workflowState" },
+
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -78,12 +78,11 @@ export const CallsheetPage: React.FC = (): any => {
                 onClick={() => navigate(`/callsheet/${item.name}`)}
                 className="font-medium"
               >
-                <a href={`/callsheet/${item.name}`}>{item.name}</a>
+                <a href={`/callsheet/${item._id}`}>{item.name}</a>
               </b>
             ),
-            user: <div>{item.createdBy.name}</div>,
+            customer: <div>{item.customer.name}</div>,
             group: <div>{item.customerGroup.name}</div>,
-            pic: <div>{item.contact ? item.contact.name : ""}</div>,
             type: (
               <div>
                 {item.type === "in" ? "Incoming Call" : "Outgoing Call"}

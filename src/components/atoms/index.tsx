@@ -4,6 +4,7 @@ import InputComponent from "./InputComponent";
 import TimeLineVertical from "./TimeLineVerticaComponent";
 import ToggleBodyComponent from "./ToggleBodyComponent";
 import InfoDateComponent from "./InfoDateComponent";
+import Select from "./SelectComponent";
 
 export {
   IconButton,
@@ -12,4 +13,5 @@ export {
   TimeLineVertical,
   ToggleBodyComponent,
   InfoDateComponent,
+  Select
 };

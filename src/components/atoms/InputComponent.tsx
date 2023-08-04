@@ -122,7 +122,7 @@ const InputComponent: React.FC<IProps> = ({
       {label && <label className="text-sm text-gray-800">{label}</label>}
       <div
         onClick={onCLick}
-        className={`w-full rounded-md h-8 bg-gray-50  relative ${
+        className={`mt-1 w-full rounded-md h-8 bg-gray-50  relative ${
           mandatoy && !value.valueData && "border-red-500 border"
         } ${className}`}
       >

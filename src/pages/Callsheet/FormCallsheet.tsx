@@ -6,6 +6,7 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
+  Select,
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
@@ -16,15 +17,10 @@ import { AlertModal, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
-
 const FormCallsheetPage: React.FC = () => {
   const metaData = {
-    title: "New Schedule - Stock App Ekatunggal",
-    description: "Halaman form schedule stock opname web system",
+    title: "New Callsheet - Sales App Ekatunggal",
+    description: "Halaman form callsheet sales web system",
   };
 
   const navigate = useNavigate();
@@ -36,19 +32,21 @@ const FormCallsheetPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
+  const dataCallType: any[] = [
+    { title: "Incomming Call", value: "in" },
+    { title: "Outgoing Call", value: "out" },
+  ];
   const [user, setUser] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  const [startDate, setStartDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+
+  const [naming, setNaming] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
   });
-  const [dueDate, setDueDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
-  const [warehouse, setWarehouse] = useState<IValue>({
+
+  const [branch, setBranch] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -58,18 +56,18 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
-  const [allow, setAllow] = useState<IAllow>({ barcode: true, manual: false });
-
+  const [callType, setCallType] = useState<string>("out");
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingWarehouse, setLoadingWarehouse] = useState<boolean>(true);
-
-  const [listWarehouse, setListWarehouse] = useState<IListInput[]>([]);
+  const [loadingNaming, setLoadingName] = useState<boolean>(true);
+  const [loadingBranch, setLoadingBranch] = useState<boolean>(true);
+  const [listNaming, setListNaming] = useState<IListInput[]>([]);
+  const [listBranch, setListBranch] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.SCHEDULE).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.CALLSHEET).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -93,35 +91,16 @@ const FormCallsheetPage: React.FC = () => {
 
       setData(result.data);
 
-      setAllow(result.data.allow);
+      setCallType(result.data.type);
 
-      setWarehouse({
-        valueData: result.data.warehouse,
-        valueInput: result.data.warehouse,
-      });
       setUser({
-        valueData: result.data.user._id,
-        valueInput: result.data.user.name,
+        valueData: result.data.createdBy._id,
+        valueInput: result.data.createdBy.name,
       });
-      setCreatedAt({
-        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
-      });
-      setStartDate({
-        valueData: moment(result.data.startDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.startDate).format("YYYY-MM-DD"),
-      });
-      setDueDate({
-        valueData: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.dueDate).format("YYYY-MM-DD"),
-      });
-      setPrevData({
-        startDate: moment(result.data.startDate).format("YYYY-MM-DD"),
-        dueDate: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        allow: result.data.allow,
-      });
+
       setLoading(false);
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -129,27 +108,61 @@ const FormCallsheetPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/schedule");
+      // navigate("/callsheet");
     }
   };
 
-  
-
-  const getWarehouse = async (): Promise<void> => {
+  const getNaming = async (): Promise<void> => {
     try {
-      const result: any = await GetDataServer(DataAPI.WAREHOUSE).FIND({});
+      const result: any = await GetDataServer(DataAPI.NAMING).FIND({
+        filters: [["doc", "=", "callsheet"]],
+      });
       if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: IListInput) => {
+        let listInput: IListInput[] = result.data.map((item: any) => {
           return {
             name: item.name,
-            value: item.name,
+            value: item._id,
           };
         });
-        setListWarehouse(listInput);
+
+        if (listInput.length === 1) {
+          setNaming({
+            valueData: listInput[0].value,
+            valueInput: listInput[0].name,
+          });
+        }
+
+        setListNaming(listInput);
       }
-      setLoadingWarehouse(false);
+      setLoadingName(false);
     } catch (error) {
-      setLoadingWarehouse(false);
+      setLoadingName(false);
+    }
+  };
+
+  const getBranch = async (): Promise<void> => {
+    try {
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({});
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+
+        if (listInput.length === 1) {
+          setBranch({
+            valueData: listInput[0].value,
+            valueInput: listInput[0].name,
+          });
+        }
+
+        setListBranch(listInput);
+      }
+      setLoadingBranch(false);
+    } catch (error) {
+      setLoadingBranch(false);
     }
   };
 
@@ -158,8 +171,8 @@ const FormCallsheetPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.SCHEDULE).DELETE(`${id}`);
-          navigate("/schedule");
+          await GetDataServer(DataAPI.CALLSHEET).DELETE(`${id}`);
+          navigate("/callsheet");
         } catch (error) {
           console.log(error);
         }
@@ -170,60 +183,61 @@ const FormCallsheetPage: React.FC = () => {
   };
 
   const onSave = async (data: {}): Promise<any> => {
-    const progress = async (): Promise<void> => {
-      if (allow.barcode === false && allow.manual === false) {
-        AlertModal.Default({
-          icon: "error",
-          title: "Error",
-          text: "Allow required",
-        });
-        return;
-      }
-      try {
-        setLoading(true);
-        let result: any;
-
-        if (!id) {
-          result = await GetDataServer(DataAPI.SCHEDULE).CREATE({
-            startDate: startDate.valueData,
-            dueDate: dueDate.valueData,
-            workflowState: "Draft",
-            status: "0",
-            warehouse: warehouse.valueData,
-            allow: allow,
-          });
-          navigate(`/schedule/${result.data.data.name}`);
-          navigate(0);
-        } else {
-          result = await GetDataServer(DataAPI.SCHEDULE).UPDATE({
-            id: id,
-            data: !data
-              ? {
-                  startDate: startDate.valueData,
-                  dueDate: dueDate.valueData,
-                  allow: allow,
-                }
-              : data,
-          });
-          getData();
-        }
-      } catch (error: any) {
-        AlertModal.Default({
-          icon: "error",
-          title: "Error",
-          text: error.response.data.msg ?? "Error Network",
-        });
-        setLoading(false);
-      }
-    };
-    AlertModal.confirmation({
-      onConfirm: progress,
-      text: "You want to save this data!",
-      confirmButtonText: "Yes, Save it",
-    });
+    // const progress = async (): Promise<void> => {
+    //   if (allow.barcode === false && allow.manual === false) {
+    //     AlertModal.Default({
+    //       icon: "error",
+    //       title: "Error",
+    //       text: "Allow required",
+    //     });
+    //     return;
+    //   }
+    //   try {
+    //     setLoading(true);
+    //     let result: any;
+    //     if (!id) {
+    //       result = await GetDataServer(DataAPI.CALLSHEET).CREATE({
+    //         startDate: startDate.valueData,
+    //         dueDate: dueDate.valueData,
+    //         workflowState: "Draft",
+    //         status: "0",
+    //         warehouse: warehouse.valueData,
+    //         allow: allow,
+    //       });
+    //       navigate(`/callsheet/${result.data.data.name}`);
+    //       navigate(0);
+    //     } else {
+    //       result = await GetDataServer(DataAPI.CALLSHEET).UPDATE({
+    //         id: id,
+    //         data: !data
+    //           ? {
+    //               startDate: startDate.valueData,
+    //               dueDate: dueDate.valueData,
+    //               allow: allow,
+    //             }
+    //           : data,
+    //       });
+    //       getData();
+    //     }
+    //   } catch (error: any) {
+    //     AlertModal.Default({
+    //       icon: "error",
+    //       title: "Error",
+    //       text: error.response.data.msg ?? "Error Network",
+    //     });
+    //     setLoading(false);
+    //   }
+    // };
+    // AlertModal.confirmation({
+    //   onConfirm: progress,
+    //   text: "You want to save this data!",
+    //   confirmButtonText: "Yes, Save it",
+    // });
   };
 
   useEffect(() => {
+    getNaming();
+    getBranch();
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
@@ -232,21 +246,6 @@ const FormCallsheetPage: React.FC = () => {
       setListMoreAction([]);
     }
   }, []);
-
-  // Cek perubahan
-  useEffect(() => {
-    const actualData = {
-      startDate: startDate.valueData,
-      dueDate: dueDate.valueData,
-      allow: allow,
-    };
-    if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
-      setChangeData(true);
-    } else {
-      setChangeData(false);
-    }
-  }, [startDate, dueDate, allow]);
-  // End
 
   return (
     <>
@@ -266,10 +265,10 @@ const FormCallsheetPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/schedule")}
+                  onClick={() => navigate("/callsheet")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Schedule" : data.name}
+                  {!id ? "New callsheet" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent
@@ -315,43 +314,106 @@ const FormCallsheetPage: React.FC = () => {
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
-                      loading={loadingWarehouse}
-                      label="Warehouse"
-                      value={warehouse}
+                      loading={loadingNaming}
+                      label="Naming Series"
+                      value={naming}
                       className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setWarehouse({ ...warehouse, valueInput: e })
-                      }
-                      onSelected={(e) =>
-                        setWarehouse({
+                      onChange={(e) => setNaming({ ...naming, valueInput: e })}
+                      onSelected={(e) => {
+                        setNaming({
                           valueData: e.value,
-                          valueInput: e.value,
-                        })
-                      }
-                      onCLick={getWarehouse}
-                      list={listWarehouse}
+                          valueInput: e.name,
+                        });
+                      }}
+                      onCLick={getNaming}
+                      list={listNaming}
                       mandatoy
                       modalStyle="top-9 max-h-[160px]"
                       onReset={() =>
-                        setWarehouse({ valueData: null, valueInput: "" })
+                        setNaming({ valueData: null, valueInput: "" })
                       }
-                      disabled={!id ? false : true}
+                      // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
                     />
-                    {id && (
+                    <Select
+                      title="Call Type"
+                      data={dataCallType}
+                      value={callType}
+                      setValue={setCallType}
+                      disabled={false}
+                    />
+                    <InputComponent
+                      loading={loadingBranch}
+                      label="Branch"
+                      value={branch}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) => setBranch({ ...naming, valueInput: e })}
+                      onSelected={(e) => {
+                        setBranch({
+                          valueData: e.value,
+                          valueInput: e.name,
+                        });
+                      }}
+                      onCLick={getBranch}
+                      list={listNaming}
+                      mandatoy
+                      modalStyle="top-9 max-h-[160px]"
+                      onReset={() =>
+                        setBranch({ valueData: null, valueInput: "" })
+                      }
+                      // disabled={!id ? false : true}
+                      closeIconClass="top-[13.5px]"
+                    />
+                    {branch.valueData && (
                       <InputComponent
-                        label="User"
-                        value={user}
+                        loading={loadingNaming}
+                        label="Group"
+                        value={naming}
                         className="h-[38px]   text-[0.93em] mb-3"
                         onChange={(e) =>
-                          setUser({
-                            valueData: e,
-                            valueInput: e,
-                          })
+                          setNaming({ ...naming, valueInput: e })
                         }
-                        disabled
+                        onSelected={(e) => {
+                          setNaming({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        onCLick={getNaming}
+                        list={listNaming}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() =>
+                          setNaming({ valueData: null, valueInput: "" })
+                        }
+                        // disabled={!id ? false : true}
+                        closeIconClass="top-[13.5px]"
                       />
                     )}
+                    <InputComponent
+                      loading={loadingNaming}
+                      label="Customer"
+                      value={naming}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) => setNaming({ ...naming, valueInput: e })}
+                      onSelected={(e) => {
+                        setNaming({
+                          valueData: e.value,
+                          valueInput: e.name,
+                        });
+                      }}
+                      onCLick={getNaming}
+                      list={listNaming}
+                      mandatoy
+                      modalStyle="top-9 max-h-[160px]"
+                      onReset={() =>
+                        setNaming({ valueData: null, valueInput: "" })
+                      }
+                      // disabled={!id ? false : true}
+                      closeIconClass="top-[13.5px]"
+                    />
+                  </div>
+                  <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
                       label="Date"
                       value={createdAt}
@@ -365,114 +427,28 @@ const FormCallsheetPage: React.FC = () => {
                       }
                       disabled
                     />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
-                      disabled={id !== undefined && data.status != 0}
-                      label="startDate"
-                      value={startDate}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="date"
-                      onChange={(e) => {
-                        setStartDate({
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) =>
+                        setUser({
                           valueData: e,
                           valueInput: e,
-                        });
-                        if (
-                          moment(Number(new Date(e))).format("YYYY-MM-DD") >
-                          moment(Number(new Date(dueDate.valueData))).format(
-                            "YYYY-MM-DD"
-                          )
-                        ) {
-                          setDueDate({
-                            valueData: e,
-                            valueInput: e,
-                          });
-                        }
-                      }}
-                      min={moment(Number(new Date())).format("YYYY-MM-DD")}
-                      mandatoy
+                        })
+                      }
+                      disabled
                     />
-                    {startDate.valueData && (
-                      <InputComponent
-                        disabled={id !== undefined && data.status != 0}
-                        label="dueDate"
-                        value={dueDate}
-                        className="h-[38px]  text-[0.93em] mb-3"
-                        type="date"
-                        onChange={(e) =>
-                          setDueDate({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        mandatoy
-                        min={startDate.valueData}
-                      />
-                    )}
-                    <div>
-                      <h4 className="text-sm text-gray-800">Allow</h4>
-                      <ul className="flex justify-between w-1/3">
-                        <li className="flex items-center">
-                          <label className="text-sm">Barcode</label>
-                          <div className="ml-1 mt-1">
-                            <input
-                              type="checkbox"
-                              id="barcode"
-                              name="Allow"
-                              checked={allow.barcode}
-                              className="accent-red-500"
-                              onChange={(e) => {
-                                if (
-                                  data.status != 1 &&
-                                  data.status != 2 &&
-                                  data.status != 3
-                                ) {
-                                  setAllow({
-                                    ...allow,
-                                    barcode: e.target.checked,
-                                  });
-                                }
-                              }}
-                            />
-                          </div>
-                        </li>
-                        <li className="flex items-center">
-                          <label className="text-sm">Manual</label>
-                          <div className="ml-1 mt-1">
-                            <input
-                              type="checkbox"
-                              id="manual"
-                              name="Allow"
-                              checked={allow.manual}
-                              className="accent-red-500"
-                              onChange={(e) => {
-                                if (
-                                  data.status != 1 &&
-                                  data.status != 2 &&
-                                  data.status != 3
-                                ) {
-                                  setAllow({
-                                    ...allow,
-                                    manual: e.target.checked,
-                                  });
-                                }
-                              }}
-                            />
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </div>
-              {id && (
+              {/* {id && (
                 <ToggleBodyComponent
                   name="Item List"
                   className="mt-5"
                   child={<ListItemSchedule props={data} />}
                 />
-              )}
+              )} */}
               <TimeLineVertical data={history} />
             </div>
           </>

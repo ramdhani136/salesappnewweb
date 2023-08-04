@@ -61,7 +61,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
           onClick={() => setOpen(!open)}
         >
           <h1 className={`${!open && "hidden duration-500"} ml-1 text-2xl`}>
-            SOSystem
+            Sales Sytem
           </h1>
 
           {!open ? (

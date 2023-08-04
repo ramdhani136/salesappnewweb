@@ -36,6 +36,8 @@ export enum DataAPI {
   WORKFLOW = "workflow",
   ROLEPROFILE = "roleprofile",
   CALLSHEET = "callsheet",
+  NAMING = "namingseries",
+  BRANCH = "branch",
 }
 
 class RequestData implements IData {
