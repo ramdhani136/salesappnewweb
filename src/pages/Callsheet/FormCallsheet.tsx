@@ -423,6 +423,18 @@ const FormCallsheetPage: React.FC = () => {
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
                     />
+                    <InputComponent
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) =>
+                        setUser({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
                     <Select
                       title="Call Type"
                       data={dataCallType}
@@ -543,18 +555,6 @@ const FormCallsheetPage: React.FC = () => {
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setUser({
                           valueData: e,
                           valueInput: e,
                         })
