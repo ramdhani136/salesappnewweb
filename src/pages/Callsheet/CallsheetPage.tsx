@@ -73,7 +73,7 @@ export const CallsheetPage: React.FC = (): any => {
             doc: item.name,
             name: (
               <b
-                onClick={() => navigate(`/callsheet/${item.name}`)}
+                onClick={() => navigate(`/callsheet/${item._id}`)}
                 className="font-medium"
               >
                 <a href={`/callsheet/${item._id}`}>{item.name}</a>

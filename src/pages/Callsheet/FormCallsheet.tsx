@@ -160,20 +160,22 @@ const FormCallsheetPage: React.FC = () => {
         valueInput: result.data.createdBy.name,
       });
 
-      setContact({
-        valueData: result.data.contact._id,
-        valueInput: result.data.contact.name,
-      });
+      if (result.data.contact) {
+        setContact({
+          valueData: result.data.contact._id,
+          valueInput: result.data.contact.name,
+        });
 
-      setPicPhone({
-        valueData: result.data.contact.phone,
-        valueInput: result.data.contact.phone,
-      });
+        setPicPhone({
+          valueData: result.data.contact.phone,
+          valueInput: result.data.contact.phone,
+        });
 
-      setPicPosition({
-        valueData: result.data.contact.position,
-        valueInput: result.data.contact.position,
-      });
+        setPicPosition({
+          valueData: result.data.contact.position,
+          valueInput: result.data.contact.position,
+        });
+      }
 
       setLoading(false);
     } catch (error: any) {
@@ -765,13 +767,13 @@ const FormCallsheetPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* {id && (
+              {id && (
                 <ToggleBodyComponent
-                  name="Item List"
+                  name="Result"
                   className="mt-5"
-                  child={<ListItemSchedule props={data} />}
+                  child={<>Halo</>}
                 />
-              )} */}
+              )}
               <TimeLineVertical data={history} />
             </div>
           </>
