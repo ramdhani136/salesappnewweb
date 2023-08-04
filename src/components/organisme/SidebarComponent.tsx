@@ -23,7 +23,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
   const menus = [
     { name: "Dashboard", link: "/", icon: DashboardOutlinedIcon },
     { name: "Schedules", link: "/schedule", icon: AssignmentOutlinedIcon },
-    { name: "Packing ID", link: "/packingid", icon: QrCode2Icon },
+    { name: "Callsheet", link: "/callsheet", icon: QrCode2Icon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
     { name: "Role", link: "/roles", icon: AdminPanelSettingsOutlinedIcon },
     { name: "Permission", link: "/permission", icon: KeyOutlinedIcon },

@@ -4,6 +4,7 @@ import jwt_decode from "jwt-decode";
 export enum LocalStorageType {
   TOKEN = "token",
   FILTERSCHEDULE = "filterschedule",
+  FILTERCALLSHEET = "filtercallsheet",
   
 }
 
