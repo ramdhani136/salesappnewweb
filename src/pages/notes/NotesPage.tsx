@@ -89,6 +89,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       });
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
+          
           return {
             id: item._id,
             checked: false,
@@ -104,9 +105,9 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
             tags: (
               <div className="p-2">
                 {item.tags &&
-                  item.tags.map((i: any) => {
+                  item.tags.map((i: any,index:number) => {
                     return (
-                      <button className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                      <button key={index} className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
                         {i.name}
                       </button>
                     );
@@ -236,7 +237,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULEITEM).DELETE(item.id);
+            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
