@@ -6,6 +6,7 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
+  Select,
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
@@ -37,6 +38,10 @@ const FormSchedulePage: React.FC = () => {
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
   const [user, setUser] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [type, setType] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -95,13 +100,13 @@ const FormSchedulePage: React.FC = () => {
 
       setAllow(result.data.allow);
 
-      setWarehouse({
-        valueData: result.data.warehouse,
-        valueInput: result.data.warehouse,
+      setType({
+        valueData: result.data.type,
+        valueInput: result.data.type,
       });
       setUser({
-        valueData: result.data.user._id,
-        valueInput: result.data.user.name,
+        valueData: result.data.createdBy._id,
+        valueInput: result.data.createdBy.name,
       });
       setCreatedAt({
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
@@ -132,8 +137,6 @@ const FormSchedulePage: React.FC = () => {
       navigate("/schedule");
     }
   };
-
-  
 
   const getWarehouse = async (): Promise<void> => {
     try {
@@ -170,58 +173,63 @@ const FormSchedulePage: React.FC = () => {
   };
 
   const onSave = async (data: {}): Promise<any> => {
-    const progress = async (): Promise<void> => {
-      if (allow.barcode === false && allow.manual === false) {
-        AlertModal.Default({
-          icon: "error",
-          title: "Error",
-          text: "Allow required",
-        });
-        return;
-      }
-      try {
-        setLoading(true);
-        let result: any;
-
-        if (!id) {
-          result = await GetDataServer(DataAPI.SCHEDULE).CREATE({
-            startDate: startDate.valueData,
-            dueDate: dueDate.valueData,
-            workflowState: "Draft",
-            status: "0",
-            warehouse: warehouse.valueData,
-            allow: allow,
-          });
-          navigate(`/schedule/${result.data.data.name}`);
-          navigate(0);
-        } else {
-          result = await GetDataServer(DataAPI.SCHEDULE).UPDATE({
-            id: id,
-            data: !data
-              ? {
-                  startDate: startDate.valueData,
-                  dueDate: dueDate.valueData,
-                  allow: allow,
-                }
-              : data,
-          });
-          getData();
-        }
-      } catch (error: any) {
-        AlertModal.Default({
-          icon: "error",
-          title: "Error",
-          text: error.response.data.msg ?? "Error Network",
-        });
-        setLoading(false);
-      }
-    };
-    AlertModal.confirmation({
-      onConfirm: progress,
-      text: "You want to save this data!",
-      confirmButtonText: "Yes, Save it",
-    });
+    // const progress = async (): Promise<void> => {
+    //   if (allow.barcode === false && allow.manual === false) {
+    //     AlertModal.Default({
+    //       icon: "error",
+    //       title: "Error",
+    //       text: "Allow required",
+    //     });
+    //     return;
+    //   }
+    //   try {
+    //     setLoading(true);
+    //     let result: any;
+    //     if (!id) {
+    //       result = await GetDataServer(DataAPI.SCHEDULE).CREATE({
+    //         startDate: startDate.valueData,
+    //         dueDate: dueDate.valueData,
+    //         workflowState: "Draft",
+    //         status: "0",
+    //         warehouse: warehouse.valueData,
+    //         allow: allow,
+    //       });
+    //       navigate(`/schedule/${result.data.data.name}`);
+    //       navigate(0);
+    //     } else {
+    //       result = await GetDataServer(DataAPI.SCHEDULE).UPDATE({
+    //         id: id,
+    //         data: !data
+    //           ? {
+    //               startDate: startDate.valueData,
+    //               dueDate: dueDate.valueData,
+    //               allow: allow,
+    //             }
+    //           : data,
+    //       });
+    //       getData();
+    //     }
+    //   } catch (error: any) {
+    //     AlertModal.Default({
+    //       icon: "error",
+    //       title: "Error",
+    //       text: error.response.data.msg ?? "Error Network",
+    //     });
+    //     setLoading(false);
+    //   }
+    // };
+    // AlertModal.confirmation({
+    //   onConfirm: progress,
+    //   text: "You want to save this data!",
+    //   confirmButtonText: "Yes, Save it",
+    // });
   };
+
+  const dataType: any[] = [
+    { title: "Visit", value: "visit" },
+    { title: "Callsheet", value: "callsheet" },
+    { title: "All", value: "all" },
+  ];
 
   useEffect(() => {
     if (id) {
@@ -314,44 +322,14 @@ const FormSchedulePage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      loading={loadingWarehouse}
-                      label="Warehouse"
-                      value={warehouse}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setWarehouse({ ...warehouse, valueInput: e })
-                      }
-                      onSelected={(e) =>
-                        setWarehouse({
-                          valueData: e.value,
-                          valueInput: e.value,
-                        })
-                      }
-                      onCLick={getWarehouse}
-                      list={listWarehouse}
-                      mandatoy
-                      modalStyle="top-9 max-h-[160px]"
-                      onReset={() =>
-                        setWarehouse({ valueData: null, valueInput: "" })
-                      }
-                      disabled={!id ? false : true}
-                      closeIconClass="top-[13.5px]"
+                    <Select
+                      title="Doc"
+                      data={dataType}
+                      value={type}
+                      setValue={setType}
+                      disabled={id !== undefined && data.status != 0}
                     />
-                    {id && (
-                      <InputComponent
-                        label="User"
-                        value={user}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) =>
-                          setUser({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled
-                      />
-                    )}
+
                     <InputComponent
                       label="Date"
                       value={createdAt}
@@ -365,11 +343,25 @@ const FormSchedulePage: React.FC = () => {
                       }
                       disabled
                     />
+                    {id && (
+                      <InputComponent
+                        label="Created By"
+                        value={user}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) =>
+                          setUser({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        disabled
+                      />
+                    )}
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
                       disabled={id !== undefined && data.status != 0}
-                      label="startDate"
+                      label="Start Date"
                       value={startDate}
                       className="h-[38px]  text-[0.93em] mb-3"
                       type="date"
@@ -396,7 +388,7 @@ const FormSchedulePage: React.FC = () => {
                     {startDate.valueData && (
                       <InputComponent
                         disabled={id !== undefined && data.status != 0}
-                        label="dueDate"
+                        label="Due Date"
                         value={dueDate}
                         className="h-[38px]  text-[0.93em] mb-3"
                         type="date"
@@ -410,59 +402,6 @@ const FormSchedulePage: React.FC = () => {
                         min={startDate.valueData}
                       />
                     )}
-                    <div>
-                      <h4 className="text-sm text-gray-800">Allow</h4>
-                      <ul className="flex justify-between w-1/3">
-                        <li className="flex items-center">
-                          <label className="text-sm">Barcode</label>
-                          <div className="ml-1 mt-1">
-                            <input
-                              type="checkbox"
-                              id="barcode"
-                              name="Allow"
-                              checked={allow.barcode}
-                              className="accent-red-500"
-                              onChange={(e) => {
-                                if (
-                                  data.status != 1 &&
-                                  data.status != 2 &&
-                                  data.status != 3
-                                ) {
-                                  setAllow({
-                                    ...allow,
-                                    barcode: e.target.checked,
-                                  });
-                                }
-                              }}
-                            />
-                          </div>
-                        </li>
-                        <li className="flex items-center">
-                          <label className="text-sm">Manual</label>
-                          <div className="ml-1 mt-1">
-                            <input
-                              type="checkbox"
-                              id="manual"
-                              name="Allow"
-                              checked={allow.manual}
-                              className="accent-red-500"
-                              onChange={(e) => {
-                                if (
-                                  data.status != 1 &&
-                                  data.status != 2 &&
-                                  data.status != 3
-                                ) {
-                                  setAllow({
-                                    ...allow,
-                                    manual: e.target.checked,
-                                  });
-                                }
-                              }}
-                            />
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </div>

@@ -73,10 +73,10 @@ export const SchedulePage: React.FC = (): any => {
             doc: item.name,
             name: (
               <b
-                onClick={() => navigate(`/schedule/${item.name}`)}
+                onClick={() => navigate(`/schedule/${item._id}`)}
                 className="font-medium"
               >
-                <a href={`/schedule/${item.name}`}>{item.name}</a>
+                <a href={`/schedule/${item._id}`}>{item.name}</a>
               </b>
             ),
             user: <div>{item.createdBy.name}</div>,

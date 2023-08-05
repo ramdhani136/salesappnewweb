@@ -26,7 +26,7 @@ export interface IFindOption {
 
 export enum DataAPI {
   SCHEDULE = "schedule",
-  SCHEDULEITEM = "scheduleitem",
+  SCHEDULELIST = "schedulelist",
   WAREHOUSE = "warehouse",
   PACKING = "schedulepacking",
   PACKINGID = "packingid",

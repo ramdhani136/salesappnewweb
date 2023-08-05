@@ -47,14 +47,13 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Item Code", accessor: "item_code", className: "w-[14%]" },
-      { header: "Item Name", accessor: "item_name", className: "w-[28%]" },
-      { header: "Stocker", accessor: "stocker", className: "w-[10%]" },
-      { header: "Status", accessor: "status", className: "w-[12%]" },
-      { header: "Stock", accessor: "actual_qty", className: "w-[6.5%]" },
-      { header: "Checked", accessor: "real_qty", className: "w-[6.5%]" },
-      { header: "Uom", accessor: "uom", className: "w-[6.5%]" },
-      { header: "", accessor: "updatedAt", className: "w-[21%]" },
+      { header: "No", accessor: "no", className: "w-[5%]" },
+      { header: "Customer", accessor: "customer", className: "w-[30%]" },
+      { header: "Status", accessor: "status", className: "w-[15%]" },
+      { header: "Group", accessor: "group", className: "w-[12%]" },
+      { header: "Type", accessor: "type", className: "w-[8%]" },
+      { header: "Doc", accessor: "doc", className: "w-[15%]" },
+      { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
     []
   );
@@ -81,74 +80,57 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULEITEM).FIND({
-        filters: [...filter, ["schedule.name", "=", `${props.name}`]],
+      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
+        filters: [...filter, ["schedule", "=", `${props._id}`]],
         limit: limit,
         page: page,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
       if (result.data.length > 0) {
-        const generateData = result.data.map((item: any): IDataTables => {
-          return {
-            id: item._id,
-            checked: false,
-            item_code: (
-              <a href={`/schedule/${props.name}/${item._id}`}>
-                {item.item_code}
-              </a>
-            ),
-            // item_code: props.allow.manual ? (
-            //   <h4 onClick={() => getItem(item)}>{item.item_code}</h4>
-            // ) : (
-            //   <a href={`/schedule/${props.name}/${item._id}`}>
-            //     {item.item_code}
-            //   </a>
-            // ),
-            code: `${item.item_code} - ${item.item_name}`,
-            item_name: (
-              <a href={`/schedule/${props.name}/${item._id}`}>
-                {item.item_name}
-              </a>
-            ),
-            // item_name: props.allow.manual ? (
-            //   <h4 onClick={() => getItem(item)}>{item.item_name}</h4>
-            // ) : (
-            //   <a href={`/schedule/${props.name}/${item._id}`}>
-            //     {item.item_name}
-            //   </a>
-            // ),
-            stocker: <div className="text-left">{item.stocker}</div>,
-            uom: <div className="text-center">{item.stock_uom}</div>,
-            status: (
-              <ButtonStatusComponent
-                status={item.status}
-                name={
-                  item.status == 0
-                    ? "Open"
-                    : item.status == 1
-                    ? "Completed"
-                    : "Not Match"
-                }
-              />
-            ),
-            real_qty: (
-              <div className="text-center font-medium text-[0.96em]">
-                {item.real_qty.toLocaleString()}
-              </div>
-            ),
-            actual_qty: (
-              <div className="text-center font-medium text-[0.96em]">
-                {item.actual_qty.toLocaleString()}
-              </div>
-            ),
-            updatedAt: (
-              <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt} className="-ml-9" />
-              </div>
-            ),
-          };
-        });
+        const generateData = result.data.map(
+          (item: any, index: number): IDataTables => {
+            return {
+              id: item._id,
+              checked: false,
+              no: `${index + 1}`,
+              customer: (
+                <a href={`/schedule/${props.name}/${item._id}`}>
+                  {item.customer.name}
+                </a>
+              ),
+              group: <a>{item.customerGroup.name}</a>,
+              type: (
+                <a href={item.closing ? `/${item.closing.doc.type}` : "#"}>
+                  {item.closing ? item.closing.doc.type : ""}
+                </a>
+              ),
+              doc: (
+                <a
+                  href={
+                    item.closing
+                      ? `/${item.closing.doc.type}/${item.closing.doc._id}`
+                      : "#"
+                  }
+                >
+                  {item.closing ? item.closing.doc.name : ""}
+                </a>
+              ),
+              status: (
+                <ButtonStatusComponent
+                  status={item.status}
+                  name={item.status == 0 ? "Open" : "Closed"}
+                />
+              ),
+
+              updatedAt: (
+                <div className="inline text-gray-600 text-[0.93em]">
+                  <InfoDateComponent date={item.updatedAt} className="-ml-9" />
+                </div>
+              ),
+            };
+          }
+        );
 
         const genSort: any[] = result.filters.map((st: any): any => {
           return {
@@ -230,7 +212,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULEITEM).DELETE(item.id);
+            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
