@@ -407,7 +407,7 @@ const FormSchedulePage: React.FC = () => {
               </div>
               {id && (
                 <ToggleBodyComponent
-                  name="Item List"
+                  name="Customer List"
                   className="mt-5"
                   child={<ListItemSchedule props={data} />}
                 />
