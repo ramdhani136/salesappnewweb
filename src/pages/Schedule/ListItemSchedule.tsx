@@ -95,7 +95,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
               checked: false,
               no: `${index + 1}`,
               customer: (
-                <a href={`/schedule/${props.name}/${item._id}`}>
+                <a href={`/customer/${item.customer._id}`}>
                   {item.customer.name}
                 </a>
               ),
