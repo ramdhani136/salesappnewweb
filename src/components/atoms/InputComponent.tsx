@@ -119,7 +119,11 @@ const InputComponent: React.FC<IProps> = ({
 
   return (
     <>
-      {label && <label className="text-sm text-gray-800">{label}</label>}
+      {label && (
+        <label className="text-sm text-gray-800">
+          {label} {mandatoy && <a className="text-red-600">*</a>}
+        </label>
+      )}
       <div
         onClick={onCLick}
         className={`mt-1 w-full rounded-md h-8 bg-gray-50  relative ${

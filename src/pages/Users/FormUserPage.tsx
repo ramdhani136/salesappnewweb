@@ -17,6 +17,7 @@ import { AlertModal, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
+import ProfileImg from "../../assets/images/iconuser.jpg";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -95,10 +96,8 @@ const FormUserPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [img, setImg] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
+  const [img, setImg] = useState<any>(ProfileImg);
+
   const [password, setPassword] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -299,54 +298,87 @@ const FormUserPage: React.FC = () => {
                 child={<ConnectionsUser data={connectionData} />}
               />
 
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
-                <div className="w-full h-auto  float-left rounded-md p-3 py-5">
-                  <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      label="Created By"
-                      value={name}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
+              <ToggleBodyComponent
+                name="Data"
+                child={
+                  <div className="flex">
+                    <div className="mr-8 flex flex-col">
+                      <img
+                        className="relative  object-contain mt-1 border shadow-sm w-[280px] h-[280px] rounded-md"
+                        src={img}
+                      />
+                      <input
+                        // onChange={(e) => imageHandler(e)}
+                        type="file"
+                        name="image"
+                        className="border  w-[280px] mt-1 text-sm"
+                        accept="image/*"
+                        // ref={browseRef}
+                      />
+                    </div>
+                    <div className="flex-1 flex">
+                      <div className="flex-1 mr-6">
+                        <InputComponent
+                          mandatoy
+                          label="Name"
+                          value={name}
+                          onChange={(e) =>
+                            setName({ valueData: e, valueInput: e })
+                          }
+                          type="text"
+                          //   disabled={disabled}
+
+                          className={`h-9 mb-3`}
+                        />
+                        <InputComponent
+                          mandatoy
+                          label="Username"
+                          value={username}
+                          onChange={(e) =>
+                            setUserName({ valueData: e, valueInput: e })
+                          }
+                          type="text"
+                          //   disabled={disabled}
+                          className={`h-9 mb-3`}
+                        />
+                        <InputComponent
+                          label="Phone"
+                          value={phone}
+                          onChange={(e) =>
+                            setPhone({ valueData: e, valueInput: e })
+                          }
+                          type="text"
+                          //   disabled={disabled}
+                          className={`h-9 mb-3`}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <InputComponent
+                          label="Email"
+                          value={email}
+                          onChange={(e) =>
+                            setEmail({ valueData: e, valueInput: e })
+                          }
+                          type="text"
+                          //   disabled={disabled}
+
+                          className={`h-9`}
+                        />
+                        {/* <Select
+                      title="Status"
+                      data={datStatus}
+                      value={status}
+                      setValue={setStatus}
+                      ClassName={`h-9`}
+                    /> */}
+                      </div>
+                    </div>
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
-                    <InputComponent
-                      label="Created By"
-                      value={name}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <InputComponent
-                      label="Date"
-                      value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                  </div>
-                </div>
-              </div>
+                }
+              />
               {id && (
                 <ToggleBodyComponent
-                  name="Result"
+                  name="Role Profiles"
                   className="mt-5"
                   child={<NotesPage props={[]} />}
                 />

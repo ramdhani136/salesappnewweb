@@ -3,7 +3,6 @@ import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
 const ConnectionsUser: React.FC<any> = ({ data }) => {
-  console.log(data);
   return (
     <div className=" w-full  float-left h-auto -mt-2">
       {data &&
