@@ -15,6 +15,7 @@ import { CallsheetPage } from "./Callsheet/CallsheetPage";
 import FormCallsheetPage from "./Callsheet/FormCallsheet";
 import { VisitPage } from "./visit/VisitPage";
 import FormVisitPage from "./visit/FormVisitPage";
+import FormUserPage from "./Users/FormUserPage";
 
 export {
   LoginPage,
@@ -33,5 +34,6 @@ export {
   CallsheetPage,
   FormCallsheetPage,
   VisitPage,
-  FormVisitPage
+  FormVisitPage,
+  FormUserPage,
 };

@@ -16,6 +16,7 @@ import {
   FormCallsheetPage,
   VisitPage,
   FormVisitPage,
+  FormUserPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -54,6 +55,14 @@ const App: React.FC = () => {
           <Route
             path="/users"
             element={<LayoutComponent Child={UsersPage} />}
+          />
+          <Route
+            path="/user/new"
+            element={<LayoutComponent Child={FormUserPage} />}
+          />
+          <Route
+            path="/user/:id"
+            element={<LayoutComponent Child={FormUserPage} />}
           />
           <Route
             path="/roles"

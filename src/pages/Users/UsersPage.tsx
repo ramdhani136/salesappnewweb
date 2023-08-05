@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -45,11 +45,11 @@ export const UsersPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Name", accessor: "name" ,className:'w-[25%]' },
-      { header: "Username", accessor: "username",className:'w-[20%]'  },
-      { header: "Email", accessor: "email" ,className:'w-[20%]' },
-      { header: "Status", accessor: "status" ,className:'w-[15%]' },
-      { header: "", accessor: "updatedAt" ,className:'w-[15%]' },
+      { header: "Name", accessor: "name", className: "w-[25%]" },
+      { header: "Username", accessor: "username", className: "w-[20%]" },
+      { header: "Email", accessor: "email", className: "w-[20%]" },
+      { header: "Status", accessor: "status", className: "w-[15%]" },
+      { header: "", accessor: "updatedAt", className: "w-[15%]" },
     ],
     []
   );
@@ -65,7 +65,7 @@ export const UsersPage: React.FC = (): any => {
         search: search,
       });
 
-      console.log(result);
+   
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
@@ -73,15 +73,12 @@ export const UsersPage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <b
-                onClick={() => navigate(`/user/${item._id}`)}
-                className="font-medium"
-              >
-                <a href={`/user/${item._id}`}>{item.name}</a>
-              </b>
+              <Link to={`/user/${item._id}`}>
+                <b className="font-medium">{item.name}</b>
+              </Link>
             ),
             username: <div>{item.username}</div>,
-            email: <div>{item.email?item.email:'-'}</div>,
+            email: <div>{item.email ? item.email : "-"}</div>,
             status: (
               <ButtonStatusComponent
                 status={item.status}
