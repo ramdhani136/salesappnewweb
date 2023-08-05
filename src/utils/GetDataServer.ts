@@ -36,6 +36,7 @@ export enum DataAPI {
   WORKFLOW = "workflow",
   ROLEPROFILE = "roleprofile",
   CALLSHEET = "callsheet",
+  VISIT = "visit",
   NAMING = "namingseries",
   BRANCH = "branch",
   GROUP = "customergroup",

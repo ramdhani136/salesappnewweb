@@ -13,6 +13,8 @@ import { PackingIDPage } from "./PackingID/PackingIDPage";
 import { WorkflowPage } from "./Workflows/WorkflowPage";
 import { CallsheetPage } from "./Callsheet/CallsheetPage";
 import FormCallsheetPage from "./Callsheet/FormCallsheet";
+import { VisitPage } from "./visit/VisitPage";
+import FormVisitPage from "./visit/FormVisitPage";
 
 export {
   LoginPage,
@@ -29,5 +31,7 @@ export {
   PackingIDPage,
   WorkflowPage,
   CallsheetPage,
-  FormCallsheetPage
+  FormCallsheetPage,
+  VisitPage,
+  FormVisitPage
 };

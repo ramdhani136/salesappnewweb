@@ -20,7 +20,7 @@ const HeaderComponent: React.FC = () => {
   };
 
   return (
-    <div className="bg-white w-full h-auto py-3 pl-1 border-b flex flex-row sticky top-0 z-[58]  justify-end lg:justify-between  px-6 items-center  drop-shadow-sm">
+    <div className="bg-white w-full h-auto py-2 pl-1 border-b flex flex-row sticky top-0 z-[58]  justify-end lg:justify-between  px-6 items-center  drop-shadow-sm">
       <div className="text-sm flex items-center ml-3">
         <SeacrhHeaderComponent />
         {/* <IconMenuHeader

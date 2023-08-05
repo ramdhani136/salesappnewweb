@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import SegmentIcon from "@mui/icons-material/Segment";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
-import CallIcon from '@mui/icons-material/Call';
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import HomeIcon from '@mui/icons-material/Home';
 import { LocalStorage, LocalStorageType, useKey } from "../../utils";
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
 interface IProps {
   user: any;
@@ -21,13 +21,14 @@ interface IProps {
 
 const SidebarComponent: React.FC<IProps> = ({ user }) => {
   const menus = [
-    { name: "Dashboard", link: "/", icon: DashboardOutlinedIcon },
-    { name: "Schedules", link: "/schedule", icon: AssignmentOutlinedIcon },
-    { name: "Callsheet", link: "/callsheet", icon: CallIcon },
+    { name: "Dashboard", link: "/", icon: HomeIcon },
+    { name: "Schedules", link: "/schedule", icon: EventNoteIcon },
+    { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
+    { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
-    { name: "Role", link: "/roles", icon: AdminPanelSettingsOutlinedIcon },
-    { name: "Permission", link: "/permission", icon: KeyOutlinedIcon },
-    { name: "Workflow", link: "/workflow", icon: AccountTreeOutlinedIcon },
+    // { name: "Role", link: "/roles", icon: AdminPanelSettingsOutlinedIcon },
+    // { name: "Permission", link: "/permission", icon: KeyOutlinedIcon },
+    // { name: "Workflow", link: "/workflow", icon: AccountTreeOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
   ];
 
@@ -88,12 +89,12 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
               key={id}
               className="group flex items-center text-sm gap-3 p-2 hover:bg-[#323335] text-[#b2b3b6]  rounded-md"
             >
-              <menu.icon style={{ fontSize: 15 }} />
+              <menu.icon style={{ fontSize: 16 }} />
               <h2
                 style={{
                   transitionDelay: `${id + 3}00ms`,
                 }}
-                className={`whitespace-pre duration-500 ${
+                className={`text-[0.93em] whitespace-pre duration-500 ${
                   !open && "opacity-0 translate-x-28 overflow-hidden"
                 }`}
               >

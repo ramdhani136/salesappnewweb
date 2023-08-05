@@ -14,14 +14,13 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, Meta } from "../../utils";
-import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 
-const FormCallsheetPage: React.FC = () => {
+const FormVisitPage: React.FC = () => {
   const metaData = {
-    title: "New Callsheet - Sales App Ekatunggal",
-    description: "Halaman form callsheet sales web system",
+    title: "New Visit - Sales App Ekatunggal",
+    description: "Halaman form visit sales web system",
   };
 
   const navigate = useNavigate();
@@ -33,9 +32,9 @@ const FormCallsheetPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
-  const dataCallType: any[] = [
-    { title: "Incomming Call", value: "in" },
-    { title: "Outgoing Call", value: "out" },
+  const dataType: any[] = [
+    { title: "In Site", value: "insite" },
+    { title: "Out Site", value: "outsite" },
   ];
   const [user, setUser] = useState<IValue>({
     valueData: "",
@@ -118,7 +117,7 @@ const FormCallsheetPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.CALLSHEET).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.VISIT).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -187,14 +186,14 @@ const FormCallsheetPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/callsheet");
+      navigate("/visit");
     }
   };
 
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "callsheet"]],
+        filters: [["doc", "=", "visit"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -372,8 +371,8 @@ const FormCallsheetPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.CALLSHEET).DELETE(`${id}`);
-          navigate("/callsheet");
+          await GetDataServer(DataAPI.VISIT).DELETE(`${id}`);
+          navigate("/visit");
         } catch (error) {
           console.log(error);
         }
@@ -466,10 +465,10 @@ const FormCallsheetPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/callsheet")}
+                  onClick={() => navigate("/visit")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New callsheet" : data.name}
+                  {!id ? "New Visit" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent
@@ -514,7 +513,7 @@ const FormCallsheetPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
+                    {/* <InputComponent
                       loading={loadingNaming}
                       label="Naming Series"
                       value={naming}
@@ -535,13 +534,13 @@ const FormCallsheetPage: React.FC = () => {
                       }
                       // disabled={!id ? false : true}
                       closeIconClass="top-[13.5px]"
-                    />
+                    /> */}
                     <Select
-                      title="Call Type"
-                      data={dataCallType}
+                      title="Type"
+                      data={dataType}
                       value={callType}
                       setValue={setCallType}
-                      disabled={false}
+                      disabled
                     />
                     <InputComponent
                       label="Date"
@@ -599,11 +598,9 @@ const FormCallsheetPage: React.FC = () => {
                         setContact({ valueData: null, valueInput: "" });
                         contactReset();
                       }}
-                      // disabled={!id ? false : true}
+                      disabled
                       closeIconClass="top-[13.5px]"
                     />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
                       <InputComponent
                         loading={loadingGroup}
@@ -633,10 +630,12 @@ const FormCallsheetPage: React.FC = () => {
                           contactReset();
                           getResetCustomer();
                         }}
-                        // disabled={!id ? false : true}
+                        disabled
                         closeIconClass="top-[13.5px]"
                       />
                     )}
+                  </div>
+                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {group.valueData && (
                       <InputComponent
                         infiniteScroll={{
@@ -684,7 +683,7 @@ const FormCallsheetPage: React.FC = () => {
                           setContact({ valueData: null, valueInput: "" });
                           contactReset();
                         }}
-                        // disabled={!id ? false : true}
+                        disabled
                         closeIconClass="top-[13.5px]"
                       />
                     )}
@@ -731,7 +730,7 @@ const FormCallsheetPage: React.FC = () => {
                           contactReset();
                           setContact({ valueData: null, valueInput: "" });
                         }}
-                        // disabled={!id ? false : true}
+                        disabled
                         closeIconClass="top-[13.5px]"
                       />
                     )}
@@ -786,4 +785,4 @@ const FormCallsheetPage: React.FC = () => {
   );
 };
 
-export default FormCallsheetPage;
+export default FormVisitPage;

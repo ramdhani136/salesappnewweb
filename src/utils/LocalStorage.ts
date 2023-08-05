@@ -5,6 +5,7 @@ export enum LocalStorageType {
   TOKEN = "token",
   FILTERSCHEDULE = "filterschedule",
   FILTERCALLSHEET = "filtercallsheet",
+  FILTERVISIT = "filtervisit",
   
 }
 

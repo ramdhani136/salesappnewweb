@@ -14,6 +14,8 @@ import {
   WorkflowPage,
   CallsheetPage,
   FormCallsheetPage,
+  VisitPage,
+  FormVisitPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -35,6 +37,14 @@ const App: React.FC = () => {
           <Route
             path="/callsheet/:id"
             element={<LayoutComponent Child={FormCallsheetPage} />}
+          />
+          <Route
+            path="/visit"
+            element={<LayoutComponent Child={VisitPage} />}
+          />
+          <Route
+            path="/visit/:id"
+            element={<LayoutComponent Child={FormVisitPage} />}
           />
 
           <Route
