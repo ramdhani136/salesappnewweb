@@ -21,7 +21,7 @@ const ButtonStatusComponent: React.FC<IProps> = ({
           ? "text-[#5f9271] bg-[#eaf6ec] font-semibold text-[0.93em]"
           : status == "3" || status == "2"
           ? "text-[#d86050] bg-[#fff5f4] font-semibold text-[0.93em]"
-          : "bg-[#f4f6f5] border-[#f4f6f5]  border font-normal text-[0.93em]"
+          : "bg-[#e9ebeb] border-[#f4f6f5]  border font-normal text-[0.93em]"
       }`}
     >
       <CircleIcon
