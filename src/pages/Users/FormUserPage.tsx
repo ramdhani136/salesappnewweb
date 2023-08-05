@@ -133,12 +133,33 @@ const FormUserPage: React.FC = () => {
       }
       // end
 
+      setName({ valueData: result.data.name, valueInput: result.data.name });
+      setUserName({
+        valueData: result.data.username,
+        valueInput: result.data.username,
+      });
+      setEmail({
+        valueData: result.data.email ?? "",
+        valueInput: result.data.email ?? "",
+      });
+      setPhone({
+        valueData: result.data.phone ?? "",
+        valueInput: result.data.email ?? "",
+      });
+
+      if (result.data.img) {
+        setImg(
+          `${import.meta.env.VITE_PUBLIC_URI}/images/users/${result.data.img}`
+        );
+      }
+
       setHistory(result.history);
 
       setData(result.data);
 
       setLoading(false);
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -146,7 +167,7 @@ const FormUserPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/users");
+      //   navigate("/users");
     }
   };
 
@@ -306,6 +327,10 @@ const FormUserPage: React.FC = () => {
                       <img
                         className="relative  object-contain mt-1 border shadow-sm w-[280px] h-[280px] rounded-md"
                         src={img}
+                        alt={"pp"}
+                        onError={(e: any) => {
+                          e.target.src = ProfileImg;
+                        }}
                       />
                       <input
                         // onChange={(e) => imageHandler(e)}
