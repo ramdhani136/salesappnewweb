@@ -450,11 +450,11 @@ const RoleContent: React.FC<any> = ({ id }) => {
             let isActive = roleuser.data.filter(
               (j: any) => j.id_roleprofile === i.id
             );
-            return { id: i.id, name: i.name, active: isActive.length === 1 };
+            return { id: i._id, name: i.name, active: isActive.length === 1 };
           });
         } else {
           filter = roleProfile.data.map((i: any) => {
-            return { id: i.id, name: i.name, active: false };
+            return { id: i._id, name: i.name, active: false };
           });
         }
         setRoleP(filter);
@@ -467,26 +467,30 @@ const RoleContent: React.FC<any> = ({ id }) => {
     active: boolean
   ): Promise<void> => {
     if (active) {
-      const result = await GetDataServer(DataAPI.ROLEUSER).CREATE({
-        id_roleprofile: id_profile,
-        id_user: id,
-      });
-      if (result.data.status === 200) {
-        setAlert(true);
-        getRole();
-      } else {
-        Swal.fire("Failed!", `Check Your Connection!`, "error");
+      try {
+        const result = await GetDataServer(DataAPI.ROLEUSER).CREATE({
+          roleprofile: id_profile,
+          user: id,
+        });
+        if (result.data.status === 200) {
+          setAlert(true);
+          getRole();
+        } else {
+          Swal.fire("Failed!", `Check Your Connection!`, "error");
+        }
+      } catch (error: any) {
+        Swal.fire(error.response.data.msg ?? "Failed, Error update roleuser");
       }
     } else {
-      const result = await FetchApi.delete(
-        `${import.meta.env.VITE_PUBLIC_URI}/}roleuser/${id_profile}${id}`
-      );
-      if (result.status === 200) {
-        setAlert(true);
-        getRole();
-      } else {
-        Swal.fire("Failed!", `Check Your Connection!`, "error");
-      }
+      //   const result = await FetchApi.delete(
+      //     `${import.meta.env.VITE_PUBLIC_URI}/roleuser/${id_profile}${id}`
+      //   );
+      //   if (result.status === 200) {
+      //     setAlert(true);
+      //     getRole();
+      //   } else {
+      //     Swal.fire("Failed!", `Check Your Connection!`, "error");
+      //   }
     }
   };
 
@@ -509,20 +513,22 @@ const RoleContent: React.FC<any> = ({ id }) => {
         </Snackbar>
       )}
       <div className=" w-full float-left">
-        {roleP.map((i: any, index: number) => (
-          <div
-            key={index}
-            className="float-left w-1/2 flex items-center mb-2  "
-          >
-            <input
-              onChange={() => ChangeAction(i.id, !i.active)}
-              checked={i.active}
-              type="checkbox"
-              className="mr-1 h-3 w-3 mt-[1.5px]"
-            />
-            <h4 className="text-sm">{i.name}</h4>
-          </div>
-        ))}
+        {roleP.map((i: any, index: number) => {
+          return (
+            <div
+              key={index}
+              className="float-left w-1/3 flex items-center mb-2  "
+            >
+              <input
+                onChange={() => ChangeAction(i.id, !i.active)}
+                checked={i.active}
+                type="checkbox"
+                className="mr-1 h-3 w-3 mt-[1.5px]"
+              />
+              <h4 className="text-sm">{i.name}</h4>
+            </div>
+          );
+        })}
         {roleP.length === 0 && (
           <h4 className="text-center text-sm text-gray-300">No Data</h4>
         )}
