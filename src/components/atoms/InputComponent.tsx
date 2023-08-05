@@ -249,7 +249,7 @@ const InputComponent: React.FC<IProps> = ({
           }}
           onMouseLeave={() => setOpenRemark(false)}
         >
-          <h6 className="italic">{remark}</h6>
+          <h6 className="italic text-[0.8em] text-gray-700">{remark}</h6>
           <h6
             className={` ${
               !openRemark && "hidden"

@@ -386,8 +386,18 @@ const FormUserPage: React.FC = () => {
                           }
                           type="text"
                           //   disabled={disabled}
-
-                          className={`h-9`}
+                          className={`h-9 mb-3`}
+                        />
+                        <InputComponent
+                          label="Password"
+                          value={password}
+                          onChange={(e) =>
+                            setPassword({ valueData: e, valueInput: e })
+                          }
+                          type="password"
+                          //   disabled={disabled}
+                          remark="*Only filled if you want to change the previous password"
+                          className={`h-9 mb-3`}
                         />
                         {/* <Select
                       title="Status"
