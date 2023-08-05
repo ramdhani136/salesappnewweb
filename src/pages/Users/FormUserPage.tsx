@@ -10,14 +10,15 @@ import {
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
-import { IListInput, IValue } from "../../components/atoms/InputComponent";
+import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, Meta } from "../../utils";
+import { AlertModal, FetchApi, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
-import NotesPage from "../notes/NotesPage";
 import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
+import Swal from "sweetalert2";
+import { Alert, Snackbar } from "@mui/material";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -415,7 +416,7 @@ const FormUserPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Role Profiles"
                   className="mt-5"
-                  child={<NotesPage props={[]} />}
+                  child={<RoleContent id={id} />}
                 />
               )}
               <TimeLineVertical data={history} />
@@ -430,3 +431,102 @@ const FormUserPage: React.FC = () => {
 };
 
 export default FormUserPage;
+
+const RoleContent: React.FC<any> = ({ id }) => {
+  const [roleP, setRoleP] = useState<any[]>([]);
+  const [alert, setAlert] = useState<boolean>(false);
+
+  const getRole = async (): Promise<void> => {
+    const roleuser: any = await GetDataServer(DataAPI.ROLEUSER).FIND({
+      filters: [["user", "=", id]],
+    });
+
+    const roleProfile: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({});
+    if (roleProfile.status) {
+      if (roleProfile.data.length > 0) {
+        let filter: any[];
+        if (roleuser.data.length > 0) {
+          filter = roleProfile.data.map((i: any) => {
+            let isActive = roleuser.data.filter(
+              (j: any) => j.id_roleprofile === i.id
+            );
+            return { id: i.id, name: i.name, active: isActive.length === 1 };
+          });
+        } else {
+          filter = roleProfile.data.map((i: any) => {
+            return { id: i.id, name: i.name, active: false };
+          });
+        }
+        setRoleP(filter);
+      }
+    }
+  };
+
+  const ChangeAction = async (
+    id_profile: number,
+    active: boolean
+  ): Promise<void> => {
+    if (active) {
+      const result = await GetDataServer(DataAPI.ROLEUSER).CREATE({
+        id_roleprofile: id_profile,
+        id_user: id,
+      });
+      if (result.data.status === 200) {
+        setAlert(true);
+        getRole();
+      } else {
+        Swal.fire("Failed!", `Check Your Connection!`, "error");
+      }
+    } else {
+      const result = await FetchApi.delete(
+        `${import.meta.env.VITE_PUBLIC_URI}/}roleuser/${id_profile}${id}`
+      );
+      if (result.status === 200) {
+        setAlert(true);
+        getRole();
+      } else {
+        Swal.fire("Failed!", `Check Your Connection!`, "error");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getRole();
+  }, []);
+
+  return (
+    <>
+      {alert && (
+        <Snackbar
+          open={true}
+          autoHideDuration={1500}
+          onClose={() => setAlert(false)}
+          message="Note archived"
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
+            Permission updated!
+          </Alert>
+        </Snackbar>
+      )}
+      <div className=" w-full float-left">
+        {roleP.map((i: any, index: number) => (
+          <div
+            key={index}
+            className="float-left w-1/2 flex items-center mb-2  "
+          >
+            <input
+              onChange={() => ChangeAction(i.id, !i.active)}
+              checked={i.active}
+              type="checkbox"
+              className="mr-1 h-3 w-3 mt-[1.5px]"
+            />
+            <h4 className="text-sm">{i.name}</h4>
+          </div>
+        ))}
+        {roleP.length === 0 && (
+          <h4 className="text-center text-sm text-gray-300">No Data</h4>
+        )}
+      </div>
+    </>
+  );
+};
