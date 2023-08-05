@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -72,20 +72,13 @@ export const VisitPage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <b
-                onClick={() => navigate(`/visit/${item._id}`)}
-                className="font-medium"
-              >
-                <a href={`/visit/${item._id}`}>{item.name}</a>
-              </b>
+              <Link to={`/visit/${item._id}`}>
+                <b className="font-medium">{item.name}</b>
+              </Link>
             ),
             customer: <div>{item.customer.name}</div>,
             group: <div>{item.customerGroup.name}</div>,
-            type: (
-              <div>
-                {item.type === "insite" ? "In site" : "Out Site"}
-              </div>
-            ),
+            type: <div>{item.type === "insite" ? "In site" : "Out Site"}</div>,
 
             workflowState: (
               <ButtonStatusComponent

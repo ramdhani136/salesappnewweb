@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -72,12 +72,9 @@ export const CallsheetPage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <b
-                onClick={() => navigate(`/callsheet/${item._id}`)}
-                className="font-medium"
-              >
-                <a href={`/callsheet/${item._id}`}>{item.name}</a>
-              </b>
+              <Link to={`/callsheet/${item._id}`}>
+                <b className="font-medium">{item.name}</b>
+              </Link>
             ),
             customer: <div>{item.customer.name}</div>,
             group: <div>{item.customerGroup.name}</div>,

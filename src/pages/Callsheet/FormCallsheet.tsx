@@ -17,6 +17,7 @@ import { AlertModal, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
+import React from "react";
 
 const FormCallsheetPage: React.FC = () => {
   const metaData = {
@@ -786,4 +787,4 @@ const FormCallsheetPage: React.FC = () => {
   );
 };
 
-export default FormCallsheetPage;
+export default React.memo(FormCallsheetPage);

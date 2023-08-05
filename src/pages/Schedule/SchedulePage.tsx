@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -72,12 +72,9 @@ export const SchedulePage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <b
-                onClick={() => navigate(`/schedule/${item._id}`)}
-                className="font-medium"
-              >
-                <a href={`/schedule/${item._id}`}>{item.name}</a>
-              </b>
+              <Link to={`/schedule/${item._id}`}>
+                <b className="font-medium">{item.name}</b>
+              </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
             startDate: moment(item.startDate).format("LL"),
