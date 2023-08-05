@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import SegmentIcon from "@mui/icons-material/Segment";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import EventNoteIcon from "@mui/icons-material/EventNote";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import { LocalStorage, LocalStorageType, useKey } from "../../utils";
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
-import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
-import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
+import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
+import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 interface IProps {
   user: any;
@@ -26,10 +26,8 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
     { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
-    // { name: "Role", link: "/roles", icon: AdminPanelSettingsOutlinedIcon },
-    // { name: "Permission", link: "/permission", icon: KeyOutlinedIcon },
-    // { name: "Workflow", link: "/workflow", icon: AccountTreeOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
+    { name: "Settings", link: "/setting", icon: SettingsIcon },
   ];
 
   const [open, setOpen] = useState<boolean>(false);

@@ -1,6 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ButtonStatusComponent, IconButton, InfoDateComponent } from "../../components/atoms";
+import {
+  ButtonStatusComponent,
+  IconButton,
+  InfoDateComponent,
+} from "../../components/atoms";
 import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import AddIcon from "@mui/icons-material/Add";
@@ -46,7 +50,6 @@ export const SchedulePage: React.FC = (): any => {
       { header: "User", accessor: "user" },
       { header: "Start Date", accessor: "startDate" },
       { header: "Due Date", accessor: "dueDate" },
-      { header: "Warehouse", accessor: "warehouse" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -57,7 +60,6 @@ export const SchedulePage: React.FC = (): any => {
       const result: any = await GetDataServer(DataAPI.SCHEDULE).FIND({
         limit: limit,
         page: page,
-        // fields: ["name", "user.name"],
         filters: filter,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
@@ -77,7 +79,7 @@ export const SchedulePage: React.FC = (): any => {
                 <a href={`/schedule/${item.name}`}>{item.name}</a>
               </b>
             ),
-            user: <div>{item.user.name}</div>,
+            user: <div>{item.createdBy.name}</div>,
             startDate: moment(item.startDate).format("LL"),
             dueDate: moment(item.dueDate).format("LL"),
             workflowState: (
@@ -86,10 +88,9 @@ export const SchedulePage: React.FC = (): any => {
                 name={item.workflowState}
               />
             ),
-            warehouse: item.warehouse,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt} className='-ml-14' />
+                <InfoDateComponent date={item.updatedAt} className="-ml-14" />
               </div>
             ),
           };
@@ -244,7 +245,6 @@ export const SchedulePage: React.FC = (): any => {
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERSCHEDULE}
               onRefresh={onRefresh}
-
             />
           </>
         ) : (
