@@ -19,7 +19,6 @@ import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
-import { title } from "process";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -37,7 +36,7 @@ const FormUserPage: React.FC = () => {
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
   const dataStatus: any[] = [
-    { title: "Actived", value: "1" },
+    { title: "Enabled", value: "1" },
     { title: "Disabled", value: "0" },
   ];
 
@@ -83,10 +82,7 @@ const FormUserPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
-  const [status, setStatus] = useState<IValue>({
-    valueData: "0",
-    valueInput: "Disabled",
-  });
+  const [status, setStatus] = useState<string>("0");
 
   const [email, setEmail] = useState<IValue>({
     valueData: "",
@@ -166,10 +162,7 @@ const FormUserPage: React.FC = () => {
         valueData: result.data.ErpToken ?? "",
         valueInput: result.data.ErpToken ?? "",
       });
-      setStatus({
-        valueData: result.data.status,
-        valueInput: result.data.status === "1" ? "Actived" : "Disabled",
-      });
+      setStatus(result.data.status);
 
       if (result.data.img) {
         setImg(
@@ -245,10 +238,10 @@ const FormUserPage: React.FC = () => {
     password.valueData && inData.append("password", password.valueData);
     inData.append("ErpToken", erpToken.valueData ?? "");
     inData.append("ErpSite", erpSite.valueData ?? "");
-    inData.append("status", status.valueData);
+    inData.append("status", status);
     inData.append(
       "workflowState",
-      status.valueData === "0" ? "Disabled" : "Actived"
+      status === "0" ? "Disabled" : "Enabled"
     );
 
     let response: any;
@@ -325,8 +318,6 @@ const FormUserPage: React.FC = () => {
       setListMoreAction([]);
     }
   }, []);
-
-
 
   return (
     <>
