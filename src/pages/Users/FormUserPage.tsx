@@ -169,10 +169,6 @@ const FormUserPage: React.FC = () => {
         );
       }
 
-      console.log(
-        `${import.meta.env.VITE_PUBLIC_URI}/images/users/${result.data.img}`
-      );
-
       setHistory(result.history);
 
       setData(result.data);
@@ -248,6 +244,9 @@ const FormUserPage: React.FC = () => {
           if (response.data.status === 200) {
             Swal.fire("Success!", `Data updated successfully`, "success");
             getData();
+            if (file) {
+              navigate(0);
+            }
           } else {
             throw response.data.msg;
           }
@@ -275,7 +274,9 @@ const FormUserPage: React.FC = () => {
               Swal.fire("Success!", `Data saved successfully`, "success");
               // navigate(`/user/${response.data.data.id}`);
               getData();
-              navigate(0);
+              if (file) {
+                navigate(0);
+              }
             } else {
               Swal.fire("error!", `Check your data!`, "error");
             }
@@ -285,7 +286,7 @@ const FormUserPage: React.FC = () => {
               `${
                 error.response.status === 403
                   ? "Access Denied"
-                  : "Check Your data!"
+                  : error.response.data.msg ?? "Error update"
               }`,
               error
             );

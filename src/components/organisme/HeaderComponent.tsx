@@ -4,48 +4,67 @@ import { Avatar } from "@mui/material";
 import { IconMenuHeader, SeacrhHeaderComponent } from "../moleculs";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LocalStorage, LocalStorageType } from "../../utils";
 import jwt_decode from "jwt-decode";
+import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const HeaderComponent: React.FC = () => {
-  const getUser = (): any => {
-    const token = LocalStorage.loadData(LocalStorageType.TOKEN);
-    if (token) {
-      const decoded: any = jwt_decode(token);
-      return decoded;
-    }
+  const [data, setData] = useState<any>([]);
+  const navigate = useNavigate();
+  const getUser = async (): Promise<any> => {
+    try {
+      const userLogin = LocalStorage.getUser();
 
-    return {};
+      const users = await GetDataServer(DataAPI.USERS).FINDONE(userLogin._id);
+
+      setData(users.data);
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.status === 403
+            ? "Access Denied"
+            : error.response.data.msg ?? "Error Get data User"
+        }`,
+        "error"
+      );
+    }
   };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <div className="bg-white w-full h-auto py-2 pl-1 border-b flex flex-row sticky top-0 z-[58]  justify-end lg:justify-between  px-6 items-center  drop-shadow-sm">
       <div className="text-sm flex items-center ml-3">
         <SeacrhHeaderComponent />
-        {/* <IconMenuHeader
-          className="ml-1"
-          Icon={TextsmsOutlinedIcon}
-          iconSize={17}
-        /> */}
+
         <IconMenuHeader Icon={NotificationsNoneIcon} title="notif" />
       </div>
+
       <div className="flex items-center">
         <Avatar
-          alt="Ilham Ramdhani"
-          src="https://img.freepik.com/premium-photo/profile-side-photo-positive-cheerful-programmer-guy-use-computer_274222-19547.jpg"
+          alt={data.name}
+          src={`${import.meta.env.VITE_PUBLIC_URI}/images/users/${data.img}`}
           sx={{ width: 35, height: 35 }}
           className={`mx-3 cursor-pointer`}
         />
         <div>
           <h4 className=" text-gray-600 text-md text-[0.87em] font-medium -mt-1">
-            {getUser().name}
+            {data.name}
           </h4>
           <h5 className="font-normal text-md text-[0.76em] text-gray-400 -mt-1">
-            @{getUser().username}
+            @{data.username}
           </h5>
         </div>
         <SettingsIcon
+          onClick={() => {
+            navigate(`/user/${data._id}`);
+          }}
           className="ml-3 cursor-pointer"
           style={{ fontSize: 15 }}
         />
