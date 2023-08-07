@@ -115,6 +115,8 @@ const FormUserPage: React.FC = () => {
     valueInput: "",
   });
 
+  const [file, setFile] = useState<File>();
+
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -167,6 +169,10 @@ const FormUserPage: React.FC = () => {
         );
       }
 
+      console.log(
+        `${import.meta.env.VITE_PUBLIC_URI}/images/users/${result.data.img}`
+      );
+
       setHistory(result.history);
 
       setData(result.data);
@@ -209,16 +215,14 @@ const FormUserPage: React.FC = () => {
       }
     };
     reader.readAsDataURL(e.target.files[0]);
-    setImg(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const onSave = async (nextStateId?: String): Promise<void> => {
     if (name.valueData !== "" && username.valueData !== "") {
       const inData = new FormData();
 
-      {
-        img && inData.append("img", img);
-      }
+      file && inData.append("imgfile", file);
 
       if (nextStateId) {
         inData.append("nextState", `${nextStateId}`);
@@ -381,6 +385,7 @@ const FormUserPage: React.FC = () => {
                   <div className="flex">
                     <div className="mr-8 flex flex-col">
                       <img
+                        crossOrigin="anonymous"
                         className="relative  object-contain mt-1 border shadow-sm w-[280px] h-[280px] rounded-md"
                         src={img}
                         alt={"pp"}
