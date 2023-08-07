@@ -295,14 +295,15 @@ const FormUserPage: React.FC = () => {
           Swal.fire("error!", `Check your data!`, "error");
         }
       } catch (error: any) {
+        console.log(error);
         Swal.fire(
           "Error!",
           `${
             error.response.status === 403
               ? "Access Denied"
-              : error.response.data.msg ?? "Error update"
+              : error.response.data.msg ?? "Error Insert"
           }`,
-          error
+          'error'
         );
         setLoading(false);
       }
