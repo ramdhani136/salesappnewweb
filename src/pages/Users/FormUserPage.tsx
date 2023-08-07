@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
@@ -19,6 +19,7 @@ import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
+import axios from "axios";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -105,6 +106,8 @@ const FormUserPage: React.FC = () => {
     valueInput: "",
   });
 
+  const browseRef = useRef<HTMLInputElement>(null);
+
   const [img, setImg] = useState<any>(ProfileImg);
 
   const [password, setPassword] = useState<IValue>({
@@ -131,9 +134,7 @@ const FormUserPage: React.FC = () => {
           return {
             name: item.action,
             onClick: () => {
-              onSave({
-                nextState: item.nextState.id,
-              });
+              onSave(item.nextState.id);
             },
           };
         });
@@ -153,7 +154,7 @@ const FormUserPage: React.FC = () => {
       });
       setPhone({
         valueData: result.data.phone ?? "",
-        valueInput: result.data.email ?? "",
+        valueInput: result.data.phone ?? "",
       });
       setStatus({
         valueData: result.data.status,
@@ -200,57 +201,99 @@ const FormUserPage: React.FC = () => {
     }
   };
 
-  const onSave = async (data: {}): Promise<any> => {
-    // const progress = async (): Promise<void> => {
-    //   if (allow.barcode === false && allow.manual === false) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: "Allow required",
-    //     });
-    //     return;
-    //   }
-    //   try {
-    //     setLoading(true);
-    //     let result: any;
-    //     if (!id) {
-    //       result = await GetDataServer(DataAPI.CALLSHEET).CREATE({
-    //         startDate: startDate.valueData,
-    //         dueDate: dueDate.valueData,
-    //         workflowState: "Draft",
-    //         status: "0",
-    //         warehouse: warehouse.valueData,
-    //         allow: allow,
-    //       });
-    //       navigate(`/callsheet/${result.data.data.name}`);
-    //       navigate(0);
-    //     } else {
-    //       result = await GetDataServer(DataAPI.CALLSHEET).UPDATE({
-    //         id: id,
-    //         data: !data
-    //           ? {
-    //               startDate: startDate.valueData,
-    //               dueDate: dueDate.valueData,
-    //               allow: allow,
-    //             }
-    //           : data,
-    //       });
-    //       getData();
-    //     }
-    //   } catch (error: any) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: error.response.data.msg ?? "Error Network",
-    //     });
-    //     setLoading(false);
-    //   }
-    // };
-    // AlertModal.confirmation({
-    //   onConfirm: progress,
-    //   text: "You want to save this data!",
-    //   confirmButtonText: "Yes, Save it",
-    // });
+  const imageHandler = (e: any) => {
+    const reader: any = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImg(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+    setImg(e.target.files[0]);
+  };
+
+  const onSave = async (nextStateId?: String): Promise<void> => {
+    if (name.valueData !== "" && username.valueData !== "") {
+      const inData = new FormData();
+
+      {
+        img && inData.append("img", img);
+      }
+
+      if (nextStateId) {
+        inData.append("nextState", `${nextStateId}`);
+      }
+      inData.append("name", name.valueData);
+      inData.append("username", username.valueData);
+      inData.append("email", email.valueData);
+      inData.append("phone", phone.valueData);
+      password.valueData && inData.append("password", password.valueData);
+      // inData.append("ErpToken", erpToken ? erpToken : "");
+      // inData.append("ErpSite", erpToken ? erpToken : "");
+      inData.append("status", status ? `1` : `0`);
+
+      let response: any;
+      if (id) {
+        setLoading(true);
+        try {
+          response = await FetchApi.put(
+            `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
+            inData
+          );
+
+          if (response.data.status === 200) {
+            Swal.fire("Success!", `Data updated successfully`, "success");
+            getData();
+          } else {
+            throw response.data.msg;
+          }
+        } catch (error: any) {
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.status === 403
+                ? "Access Denied"
+                : error.response.data.msg ?? "Error update"
+            }`,
+            error
+          );
+          setLoading(false);
+        }
+      } else {
+        if (password.valueData !== "") {
+          setLoading(true);
+          try {
+            response = await FetchApi.post(
+              `${import.meta.env.VITE_PUBLIC_URI}/users`,
+              inData
+            );
+            if (response.data.status) {
+              Swal.fire("Success!", `Data saved successfully`, "success");
+              // navigate(`/user/${response.data.data.id}`);
+              getData();
+              navigate(0);
+            } else {
+              Swal.fire("error!", `Check your data!`, "error");
+            }
+          } catch (error: any) {
+            Swal.fire(
+              "Error!",
+              `${
+                error.response.status === 403
+                  ? "Access Denied"
+                  : "Check Your data!"
+              }`,
+              error
+            );
+            setLoading(false);
+          }
+        } else {
+          Swal.fire("error!", `Password is mandatory!`, "error");
+        }
+      }
+    } else {
+      Swal.fire("error!", `Check mandatory data!`, "error");
+    }
   };
 
   useEffect(() => {
@@ -308,13 +351,13 @@ const FormUserPage: React.FC = () => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id ? "Update" : "Save"}
-                    callback={onSave}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                {/* {isChangeData && ( */}
+                <IconButton
+                  name={id ? "Update" : "Save"}
+                  callback={onSave}
+                  className={`opacity-80 hover:opacity-100 duration-100  `}
+                />
+                {/* )} */}
                 {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
@@ -346,12 +389,12 @@ const FormUserPage: React.FC = () => {
                         }}
                       />
                       <input
-                        // onChange={(e) => imageHandler(e)}
+                        onChange={(e) => imageHandler(e)}
                         type="file"
                         name="image"
                         className="border  w-[280px] mt-1 text-sm"
                         accept="image/*"
-                        // ref={browseRef}
+                        ref={browseRef}
                       />
                     </div>
                     <div className="flex-1 flex">
