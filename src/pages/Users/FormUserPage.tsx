@@ -20,6 +20,7 @@ import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
 import axios from "axios";
+import { Textarea } from "@chakra-ui/react";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -158,6 +159,14 @@ const FormUserPage: React.FC = () => {
         valueData: result.data.phone ?? "",
         valueInput: result.data.phone ?? "",
       });
+      setErpSite({
+        valueData: result.data.ErpSite ?? "",
+        valueInput: result.data.ErpSite ?? "",
+      });
+      setErpToken({
+        valueData: result.data.ErpToken ?? "",
+        valueInput: result.data.ErpToken ?? "",
+      });
       setStatus({
         valueData: result.data.status,
         valueInput: result.data.status === "1" ? "Actived" : "Disabled",
@@ -228,8 +237,8 @@ const FormUserPage: React.FC = () => {
       inData.append("email", email.valueData);
       inData.append("phone", phone.valueData);
       password.valueData && inData.append("password", password.valueData);
-      // inData.append("ErpToken", erpToken ? erpToken : "");
-      // inData.append("ErpSite", erpToken ? erpToken : "");
+      inData.append("ErpToken", erpToken.valueData ?? "");
+      inData.append("ErpSite", erpSite.valueData ?? "");
       inData.append("status", status ? `1` : `0`);
 
       let response: any;
@@ -470,6 +479,49 @@ const FormUserPage: React.FC = () => {
                         />
                       </div>
                     </div>
+                  </div>
+                }
+              />
+              <ToggleBodyComponent
+                name="Role Profiles"
+                className="mt-5"
+                child={
+                  <div className="flex ">
+                    <li className="flex-1 px-2 list-none">
+                      <label className="text-sm">Uri : </label>
+                      <textarea
+                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
+                        name="Site Uri"
+                        value={erpSite.valueData}
+                        onChange={(e) =>
+                          setErpSite({
+                            valueData: e.target.value,
+                            valueInput: e.target.value,
+                          })
+                        }
+                      />
+                      <h4 className="italic text-[0.8em] text-gray-700">
+                        *Uri of the erpnext system so that it is connected to
+                        the erp data ex: etm.digitalasiasolusindo.com
+                      </h4>
+                    </li>
+                    <li className="flex-1 px-2 list-none">
+                      <label className="text-sm">Token : </label>
+                      <textarea
+                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
+                        name="Site Uri"
+                        value={erpToken.valueData}
+                        onChange={(e) =>
+                          setErpToken({
+                            valueData: e.target.value,
+                            valueInput: e.target.value,
+                          })
+                        }
+                      />
+                      <h4 className="italic text-[0.8em] text-gray-700">
+                        *Get from user token in erpnext system
+                      </h4>
+                    </li>
                   </div>
                 }
               />
