@@ -19,6 +19,7 @@ import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
+import { title } from "process";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -200,7 +201,18 @@ const FormUserPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.USERS).DELETE(`${id}`);
           navigate("/users");
-        } catch (error) {}
+        } catch (error: any) {
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.status === 403
+                ? "Access Denied"
+                : error.response.data.msg ?? "Error Delete"
+            }`,
+            "error"
+          );
+          setLoading(false);
+        }
       };
 
       AlertModal.confirmation({ onConfirm: progress });
