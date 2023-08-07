@@ -239,10 +239,7 @@ const FormUserPage: React.FC = () => {
     inData.append("ErpToken", erpToken.valueData ?? "");
     inData.append("ErpSite", erpSite.valueData ?? "");
     inData.append("status", status);
-    inData.append(
-      "workflowState",
-      status === "0" ? "Disabled" : "Enabled"
-    );
+    inData.append("workflowState", status === "0" ? "Disabled" : "Enabled");
 
     let response: any;
     if (id) {
@@ -295,7 +292,6 @@ const FormUserPage: React.FC = () => {
           Swal.fire("error!", `Check your data!`, "error");
         }
       } catch (error: any) {
-        console.log(error);
         Swal.fire(
           "Error!",
           `${
@@ -303,7 +299,7 @@ const FormUserPage: React.FC = () => {
               ? "Access Denied"
               : error.response.data.msg ?? "Error Insert"
           }`,
-          'error'
+          "error"
         );
         setLoading(false);
       }
