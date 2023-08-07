@@ -548,28 +548,17 @@ const RoleContent: React.FC<any> = ({ id }) => {
   const [alert, setAlert] = useState<boolean>(false);
 
   const getRole = async (): Promise<void> => {
-    const roleuser: any = await GetDataServer(DataAPI.ROLEUSER).FIND({
-      filters: [["user", "=", id]],
-    });
-
-    const roleProfile: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({});
-    if (roleProfile.status) {
+    try {
+      const roleProfile: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
+        fields: ["name"],
+      });
       if (roleProfile.data.length > 0) {
-        let filter: any[];
-        if (roleuser.data.length > 0) {
-          filter = roleProfile.data.map((i: any) => {
-            let isActive = roleuser.data.filter(
-              (j: any) => j.id_roleprofile === i.id
-            );
-            return { id: i._id, name: i.name, active: isActive.length === 1 };
-          });
-        } else {
-          filter = roleProfile.data.map((i: any) => {
-            return { id: i._id, name: i.name, active: false };
-          });
-        }
-        setRoleP(filter);
+        const setRole = roleProfile.data.map((i: any) => {
+          console.log(i);
+        });
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 

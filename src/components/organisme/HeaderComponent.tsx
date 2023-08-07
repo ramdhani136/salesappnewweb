@@ -49,7 +49,10 @@ const HeaderComponent: React.FC = () => {
       <div className="flex items-center">
         <Avatar
           alt={data.name}
-          src={`${import.meta.env.VITE_PUBLIC_URI}/images/users/${data.img}`}
+          src={`${
+            data.img &&
+            `${import.meta.env.VITE_PUBLIC_URI}/images/users/${data.img}`
+          }`}
           sx={{ width: 35, height: 35 }}
           className={`mx-3 cursor-pointer`}
         />
