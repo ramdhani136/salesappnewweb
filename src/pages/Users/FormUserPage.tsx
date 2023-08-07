@@ -84,8 +84,8 @@ const FormUserPage: React.FC = () => {
     valueInput: "",
   });
   const [status, setStatus] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
+    valueData: "0",
+    valueInput: "Disabled",
   });
 
   const [email, setEmail] = useState<IValue>({
@@ -245,7 +245,11 @@ const FormUserPage: React.FC = () => {
     password.valueData && inData.append("password", password.valueData);
     inData.append("ErpToken", erpToken.valueData ?? "");
     inData.append("ErpSite", erpSite.valueData ?? "");
-    inData.append("status", status ? `1` : `0`);
+    inData.append("status", status.valueData);
+    inData.append(
+      "workflowState",
+      status.valueData === "0" ? "Disabled" : "Actived"
+    );
 
     let response: any;
     if (id) {
@@ -321,6 +325,8 @@ const FormUserPage: React.FC = () => {
       setListMoreAction([]);
     }
   }, []);
+
+
 
   return (
     <>
