@@ -573,7 +573,7 @@ const RoleContent: React.FC<any> = ({ id }) => {
         setRoleP(data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
