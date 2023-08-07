@@ -14,7 +14,7 @@ import {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
+
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 export const UsersPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -140,7 +140,7 @@ export const UsersPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Schedule"), {
+  useKey("n", () => alert("Create new User"), {
     ctrl: true,
     alt: true,
   });
@@ -205,7 +205,7 @@ export const UsersPage: React.FC = (): any => {
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/schedule/new")}
+                  callback={() => navigate("/user/new")}
                 />
 
                 <IconButton
@@ -240,7 +240,7 @@ export const UsersPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERSCHEDULE}
+              localStorage={LocalStorageType.FILTERUSER}
               onRefresh={onRefresh}
             />
           </>

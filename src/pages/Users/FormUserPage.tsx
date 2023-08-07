@@ -19,8 +19,6 @@ import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
-import axios from "axios";
-import { Textarea } from "@chakra-ui/react";
 
 const FormUserPage: React.FC = () => {
   const metaData = {
@@ -184,7 +182,6 @@ const FormUserPage: React.FC = () => {
 
       setLoading(false);
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -203,9 +200,7 @@ const FormUserPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.USERS).DELETE(`${id}`);
           navigate("/users");
-        } catch (error) {
-          console.log(error);
-        }
+        } catch (error) {}
       };
 
       AlertModal.confirmation({ onConfirm: progress });
@@ -224,89 +219,84 @@ const FormUserPage: React.FC = () => {
   };
 
   const onSave = async (nextStateId?: String): Promise<void> => {
-    if (name.valueData !== "" && username.valueData !== "") {
-      const inData = new FormData();
+    const inData = new FormData();
 
-      file && inData.append("imgfile", file);
+    file && inData.append("imgfile", file);
 
-      if (nextStateId) {
-        inData.append("nextState", `${nextStateId}`);
-      }
-      inData.append("name", name.valueData);
-      inData.append("username", username.valueData);
-      inData.append("email", email.valueData);
-      inData.append("phone", phone.valueData);
-      password.valueData && inData.append("password", password.valueData);
-      inData.append("ErpToken", erpToken.valueData ?? "");
-      inData.append("ErpSite", erpSite.valueData ?? "");
-      inData.append("status", status ? `1` : `0`);
+    if (nextStateId) {
+      inData.append("nextState", `${nextStateId}`);
+    }
+    inData.append("name", name.valueData);
+    inData.append("username", username.valueData);
+    inData.append("email", email.valueData);
+    inData.append("phone", phone.valueData);
+    password.valueData && inData.append("password", password.valueData);
+    inData.append("ErpToken", erpToken.valueData ?? "");
+    inData.append("ErpSite", erpSite.valueData ?? "");
+    inData.append("status", status ? `1` : `0`);
 
-      let response: any;
-      if (id) {
-        setLoading(true);
-        try {
-          response = await FetchApi.put(
-            `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
-            inData
-          );
+    let response: any;
+    if (id) {
+      setLoading(true);
+      try {
+        response = await FetchApi.put(
+          `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
+          inData
+        );
 
-          if (response.data.status === 200) {
-            Swal.fire("Success!", `Data updated successfully`, "success");
-            getData();
-            if (file) {
-              navigate(0);
-            }
-          } else {
-            throw response.data.msg;
-          }
-        } catch (error: any) {
-          Swal.fire(
-            "Error!",
-            `${
-              error.response.status === 403
-                ? "Access Denied"
-                : error.response.data.msg ?? "Error update"
-            }`,
-            error
-          );
-          setLoading(false);
-        }
-      } else {
-        if (password.valueData !== "") {
-          setLoading(true);
-          try {
-            response = await FetchApi.post(
-              `${import.meta.env.VITE_PUBLIC_URI}/users`,
-              inData
-            );
-            if (response.data.status) {
-              Swal.fire("Success!", `Data saved successfully`, "success");
-              // navigate(`/user/${response.data.data.id}`);
-              getData();
-              if (file) {
-                navigate(0);
-              }
-            } else {
-              Swal.fire("error!", `Check your data!`, "error");
-            }
-          } catch (error: any) {
-            Swal.fire(
-              "Error!",
-              `${
-                error.response.status === 403
-                  ? "Access Denied"
-                  : error.response.data.msg ?? "Error update"
-              }`,
-              error
-            );
-            setLoading(false);
+        if (response.data.status === 200) {
+          Swal.fire("Success!", `Data updated successfully`, "success");
+          getData();
+          if (file) {
+            navigate(0);
           }
         } else {
-          Swal.fire("error!", `Password is mandatory!`, "error");
+          throw response.data.msg;
         }
+      } catch (error: any) {
+        Swal.fire(
+          "Error!",
+          `${
+            error.response.status === 403
+              ? "Access Denied"
+              : error.response.data.msg ?? "Error update"
+          }`,
+          error
+        );
+        setLoading(false);
       }
     } else {
-      Swal.fire("error!", `Check mandatory data!`, "error");
+      setLoading(true);
+      try {
+        response = await FetchApi.post(
+          `${import.meta.env.VITE_PUBLIC_URI}/users`,
+          inData
+        );
+        if (response.data.status) {
+          Swal.fire("Success!", `Data saved successfully`, "success");
+
+          if (response.data.status !== 200) {
+            throw response.data.msg;
+          }
+
+          navigate(`/user/${response.data.data._id}`);
+
+          navigate(0);
+        } else {
+          Swal.fire("error!", `Check your data!`, "error");
+        }
+      } catch (error: any) {
+        Swal.fire(
+          "Error!",
+          `${
+            error.response.status === 403
+              ? "Access Denied"
+              : error.response.data.msg ?? "Error update"
+          }`,
+          error
+        );
+        setLoading(false);
+      }
     }
   };
 
@@ -383,11 +373,13 @@ const FormUserPage: React.FC = () => {
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
-              <ToggleBodyComponent
-                name="Connections"
-                className="mt-5 mb-5"
-                child={<ConnectionsUser data={connectionData} />}
-              />
+              {id && (
+                <ToggleBodyComponent
+                  name="Connections"
+                  className="mt-5 mb-5"
+                  child={<ConnectionsUser data={connectionData} />}
+                />
+              )}
 
               <ToggleBodyComponent
                 name="Data"
@@ -483,7 +475,7 @@ const FormUserPage: React.FC = () => {
                 }
               />
               <ToggleBodyComponent
-                name="Role Profiles"
+                name="Erpnext Sync"
                 className="mt-5"
                 child={
                   <div className="flex ">
