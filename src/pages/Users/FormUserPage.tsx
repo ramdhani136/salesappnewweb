@@ -35,6 +35,10 @@ const FormUserPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
+  const dataStatus: any[] = [
+    { title: "Actived", value: "1" },
+    { title: "Disabled", value: "0" },
+  ];
 
   const [connectionData, setConnectionData] = useState<IConnectionComponent[]>([
     {
@@ -75,6 +79,10 @@ const FormUserPage: React.FC = () => {
   });
 
   const [username, setUserName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [status, setStatus] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -146,6 +154,10 @@ const FormUserPage: React.FC = () => {
       setPhone({
         valueData: result.data.phone ?? "",
         valueInput: result.data.email ?? "",
+      });
+      setStatus({
+        valueData: result.data.status,
+        valueInput: result.data.status === "1" ? "Actived" : "Disabled",
       });
 
       if (result.data.img) {
@@ -389,6 +401,13 @@ const FormUserPage: React.FC = () => {
                           //   disabled={disabled}
                           className={`h-9 mb-3`}
                         />
+                        <Select
+                          title="Status"
+                          data={dataStatus}
+                          value={status}
+                          setValue={setStatus}
+                          ClassName={`h-9`}
+                        />
                         <InputComponent
                           label="Password"
                           value={password}
@@ -400,13 +419,6 @@ const FormUserPage: React.FC = () => {
                           remark="*Only filled if you want to change the previous password"
                           className={`h-9 mb-3`}
                         />
-                        {/* <Select
-                      title="Status"
-                      data={datStatus}
-                      value={status}
-                      setValue={setStatus}
-                      ClassName={`h-9`}
-                    /> */}
                       </div>
                     </div>
                   </div>
