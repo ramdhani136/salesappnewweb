@@ -551,11 +551,26 @@ const RoleContent: React.FC<any> = ({ id }) => {
     try {
       const roleProfile: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
         fields: ["name"],
+        filters: [["status", "=", "1"]],
       });
       if (roleProfile.data.length > 0) {
-        const setRole = roleProfile.data.map((i: any) => {
-          console.log(i);
+        const setRole = await roleProfile.data.map(async (i: any) => {
+          let cekIsSet: any = await GetDataServer(DataAPI.ROLEUSER).FIND({
+            limit: 1,
+            fields: ["_id"],
+            filters: [
+              ["roleprofile", "=", i._id],
+              ["user", "=", id],
+            ],
+          });
+          return {
+            ...i,
+            roleUserId: cekIsSet.data.length > 0 ? cekIsSet.data[0]._id : null,
+          };
         });
+
+        const data = await Promise.all(setRole);
+        setRoleP(data);
       }
     } catch (error) {
       console.log(error);
@@ -564,9 +579,22 @@ const RoleContent: React.FC<any> = ({ id }) => {
 
   const ChangeAction = async (
     id_profile: number,
-    active: boolean
+    roleUserId: string
   ): Promise<void> => {
-    if (active) {
+    if (roleUserId) {
+      try {
+        const deleteRoleUser: any = await GetDataServer(
+          DataAPI.ROLEUSER
+        ).DELETE(roleUserId);
+        if (deleteRoleUser.status != 200) {
+          throw new Error(deleteRoleUser.response.data.msg);
+        }
+        setAlert(true);
+        getRole();
+      } catch (error: any) {
+        Swal.fire(error.response.data.msg ?? "Failed, Error update roleuser");
+      }
+    } else {
       try {
         const result = await GetDataServer(DataAPI.ROLEUSER).CREATE({
           roleprofile: id_profile,
@@ -581,16 +609,6 @@ const RoleContent: React.FC<any> = ({ id }) => {
       } catch (error: any) {
         Swal.fire(error.response.data.msg ?? "Failed, Error update roleuser");
       }
-    } else {
-      //   const result = await FetchApi.delete(
-      //     `${import.meta.env.VITE_PUBLIC_URI}/roleuser/${id_profile}${id}`
-      //   );
-      //   if (result.status === 200) {
-      //     setAlert(true);
-      //     getRole();
-      //   } else {
-      //     Swal.fire("Failed!", `Check Your Connection!`, "error");
-      //   }
     }
   };
 
@@ -620,8 +638,8 @@ const RoleContent: React.FC<any> = ({ id }) => {
               className="float-left w-1/3 flex items-center mb-2  "
             >
               <input
-                onChange={() => ChangeAction(i.id, !i.active)}
-                checked={i.active}
+                onChange={() => ChangeAction(i._id, i.roleUserId)}
+                checked={i.roleUserId ? true : false}
                 type="checkbox"
                 className="mr-1 h-3 w-3 mt-[1.5px]"
               />

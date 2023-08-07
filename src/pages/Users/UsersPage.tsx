@@ -65,7 +65,6 @@ export const UsersPage: React.FC = (): any => {
         search: search,
       });
 
-   
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
@@ -166,7 +165,7 @@ export const UsersPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.USERS).DELETE(item._id);
+            await GetDataServer(DataAPI.USERS).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
