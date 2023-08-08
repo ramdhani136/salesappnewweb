@@ -174,8 +174,9 @@ export const CustomerGroupPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
-          navigate(0);
+          getAllData();
         } catch (error: any) {
+          getAllData();
           AlertModal.Default({
             icon: "error",
             title: "Error",

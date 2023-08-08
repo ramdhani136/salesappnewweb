@@ -14,6 +14,7 @@ import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
+import Swal from "sweetalert2";
 
 interface IAllow {
   barcode: boolean;
@@ -69,9 +70,14 @@ const FormCustomerGroupPage: React.FC = () => {
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
           return {
-            name: item.name,
+            name: item.action,
             onClick: () => {
-              onSave(item.nextState.id);
+              AlertModal.confirmation({
+                onConfirm: () => {
+                  onSave(item.nextState.id);
+                },
+                confirmButtonText: "Yes, Save it!",
+              });
             },
           };
         });
@@ -142,7 +148,7 @@ const FormCustomerGroupPage: React.FC = () => {
     }
   };
 
-  const onSave = async (nextState: String): Promise<any> => {
+  const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
       let data: any = {
@@ -153,10 +159,31 @@ const FormCustomerGroupPage: React.FC = () => {
         data.nextState = nextState;
       }
 
-      const result = await GetDataServer(DataAPI.GROUP).CREATE(data);
+      let Action = id
+        ? GetDataServer(DataAPI.GROUP).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.GROUP).CREATE(data);
+
+      const result = await Action;
       navigate(`/customergroup/${result.data.data._id}`);
-      navigate(0);
-    } catch (error) {}
+      if (id) {
+        getData();
+        Swal.fire({ icon: "success", text: "Saved" });
+      } else {
+        navigate(0);
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
     setLoading(false);
   };
 
@@ -232,7 +259,14 @@ const FormCustomerGroupPage: React.FC = () => {
                 {isChangeData && (
                   <IconButton
                     name={id ? "Update" : "Save"}
-                    callback={onSave}
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: onSave,
+                        confirmButtonText: `Yes, ${
+                          !id ? "Save it!" : "Update It"
+                        }`,
+                      });
+                    }}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}

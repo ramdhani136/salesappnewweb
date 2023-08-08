@@ -172,13 +172,14 @@ export const BranchPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
-          navigate(0);
+          getAllData();
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
             title: "Error",
             text: error.response.data.msg ?? "Error Network",
           });
+          getAllData();
           setLoading(false);
           setActiveProgress(false);
         }
