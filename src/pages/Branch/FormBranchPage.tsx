@@ -45,6 +45,9 @@ const FormBranchPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+
+  const [status, setStatus] = useState<String>("Draft");
+
   const [type, setType] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -129,6 +132,15 @@ const FormBranchPage: React.FC = () => {
         dueDate: moment(result.data.dueDate).format("YYYY-MM-DD"),
         allow: result.data.allow,
       });
+      setStatus(
+        result.data.status == "0"
+          ? "Draft"
+          : result.data.status == "1"
+          ? "Submitted"
+          : result.data.status == "2"
+          ? "Canceled"
+          : "Closed"
+      );
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -229,12 +241,6 @@ const FormBranchPage: React.FC = () => {
     // });
   };
 
-  const dataType: any[] = [
-    { title: "Visit", value: "visit" },
-    { title: "Callsheet", value: "callsheet" },
-    { title: "All", value: "all" },
-  ];
-
   useEffect(() => {
     if (id) {
       getData();
@@ -326,7 +332,8 @@ const FormBranchPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                  <InputComponent
+                    <InputComponent
+                      mandatoy
                       label="Name"
                       value={name}
                       className="h-[38px]  text-[0.93em] mb-3"
@@ -339,19 +346,7 @@ const FormBranchPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      label="Date"
-                      value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
+
                     {id && (
                       <InputComponent
                         label="Created By"
@@ -369,48 +364,31 @@ const FormBranchPage: React.FC = () => {
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
-                      disabled={id !== undefined && data.status != 0}
-                      label="Start Date"
-                      value={startDate}
+                      label="Date"
+                      value={createdAt}
                       className="h-[38px]  text-[0.93em] mb-3"
                       type="date"
-                      onChange={(e) => {
-                        setStartDate({
+                      onChange={(e) =>
+                        setCreatedAt({
                           valueData: e,
                           valueInput: e,
-                        });
-                        if (
-                          moment(Number(new Date(e))).format("YYYY-MM-DD") >
-                          moment(Number(new Date(dueDate.valueData))).format(
-                            "YYYY-MM-DD"
-                          )
-                        ) {
-                          setDueDate({
-                            valueData: e,
-                            valueInput: e,
-                          });
-                        }
-                      }}
-                      min={moment(Number(new Date())).format("YYYY-MM-DD")}
-                      mandatoy
+                        })
+                      }
+                      disabled
                     />
-                    {startDate.valueData && (
-                      <InputComponent
-                        disabled={id !== undefined && data.status != 0}
-                        label="Due Date"
-                        value={dueDate}
-                        className="h-[38px]  text-[0.93em] mb-3"
-                        type="date"
-                        onChange={(e) =>
-                          setDueDate({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        mandatoy
-                        min={startDate.valueData}
-                      />
-                    )}
+                    <InputComponent
+                      label="Status"
+                      value={{ valueData: status, valueInput: status }}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="text"
+                      onChange={(e) =>
+                        setCreatedAt({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
                   </div>
                 </div>
               </div>
