@@ -16,11 +16,6 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
-
 const FormCustomerGroupPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
@@ -35,6 +30,7 @@ const FormCustomerGroupPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
+  const [branch, setBranch] = useState<any[]>([]);
 
   // group
   const [parentList, setParentList] = useState<IListInput[]>([]);
@@ -43,6 +39,18 @@ const FormCustomerGroupPage: React.FC = () => {
   const [parentMoreLoading, setParentMoreLoading] = useState<boolean>(false);
   const [parentHasmore, setParentHasMore] = useState<boolean>(false);
   const [parent, setParent] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // branch
+  const [branchList, setBranchList] = useState<IListInput[]>([]);
+  const [branchPage, setBranchPage] = useState<Number>(1);
+  const [branchLoading, setBranchLoading] = useState<boolean>(true);
+  const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
+  const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
+  const [branchValue, setBranchValue] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -121,12 +129,19 @@ const FormCustomerGroupPage: React.FC = () => {
         });
       }
 
+      if (result.data.branch.length > 0) {
+        setBranch(result.data.branch);
+      }
+
       setData(result.data);
 
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
+        parent: result.data.parent.name ?? "",
+        branch: result.data.branch,
       });
+
       if (result.data.desc) {
         setDesc(result.data.desc);
       }
@@ -157,12 +172,9 @@ const FormCustomerGroupPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          console.log("dd");
           await GetDataServer(DataAPI.GROUP).DELETE(`${id}`);
           navigate("/customergroup");
         } catch (error: any) {
-          console.log("ddd");
-          console.log(error.response.data.msg);
           setLoading(false);
           Swal.fire(
             "Error!",
@@ -184,11 +196,26 @@ const FormCustomerGroupPage: React.FC = () => {
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
+
     try {
+      let isBranch: string[] = [];
+      if (branch.length > 0) {
+        isBranch = branch.map((item: any) => item._id);
+      } else {
+        Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
+        setLoading(false);
+        return;
+      }
       let data: any = {
         name: name.valueData,
         desc: desc,
+        branch: isBranch,
       };
+
+      if (parent.valueData != "") {
+        data.parent = parent.valueData;
+      }
+
       if (nextState) {
         data.nextState = nextState;
       }
@@ -269,6 +296,47 @@ const FormCustomerGroupPage: React.FC = () => {
     setParentLoading(true);
   };
 
+  const getBranch = async (search?: string): Promise<void> => {
+    try {
+      if (!branchLoading) {
+        setBranchMoreLoading(true);
+      } else {
+        setBranchMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${branchPage}`,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setBranchList([...branchList, ...listInput]);
+        setBranchHasMore(result.hasMore);
+        setBranchPage(result.nextPage);
+      }
+
+      setBranchLoading(false);
+      setBranchHasMore(false);
+    } catch (error: any) {
+      setLoading(false);
+      setBranchMoreLoading(false);
+      setBranchHasMore(false);
+    }
+  };
+
+  const ResetBranch = () => {
+    setBranchList([]);
+    setBranchHasMore(false);
+    setBranchPage(1);
+    setBranchLoading(true);
+  };
+
   useEffect(() => {
     if (id) {
       getData();
@@ -284,14 +352,15 @@ const FormCustomerGroupPage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       desc: desc ?? "",
-      parent: parent.valueData,
+      parent: parent.valueData ?? "",
+      branch: branch,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc, parent]);
+  }, [name, desc, parent, branch]);
   // End
 
   return (
@@ -474,6 +543,78 @@ const FormCustomerGroupPage: React.FC = () => {
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                     />
+
+                    <InputComponent
+                      label="Branch"
+                      infiniteScroll={{
+                        loading: branchMoreLoading,
+                        hasMore: branchHasMore,
+                        next: () => {
+                          getBranch();
+                        },
+                        onSearch(e) {
+                          getBranch(e);
+                        },
+                      }}
+                      loading={branchLoading}
+                      modalStyle="mt-2"
+                      value={branchValue}
+                      onChange={(e) => {
+                        ResetBranch();
+                        setBranchLoading(true);
+                        setBranchValue({
+                          ...branchValue,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        const cekDup = branch.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let getBranch = [
+                            ...branch,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setBranch(getBranch);
+                        }
+
+                        setBranchValue({ valueData: "", valueInput: "" });
+                      }}
+                      onReset={() => {
+                        ResetBranch();
+                        setBranchValue({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={branchList}
+                      type="text"
+                      //   disabled={disabled}
+                      className={`h-9 mb-1`}
+                    />
+                    {branch.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {branch.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                const genBranch = branch.filter((i: any) => {
+                                  return i._id !== item._id;
+                                });
+
+                                setBranch(genBranch);
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.8em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>
