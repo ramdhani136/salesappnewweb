@@ -17,6 +17,8 @@ import { VisitPage } from "./visit/VisitPage";
 import FormVisitPage from "./visit/FormVisitPage";
 import FormUserPage from "./Users/FormUserPage";
 import SettingPage from "./Settings/SettingPage";
+import { BranchPage } from "./Branch/BranchPage";
+import FormBranchPage from "./Branch/FormBranchPage";
 
 export {
   LoginPage,
@@ -38,4 +40,6 @@ export {
   FormVisitPage,
   FormUserPage,
   SettingPage,
+  BranchPage,
+  FormBranchPage,
 };

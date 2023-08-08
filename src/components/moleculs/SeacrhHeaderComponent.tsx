@@ -30,11 +30,25 @@ const SeacrhHeaderComponent: React.FC = () => {
   });
 
   const menus = [
-    { name: "Schedule List", link: "/schedule" },
-    { name: "Workflow List", link: "/workflow" },
-    { name: "New Workflow", link: "/workflow/new" },
+    { name: "Branch List", link: "/branch" },
+    { name: "New Branch", link: "/branch/new" },
+    { name: "Contact List", link: "/contact" },
+    { name: "New Contact", link: "/contact/new" },
     { name: "Customer List", link: "/customer" },
     { name: "New Customer", link: "/customer/new" },
+    { name: "Customer Group List", link: "/customergroup" },
+    { name: "New Customer Group", link: "/customergroup/new" },
+    { name: "Memo List", link: "/memo" },
+    { name: "New Memo", link: "/memo/new" },
+    { name: "Naming List", link: "/namingseries" },
+    { name: "New Naming Series", link: "/namingseries/new" },
+    { name: "Schedule List", link: "/schedule" },
+    { name: "Tag List", link: "/tag" },
+    { name: "New Tag", link: "/tag/new" },
+    { name: "Topic List", link: "/topic" },
+    { name: "New Topic", link: "/topic/new" },
+    { name: "Workflow List", link: "/workflow" },
+    { name: "New Workflow", link: "/workflow/new" },
   ];
 
   const click = (): void => {

@@ -18,6 +18,8 @@ import {
   FormVisitPage,
   FormUserPage,
   SettingPage,
+  BranchPage,
+  FormBranchPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -58,6 +60,14 @@ const App: React.FC = () => {
             element={<LayoutComponent Child={SchedulePage} />}
           />
           <Route
+            path="/schedule/:id"
+            element={<LayoutComponent Child={FormSchedulePage} />}
+          />
+          <Route
+            path="/schedule/new"
+            element={<LayoutComponent Child={FormSchedulePage} />}
+          />
+          <Route
             path="/users"
             element={<LayoutComponent Child={UsersPage} />}
           />
@@ -81,18 +91,20 @@ const App: React.FC = () => {
             path="/packingid"
             element={<LayoutComponent Child={PackingIDPage} />}
           />
+
           <Route
-            path="/schedule/:id"
-            element={<LayoutComponent Child={FormSchedulePage} />}
+            path="/branch"
+            element={<LayoutComponent Child={BranchPage} />}
           />
           <Route
-            path={`/schedule/:scheduleId/:scheduleItem`}
-            element={<LayoutComponent Child={ScheduleItemPage} />}
+            path="/branch/:id"
+            element={<LayoutComponent Child={FormBranchPage} />}
           />
           <Route
-            path="/schedule/new"
-            element={<LayoutComponent Child={FormSchedulePage} />}
+            path="/branch/new"
+            element={<LayoutComponent Child={FormBranchPage} />}
           />
+
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
