@@ -150,7 +150,7 @@ const InputComponent: React.FC<IProps> = ({
                 : `${value.valueInput}`
               : `${value.valueInput}`
           }
-          className={`w-full  text-[0.95em]  font-normal border h-full z-10 rounded-md bg-gray-100  px-3 ${inputStyle}`}
+          className={`w-full  text-[0.95em]  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
         />
         {value.valueInput && onReset && !disabled && (
           <CloseIcon

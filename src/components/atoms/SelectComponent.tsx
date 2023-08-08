@@ -37,7 +37,7 @@ const Select: React.FC<ISelect> = ({
         value={value}
         className={`${
           disabled ? `cursor-not-allowed` : ``
-        } w-full px-3 text-sm mt-2 border h-9 rounded-md  bg-gray-100 outline-gray-200 ${ClassName}`}
+        } w-full px-3 text-sm mt-2 border h-9 rounded-md  bg-gray-50 outline-gray-200 ${ClassName}`}
         name={title}
         onClick={onClick}
       >
