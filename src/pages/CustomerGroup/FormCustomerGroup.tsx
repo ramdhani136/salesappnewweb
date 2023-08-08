@@ -308,6 +308,7 @@ const FormCustomerGroupPage: React.FC = () => {
         search: search ?? "",
         limit: 10,
         page: `${branchPage}`,
+        filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
