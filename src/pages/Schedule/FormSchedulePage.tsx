@@ -23,15 +23,19 @@ interface IAllow {
 }
 
 const FormSchedulePage: React.FC = () => {
+  let { id } = useParams();
+  const [data, setData] = useState<any>({});
   const metaData = {
-    title: "New Schedule - Stock App Ekatunggal",
+    title: `${id ? data.name : "New Schedule"} - Sales App Ekatunggal`,
     description: "Halaman form schedule stock opname web system",
   };
 
-  const navigate = useNavigate();
-  let { id } = useParams();
+  
 
-  const [data, setData] = useState<any>({});
+  const navigate = useNavigate();
+
+
+ 
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);

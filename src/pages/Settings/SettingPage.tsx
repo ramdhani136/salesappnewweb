@@ -20,13 +20,16 @@ import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
 
 const SettingPage: React.FC = () => {
-  const metaData = {
-    title: "New User - Sales App Ekatunggal",
-    description: "Halaman form User sales web system",
-  };
-
   const navigate = useNavigate();
   let { id } = useParams();
+  const [name, setName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const metaData = {
+    title: `${id ? name.valueData : "New User"} - Sales App Ekatunggal`,
+    description: "Halaman form User sales web system",
+  };
 
   const [data, setData] = useState<any>({});
   const [scroll, setScroll] = useState<number>(0);
@@ -39,10 +42,7 @@ const SettingPage: React.FC = () => {
     { title: "Disabled", value: "0" },
   ];
 
-  const [name, setName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
+
 
   const [username, setUserName] = useState<IValue>({
     valueData: "",
