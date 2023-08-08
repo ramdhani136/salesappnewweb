@@ -104,6 +104,7 @@ const SettingPage: React.FC = () => {
         `${error.response.data.msg ?? "Error Access"}`,
         "error"
       );
+      navigate(-1);
     }
     setLoading(false);
   };
@@ -210,17 +211,13 @@ const SettingPage: React.FC = () => {
                               return (
                                 <li
                                   onClick={() => {
-                                    AlertModal.confirmation({
-                                      onConfirm: () => {
-                                        const setTags = visitTags.filter(
-                                          (i: any) => {
-                                            return i._id !== item._id;
-                                          }
-                                        );
+                                    const setTags = visitTags.filter(
+                                      (i: any) => {
+                                        return i._id !== item._id;
+                                      }
+                                    );
 
-                                        setVisitTags(setTags);
-                                      },
-                                    });
+                                    setVisitTags(setTags);
                                   }}
                                   key={index}
                                   className=" cursor-pointer duration-150 hover:bg-green-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-green-600 text-white float-left flex items-center"
