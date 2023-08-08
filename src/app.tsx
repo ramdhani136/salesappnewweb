@@ -17,6 +17,7 @@ import {
   VisitPage,
   FormVisitPage,
   FormUserPage,
+  SettingPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -27,6 +28,10 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<LayoutComponent Child={HomePage} />} />
+          <Route
+            path="/setting"
+            element={<LayoutComponent Child={SettingPage} />}
+          />
           <Route
             path="/callsheet"
             element={<LayoutComponent Child={CallsheetPage} />}
