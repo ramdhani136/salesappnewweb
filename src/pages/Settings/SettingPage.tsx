@@ -22,6 +22,8 @@ import { Alert, Snackbar } from "@mui/material";
 const SettingPage: React.FC = () => {
   const navigate = useNavigate();
 
+  const [id, setId] = useState<string>("");
+
   const [name, setName] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -31,22 +33,23 @@ const SettingPage: React.FC = () => {
     description: "Halaman form User sales web system",
   };
 
-  const [data, setData] = useState<any>({});
   const [scroll, setScroll] = useState<number>(0);
-  const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
-  const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [prevData, setPrevData] = useState<any>({});
-  const dataStatus: any[] = [
-    { title: "Enabled", value: "1" },
-    { title: "Disabled", value: "0" },
-  ];
 
-  const [username, setUserName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
+  const [visitCheckIn, setVisitCheckIn] = useState<IValue>({
+    valueData: 0,
+    valueInput: "0",
   });
-  const [status, setStatus] = useState<string>("0");
+  const [visitCheckOut, setVisitCheckOut] = useState<IValue>({
+    valueData: 0,
+    valueInput: "0",
+  });
+  const [visitNoteLength, setVisitNoteLength] = useState<IValue>({
+    valueData: 0,
+    valueInput: "0",
+  });
+
+  const [visitTags, setVisitTags] = useState<any[]>([]);
 
   const [email, setEmail] = useState<IValue>({
     valueData: "",
@@ -68,28 +71,61 @@ const SettingPage: React.FC = () => {
 
   const browseRef = useRef<HTMLInputElement>(null);
 
-  const [img, setImg] = useState<any>(ProfileImg);
-
-  const [password, setPassword] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [file, setFile] = useState<File>();
-
-  const [createdAt, setCreatedAt] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
-  const getData = async (): Promise<void> => {};
+  const getData = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const result: any = await GetDataServer(DataAPI.CONFIG).FIND({
+        limit: 1,
+      });
+      setId(result.data._id);
+      const visit: any = result.data.visit;
+      setVisitCheckIn({
+        valueData: visit.checkInDistance ?? 0,
+        valueInput: visit.checkInDistance ?? 0,
+      });
+      setVisitCheckOut({
+        valueData: visit.checkOutDistance ?? 0,
+        valueInput: visit.checkOutDistance ?? 0,
+      });
+      setVisitNoteLength({
+        valueData: visit.notesLength ?? 0,
+        valueInput: visit.notesLength ?? 0,
+      });
 
-  const onSave = async (): Promise<void> => {};
+      if (visit.tagsMandatory.length > 0) {
+        setVisitTags(visit.tagsMandatory);
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${error.response.data.msg ?? "Error Access"}`,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
 
-  useEffect(() => {}, []);
+  const OnUpdate = async (data: {}) => {
+    try {
+      await GetDataServer(DataAPI.CONFIG).UPDATE({
+        id: id,
+        data: data,
+      });
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${error.response.data.msg ?? "Error Delete"}`,
+        "error"
+      );
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <>
@@ -130,11 +166,11 @@ const SettingPage: React.FC = () => {
                 )}
 
                 {/* {isChangeData && ( */}
-                {/* <IconButton
+                <IconButton
                   name="Update"
-                  callback={onSave}
+                  //   callback={onSave}
                   className={`opacity-80 hover:opacity-100 duration-100  `}
-                /> */}
+                />
                 {/* )} */}
               </div>
             </div>
@@ -148,9 +184,9 @@ const SettingPage: React.FC = () => {
                         <InputComponent
                           label="Check In Distance (Meters)"
                           placeholder="0"
-                          value={username}
+                          value={visitCheckIn}
                           onChange={(e) =>
-                            setUserName({ valueData: e, valueInput: e })
+                            setVisitCheckIn({ valueData: e, valueInput: e })
                           }
                           type="number"
                           min={0}
@@ -168,15 +204,41 @@ const SettingPage: React.FC = () => {
                           //   disabled={disabled}
                           className={`h-9 mb-1`}
                         />
-                        <div className="w-full h-14 rounded-sm border"></div>
+                        {visitTags.length > 0 && (
+                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                            {visitTags.map((item: any, index: number) => {
+                              return (
+                                <li
+                                  onClick={() => {
+                                    AlertModal.confirmation({
+                                      onConfirm: () => {
+                                        const setTags = visitTags.filter(
+                                          (i: any) => {
+                                            return i._id !== item._id;
+                                          }
+                                        );
+
+                                        setVisitTags(setTags);
+                                      },
+                                    });
+                                  }}
+                                  key={index}
+                                  className=" cursor-pointer duration-150 hover:bg-green-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-green-600 text-white float-left flex items-center"
+                                >
+                                  {item.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
                       </div>
                       <div className="flex-1">
                         <InputComponent
                           label="Check Out Distance (Meters)"
                           placeholder="0"
-                          value={name}
+                          value={visitCheckOut}
                           onChange={(e) =>
-                            setName({ valueData: e, valueInput: e })
+                            setVisitCheckOut({ valueData: e, valueInput: e })
                           }
                           type="number"
                           min={0}
@@ -184,9 +246,9 @@ const SettingPage: React.FC = () => {
                         />
                         <InputComponent
                           label="Notes Length"
-                          value={email}
+                          value={visitNoteLength}
                           onChange={(e) =>
-                            setEmail({ valueData: e, valueInput: e })
+                            setVisitNoteLength({ valueData: e, valueInput: e })
                           }
                           placeholder="0"
                           min={0}

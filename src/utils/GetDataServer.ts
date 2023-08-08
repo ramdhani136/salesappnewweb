@@ -44,6 +44,7 @@ export enum DataAPI {
   CUSTOMER = "customer",
   CONTACT = "contact",
   NOTE = "notes",
+  CONFIG = "config",
 }
 
 class RequestData implements IData {
