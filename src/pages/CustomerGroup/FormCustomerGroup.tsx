@@ -137,14 +137,29 @@ const FormCustomerGroupPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
+          console.log("dd");
           await GetDataServer(DataAPI.GROUP).DELETE(`${id}`);
           navigate("/customergroup");
-        } catch (error) {
-          console.log(error);
+        } catch (error:any) {
+          console.log("ddd")
+          console.log(error.response.data.msg);
+          setLoading(false);
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.data.msg
+                ? error.response.data.msg
+                : error.message
+                ? error.message
+                : "Error Delete"
+            }`,
+            "error"
+          );
         }
       };
 
       AlertModal.confirmation({ onConfirm: progress });
+    
     }
   };
 

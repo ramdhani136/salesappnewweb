@@ -76,8 +76,7 @@ const FormBranchPage: React.FC = () => {
                 onConfirm: () => {
                   onSave(item.nextState.id);
                 },
-                confirmButtonText:"Yes, Save it!"
-
+                confirmButtonText: "Yes, Save it!",
               });
             },
           };
@@ -140,8 +139,19 @@ const FormBranchPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
           navigate("/branch");
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          setLoading(false);
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.data.msg
+                ? error.response.data.msg
+                : error.message
+                ? error.message
+                : "Error Delete"
+            }`,
+            "error"
+          );
         }
       };
 

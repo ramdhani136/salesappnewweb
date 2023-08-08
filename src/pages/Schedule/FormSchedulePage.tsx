@@ -16,6 +16,7 @@ import moment from "moment";
 import { AlertModal, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemSchedule";
 import { IListIconButton } from "../../components/atoms/IconButton";
+import Swal from "sweetalert2";
 
 interface IAllow {
   barcode: boolean;
@@ -167,8 +168,19 @@ const FormSchedulePage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.SCHEDULE).DELETE(`${id}`);
           navigate("/schedule");
-        } catch (error) {
-          console.log(error);
+        } catch (error:any) {
+          setLoading(false);
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.data.msg
+                ? error.response.data.msg
+                : error.message
+                ? error.message
+                : "Error Delete"
+            }`,
+            "error"
+          );
         }
       };
 
