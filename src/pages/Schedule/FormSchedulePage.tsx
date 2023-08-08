@@ -27,7 +27,7 @@ const FormSchedulePage: React.FC = () => {
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${id ? data.name : "New Schedule"} - Sales App Ekatunggal`,
-    description: "Halaman form schedule stock opname web system",
+    description: "Halaman form schedule  Sales  web system",
   };
 
   

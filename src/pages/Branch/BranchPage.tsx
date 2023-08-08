@@ -38,8 +38,8 @@ export const BranchPage: React.FC = (): any => {
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
 
   const metaData = {
-    title: "Schedule -  Stock Opname App Ekatunggal",
-    description: "Halaman schedule stock opname web system",
+    title: "Branch -  Sales App Ekatunggal",
+    description: "Halaman branch sales web system",
   };
 
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ export const BranchPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULE).FIND({
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
         limit: limit,
         page: page,
         filters: filter,
@@ -73,7 +73,7 @@ export const BranchPage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <Link to={`/schedule/${item._id}`}>
+              <Link to={`/branch/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
               </Link>
             ),
@@ -141,7 +141,7 @@ export const BranchPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Schedule"), {
+  useKey("n", () => alert("Create new Branch"), {
     ctrl: true,
     alt: true,
   });
@@ -167,7 +167,7 @@ export const BranchPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULE).DELETE(item.doc);
+            await GetDataServer(DataAPI.BRANCH).DELETE(item.doc);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -197,16 +197,16 @@ export const BranchPage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Schedule List
+                Branch List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add Schedule"
+                  name="Add Branch"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/schedule/new")}
+                  callback={() => navigate("/branch/new")}
                 />
 
                 <IconButton
@@ -241,7 +241,7 @@ export const BranchPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERSCHEDULE}
+              localStorage={LocalStorageType.FILTERBRANCH}
               onRefresh={onRefresh}
             />
           </>

@@ -37,8 +37,8 @@ export const SchedulePage: React.FC = (): any => {
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
 
   const metaData = {
-    title: "Schedule -  Stock Opname App Ekatunggal",
-    description: "Halaman schedule stock opname web system",
+    title: "Schedule - Sales App Ekatunggal",
+    description: "Halaman schedule sales web system",
   };
 
   const navigate = useNavigate();

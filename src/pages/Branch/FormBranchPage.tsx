@@ -26,22 +26,22 @@ const FormBranchPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Schedule"} - Sales App Ekatunggal`,
-    description: "Halaman form schedule stock opname web system",
+    title: `${id ? data.name : "New Branch"} - Sales App Ekatunggal`,
+    description: "Halaman form Branch Sales web system",
   };
-
-  
 
   const navigate = useNavigate();
 
-
- 
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
   const [user, setUser] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [name, setName] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -56,10 +56,6 @@ const FormBranchPage: React.FC = () => {
   const [dueDate, setDueDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
-  const [warehouse, setWarehouse] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -78,7 +74,7 @@ const FormBranchPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.SCHEDULE).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -107,6 +103,10 @@ const FormBranchPage: React.FC = () => {
       setType({
         valueData: result.data.type,
         valueInput: result.data.type,
+      });
+      setName({
+        valueData: result.data.name,
+        valueInput: result.data.name,
       });
       setUser({
         valueData: result.data.createdBy._id,
@@ -138,7 +138,7 @@ const FormBranchPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/schedule");
+      navigate("/branch");
     }
   };
 
@@ -165,8 +165,8 @@ const FormBranchPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.SCHEDULE).DELETE(`${id}`);
-          navigate("/schedule");
+          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
+          navigate("/branch");
         } catch (error) {
           console.log(error);
         }
@@ -278,10 +278,10 @@ const FormBranchPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/schedule")}
+                  onClick={() => navigate("/branch")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Schedule" : data.name}
+                  {!id ? "New branch" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent
@@ -326,14 +326,19 @@ const FormBranchPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    <Select
-                      title="Doc"
-                      data={dataType}
-                      value={type}
-                      setValue={setType}
-                      disabled={id !== undefined && data.status != 0}
+                  <InputComponent
+                      label="Name"
+                      value={name}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="text"
+                      onChange={(e) =>
+                        setName({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
                     />
-
                     <InputComponent
                       label="Date"
                       value={createdAt}
@@ -409,7 +414,7 @@ const FormBranchPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            
+
               <TimeLineVertical data={history} />
             </div>
           </>
