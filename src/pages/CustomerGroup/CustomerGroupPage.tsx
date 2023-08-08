@@ -17,7 +17,7 @@ import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
-export const BranchPage: React.FC = (): any => {
+export const CustomerGroupPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -38,8 +38,8 @@ export const BranchPage: React.FC = (): any => {
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
 
   const metaData = {
-    title: "Branch -  Sales App Ekatunggal",
-    description: "Halaman branch sales web system",
+    title: "Customer Group -  Sales App Ekatunggal",
+    description: "Halaman Customer Group - sales web system",
   };
 
   const navigate = useNavigate();
@@ -48,6 +48,7 @@ export const BranchPage: React.FC = (): any => {
     () => [
       { header: "Name", accessor: "name" },
       { header: "Status", accessor: "workflowState" },
+      { header: "Parent", accessor: "parent" },
       { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
@@ -56,7 +57,7 @@ export const BranchPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
+      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
         limit: limit,
         page: page,
         filters: filter,
@@ -71,11 +72,12 @@ export const BranchPage: React.FC = (): any => {
             checked: false,
             doc: item.name,
             name: (
-              <Link to={`/branch/${item._id}`}>
+              <Link to={`/customergroup/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
               </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
+            parent: <div>{item.parent.name??"-"}</div>,
 
             workflowState: (
               <ButtonStatusComponent
@@ -138,7 +140,7 @@ export const BranchPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Branch"), {
+  useKey("n", () => alert("Create new Customer Group"), {
     ctrl: true,
     alt: true,
   });
@@ -164,7 +166,7 @@ export const BranchPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.BRANCH).DELETE(item.id);
+            await GetDataServer(DataAPI.GROUP).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -194,16 +196,16 @@ export const BranchPage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Branch List
+                Customer Group List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add Branch"
+                  name="Add New"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/branch/new")}
+                  callback={() => navigate("/customergroup/new")}
                 />
 
                 <IconButton
@@ -238,7 +240,7 @@ export const BranchPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERBRANCH}
+              localStorage={LocalStorageType.FILTERCG}
               onRefresh={onRefresh}
             />
           </>

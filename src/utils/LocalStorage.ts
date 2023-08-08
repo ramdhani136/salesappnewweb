@@ -8,6 +8,7 @@ export enum LocalStorageType {
   FILTERVISIT = "filtervisit",
   FILTERUSER = "filteruser",
   FILTERBRANCH = "filterbranch",
+  FILTERCG = "fiterCG",
   
 }
 

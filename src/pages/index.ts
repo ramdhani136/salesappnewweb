@@ -19,6 +19,8 @@ import FormUserPage from "./Users/FormUserPage";
 import SettingPage from "./Settings/SettingPage";
 import { BranchPage } from "./Branch/BranchPage";
 import FormBranchPage from "./Branch/FormBranchPage";
+import { CustomerGroupPage } from "./CustomerGroup/CustomerGroupPage";
+import FormCustomerGroupPage from "./CustomerGroup/FormCustomerGroup";
 
 export {
   LoginPage,
@@ -42,4 +44,6 @@ export {
   SettingPage,
   BranchPage,
   FormBranchPage,
+  CustomerGroupPage,
+  FormCustomerGroupPage,
 };
