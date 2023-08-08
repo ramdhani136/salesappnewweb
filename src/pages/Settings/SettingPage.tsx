@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+
 import {
   IconButton,
   InputComponent,
@@ -11,7 +11,6 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 
 import { AlertModal, Meta } from "../../utils";
-import { IListIconButton } from "../../components/atoms/IconButton";
 
 import Swal from "sweetalert2";
 

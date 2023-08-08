@@ -8,7 +8,7 @@ import {
   InputComponent,
   TimeLineVertical,
 } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
+import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -36,6 +36,18 @@ const FormCustomerGroupPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
+  // group
+  const [parentList, setParentList] = useState<IListInput[]>([]);
+  const [parentPage, setParentPage] = useState<Number>(1);
+  const [parentLoading, setParentLoading] = useState<boolean>(true);
+  const [parentMoreLoading, setParentMoreLoading] = useState<boolean>(false);
+  const [parentHasmore, setParentHasMore] = useState<boolean>(false);
+  const [parent, setParent] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
@@ -50,6 +62,7 @@ const FormCustomerGroupPage: React.FC = () => {
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
     desc: desc ?? "",
+    parent: "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -101,6 +114,13 @@ const FormCustomerGroupPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
+      if (result.data.parent.name) {
+        setParent({
+          valueData: result.data.parent._id,
+          valueInput: result.data.parent.name,
+        });
+      }
+
       setData(result.data);
 
       setPrevData({
@@ -140,8 +160,8 @@ const FormCustomerGroupPage: React.FC = () => {
           console.log("dd");
           await GetDataServer(DataAPI.GROUP).DELETE(`${id}`);
           navigate("/customergroup");
-        } catch (error:any) {
-          console.log("ddd")
+        } catch (error: any) {
+          console.log("ddd");
           console.log(error.response.data.msg);
           setLoading(false);
           Swal.fire(
@@ -159,7 +179,6 @@ const FormCustomerGroupPage: React.FC = () => {
       };
 
       AlertModal.confirmation({ onConfirm: progress });
-    
     }
   };
 
@@ -202,6 +221,54 @@ const FormCustomerGroupPage: React.FC = () => {
     setLoading(false);
   };
 
+  const getParent = async (search?: string): Promise<void> => {
+    try {
+      if (!parentLoading) {
+        setParentMoreLoading(true);
+      } else {
+        setParentMoreLoading(false);
+      }
+
+      let filters: any = [];
+
+      if (id) {
+        filters.push(["_id", "!=", id]);
+      }
+
+      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${parentPage}`,
+        filters: filters,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setParentList([...parentList, ...listInput]);
+        setParentHasMore(result.hasMore);
+        setParentPage(result.nextPage);
+      }
+
+      setParentLoading(false);
+      setParentMoreLoading(false);
+    } catch (error: any) {
+      setParentLoading(false);
+      setParentMoreLoading(false);
+      setParentHasMore(false);
+    }
+  };
+
+  const ResetParent = () => {
+    setParentList([]);
+    setParentHasMore(false);
+    setParentPage(1);
+    setParentLoading(true);
+  };
+
   useEffect(() => {
     if (id) {
       getData();
@@ -217,13 +284,14 @@ const FormCustomerGroupPage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       desc: desc ?? "",
+      parent: parent.valueData,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [name, desc, parent]);
   // End
 
   return (
@@ -365,6 +433,46 @@ const FormCustomerGroupPage: React.FC = () => {
                         })
                       }
                       disabled
+                    />
+                    <InputComponent
+                      label="Parent"
+                      value={parent}
+                      infiniteScroll={{
+                        loading: parentMoreLoading,
+                        hasMore: parentHasmore,
+                        next: () => {
+                          getParent();
+                        },
+                        onSearch(e) {
+                          getParent(e);
+                        },
+                      }}
+                      loading={parentLoading}
+                      list={parentList}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) => {
+                        ResetParent();
+                        setParentLoading(true);
+                        setParent({
+                          ...parent,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setParent({ valueData: e.value, valueInput: e.name });
+                        ResetParent();
+                      }}
+                      onReset={() => {
+                        ResetParent();
+                        setParent({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      modalStyle="mt-2"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                     />
                   </div>
                 </div>
