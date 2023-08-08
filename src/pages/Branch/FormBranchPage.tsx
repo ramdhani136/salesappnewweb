@@ -6,14 +6,12 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
-  Select,
   TimeLineVertical,
-  ToggleBodyComponent,
 } from "../../components/atoms";
-import { IListInput, IValue } from "../../components/atoms/InputComponent";
+import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, Meta } from "../../utils";
+import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 
@@ -36,10 +34,10 @@ const FormBranchPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [prevData, setPrevData] = useState<any>({});
+
   const [user, setUser] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
+    valueData: LocalStorage.getUser()._id,
+    valueInput: LocalStorage.getUser().name,
   });
   const [name, setName] = useState<IValue>({
     valueData: "",
@@ -47,18 +45,10 @@ const FormBranchPage: React.FC = () => {
   });
 
   const [status, setStatus] = useState<String>("Draft");
-
-  const [type, setType] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  const [startDate, setStartDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
-  const [dueDate, setDueDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+  const [desc, setDesc] = useState<string>("");
+  const [prevData, setPrevData] = useState<any>({
+    name: name.valueData,
+    desc: desc ?? "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -66,12 +56,8 @@ const FormBranchPage: React.FC = () => {
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
-  const [allow, setAllow] = useState<IAllow>({ barcode: true, manual: false });
-
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingWarehouse, setLoadingWarehouse] = useState<boolean>(true);
 
-  const [listWarehouse, setListWarehouse] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
@@ -85,10 +71,7 @@ const FormBranchPage: React.FC = () => {
           return {
             name: item.name,
             onClick: () => {
-              onSave({
-                id_workflow: item.id_workflow,
-                id_state: item.nextstate.id,
-              });
+              onSave(item.nextState.id);
             },
           };
         });
@@ -99,14 +82,6 @@ const FormBranchPage: React.FC = () => {
 
       setHistory(result.history);
 
-      setData(result.data);
-
-      setAllow(result.data.allow);
-
-      setType({
-        valueData: result.data.type,
-        valueInput: result.data.type,
-      });
       setName({
         valueData: result.data.name,
         valueInput: result.data.name,
@@ -119,19 +94,16 @@ const FormBranchPage: React.FC = () => {
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
-      setStartDate({
-        valueData: moment(result.data.startDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.startDate).format("YYYY-MM-DD"),
-      });
-      setDueDate({
-        valueData: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.dueDate).format("YYYY-MM-DD"),
-      });
+
+      setData(result.data);
+
       setPrevData({
-        startDate: moment(result.data.startDate).format("YYYY-MM-DD"),
-        dueDate: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        allow: result.data.allow,
+        name: result.data.name,
+        desc: result.data.desc ?? "",
       });
+      if (result.data.desc) {
+        setDesc(result.data.desc);
+      }
       setStatus(
         result.data.status == "0"
           ? "Draft"
@@ -154,24 +126,6 @@ const FormBranchPage: React.FC = () => {
     }
   };
 
-  const getWarehouse = async (): Promise<void> => {
-    try {
-      const result: any = await GetDataServer(DataAPI.WAREHOUSE).FIND({});
-      if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: IListInput) => {
-          return {
-            name: item.name,
-            value: item.name,
-          };
-        });
-        setListWarehouse(listInput);
-      }
-      setLoadingWarehouse(false);
-    } catch (error) {
-      setLoadingWarehouse(false);
-    }
-  };
-
   const onDelete = (): void => {
     if (id) {
       const progress = async (): Promise<void> => {
@@ -188,57 +142,22 @@ const FormBranchPage: React.FC = () => {
     }
   };
 
-  const onSave = async (data: {}): Promise<any> => {
-    // const progress = async (): Promise<void> => {
-    //   if (allow.barcode === false && allow.manual === false) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: "Allow required",
-    //     });
-    //     return;
-    //   }
-    //   try {
-    //     setLoading(true);
-    //     let result: any;
-    //     if (!id) {
-    //       result = await GetDataServer(DataAPI.SCHEDULE).CREATE({
-    //         startDate: startDate.valueData,
-    //         dueDate: dueDate.valueData,
-    //         workflowState: "Draft",
-    //         status: "0",
-    //         warehouse: warehouse.valueData,
-    //         allow: allow,
-    //       });
-    //       navigate(`/schedule/${result.data.data.name}`);
-    //       navigate(0);
-    //     } else {
-    //       result = await GetDataServer(DataAPI.SCHEDULE).UPDATE({
-    //         id: id,
-    //         data: !data
-    //           ? {
-    //               startDate: startDate.valueData,
-    //               dueDate: dueDate.valueData,
-    //               allow: allow,
-    //             }
-    //           : data,
-    //       });
-    //       getData();
-    //     }
-    //   } catch (error: any) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: error.response.data.msg ?? "Error Network",
-    //     });
-    //     setLoading(false);
-    //   }
-    // };
-    // AlertModal.confirmation({
-    //   onConfirm: progress,
-    //   text: "You want to save this data!",
-    //   confirmButtonText: "Yes, Save it",
-    // });
+  const onSave = async (nextState: String): Promise<any> => {
+    setLoading(true);
+    try {
+      let data: any = {
+        name: name.valueData,
+        desc: desc,
+      };
+      if (nextState) {
+        data.nextState = nextState;
+      }
+
+      const result = await GetDataServer(DataAPI.BRANCH).CREATE(data);
+      navigate(`/branch/${result.data.data._id}`);
+      navigate(0);
+    } catch (error) {}
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -254,16 +173,15 @@ const FormBranchPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      startDate: startDate.valueData,
-      dueDate: dueDate.valueData,
-      allow: allow,
+      name: name.valueData,
+      desc: desc ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [startDate, dueDate, allow]);
+  }, [name, desc]);
   // End
 
   return (
@@ -344,23 +262,33 @@ const FormBranchPage: React.FC = () => {
                           valueInput: e,
                         })
                       }
-                      disabled
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                     />
 
-                    {id && (
-                      <InputComponent
-                        label="Created By"
-                        value={user}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) =>
-                          setUser({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled
-                      />
-                    )}
+                    <InputComponent
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) =>
+                        setUser({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
+                    <label className="text-sm">Desc</label>
+                    <textarea
+                      className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
+                      name="Site Uri"
+                      value={desc}
+                      onChange={(e) => setDesc(e.target.value)}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                    />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
