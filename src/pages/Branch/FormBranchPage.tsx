@@ -70,9 +70,15 @@ const FormBranchPage: React.FC = () => {
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
           return {
-            name: item.name,
+            name: item.action,
             onClick: () => {
-              onSave(item.nextState.id);
+              AlertModal.confirmation({
+                onConfirm: () => {
+                  onSave(item.nextState.id);
+                },
+                confirmButtonText:"Yes, Save it!"
+
+              });
             },
           };
         });
@@ -162,7 +168,7 @@ const FormBranchPage: React.FC = () => {
       navigate(`/branch/${result.data.data._id}`);
       if (id) {
         getData();
-        Swal.fire({icon:'success',text:"Saved"})
+        Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(0);
       }
