@@ -24,8 +24,8 @@ const FormCustomerGroupPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Branch"} - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    title: `${id ? data.name : "New Group"} - Sales App Ekatunggal`,
+    description: "Halaman form Group Sales web system",
   };
 
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ const FormCustomerGroupPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.GROUP).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -122,7 +122,7 @@ const FormCustomerGroupPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/customergroup");
     }
   };
 
@@ -131,8 +131,8 @@ const FormCustomerGroupPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
+          await GetDataServer(DataAPI.GROUP).DELETE(`${id}`);
+          navigate("/customergroup");
         } catch (error) {
           console.log(error);
         }
@@ -153,8 +153,8 @@ const FormCustomerGroupPage: React.FC = () => {
         data.nextState = nextState;
       }
 
-      const result = await GetDataServer(DataAPI.BRANCH).CREATE(data);
-      navigate(`/branch/${result.data.data._id}`);
+      const result = await GetDataServer(DataAPI.GROUP).CREATE(data);
+      navigate(`/customergroup/${result.data.data._id}`);
       navigate(0);
     } catch (error) {}
     setLoading(false);
@@ -202,10 +202,10 @@ const FormCustomerGroupPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/customergroup")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New branch" : data.name}
+                  {!id ? "New Group" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent

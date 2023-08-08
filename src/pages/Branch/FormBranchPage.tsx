@@ -14,6 +14,7 @@ import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
+import Swal from "sweetalert2";
 
 interface IAllow {
   barcode: boolean;
@@ -142,7 +143,7 @@ const FormBranchPage: React.FC = () => {
     }
   };
 
-  const onSave = async (nextState: String): Promise<any> => {
+  const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
       let data: any = {
@@ -153,10 +154,31 @@ const FormBranchPage: React.FC = () => {
         data.nextState = nextState;
       }
 
-      const result = await GetDataServer(DataAPI.BRANCH).CREATE(data);
+      let Action = id
+        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+
+      const result = await Action;
       navigate(`/branch/${result.data.data._id}`);
-      navigate(0);
-    } catch (error) {}
+      if (id) {
+        getData();
+        Swal.fire({icon:'success',text:"Saved"})
+      } else {
+        navigate(0);
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
     setLoading(false);
   };
 
@@ -232,7 +254,14 @@ const FormBranchPage: React.FC = () => {
                 {isChangeData && (
                   <IconButton
                     name={id ? "Update" : "Save"}
-                    callback={onSave}
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: onSave,
+                        confirmButtonText: `Yes, ${
+                          !id ? "Save it!" : "Update It"
+                        }`,
+                      });
+                    }}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
