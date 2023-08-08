@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import _ from "lodash";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { useKey } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
 const SeacrhHeaderComponent: React.FC = () => {
   const [active, setActive] = useState<boolean>(false);
@@ -29,10 +30,11 @@ const SeacrhHeaderComponent: React.FC = () => {
   });
 
   const menus = [
-    { name: "Form Schedule", link: "/schedule/new" },
     { name: "Schedule List", link: "/schedule" },
     { name: "Workflow List", link: "/workflow" },
-    { name: "Form Workflow", link: "/workflow/new" },
+    { name: "New Workflow", link: "/workflow/new" },
+    { name: "Customer List", link: "/customer" },
+    { name: "New Customer", link: "/customer/new" },
   ];
 
   const click = (): void => {
@@ -54,6 +56,7 @@ const SeacrhHeaderComponent: React.FC = () => {
       return a["name"] > b["name"] ? 1 : -1;
     });
   };
+  const navigate = useNavigate();
 
   return (
     <div className=" md:w-[23rem] lg:w-[18rem] relative">
@@ -101,11 +104,11 @@ const SeacrhHeaderComponent: React.FC = () => {
           !active && "hidden"
         } p-2 px-1 duration-500 w-full border  max-h-80 overflow-y-auto absolute scrollbar-none  top-8   bg-white rounded-b-md drop-shadow-sm text-[0.95em] text-gray-600`}
       >
-        {filterMenu(sort(menus)).map((menu, id) => (
+        {filterMenu(menus).map((menu, id) => (
           <li
             key={id}
             className="p-2 py-3 hover:bg-gray-100 rounded-md cursor-pointer"
-            onClick={() => alert("halow")}
+            onClick={() => navigate(menu.link)}
           >
             {menu.name}
           </li>
