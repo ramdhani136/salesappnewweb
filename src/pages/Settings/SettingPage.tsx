@@ -1,40 +1,32 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
-  ButtonStatusComponent,
   IconButton,
   InputComponent,
-  Select,
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
-import { AlertModal, FetchApi, Meta } from "../../utils";
+
+import { AlertModal, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
-import ProfileImg from "../../assets/images/iconuser.jpg";
+
 import Swal from "sweetalert2";
-import { Alert, Snackbar } from "@mui/material";
 
 const SettingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [id, setId] = useState<string>("");
 
-  const [name, setName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
   const metaData = {
     title: `Settings - Sales App Ekatunggal`,
     description: "Halaman form User sales web system",
   };
 
   const [scroll, setScroll] = useState<number>(0);
-  const [history, setHistory] = useState<any[]>([]);
 
   const [tags, setTags] = useState<IListInput[]>([]);
   const [tagPage, setTagPage] = useState<Number>(1);
@@ -48,33 +40,31 @@ const SettingPage: React.FC = () => {
     valueData: 0,
     valueInput: "0",
   });
+  const [locationDistance, setLocationDistance] = useState<IValue>({
+    valueData: 0,
+    valueInput: "0",
+  });
   const [visitNoteLength, setVisitNoteLength] = useState<IValue>({
+    valueData: 0,
+    valueInput: "0",
+  });
+  const [callsheetNoteLength, ssetCallsheetNoteLength] = useState<IValue>({
     valueData: 0,
     valueInput: "0",
   });
 
   const [visitTags, setVisitTags] = useState<any[]>([]);
+  const [callsheetTags, setCallsheetTags] = useState<any[]>([]);
   const [tagHasmore, setTagHasmore] = useState<boolean>(false);
 
   const [visitTagValue, setVisitTagValue] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-
-  const [phone, setPhone] = useState<IValue>({
+  const [callsheetTagValue, setCallsheetTagValue] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  const [erpSite, setErpSite] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  const [erpToken, setErpToken] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const browseRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
@@ -87,6 +77,8 @@ const SettingPage: React.FC = () => {
       });
       setId(result.data._id);
       const visit: any = result.data.visit;
+      const callsheet: any = result.data.callsheet;
+      const customer: any = result.data.customer;
       setVisitCheckIn({
         valueData: visit.checkInDistance ?? 0,
         valueInput: visit.checkInDistance ?? 0,
@@ -95,13 +87,24 @@ const SettingPage: React.FC = () => {
         valueData: visit.checkOutDistance ?? 0,
         valueInput: visit.checkOutDistance ?? 0,
       });
+      setLocationDistance({
+        valueData: customer.locationDistance ?? 0,
+        valueInput: customer.locationDistance ?? 0,
+      });
       setVisitNoteLength({
         valueData: visit.notesLength ?? 0,
         valueInput: visit.notesLength ?? 0,
       });
+      ssetCallsheetNoteLength({
+        valueData: callsheet.notesLength ?? 0,
+        valueInput: callsheet.notesLength ?? 0,
+      });
 
       if (visit.tagsMandatory.length > 0) {
         setVisitTags(visit.tagsMandatory);
+      }
+      if (callsheet.tagsMandatory.length > 0) {
+        setCallsheetTags(callsheet.tagsMandatory);
       }
     } catch (error: any) {
       Swal.fire(
@@ -165,12 +168,19 @@ const SettingPage: React.FC = () => {
           notesLength: visitNoteLength.valueData,
           tagsMandatory: visitTags,
         },
+        callsheet: {
+          notesLength: callsheetNoteLength.valueData,
+          tagsMandatory: callsheetTags,
+        },
+        customer: {
+          locationDistance: locationDistance.valueData,
+        },
       };
       await GetDataServer(DataAPI.CONFIG).UPDATE({
         id: id,
         data: data,
       });
-      Swal.fire({ icon: "success" , title: 'Data has been saved',});
+      Swal.fire({ icon: "success", title: "Data has been saved" });
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -364,42 +374,103 @@ const SettingPage: React.FC = () => {
                 name="Callsheet"
                 className="mt-5"
                 child={
-                  <div className="flex ">
-                    <li className="flex-1 px-2 list-none">
-                      <label className="text-sm">Uri : </label>
-                      <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
-                        name="Site Uri"
-                        value={erpSite.valueData}
-                        onChange={(e) =>
-                          setErpSite({
-                            valueData: e.target.value,
-                            valueInput: e.target.value,
-                          })
-                        }
-                      />
-                      <h4 className="italic text-[0.8em] text-gray-700">
-                        *Uri of the erpnext system so that it is connected to
-                        the erp data ex: etm.digitalasiasolusindo.com
-                      </h4>
-                    </li>
-                    <li className="flex-1 px-2 list-none">
-                      <label className="text-sm">Token : </label>
-                      <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
-                        name="Site Uri"
-                        value={erpToken.valueData}
-                        onChange={(e) =>
-                          setErpToken({
-                            valueData: e.target.value,
-                            valueInput: e.target.value,
-                          })
-                        }
-                      />
-                      <h4 className="italic text-[0.8em] text-gray-700">
-                        *Get from user token in erpnext system
-                      </h4>
-                    </li>
+                  <div className="flex">
+                    <div className="flex-1 flex">
+                      <div className="flex-1 mr-6">
+                        <InputComponent
+                          label="Mandatory Tags"
+                          infiniteScroll={{
+                            loading: tagMoreLoading,
+                            hasMore: tagHasmore,
+                            next: () => {
+                              getTags();
+                            },
+                            onSearch(e) {
+                              getTags(e);
+                            },
+                          }}
+                          loading={tagLoading}
+                          modalStyle="mt-2"
+                          value={callsheetTagValue}
+                          onChange={(e) => {
+                            ResetTags();
+                            setTagLoading(true);
+                            setCallsheetTagValue({
+                              ...callsheetTagValue,
+                              valueInput: e,
+                            });
+                          }}
+                          onSelected={(e) => {
+                            const cekDup = callsheetTags.find(
+                              (item: any) => item._id === e.value
+                            );
+
+                            if (!cekDup) {
+                              let setTag = [
+                                ...callsheetTags,
+                                { _id: e.value, name: e.name },
+                              ];
+                              setCallsheetTags(setTag);
+                            }
+
+                            setCallsheetTagValue({
+                              valueData: "",
+                              valueInput: "",
+                            });
+                          }}
+                          onReset={() => {
+                            ResetTags();
+                            setCallsheetTagValue({
+                              valueData: null,
+                              valueInput: "",
+                            });
+                          }}
+                          list={tags}
+                          type="text"
+                          //   disabled={disabled}
+                          className={`h-9 mb-1`}
+                        />
+                        {callsheetTags.length > 0 && (
+                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                            {callsheetTags.map((item: any, index: number) => {
+                              return (
+                                <li
+                                  onClick={() => {
+                                    const setTags = callsheetTags.filter(
+                                      (i: any) => {
+                                        return i._id !== item._id;
+                                      }
+                                    );
+
+                                    setCallsheetTags(setTags);
+                                  }}
+                                  key={index}
+                                  className=" mb-1 cursor-pointer duration-150 hover:bg-green-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-green-600 text-white float-left flex items-center"
+                                >
+                                  {item.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <InputComponent
+                          label="Notes Length"
+                          value={callsheetNoteLength}
+                          onChange={(e) =>
+                            ssetCallsheetNoteLength({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          placeholder="0"
+                          min={0}
+                          type="number"
+                          className={`h-9 mb-3`}
+                        />
+                      </div>
+                    </div>
                   </div>
                 }
               />
@@ -409,44 +480,23 @@ const SettingPage: React.FC = () => {
                 child={
                   <div className="flex ">
                     <li className="flex-1 px-2 list-none">
-                      <label className="text-sm">Uri : </label>
-                      <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
-                        name="Site Uri"
-                        value={erpSite.valueData}
+                      <InputComponent
+                        label="Location Distance (Meters)"
+                        placeholder="0"
+                        value={locationDistance}
                         onChange={(e) =>
-                          setErpSite({
-                            valueData: e.target.value,
-                            valueInput: e.target.value,
-                          })
+                          setLocationDistance({ valueData: e, valueInput: e })
                         }
+                        type="number"
+                        min={0}
+                        //   disabled={disabled}
+                        className={`h-9 mb-3`}
                       />
-                      <h4 className="italic text-[0.8em] text-gray-700">
-                        *Uri of the erpnext system so that it is connected to
-                        the erp data ex: etm.digitalasiasolusindo.com
-                      </h4>
                     </li>
-                    <li className="flex-1 px-2 list-none">
-                      <label className="text-sm">Token : </label>
-                      <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
-                        name="Site Uri"
-                        value={erpToken.valueData}
-                        onChange={(e) =>
-                          setErpToken({
-                            valueData: e.target.value,
-                            valueInput: e.target.value,
-                          })
-                        }
-                      />
-                      <h4 className="italic text-[0.8em] text-gray-700">
-                        *Get from user token in erpnext system
-                      </h4>
-                    </li>
+                    <li className="flex-1 px-2 list-none"></li>
                   </div>
                 }
               />
-              <TimeLineVertical data={history} />
             </div>
           </>
         ) : (
