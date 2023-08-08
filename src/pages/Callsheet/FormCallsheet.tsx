@@ -20,15 +20,15 @@ import NotesPage from "../notes/NotesPage";
 import React from "react";
 
 const FormCallsheetPage: React.FC = () => {
+  let { id } = useParams();
+  const [data, setData] = useState<any>({});
   const metaData = {
-    title: "New Callsheet - Sales App Ekatunggal",
+    title: `${id ? data.name : "New Callsheet"} - Sales App Ekatunggal`,
     description: "Halaman form callsheet sales web system",
   };
 
   const navigate = useNavigate();
-  let { id } = useParams();
 
-  const [data, setData] = useState<any>({});
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);

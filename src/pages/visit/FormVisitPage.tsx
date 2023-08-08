@@ -18,15 +18,15 @@ import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 
 const FormVisitPage: React.FC = () => {
+  let { id } = useParams();
+  const [data, setData] = useState<any>({});
   const metaData = {
-    title: "New Visit - Sales App Ekatunggal",
+    title: `${id?data.name:"New Visit"} - Sales App Ekatunggal`,
     description: "Halaman form visit sales web system",
   };
 
   const navigate = useNavigate();
-  let { id } = useParams();
 
-  const [data, setData] = useState<any>({});
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);

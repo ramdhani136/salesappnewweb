@@ -21,13 +21,13 @@ import { Alert, Snackbar } from "@mui/material";
 
 const SettingPage: React.FC = () => {
   const navigate = useNavigate();
-  let { id } = useParams();
+
   const [name, setName] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
   const metaData = {
-    title: `${id ? name.valueData : "New User"} - Sales App Ekatunggal`,
+    title: `Settings - Sales App Ekatunggal`,
     description: "Halaman form User sales web system",
   };
 
@@ -41,8 +41,6 @@ const SettingPage: React.FC = () => {
     { title: "Enabled", value: "1" },
     { title: "Disabled", value: "0" },
   ];
-
-
 
   const [username, setUserName] = useState<IValue>({
     valueData: "",
@@ -84,203 +82,14 @@ const SettingPage: React.FC = () => {
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
-  const getData = async (): Promise<void> => {
-    setWorkflow([]);
-    try {
-      const result = await GetDataServer(DataAPI.USERS).FINDONE(`${id}`);
+  const getData = async (): Promise<void> => {};
 
-      // set workflow
-      if (result.workflow.length > 0) {
-        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-          return {
-            name: item.action,
-            onClick: () => {
-              onSave(item.nextState.id);
-            },
-          };
-        });
+  const onSave = async (): Promise<void> => {};
 
-        setWorkflow(isWorkflow);
-      }
-      // end
-
-      setName({ valueData: result.data.name, valueInput: result.data.name });
-      setUserName({
-        valueData: result.data.username,
-        valueInput: result.data.username,
-      });
-      setEmail({
-        valueData: result.data.email ?? "",
-        valueInput: result.data.email ?? "",
-      });
-      setPhone({
-        valueData: result.data.phone ?? "",
-        valueInput: result.data.phone ?? "",
-      });
-      setErpSite({
-        valueData: result.data.ErpSite ?? "",
-        valueInput: result.data.ErpSite ?? "",
-      });
-      setErpToken({
-        valueData: result.data.ErpToken ?? "",
-        valueInput: result.data.ErpToken ?? "",
-      });
-      setStatus(result.data.status);
-
-      if (result.data.img) {
-        setImg(
-          `${import.meta.env.VITE_PUBLIC_URI}/images/users/${result.data.img}`
-        );
-      }
-
-      setHistory(result.history);
-
-      setData(result.data);
-
-      setLoading(false);
-    } catch (error: any) {
-      setLoading(false);
-      AlertModal.Default({
-        icon: "error",
-        title: "Error",
-        text: "Data not found!",
-      });
-
-      //   navigate("/users");
-    }
-  };
-
-  const onDelete = (): void => {
-    if (id) {
-      const progress = async (): Promise<void> => {
-        setLoading(true);
-        try {
-          await GetDataServer(DataAPI.USERS).DELETE(`${id}`);
-          navigate("/users");
-        } catch (error: any) {
-          Swal.fire(
-            "Error!",
-            `${
-              error.response.status === 403
-                ? "Access Denied"
-                : error.response.data.msg ?? "Error Delete"
-            }`,
-            "error"
-          );
-          setLoading(false);
-        }
-      };
-
-      AlertModal.confirmation({ onConfirm: progress });
-    }
-  };
-
-  const imageHandler = (e: any) => {
-    const reader: any = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setImg(reader.result);
-      }
-    };
-    reader.readAsDataURL(e.target.files[0]);
-    setFile(e.target.files[0]);
-  };
-
-  const onSave = async (nextStateId?: String): Promise<void> => {
-    const inData = new FormData();
-
-    file && inData.append("imgfile", file);
-
-    if (nextStateId) {
-      inData.append("nextState", `${nextStateId}`);
-    }
-    inData.append("name", name.valueData);
-    inData.append("username", username.valueData);
-    inData.append("email", email.valueData);
-    inData.append("phone", phone.valueData);
-    password.valueData && inData.append("password", password.valueData);
-    inData.append("ErpToken", erpToken.valueData ?? "");
-    inData.append("ErpSite", erpSite.valueData ?? "");
-    inData.append("status", status);
-    inData.append("workflowState", status === "0" ? "Disabled" : "Enabled");
-
-    let response: any;
-    if (id) {
-      setLoading(true);
-      try {
-        response = await FetchApi.put(
-          `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
-          inData
-        );
-
-        if (response.data.status === 200) {
-          Swal.fire("Success!", `Data updated successfully`, "success");
-          getData();
-          if (file) {
-            navigate(0);
-          }
-        } else {
-          throw response.data.msg;
-        }
-      } catch (error: any) {
-        Swal.fire(
-          "Error!",
-          `${
-            error.response.status === 403
-              ? "Access Denied"
-              : error.response.data.msg ?? "Error update"
-          }`,
-          error
-        );
-        setLoading(false);
-      }
-    } else {
-      setLoading(true);
-      try {
-        response = await FetchApi.post(
-          `${import.meta.env.VITE_PUBLIC_URI}/users`,
-          inData
-        );
-        if (response.data.status) {
-          Swal.fire("Success!", `Data saved successfully`, "success");
-
-          if (response.data.status !== 200) {
-            throw response.data.msg;
-          }
-
-          navigate(`/user/${response.data.data._id}`);
-
-          navigate(0);
-        } else {
-          Swal.fire("error!", `Check your data!`, "error");
-        }
-      } catch (error: any) {
-        Swal.fire(
-          "Error!",
-          `${
-            error.response.status === 403
-              ? "Access Denied"
-              : error.response.data.msg ?? "Error Insert"
-          }`,
-          "error"
-        );
-        setLoading(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (id) {
-      getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
-    } else {
-      setLoading(false);
-      setListMoreAction([]);
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -303,15 +112,8 @@ const SettingPage: React.FC = () => {
                   onClick={() => navigate("/users")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New User" : data.name}
+                  Settings
                 </h4>
-                <div className="text-[0.9em]">
-                  <ButtonStatusComponent
-                    // className="text-[0.7em]"
-                    status={data.status ?? "0"}
-                    name={data.workflowState ?? "Not Save"}
-                  />
-                </div>
               </div>
               <div className="flex">
                 {listMoreAction.length > 0 && (
@@ -328,109 +130,67 @@ const SettingPage: React.FC = () => {
                 )}
 
                 {/* {isChangeData && ( */}
-                <IconButton
-                  name={id ? "Update" : "Save"}
+                {/* <IconButton
+                  name="Update"
                   callback={onSave}
                   className={`opacity-80 hover:opacity-100 duration-100  `}
-                />
+                /> */}
                 {/* )} */}
-                {!isChangeData && id && workflow.length > 0 && (
-                  <IconButton
-                    name="Actions"
-                    list={workflow}
-                    callback={onSave}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
               <ToggleBodyComponent
-                name="Data"
+                name="Visit"
                 child={
                   <div className="flex">
-                    <div className="mr-8 flex flex-col">
-                      <img
-                        crossOrigin="anonymous"
-                        className="relative  object-contain mt-1 border shadow-sm w-[280px] h-[280px] rounded-md"
-                        src={img}
-                        alt={"pp"}
-                        onError={(e: any) => {
-                          e.target.src = ProfileImg;
-                        }}
-                      />
-                      <input
-                        onChange={(e) => imageHandler(e)}
-                        type="file"
-                        name="image"
-                        className="border  w-[280px] mt-1 text-sm"
-                        accept="image/*"
-                        ref={browseRef}
-                      />
-                    </div>
                     <div className="flex-1 flex">
                       <div className="flex-1 mr-6">
                         <InputComponent
-                          mandatoy
-                          label="Name"
-                          value={name}
-                          onChange={(e) =>
-                            setName({ valueData: e, valueInput: e })
-                          }
-                          type="text"
-                          //   disabled={disabled}
-
-                          className={`h-9 mb-3`}
-                        />
-                        <InputComponent
-                          mandatoy
-                          label="Username"
+                          label="Check In Distance (Meters)"
+                          placeholder="0"
                           value={username}
                           onChange={(e) =>
                             setUserName({ valueData: e, valueInput: e })
                           }
-                          type="text"
+                          type="number"
+                          min={0}
                           //   disabled={disabled}
                           className={`h-9 mb-3`}
                         />
+
                         <InputComponent
-                          label="Phone"
+                          label="Mandatory Tags"
                           value={phone}
                           onChange={(e) =>
                             setPhone({ valueData: e, valueInput: e })
                           }
                           type="text"
                           //   disabled={disabled}
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-1`}
                         />
+                        <div className="w-full h-14 rounded-sm border"></div>
                       </div>
                       <div className="flex-1">
                         <InputComponent
-                          label="Email"
+                          label="Check Out Distance (Meters)"
+                          placeholder="0"
+                          value={name}
+                          onChange={(e) =>
+                            setName({ valueData: e, valueInput: e })
+                          }
+                          type="number"
+                          min={0}
+                          className={`h-9 mb-3`}
+                        />
+                        <InputComponent
+                          label="Notes Length"
                           value={email}
                           onChange={(e) =>
                             setEmail({ valueData: e, valueInput: e })
                           }
-                          type="text"
-                          //   disabled={disabled}
-                          className={`h-9 mb-3`}
-                        />
-                        <Select
-                          title="Status"
-                          data={dataStatus}
-                          value={status}
-                          setValue={setStatus}
-                          ClassName={`h-9`}
-                        />
-                        <InputComponent
-                          label="Password"
-                          value={password}
-                          onChange={(e) =>
-                            setPassword({ valueData: e, valueInput: e })
-                          }
-                          type="password"
-                          //   disabled={disabled}
-                          remark="*Only filled if you want to change the previous password"
+                          placeholder="0"
+                          min={0}
+                          type="number"
                           className={`h-9 mb-3`}
                         />
                       </div>
@@ -439,7 +199,50 @@ const SettingPage: React.FC = () => {
                 }
               />
               <ToggleBodyComponent
-                name="Erpnext Sync"
+                name="Callsheet"
+                className="mt-5"
+                child={
+                  <div className="flex ">
+                    <li className="flex-1 px-2 list-none">
+                      <label className="text-sm">Uri : </label>
+                      <textarea
+                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
+                        name="Site Uri"
+                        value={erpSite.valueData}
+                        onChange={(e) =>
+                          setErpSite({
+                            valueData: e.target.value,
+                            valueInput: e.target.value,
+                          })
+                        }
+                      />
+                      <h4 className="italic text-[0.8em] text-gray-700">
+                        *Uri of the erpnext system so that it is connected to
+                        the erp data ex: etm.digitalasiasolusindo.com
+                      </h4>
+                    </li>
+                    <li className="flex-1 px-2 list-none">
+                      <label className="text-sm">Token : </label>
+                      <textarea
+                        className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md"
+                        name="Site Uri"
+                        value={erpToken.valueData}
+                        onChange={(e) =>
+                          setErpToken({
+                            valueData: e.target.value,
+                            valueInput: e.target.value,
+                          })
+                        }
+                      />
+                      <h4 className="italic text-[0.8em] text-gray-700">
+                        *Get from user token in erpnext system
+                      </h4>
+                    </li>
+                  </div>
+                }
+              />
+              <ToggleBodyComponent
+                name="Customer"
                 className="mt-5"
                 child={
                   <div className="flex ">
