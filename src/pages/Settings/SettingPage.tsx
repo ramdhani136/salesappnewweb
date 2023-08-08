@@ -5,7 +5,6 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
   IconButton,
   InputComponent,
-  TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
@@ -32,6 +31,7 @@ const SettingPage: React.FC = () => {
   const [tagPage, setTagPage] = useState<Number>(1);
   const [tagLoading, setTagLoading] = useState<boolean>(true);
   const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
+  const [prevData, setPrevData] = useState<any>({});
   const [visitCheckIn, setVisitCheckIn] = useState<IValue>({
     valueData: 0,
     valueInput: "0",
@@ -56,6 +56,7 @@ const SettingPage: React.FC = () => {
   const [visitTags, setVisitTags] = useState<any[]>([]);
   const [callsheetTags, setCallsheetTags] = useState<any[]>([]);
   const [tagHasmore, setTagHasmore] = useState<boolean>(false);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const [visitTagValue, setVisitTagValue] = useState<IValue>({
     valueData: "",
@@ -67,7 +68,6 @@ const SettingPage: React.FC = () => {
   });
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
     setLoading(true);
@@ -84,7 +84,7 @@ const SettingPage: React.FC = () => {
         valueInput: visit.checkInDistance ?? 0,
       });
       setVisitCheckOut({
-        valueData: visit.checkOutDistance ?? 0,
+        valueData: visit.checkInDistance ?? 0,
         valueInput: visit.checkOutDistance ?? 0,
       });
       setLocationDistance({
@@ -106,6 +106,22 @@ const SettingPage: React.FC = () => {
       if (callsheet.tagsMandatory.length > 0) {
         setCallsheetTags(callsheet.tagsMandatory);
       }
+
+      setPrevData({
+        visit: {
+          checkInDistance: visit.checkInDistance,
+          checkOutDistance: visit.checkOutDistance ?? 0,
+          notesLength: visit.notesLength ?? 0,
+          tagsMandatory: visit.tagsMandatory,
+        },
+        callsheet: {
+          notesLength: callsheet.notesLength,
+          tagsMandatory: callsheet.tagsMandatory,
+        },
+        customer: {
+          locationDistance: customer.locationDistance ?? 0,
+        },
+      });
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -158,6 +174,38 @@ const SettingPage: React.FC = () => {
     setTagLoading(true);
   };
 
+  useEffect(() => {
+    const updateData = {
+      visit: {
+        checkInDistance: visitCheckIn.valueData,
+        checkOutDistance: visitCheckOut.valueData,
+        notesLength: visitNoteLength.valueData,
+        tagsMandatory: visitTags,
+      },
+      callsheet: {
+        notesLength: callsheetNoteLength.valueData,
+        tagsMandatory: callsheetTags,
+      },
+      customer: {
+        locationDistance: locationDistance.valueData,
+      },
+    };
+
+    if (`${JSON.stringify(updateData)}` === `${JSON.stringify(prevData)}`) {
+      setIsUpdate(false);
+    } else {
+      setIsUpdate(true);
+    }
+  }, [
+    visitCheckIn,
+    visitCheckOut,
+    visitTags,
+    visitNoteLength,
+    callsheetNoteLength,
+    callsheetTags,
+    locationDistance,
+  ]);
+
   const OnUpdate = async () => {
     setLoading(true);
     try {
@@ -180,6 +228,7 @@ const SettingPage: React.FC = () => {
         id: id,
         data: data,
       });
+      getData();
       Swal.fire({ icon: "success", title: "Data has been saved" });
     } catch (error: any) {
       Swal.fire(
@@ -220,32 +269,19 @@ const SettingPage: React.FC = () => {
                 </h4>
               </div>
               <div className="flex">
-                {listMoreAction.length > 0 && (
+                {isUpdate && (
                   <IconButton
-                    classModal="top-[29px]"
-                    primary
-                    Icon={MoreHorizIcon}
-                    iconSize={15}
-                    classIcon="mt-1"
-                    list={listMoreAction}
-                    iconListDisabled
-                    className={` duration-100 mr-2 px-2 `}
+                    name="Update"
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: OnUpdate,
+                        text: "Want to change this data?",
+                        confirmButtonText: "Yes, Update it!",
+                      });
+                    }}
+                    className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
-
-                {/* {isChangeData && ( */}
-                <IconButton
-                  name="Update"
-                  callback={() => {
-                    AlertModal.confirmation({
-                      onConfirm: OnUpdate,
-                      text: "Want to change this data?",
-                      confirmButtonText: "Yes, Update it!",
-                    });
-                  }}
-                  className={`opacity-80 hover:opacity-100 duration-100  `}
-                />
-                {/* )} */}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
