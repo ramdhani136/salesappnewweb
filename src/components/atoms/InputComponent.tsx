@@ -152,7 +152,8 @@ const InputComponent: React.FC<IProps> = ({
           }
           className={`w-full  text-[0.95em]  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
         />
-        {value.valueInput && onReset && !disabled && (
+       
+        {(value.valueInput || type=="number")   && onReset && !disabled && (
           <CloseIcon
             onClick={() => {
               if (onReset) {

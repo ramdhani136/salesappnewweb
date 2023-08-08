@@ -10,7 +10,7 @@ import {
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
+import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, FetchApi, Meta } from "../../utils";
@@ -36,6 +36,10 @@ const SettingPage: React.FC = () => {
   const [scroll, setScroll] = useState<number>(0);
   const [history, setHistory] = useState<any[]>([]);
 
+  const [tags, setTags] = useState<IListInput[]>([]);
+  const [tagPage, setTagPage] = useState<Number>(1);
+  const [tagLoading, setTagLoading] = useState<boolean>(true);
+  const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
   const [visitCheckIn, setVisitCheckIn] = useState<IValue>({
     valueData: 0,
     valueInput: "0",
@@ -50,8 +54,9 @@ const SettingPage: React.FC = () => {
   });
 
   const [visitTags, setVisitTags] = useState<any[]>([]);
+  const [tagHasmore, setTagHasmore] = useState<boolean>(false);
 
-  const [email, setEmail] = useState<IValue>({
+  const [visitTagValue, setVisitTagValue] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -109,12 +114,63 @@ const SettingPage: React.FC = () => {
     setLoading(false);
   };
 
-  const OnUpdate = async (data: {}) => {
+  const getTags = async (search?: string): Promise<void> => {
     try {
+      if (!tagLoading) {
+        setTagMoreLoading(true);
+      } else {
+        setTagMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${tagPage}`,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setTags([...tags, ...listInput]);
+        setTagHasmore(result.hasMore);
+        setTagPage(result.nextPage);
+      }
+
+      setTagLoading(false);
+      setTagMoreLoading(false);
+    } catch (error: any) {
+      setTagLoading(false);
+      setTagMoreLoading(false);
+      setTagHasmore(false);
+    }
+  };
+
+  const ResetTags = () => {
+    setTags([]);
+    setTagHasmore(false);
+    setTagPage(1);
+    setTagLoading(true);
+  };
+
+  const OnUpdate = async () => {
+    setLoading(true);
+    try {
+      const data = {
+        visit: {
+          checkInDistance: visitCheckIn.valueData,
+          checkOutDistance: visitCheckOut.valueData,
+          notesLength: visitNoteLength.valueData,
+          tagsMandatory: visitTags,
+        },
+      };
       await GetDataServer(DataAPI.CONFIG).UPDATE({
         id: id,
         data: data,
       });
+      Swal.fire({ icon: "success" , title: 'Data has been saved',});
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -122,6 +178,7 @@ const SettingPage: React.FC = () => {
         "error"
       );
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -169,7 +226,13 @@ const SettingPage: React.FC = () => {
                 {/* {isChangeData && ( */}
                 <IconButton
                   name="Update"
-                  //   callback={onSave}
+                  callback={() => {
+                    AlertModal.confirmation({
+                      onConfirm: OnUpdate,
+                      text: "Want to change this data?",
+                      confirmButtonText: "Yes, Update it!",
+                    });
+                  }}
                   className={`opacity-80 hover:opacity-100 duration-100  `}
                 />
                 {/* )} */}
@@ -197,10 +260,50 @@ const SettingPage: React.FC = () => {
 
                         <InputComponent
                           label="Mandatory Tags"
-                          value={phone}
-                          onChange={(e) =>
-                            setPhone({ valueData: e, valueInput: e })
-                          }
+                          infiniteScroll={{
+                            loading: tagMoreLoading,
+                            hasMore: tagHasmore,
+                            next: () => {
+                              getTags();
+                            },
+                            onSearch(e) {
+                              getTags(e);
+                            },
+                          }}
+                          loading={tagLoading}
+                          modalStyle="mt-2"
+                          value={visitTagValue}
+                          onChange={(e) => {
+                            ResetTags();
+                            setTagLoading(true);
+                            setVisitTagValue({
+                              ...visitTagValue,
+                              valueInput: e,
+                            });
+                          }}
+                          onSelected={(e) => {
+                            const cekDup = visitTags.find(
+                              (item: any) => item._id === e.value
+                            );
+
+                            if (!cekDup) {
+                              let setTag = [
+                                ...visitTags,
+                                { _id: e.value, name: e.name },
+                              ];
+                              setVisitTags(setTag);
+                            }
+
+                            setVisitTagValue({ valueData: "", valueInput: "" });
+                          }}
+                          onReset={() => {
+                            ResetTags();
+                            setVisitTagValue({
+                              valueData: null,
+                              valueInput: "",
+                            });
+                          }}
+                          list={tags}
                           type="text"
                           //   disabled={disabled}
                           className={`h-9 mb-1`}
@@ -220,7 +323,7 @@ const SettingPage: React.FC = () => {
                                     setVisitTags(setTags);
                                   }}
                                   key={index}
-                                  className=" cursor-pointer duration-150 hover:bg-green-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-green-600 text-white float-left flex items-center"
+                                  className=" mb-1 cursor-pointer duration-150 hover:bg-green-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-green-600 text-white float-left flex items-center"
                                 >
                                   {item.name}
                                 </li>
