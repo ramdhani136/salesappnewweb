@@ -441,6 +441,7 @@ const FormCustomerPage: React.FC = () => {
                     />
 
                     <InputComponent
+                      mandatoy
                       label="Branch"
                       infiniteScroll={{
                         loading: branchMoreLoading,
@@ -491,6 +492,7 @@ const FormCustomerPage: React.FC = () => {
                     />
                     {branch.valueData && (
                       <InputComponent
+                        mandatoy
                         label="Group"
                         value={group}
                         infiniteScroll={{
@@ -526,9 +528,9 @@ const FormCustomerPage: React.FC = () => {
                           });
                         }}
                         modalStyle="mt-2"
-                        // disabled={
-                        //   id != null ? (status !== "Draft" ? true : false) : false
-                        // }
+                        disabled={
+                          id != null ? (status !== "Draft" ? true : false) : false
+                        }
                       />
                     )}
                     <label className="text-sm">Address</label>

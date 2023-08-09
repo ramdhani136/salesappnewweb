@@ -121,7 +121,7 @@ const InputComponent: React.FC<IProps> = ({
     <>
       {label && (
         <label className="text-sm text-gray-800">
-          {label} {mandatoy && <a className="text-red-600">*</a>}
+          {label} {(mandatoy && !disabled)&& <a className="text-red-600">*</a>}
         </label>
       )}
       <div
