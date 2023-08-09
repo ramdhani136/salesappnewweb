@@ -195,55 +195,6 @@ const FormCustomerGroupPage: React.FC = () => {
     }
   };
 
-  const onSave = async (nextState?: String): Promise<any> => {
-    setLoading(true);
-
-    try {
-      let isBranch: string[] = [];
-      if (branch.length > 0) {
-        isBranch = branch.map((item: any) => item._id);
-      } else {
-        Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
-        setLoading(false);
-        return;
-      }
-      let data: any = {
-        name: name.valueData,
-        desc: desc,
-        branch: isBranch,
-        parent: parent.valueData,
-      };
-
-      if (nextState) {
-        data.nextState = nextState;
-      }
-
-      let Action = id
-        ? GetDataServer(DataAPI.GROUP).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.GROUP).CREATE(data);
-
-      const result = await Action;
-      navigate(`/customergroup/${result.data.data._id}`);
-      if (id) {
-        getData();
-        Swal.fire({ icon: "success", text: "Saved" });
-      } else {
-        navigate(0);
-      }
-    } catch (error: any) {
-      Swal.fire(
-        "Error!",
-        `${
-          error.response.data.msg.message ??
-          error.response.data.msg ??
-          "Error Insert"
-        }`,
-        "error"
-      );
-    }
-    setLoading(false);
-  };
-
   const getParent = async (search?: string): Promise<void> => {
     try {
       if (!parentLoading) {
@@ -344,6 +295,59 @@ const FormCustomerGroupPage: React.FC = () => {
     }
   }, []);
 
+  const onSave = async (nextState?: String): Promise<any> => {
+    setLoading(true);
+
+    try {
+      let isBranch: string[] = [];
+
+      if (nextState == undefined) {
+        if (branch.length > 0) {
+          isBranch = branch.map((item: any) => item._id);
+        } else {
+          Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
+          setLoading(false);
+          return;
+        }
+      }
+
+      let data: any = {};
+      if (nextState) {
+        data = { nextState: nextState };
+      } else {
+        data = {
+          name: name.valueData,
+          desc: desc,
+          branch: isBranch,
+          parent: parent.valueData,
+        };
+      }
+
+      let Action = id
+        ? GetDataServer(DataAPI.GROUP).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.GROUP).CREATE(data);
+
+      const result = await Action;
+      navigate(`/customergroup/${result.data.data._id}`);
+      if (id) {
+        getData();
+        Swal.fire({ icon: "success", text: "Saved" });
+      } else {
+        navigate(0);
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg.message ??
+          error.response.data.msg ??
+          "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
   // Cek perubahan
   useEffect(() => {
     const actualData = {
