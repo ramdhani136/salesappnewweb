@@ -370,8 +370,12 @@ const FormCustomerPage: React.FC = () => {
       file && inData.append("img", file);
       inData.append("name", name.valueData);
       inData.append("type", type);
-      inData.append("branch", branch.valueData);
-      inData.append("customerGroup", group.valueData);
+      if (branch.valueData) {
+        inData.append("branch", branch.valueData);
+      }
+      if (group.valueData) {
+        inData.append("customerGroup", group.valueData);
+      }
       inData.append("erpId", erpId.valueData);
       inData.append("address", address);
       if (lat.valueData) {
@@ -397,6 +401,7 @@ const FormCustomerPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       Swal.fire(
         "Error!",
