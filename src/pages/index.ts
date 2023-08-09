@@ -21,6 +21,8 @@ import { BranchPage } from "./Branch/BranchPage";
 import FormBranchPage from "./Branch/FormBranchPage";
 import { CustomerGroupPage } from "./CustomerGroup/CustomerGroupPage";
 import FormCustomerGroupPage from "./CustomerGroup/FormCustomerGroup";
+import { CustomerPage } from "./Customer/CustomerPage";
+import FormCustomerPage from "./Customer/FormCustomerPage";
 
 export {
   LoginPage,
@@ -46,4 +48,6 @@ export {
   FormBranchPage,
   CustomerGroupPage,
   FormCustomerGroupPage,
+  CustomerPage,
+  FormCustomerPage
 };

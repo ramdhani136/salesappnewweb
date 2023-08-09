@@ -15,7 +15,8 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
-export const CallsheetPage: React.FC = (): any => {
+
+export const CustomerPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -36,8 +37,8 @@ export const CallsheetPage: React.FC = (): any => {
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
 
   const metaData = {
-    title: "Callsheet -   Sales App Ekatunggal",
-    description: "Halaman callsheet sales web system",
+    title: "Customer -  Sales App Ekatunggal",
+    description: "Halaman Customer - sales web system",
   };
 
   const navigate = useNavigate();
@@ -45,10 +46,10 @@ export const CallsheetPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
-      { header: "Customer", accessor: "customer" },
       { header: "Status", accessor: "workflowState" },
-      { header: "Type", accessor: "type" },
       { header: "Group", accessor: "group" },
+      { header: "Branch", accessor: "branch" },
+      { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -56,33 +57,29 @@ export const CallsheetPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.CALLSHEET).FIND({
+      const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
         limit: limit,
         page: page,
-        // fields: ["name", "user.name"],
         filters: filter,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
 
       if (result.data.length > 0) {
+        console.log(result.data);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
             checked: false,
             doc: item.name,
             name: (
-              <Link to={`/callsheet/${item._id}`}>
+              <Link to={`/customer/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
               </Link>
             ),
-            customer: <div>{item.customer.name}</div>,
+            user: <div>{item.createdBy.name}</div>,
             group: <div>{item.customerGroup.name}</div>,
-            type: (
-              <div>
-                {item.type === "in" ? "Incoming Call" : "Outgoing Call"}
-              </div>
-            ),
+            branch: <div>{item.branch.name}</div>,
 
             workflowState: (
               <ButtonStatusComponent
@@ -90,7 +87,6 @@ export const CallsheetPage: React.FC = (): any => {
                 name={item.workflowState}
               />
             ),
-            // warehouse: item.warehouse,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
@@ -146,7 +142,7 @@ export const CallsheetPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Callsheet"), {
+  useKey("n", () => alert("Create new Customer"), {
     ctrl: true,
     alt: true,
   });
@@ -172,7 +168,7 @@ export const CallsheetPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.CALLSHEET).DELETE(item.id);
+            await GetDataServer(DataAPI.CUSTOMER).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -180,8 +176,9 @@ export const CallsheetPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
-          navigate(0);
+          getAllData();
         } catch (error: any) {
+          getAllData();
           AlertModal.Default({
             icon: "error",
             title: "Error",
@@ -202,16 +199,16 @@ export const CallsheetPage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Callsheet List
+                Customer List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add callsheet"
+                  name="Add New"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/callsheet/new")}
+                  callback={() => navigate("/customer/new")}
                 />
 
                 <IconButton
@@ -246,7 +243,7 @@ export const CallsheetPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERCALLSHEET}
+              localStorage={LocalStorageType.FILTERCG}
               onRefresh={onRefresh}
             />
           </>
