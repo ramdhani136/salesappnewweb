@@ -43,6 +43,18 @@ const FormCustomerPage: React.FC = () => {
   });
   // End
 
+  // group
+  const [groupList, setGroupList] = useState<IListInput[]>([]);
+  const [groupPage, setGroupPage] = useState<Number>(1);
+  const [groupLoading, setGroupLoading] = useState<boolean>(true);
+  const [GroupMoreLoading, setGroupMoreLoading] = useState<boolean>(false);
+  const [groupHasMore, setGroupHasMore] = useState<boolean>(false);
+  const [group, setGroup] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
@@ -105,6 +117,10 @@ const FormCustomerPage: React.FC = () => {
         valueData: result.data.branch._id,
         valueInput: result.data.branch.name,
       });
+      setGroup({
+        valueData: result.data.customerGroup._id,
+        valueInput: result.data.customerGroup.name,
+      });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -114,9 +130,7 @@ const FormCustomerPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-      if (result.data.branch.length > 0) {
-        setBranch(result.data.branch);
-      }
+    
 
       setData(result.data);
 
@@ -174,53 +188,53 @@ const FormCustomerPage: React.FC = () => {
     }
   };
 
-  // const getParent = async (search?: string): Promise<void> => {
-  //   try {
-  //     if (!parentLoading) {
-  //       setParentMoreLoading(true);
-  //     } else {
-  //       setParentMoreLoading(false);
-  //     }
+  const getGroup = async (search?: string): Promise<void> => {
+    try {
+      if (!groupLoading) {
+        setGroupMoreLoading(true);
+      } else {
+        setGroupMoreLoading(false);
+      }
 
-  //     let filters: any = [];
+      let filters: any = [];
 
-  //     if (id) {
-  //       filters.push(["_id", "!=", id]);
-  //     }
+      if (id) {
+        filters.push(["_id", "!=", id]);
+      }
 
-  //     const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
-  //       search: search ?? "",
-  //       limit: 10,
-  //       page: `${parentPage}`,
-  //       filters: filters,
-  //     });
-  //     if (result.data.length > 0) {
-  //       let listInput: IListInput[] = result.data.map((item: any) => {
-  //         return {
-  //           name: item.name,
-  //           value: item._id,
-  //         };
-  //       });
-  //       setParentList([...parentList, ...listInput]);
-  //       setParentHasMore(result.hasMore);
-  //       setParentPage(result.nextPage);
-  //     }
+      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${groupPage}`,
+        filters: filters,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setGroupList([...groupList, ...listInput]);
+        setGroupHasMore(result.hasMore);
+        setGroupPage(result.nextPage);
+      }
 
-  //     setParentLoading(false);
-  //     setParentMoreLoading(false);
-  //   } catch (error: any) {
-  //     setParentLoading(false);
-  //     setParentMoreLoading(false);
-  //     setParentHasMore(false);
-  //   }
-  // };
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+    } catch (error: any) {
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+      setGroupHasMore(false);
+    }
+  };
 
-  // const ResetParent = () => {
-  //   setParentList([]);
-  //   setParentHasMore(false);
-  //   setParentPage(1);
-  //   setParentLoading(true);
-  // };
+  const ResetGroup = () => {
+    setGroupList([]);
+    setGroupHasMore(false);
+    setGroupPage(1);
+    setGroupLoading(true);
+  };
 
   const getBranch = async (search?: string): Promise<void> => {
     try {
@@ -336,7 +350,7 @@ const FormCustomerPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [name, parent, branch]);
+  }, [name, branch]);
   // End
 
   return (
@@ -518,46 +532,46 @@ const FormCustomerPage: React.FC = () => {
                       }
                       disabled
                     />
-                    {/* <InputComponent
-                      label="Parent"
-                      value={parent}
+                    <InputComponent
+                      label="Group"
+                      value={group}
                       infiniteScroll={{
-                        loading: parentMoreLoading,
-                        hasMore: parentHasmore,
+                        loading: GroupMoreLoading,
+                        hasMore: groupHasMore,
                         next: () => {
-                          getParent();
+                          getGroup();
                         },
                         onSearch(e) {
-                          getParent(e);
+                          getGroup(e);
                         },
                       }}
-                      loading={parentLoading}
-                      list={parentList}
+                      loading={groupLoading}
+                      list={groupList}
                       className="h-[38px]   text-[0.93em] mb-3"
                       onChange={(e) => {
-                        ResetParent();
-                        setParentLoading(true);
-                        setParent({
-                          ...parent,
+                        ResetGroup();
+
+                        setGroup({
+                          ...group,
                           valueInput: e,
                         });
                       }}
                       onSelected={(e) => {
-                        setParent({ valueData: e.value, valueInput: e.name });
-                        ResetParent();
+                        setGroup({ valueData: e.value, valueInput: e.name });
+                        ResetGroup();
                       }}
                       onReset={() => {
-                        ResetParent();
-                        setParent({
+                        ResetGroup();
+                        setGroup({
                           valueData: null,
                           valueInput: "",
                         });
                       }}
                       modalStyle="mt-2"
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    /> */}
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
+                    />
                   </div>
                 </div>
               </div>
