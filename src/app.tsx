@@ -24,6 +24,8 @@ import {
   FormCustomerGroupPage,
   CustomerPage,
   FormCustomerPage,
+  ContactPage,
+  FormContactPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -131,6 +133,18 @@ const App: React.FC = () => {
           <Route
             path="/customer/new"
             element={<LayoutComponent Child={FormCustomerPage} />}
+          />
+          <Route
+            path="/contact"
+            element={<LayoutComponent Child={ContactPage} />}
+          />
+          <Route
+            path="/contact/:id"
+            element={<LayoutComponent Child={FormContactPage} />}
+          />
+          <Route
+            path="/contact/new"
+            element={<LayoutComponent Child={FormContactPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

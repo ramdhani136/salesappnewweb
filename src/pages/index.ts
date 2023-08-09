@@ -23,6 +23,8 @@ import { CustomerGroupPage } from "./CustomerGroup/CustomerGroupPage";
 import FormCustomerGroupPage from "./CustomerGroup/FormCustomerGroup";
 import { CustomerPage } from "./Customer/CustomerPage";
 import FormCustomerPage from "./Customer/FormCustomerPage";
+import { ContactPage } from "./Contact/ContactPage";
+import FormContactPage from "./Contact/FormContactPage";
 
 export {
   LoginPage,
@@ -49,5 +51,7 @@ export {
   CustomerGroupPage,
   FormCustomerGroupPage,
   CustomerPage,
-  FormCustomerPage
+  FormCustomerPage,
+  ContactPage,
+  FormContactPage,
 };
