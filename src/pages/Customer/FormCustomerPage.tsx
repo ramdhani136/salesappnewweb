@@ -6,6 +6,7 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
+  Select,
   TimeLineVertical,
 } from "../../components/atoms";
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
@@ -30,6 +31,11 @@ const FormCustomerPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
+  const dataType: any[] = [
+    { title: "Individual", value: "Individual" },
+    { title: "Company", value: "Company" },
+  ];
+  const [type, setType] = useState<string>("Company");
 
   // branch
   const [branchList, setBranchList] = useState<IListInput[]>([]);
@@ -60,6 +66,11 @@ const FormCustomerPage: React.FC = () => {
     valueInput: LocalStorage.getUser().name,
   });
   const [name, setName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+
+  const [erpId, setErpId] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -112,6 +123,12 @@ const FormCustomerPage: React.FC = () => {
         valueData: result.data.name,
         valueInput: result.data.name,
       });
+      if (result.data.erpId) {
+        setErpId({
+          valueData: result.data.erpId,
+          valueInput: result.data.erpId,
+        });
+      }
       setAddress(result.data.address);
       setBranch({
         valueData: result.data.branch._id,
@@ -131,6 +148,8 @@ const FormCustomerPage: React.FC = () => {
       });
 
       setData(result.data);
+
+      setType(result.data.type);
 
       setPrevData({
         name: result.data.name,
@@ -440,6 +459,16 @@ const FormCustomerPage: React.FC = () => {
                       }
                     />
 
+                    <Select
+                      title="Type"
+                      data={dataType}
+                      value={type}
+                      setValue={setType}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                    />
+
                     <InputComponent
                       mandatoy
                       label="Branch"
@@ -557,6 +586,21 @@ const FormCustomerPage: React.FC = () => {
                         })
                       }
                       disabled
+                    />
+                    <InputComponent
+                      label="ErpId"
+                      value={erpId}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="text"
+                      onChange={(e) =>
+                        setErpId({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                     />
                     <InputComponent
                       label="Status"
