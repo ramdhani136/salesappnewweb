@@ -71,6 +71,7 @@ const FormCustomerGroupPage: React.FC = () => {
     name: name.valueData,
     desc: desc ?? "",
     parent: "",
+    branch: [],
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -138,7 +139,7 @@ const FormCustomerGroupPage: React.FC = () => {
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
-        parent: result.data.parent.name ?? "",
+        parent: result.data.parent._id ?? "",
         branch: result.data.branch,
       });
 
@@ -210,11 +211,8 @@ const FormCustomerGroupPage: React.FC = () => {
         name: name.valueData,
         desc: desc,
         branch: isBranch,
+        parent: parent.valueData,
       };
-
-      if (parent.valueData != "") {
-        data.parent = parent.valueData;
-      }
 
       if (nextState) {
         data.nextState = nextState;
@@ -236,11 +234,9 @@ const FormCustomerGroupPage: React.FC = () => {
       Swal.fire(
         "Error!",
         `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Insert"
+          error.response.data.msg.message ??
+          error.response.data.msg ??
+          "Error Insert"
         }`,
         "error"
       );
