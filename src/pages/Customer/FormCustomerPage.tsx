@@ -52,6 +52,8 @@ const FormCustomerPage: React.FC = () => {
     valueInput: "",
   });
 
+  const [address, setAddress] = useState<string>("");
+
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
@@ -98,6 +100,7 @@ const FormCustomerPage: React.FC = () => {
         valueData: result.data.name,
         valueInput: result.data.name,
       });
+      setAddress(result.data.address);
       setBranch({
         valueData: result.data.branch._id,
         valueInput: result.data.branch.name,
@@ -427,23 +430,50 @@ const FormCustomerPage: React.FC = () => {
                     />
 
                     <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
+                      label="Branch"
+                      infiniteScroll={{
+                        loading: branchMoreLoading,
+                        hasMore: branchHasMore,
+                        next: () => {
+                          getBranch();
+                        },
+                        onSearch(e) {
+                          getBranch(e);
+                        },
+                      }}
+                      loading={branchLoading}
+                      modalStyle="mt-2"
+                      value={branch}
+                      onChange={(e) => {
+                        ResetBranch();
+                        setBranchLoading(true);
+                        setBranch({
+                          ...branch,
                           valueInput: e,
-                        })
-                      }
-                      disabled
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setBranch({ valueData: e.value, valueInput: e.name });
+                        ResetBranch();
+                      }}
+                      onReset={() => {
+                        ResetBranch();
+                        setBranch({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={branchList}
+                      type="text"
+                      //   disabled={disabled}
+                      className={`h-9 mb-1`}
                     />
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
                       name="Address"
-                      // value={desc}
-                      // onChange={(e) => setDesc(e.target.value)}
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -470,6 +500,18 @@ const FormCustomerPage: React.FC = () => {
                       type="text"
                       onChange={(e) =>
                         setCreatedAt({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
+                    <InputComponent
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) =>
+                        setUser({
                           valueData: e,
                           valueInput: e,
                         })
@@ -516,46 +558,6 @@ const FormCustomerPage: React.FC = () => {
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                     /> */}
-
-                    <InputComponent
-                      label="Branch"
-                      infiniteScroll={{
-                        loading: branchMoreLoading,
-                        hasMore: branchHasMore,
-                        next: () => {
-                          getBranch();
-                        },
-                        onSearch(e) {
-                          getBranch(e);
-                        },
-                      }}
-                      loading={branchLoading}
-                      modalStyle="mt-2"
-                      value={branch}
-                      onChange={(e) => {
-                        ResetBranch();
-                        setBranchLoading(true);
-                        setBranch({
-                          ...branch,
-                          valueInput: e,
-                        });
-                      }}
-                      onSelected={(e) => {
-                        setBranch({ valueData: e.value, valueInput: e.name });
-                        ResetBranch();
-                      }}
-                      onReset={() => {
-                        ResetBranch();
-                        setBranch({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                      }}
-                      list={branchList}
-                      type="text"
-                      //   disabled={disabled}
-                      className={`h-9 mb-1`}
-                    />
                   </div>
                 </div>
               </div>
