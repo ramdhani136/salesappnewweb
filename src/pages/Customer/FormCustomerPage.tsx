@@ -92,7 +92,7 @@ const FormCustomerPage: React.FC = () => {
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
     type: type,
-    branch: branch,
+    branch: branch.valueData,
     group: group.valueData,
     img: img,
     address: address,
@@ -190,7 +190,14 @@ const FormCustomerPage: React.FC = () => {
 
       setPrevData({
         name: result.data.name,
-        branch: result.data.branch,
+        type: result.data.type,
+        branch: result.data.branch._id,
+        group: result.data.customerGroup._id,
+        img: result.data.img ?? ProfileImg,
+        address: result.data.address,
+        erpId: result.data.erpId ?? "",
+        lat: result.data.location ? result.data.location.coordinates[1] : "",
+        lng: result.data.location ? result.data.location.coordinates[0] : "",
       });
 
       setStatus(
@@ -397,7 +404,7 @@ const FormCustomerPage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       type: type,
-      branch: branch,
+      branch: branch.valueData,
       group: group.valueData,
       img: img,
       address: address,
@@ -655,7 +662,7 @@ const FormCustomerPage: React.FC = () => {
                     />
                     <label className="text-sm">Address</label>
                     <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
+                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
                       name="Address"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}

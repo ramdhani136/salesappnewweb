@@ -468,7 +468,7 @@ const FormCustomerGroupPage: React.FC = () => {
                     />
                     <label className="text-sm">Desc</label>
                     <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
+                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
                       name="Site Uri"
                       value={desc}
                       onChange={(e) => setDesc(e.target.value)}
