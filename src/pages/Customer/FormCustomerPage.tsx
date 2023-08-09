@@ -91,7 +91,14 @@ const FormCustomerPage: React.FC = () => {
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    branch: [],
+    type: type,
+    branch: branch,
+    group: group.valueData,
+    img: img,
+    address: address,
+    erpId: erpId.valueData,
+    lat: lat.valueData,
+    lng: lng.valueData,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -389,14 +396,21 @@ const FormCustomerPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
+      type: type,
       branch: branch,
+      group: group.valueData,
+      img: img,
+      address: address,
+      erpId: erpId.valueData,
+      lat: lat.valueData,
+      lng: lng.valueData,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, branch]);
+  }, [name, type, branch, group, img, address, erpId, lat, lng]);
   // End
 
   const imageHandler = (e: any) => {
@@ -409,7 +423,6 @@ const FormCustomerPage: React.FC = () => {
     reader.readAsDataURL(e.target.files[0]);
     setFile(e.target.files[0]);
   };
-
 
   return (
     <>
@@ -715,7 +728,7 @@ const FormCustomerPage: React.FC = () => {
                         e.target.src = ProfileImg;
                       }}
                     />
-                    {(!id || (id!=undefined && status === "Draft")) && (
+                    {(!id || (id != undefined && status === "Draft")) && (
                       <input
                         onChange={(e) => imageHandler(e)}
                         type="file"
