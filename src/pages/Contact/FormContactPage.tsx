@@ -36,7 +36,7 @@ const FormContactPage: React.FC = () => {
     { title: "Purchasing Staff", value: "Purchasing Staff" },
     { title: "Purchasing Manager", value: "Purchasing Manager" },
   ];
-  const [position, setPosition] = useState<string>("Company");
+  const [position, setPosition] = useState<string>("Purchasing Staff");
 
   // customer
   const [customerList, setCustomerLlist] = useState<IListInput[]>([]);
@@ -450,7 +450,7 @@ const FormContactPage: React.FC = () => {
                       title="Position"
                       data={dataType}
                       value={position}
-                      setValue={position}
+                      setValue={setPosition}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
