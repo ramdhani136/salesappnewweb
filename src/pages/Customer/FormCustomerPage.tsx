@@ -30,19 +30,6 @@ const FormCustomerPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [branch, setBranch] = useState<any[]>([]);
-
-  // group
-  const [parentList, setParentList] = useState<IListInput[]>([]);
-  const [parentPage, setParentPage] = useState<Number>(1);
-  const [parentLoading, setParentLoading] = useState<boolean>(true);
-  const [parentMoreLoading, setParentMoreLoading] = useState<boolean>(false);
-  const [parentHasmore, setParentHasMore] = useState<boolean>(false);
-  const [parent, setParent] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  // End
 
   // branch
   const [branchList, setBranchList] = useState<IListInput[]>([]);
@@ -50,7 +37,7 @@ const FormCustomerPage: React.FC = () => {
   const [branchLoading, setBranchLoading] = useState<boolean>(true);
   const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
   const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
-  const [branchValue, setBranchValue] = useState<IValue>({
+  const [branch, setBranch] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -66,11 +53,8 @@ const FormCustomerPage: React.FC = () => {
   });
 
   const [status, setStatus] = useState<String>("Draft");
-  const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    desc: desc ?? "",
-    parent: "",
     branch: [],
   });
 
@@ -114,6 +98,10 @@ const FormCustomerPage: React.FC = () => {
         valueData: result.data.name,
         valueInput: result.data.name,
       });
+      setBranch({
+        valueData: result.data.branch._id,
+        valueInput: result.data.branch.name,
+      });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -123,7 +111,6 @@ const FormCustomerPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-
       if (result.data.branch.length > 0) {
         setBranch(result.data.branch);
       }
@@ -132,10 +119,8 @@ const FormCustomerPage: React.FC = () => {
 
       setPrevData({
         name: result.data.name,
-        desc: result.data.desc ?? "",
         branch: result.data.branch,
       });
-
 
       setStatus(
         result.data.status == "0"
@@ -148,7 +133,6 @@ const FormCustomerPage: React.FC = () => {
       );
       setLoading(false);
     } catch (error: any) {
-   
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -187,53 +171,53 @@ const FormCustomerPage: React.FC = () => {
     }
   };
 
-  const getParent = async (search?: string): Promise<void> => {
-    try {
-      if (!parentLoading) {
-        setParentMoreLoading(true);
-      } else {
-        setParentMoreLoading(false);
-      }
+  // const getParent = async (search?: string): Promise<void> => {
+  //   try {
+  //     if (!parentLoading) {
+  //       setParentMoreLoading(true);
+  //     } else {
+  //       setParentMoreLoading(false);
+  //     }
 
-      let filters: any = [];
+  //     let filters: any = [];
 
-      if (id) {
-        filters.push(["_id", "!=", id]);
-      }
+  //     if (id) {
+  //       filters.push(["_id", "!=", id]);
+  //     }
 
-      const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
-        search: search ?? "",
-        limit: 10,
-        page: `${parentPage}`,
-        filters: filters,
-      });
-      if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: any) => {
-          return {
-            name: item.name,
-            value: item._id,
-          };
-        });
-        setParentList([...parentList, ...listInput]);
-        setParentHasMore(result.hasMore);
-        setParentPage(result.nextPage);
-      }
+  //     const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
+  //       search: search ?? "",
+  //       limit: 10,
+  //       page: `${parentPage}`,
+  //       filters: filters,
+  //     });
+  //     if (result.data.length > 0) {
+  //       let listInput: IListInput[] = result.data.map((item: any) => {
+  //         return {
+  //           name: item.name,
+  //           value: item._id,
+  //         };
+  //       });
+  //       setParentList([...parentList, ...listInput]);
+  //       setParentHasMore(result.hasMore);
+  //       setParentPage(result.nextPage);
+  //     }
 
-      setParentLoading(false);
-      setParentMoreLoading(false);
-    } catch (error: any) {
-      setParentLoading(false);
-      setParentMoreLoading(false);
-      setParentHasMore(false);
-    }
-  };
+  //     setParentLoading(false);
+  //     setParentMoreLoading(false);
+  //   } catch (error: any) {
+  //     setParentLoading(false);
+  //     setParentMoreLoading(false);
+  //     setParentHasMore(false);
+  //   }
+  // };
 
-  const ResetParent = () => {
-    setParentList([]);
-    setParentHasMore(false);
-    setParentPage(1);
-    setParentLoading(true);
-  };
+  // const ResetParent = () => {
+  //   setParentList([]);
+  //   setParentHasMore(false);
+  //   setParentPage(1);
+  //   setParentLoading(true);
+  // };
 
   const getBranch = async (search?: string): Promise<void> => {
     try {
@@ -293,15 +277,15 @@ const FormCustomerPage: React.FC = () => {
     try {
       let isBranch: string[] = [];
 
-      if (nextState == undefined) {
-        if (branch.length > 0) {
-          isBranch = branch.map((item: any) => item._id);
-        } else {
-          Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
-          setLoading(false);
-          return;
-        }
-      }
+      // if (nextState == undefined) {
+      //   if (branch.length > 0) {
+      //     isBranch = branch.map((item: any) => item._id);
+      //   } else {
+      //     Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
+      //     setLoading(false);
+      //     return;
+      //   }
+      // }
 
       let data: any = {};
       if (nextState) {
@@ -309,9 +293,7 @@ const FormCustomerPage: React.FC = () => {
       } else {
         data = {
           name: name.valueData,
-          desc: desc,
           branch: isBranch,
-          parent: parent.valueData,
         };
       }
 
@@ -344,8 +326,6 @@ const FormCustomerPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      desc: desc ?? "",
-      parent: parent.valueData ?? "",
       branch: branch,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -353,7 +333,7 @@ const FormCustomerPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [name, desc, parent, branch]);
+  }, [name, parent, branch]);
   // End
 
   return (
@@ -458,12 +438,12 @@ const FormCustomerPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <label className="text-sm">Desc</label>
+                    <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
+                      name="Address"
+                      // value={desc}
+                      // onChange={(e) => setDesc(e.target.value)}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -496,7 +476,7 @@ const FormCustomerPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
+                    {/* <InputComponent
                       label="Parent"
                       value={parent}
                       infiniteScroll={{
@@ -535,7 +515,7 @@ const FormCustomerPage: React.FC = () => {
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
-                    />
+                    /> */}
 
                     <InputComponent
                       label="Branch"
@@ -551,33 +531,22 @@ const FormCustomerPage: React.FC = () => {
                       }}
                       loading={branchLoading}
                       modalStyle="mt-2"
-                      value={branchValue}
+                      value={branch}
                       onChange={(e) => {
                         ResetBranch();
                         setBranchLoading(true);
-                        setBranchValue({
-                          ...branchValue,
+                        setBranch({
+                          ...branch,
                           valueInput: e,
                         });
                       }}
                       onSelected={(e) => {
-                        const cekDup = branch.find(
-                          (item: any) => item._id === e.value
-                        );
-
-                        if (!cekDup) {
-                          let getBranch = [
-                            ...branch,
-                            { _id: e.value, name: e.name },
-                          ];
-                          setBranch(getBranch);
-                        }
-
-                        setBranchValue({ valueData: "", valueInput: "" });
+                        setBranch({ valueData: e.value, valueInput: e.name });
+                        ResetBranch();
                       }}
                       onReset={() => {
                         ResetBranch();
-                        setBranchValue({
+                        setBranch({
                           valueData: null,
                           valueInput: "",
                         });
@@ -587,27 +556,6 @@ const FormCustomerPage: React.FC = () => {
                       //   disabled={disabled}
                       className={`h-9 mb-1`}
                     />
-                    {branch.length > 0 && (
-                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
-                        {branch.map((item: any, index: number) => {
-                          return (
-                            <li
-                              onClick={() => {
-                                const genBranch = branch.filter((i: any) => {
-                                  return i._id !== item._id;
-                                });
-
-                                setBranch(genBranch);
-                              }}
-                              key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.8em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
-                            >
-                              {item.name}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
                   </div>
                 </div>
               </div>
