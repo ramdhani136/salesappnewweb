@@ -33,36 +33,32 @@ const FormContactPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const dataType: any[] = [
-    { title: "Individual", value: "Individual" },
-    { title: "Company", value: "Company" },
+    { title: "Purchasing Staff", value: "Purchasing Staff" },
+    { title: "Purchasing Manager", value: "Purchasing Manager" },
   ];
-  const [type, setType] = useState<string>("Company");
-  const browseRef = useRef<HTMLInputElement>(null);
-  const [img, setImg] = useState<any>(ProfileImg);
-  const [file, setFile] = useState<File>();
-  // branch
-  const [branchList, setBranchList] = useState<IListInput[]>([]);
-  const [branchPage, setBranchPage] = useState<Number>(1);
-  const [branchLoading, setBranchLoading] = useState<boolean>(true);
-  const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
-  const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
+  const [position, setPosition] = useState<string>("Company");
+
+  // customer
+  const [customerList, setCustomerLlist] = useState<IListInput[]>([]);
+  const [customerPage, setCustomerPage] = useState<Number>(1);
+  const [customerLoading, setCustomerLoading] = useState<boolean>(true);
+  const [customerMoreLoading, setCustomerMoreLoading] =
+    useState<boolean>(false);
+  const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
+  const [customer, setCustomer] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
   const [branch, setBranch] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  // End
 
-  // group
-  const [groupList, setGroupList] = useState<IListInput[]>([]);
-  const [groupPage, setGroupPage] = useState<Number>(1);
-  const [groupLoading, setGroupLoading] = useState<boolean>(true);
-  const [GroupMoreLoading, setGroupMoreLoading] = useState<boolean>(false);
-  const [groupHasMore, setGroupHasMore] = useState<boolean>(false);
   const [group, setGroup] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  // End
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -72,33 +68,18 @@ const FormContactPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
-  const [lat, setLat] = useState<IValue>({
+  const [phone, setPhone] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  const [lng, setLng] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [erpId, setErpId] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [address, setAddress] = useState<string>("");
 
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    type: type,
+    position: position,
     branch: branch.valueData,
     group: group.valueData,
-    img: img,
-    address: address,
-    erpId: erpId.valueData,
-    lat: lat.valueData,
-    lng: lng.valueData,
+    phone: phone.valueData,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -141,20 +122,23 @@ const FormContactPage: React.FC = () => {
         valueData: result.data.name,
         valueInput: result.data.name,
       });
-      if (result.data.erpId) {
-        setErpId({
-          valueData: result.data.erpId,
-          valueInput: result.data.erpId,
-        });
-      }
-      setAddress(result.data.address);
+
+      setPhone({
+        valueData: result.data.phone,
+        valueInput: result.data.phone,
+      });
+      // setAddress(result.data.address);
+      setCustomer({
+        valueData: result.data.customer._id,
+        valueInput: result.data.customer.name,
+      });
       setBranch({
-        valueData: result.data.branch._id,
-        valueInput: result.data.branch.name,
+        valueData: result.data.customer.branch._id,
+        valueInput: result.data.customer.branch.name,
       });
       setGroup({
-        valueData: result.data.customerGroup._id,
-        valueInput: result.data.customerGroup.name,
+        valueData: result.data.customer.customerGroup._id,
+        valueInput: result.data.customer.customerGroup.name,
       });
       setUser({
         valueData: result.data.createdBy._id,
@@ -165,44 +149,44 @@ const FormContactPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-      if (result.data.location) {
-        setLat({
-          valueData: result.data.location.coordinates[1],
-          valueInput: result.data.location.coordinates[1],
-        });
-        setLng({
-          valueData: result.data.location.coordinates[0],
-          valueInput: result.data.location.coordinates[0],
-        });
-      }
+      // if (result.data.location) {
+      //   setLat({
+      //     valueData: result.data.location.coordinates[1],
+      //     valueInput: result.data.location.coordinates[1],
+      //   });
+      //   setLng({
+      //     valueData: result.data.location.coordinates[0],
+      //     valueInput: result.data.location.coordinates[0],
+      //   });
+      // }
 
-      if (result.data.img) {
-        setImg(
-          `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
-            result.data.img
-          }`
-        );
-      }
+      // if (result.data.img) {
+      //   setImg(
+      //     `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
+      //       result.data.img
+      //     }`
+      //   );
+      // }
 
       setData(result.data);
 
-      setType(result.data.type);
+      setPosition(result.data.position);
 
-      setPrevData({
-        name: result.data.name,
-        type: result.data.type,
-        branch: result.data.branch._id,
-        group: result.data.customerGroup._id,
-        img: result.data.img
-          ? `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
-              result.data.img
-            }`
-          : ProfileImg,
-        address: result.data.address,
-        erpId: result.data.erpId ?? "",
-        lat: result.data.location ? result.data.location.coordinates[1] : "",
-        lng: result.data.location ? result.data.location.coordinates[0] : "",
-      });
+      // setPrevData({
+      //   name: result.data.name,
+      //   type: result.data.type,
+      //   branch: result.data.branch._id,
+      //   group: result.data.customerGroup._id,
+      //   img: result.data.img
+      //     ? `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
+      //         result.data.img
+      //       }`
+      //     : ProfileImg,
+      //   address: result.data.address,
+      //   erpId: result.data.erpId ?? "",
+      //   lat: result.data.location ? result.data.location.coordinates[1] : "",
+      //   lng: result.data.location ? result.data.location.coordinates[0] : "",
+      // });
 
       setStatus(
         result.data.status == "0"
@@ -253,65 +237,18 @@ const FormContactPage: React.FC = () => {
     }
   };
 
-  const getGroup = async (search?: string): Promise<void> => {
+  const getCustomer = async (search?: string): Promise<void> => {
     try {
-      if (!groupLoading) {
-        setGroupMoreLoading(true);
+      if (!customerLoading) {
+        setCustomerMoreLoading(true);
       } else {
-        setGroupMoreLoading(false);
+        setCustomerMoreLoading(false);
       }
 
-      let filters: any = [
-        ["branch._id", "=", branch.valueData],
-        ["status", "=", "1"],
-      ];
-
-      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
+      const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
         search: search ?? "",
         limit: 10,
-        page: `${groupPage}`,
-        filters: filters,
-      });
-      if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: any) => {
-          return {
-            name: item.name,
-            value: item._id,
-          };
-        });
-        setGroupList([...groupList, ...listInput]);
-        setGroupHasMore(result.hasMore);
-        setGroupPage(result.nextPage);
-      }
-
-      setGroupLoading(false);
-      setGroupMoreLoading(false);
-    } catch (error: any) {
-      setGroupLoading(false);
-      setGroupMoreLoading(false);
-      setGroupHasMore(false);
-    }
-  };
-
-  const ResetGroup = () => {
-    setGroupList([]);
-    setGroupHasMore(false);
-    setGroupPage(1);
-    setGroupLoading(true);
-  };
-
-  const getBranch = async (search?: string): Promise<void> => {
-    try {
-      if (!branchLoading) {
-        setBranchMoreLoading(true);
-      } else {
-        setBranchMoreLoading(false);
-      }
-
-      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
-        search: search ?? "",
-        limit: 10,
-        page: `${branchPage}`,
+        page: `${customerPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -321,25 +258,27 @@ const FormContactPage: React.FC = () => {
             value: item._id,
           };
         });
-        setBranchList([...branchList, ...listInput]);
-        setBranchHasMore(result.hasMore);
-        setBranchPage(result.nextPage);
+        setCustomerLlist([...customerList, ...listInput]);
+        setCustomerHasMore(result.hasMore);
+
+        setCustomerPage(result.nextPage);
       }
 
-      setBranchLoading(false);
-      setBranchHasMore(false);
+      setCustomerLoading(false);
+      setCustomerMoreLoading(false);
+      setCustomerHasMore(false);
     } catch (error: any) {
       setLoading(false);
-      setBranchMoreLoading(false);
-      setBranchHasMore(false);
+      setCustomerMoreLoading(false);
+      setCustomerHasMore(false);
     }
   };
 
-  const ResetBranch = () => {
-    setBranchList([]);
-    setBranchHasMore(false);
-    setBranchPage(1);
-    setBranchLoading(true);
+  const ResetCustomer = () => {
+    setCustomerLlist([]);
+    setCustomerHasMore(false);
+    setCustomerPage(1);
+    setCustomerLoading(true);
   };
 
   useEffect(() => {
@@ -354,43 +293,26 @@ const FormContactPage: React.FC = () => {
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
-
     try {
-      if (lat.valueData) {
-        if (!lng.valueData) {
-          throw "Please select a lng location";
-        }
-      }
-
-      const inData = new FormData();
+      let updata = {};
       if (nextState) {
-        inData.append("nextState", `${nextState}`);
-      }
-
-      file && inData.append("img", file);
-      inData.append("name", name.valueData);
-      inData.append("type", type);
-      inData.append("branch", branch.valueData);
-      inData.append("customerGroup", group.valueData);
-      inData.append("erpId", erpId.valueData);
-      inData.append("address", address);
-      if (lat.valueData) {
-        inData.append("lat", lat.valueData);
+        updata = { nextState: nextState };
       } else {
-        inData.append("unsetLocation", "true");
-      }
-
-      if (lng.valueData) {
-        inData.append("lng", lng.valueData);
+        updata = {
+          name: name.valueData,
+          position: position,
+          customer: customer.valueData,
+          phone: phone.valueData,
+        };
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.CONTACT).UPDATE({ id: id, data: inData })
-        : GetDataServer(DataAPI.CONTACT).CREATE(inData);
+        ? GetDataServer(DataAPI.CONTACT).UPDATE({ id: id, data: updata })
+        : GetDataServer(DataAPI.CONTACT).CREATE(updata);
 
       const result = await Action;
       navigate(`/contact/${result.data.data._id}`);
-      if (id && !file) {
+      if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
@@ -410,41 +332,26 @@ const FormContactPage: React.FC = () => {
         "error"
       );
     }
-    ResetBranch();
-    ResetGroup();
+    ResetCustomer();
+
     setLoading(false);
   };
   // Cek perubahan
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      type: type,
+      position: position,
       branch: branch.valueData,
       group: group.valueData,
-      img: img,
-      address: address,
-      erpId: erpId.valueData,
-      lat: lat.valueData,
-      lng: lng.valueData,
+      phone: phone.valueData,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, type, branch, group, img, address, erpId, lat, lng]);
+  }, [name, position, branch, group, phone]);
   // End
-
-  const imageHandler = (e: any) => {
-    const reader: any = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setImg(reader.result);
-      }
-    };
-    reader.readAsDataURL(e.target.files[0]);
-    setFile(e.target.files[0]);
-  };
 
   return (
     <>
@@ -540,10 +447,10 @@ const FormContactPage: React.FC = () => {
                     />
 
                     <Select
-                      title="Type"
+                      title="Position"
                       data={dataType}
-                      value={type}
-                      setValue={setType}
+                      value={position}
+                      setValue={position}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -551,40 +458,46 @@ const FormContactPage: React.FC = () => {
 
                     <InputComponent
                       mandatoy
-                      label="Branch"
+                      label="Customer"
                       infiniteScroll={{
-                        loading: branchMoreLoading,
-                        hasMore: branchHasMore,
+                        loading: customerMoreLoading,
+                        hasMore: customerHasMore,
                         next: () => {
-                          getBranch();
+                          getCustomer();
                         },
                         onSearch(e) {
-                          getBranch(e);
+                          getCustomer(e);
                         },
                       }}
-                      loading={branchLoading}
+                      loading={customerLoading}
                       modalStyle="mt-2"
-                      value={branch}
+                      value={customer}
                       onChange={(e) => {
-                        ResetBranch();
-                        setBranchLoading(true);
-                        setBranch({
+                        ResetCustomer();
+                        setCustomerLoading(true);
+                        setCustomer({
                           ...branch,
                           valueInput: e,
                         });
                       }}
                       onSelected={(e) => {
-                        setBranch({ valueData: e.value, valueInput: e.name });
+                        setCustomer({ valueData: e.value, valueInput: e.name });
                         setGroup({
                           valueData: null,
                           valueInput: "",
                         });
-                        ResetBranch();
-                        ResetGroup();
+                        setBranch({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        ResetCustomer();
                       }}
                       onReset={() => {
-                        ResetBranch();
-                        ResetGroup();
+                        ResetCustomer();
+                        setCustomer({
+                          valueData: null,
+                          valueInput: "",
+                        });
                         setBranch({
                           valueData: null,
                           valueInput: "",
@@ -594,67 +507,39 @@ const FormContactPage: React.FC = () => {
                           valueInput: "",
                         });
                       }}
-                      list={branchList}
+                      list={customerList}
                       type="text"
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
                       className={`h-9 mb-1`}
                     />
-                    {branch.valueData && (
-                      <InputComponent
-                        mandatoy
-                        label="Group"
-                        value={group}
-                        infiniteScroll={{
-                          loading: GroupMoreLoading,
-                          hasMore: groupHasMore,
-                          next: () => {
-                            getGroup();
-                          },
-                          onSearch(e) {
-                            getGroup(e);
-                          },
-                        }}
-                        loading={groupLoading}
-                        list={groupList}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) => {
-                          ResetGroup();
-
-                          setGroup({
-                            ...group,
-                            valueInput: e,
-                          });
-                        }}
-                        onSelected={(e) => {
-                          setGroup({ valueData: e.value, valueInput: e.name });
-                          ResetGroup();
-                        }}
-                        onReset={() => {
-                          ResetGroup();
-                          setGroup({
-                            valueData: null,
-                            valueInput: "",
-                          });
-                        }}
-                        modalStyle="mt-2"
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
-                      />
+                    {customer.valueData && (
+                      <>
+                        <InputComponent
+                          mandatoy
+                          label="Group"
+                          value={group}
+                          className="h-[38px]   text-[0.93em] mb-3"
+                          disabled
+                        />
+                        <InputComponent
+                          label="Branch"
+                          value={branch}
+                          className="h-[38px]  text-[0.93em] mb-3"
+                          type="text"
+                        />
+                      </>
                     )}
+                  </div>
+                  <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
-                      label="Lat"
-                      value={lat}
+                      label="Phone"
+                      value={phone}
                       className="h-[38px]  text-[0.93em] mb-3"
                       type="number"
                       onChange={(e) =>
-                        setLat({
+                        setPhone({
                           valueData: e,
                           valueInput: e,
                         })
@@ -663,47 +548,9 @@ const FormContactPage: React.FC = () => {
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                       onReset={() => {
-                        setLat({ valueData: "", valueInput: "" });
-                        setLng({ valueData: "", valueInput: "" });
+                        setPhone({ valueData: "", valueInput: "" });
                       }}
                     />
-                    {lat.valueData && (
-                      <InputComponent
-                        mandatoy
-                        label="Lng"
-                        value={lng}
-                        className="h-[38px]  text-[0.93em] mb-3"
-                        type="number"
-                        onChange={(e) =>
-                          setLng({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
-                        onReset={() => {
-                          setLng({ valueData: "", valueInput: "" });
-                        }}
-                      />
-                    )}
-                    <label className="text-sm">Address</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Address"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
                       label="Date"
                       value={createdAt}
@@ -717,24 +564,7 @@ const FormContactPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      label="ErpId"
-                      value={erpId}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setErpId({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                      onReset={() => {
-                        setErpId({ valueData: "", valueInput: "" });
-                      }}
-                    />
+
                     <InputComponent
                       label="Status"
                       value={{ valueData: status, valueInput: status }}
@@ -760,26 +590,6 @@ const FormContactPage: React.FC = () => {
                       }
                       disabled
                     />
-
-                    <img
-                      crossOrigin="anonymous"
-                      className="relative  object-contain mt-8 border shadow-sm w-[280px] h-[280px] rounded-md"
-                      src={img}
-                      alt={"pp"}
-                      onError={(e: any) => {
-                        e.target.src = ProfileImg;
-                      }}
-                    />
-                    {(!id || (id != undefined && status === "Draft")) && (
-                      <input
-                        onChange={(e) => imageHandler(e)}
-                        type="file"
-                        name="image"
-                        className="border  w-[280px] mt-1 text-sm"
-                        accept="image/*"
-                        ref={browseRef}
-                      />
-                    )}
                   </div>
                 </div>
               </div>
