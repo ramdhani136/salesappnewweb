@@ -193,7 +193,11 @@ const FormCustomerPage: React.FC = () => {
         type: result.data.type,
         branch: result.data.branch._id,
         group: result.data.customerGroup._id,
-        img: result.data.img ?? ProfileImg,
+        img: result.data.img
+          ? `${import.meta.env.VITE_PUBLIC_URI}/public/customer/${
+              result.data.img
+            }`
+          : ProfileImg,
         address: result.data.address,
         erpId: result.data.erpId ?? "",
         lat: result.data.location ? result.data.location.coordinates[1] : "",
@@ -352,6 +356,12 @@ const FormCustomerPage: React.FC = () => {
     setLoading(true);
 
     try {
+      if (lat.valueData) {
+        if (!lng.valueData) {
+          throw "Please select a lng location";
+        }
+      }
+
       const inData = new FormData();
       if (nextState) {
         inData.append("nextState", `${nextState}`);
@@ -363,6 +373,16 @@ const FormCustomerPage: React.FC = () => {
       inData.append("branch", branch.valueData);
       inData.append("customerGroup", group.valueData);
       inData.append("erpId", erpId.valueData);
+      inData.append("address", address);
+      if (lat.valueData) {
+        inData.append("lat", lat.valueData);
+      } else {
+        inData.append("unsetLocation", "true");
+      }
+
+      if (lng.valueData) {
+        inData.append("lng", lng.valueData);
+      }
 
       let Action = id
         ? GetDataServer(DataAPI.CUSTOMER).UPDATE({ id: id, data: inData })
@@ -370,18 +390,20 @@ const FormCustomerPage: React.FC = () => {
 
       const result = await Action;
       navigate(`/customer/${result.data.data._id}`);
-      if (id) {
+      if (id && !file) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(0);
       }
     } catch (error: any) {
+      setLoading(false);
       Swal.fire(
         "Error!",
         `${
-          error.response.data.msg.message ??
-          error.response.data.msg ??
+          error?.response?.data?.msg?.message ??
+          error?.response?.data?.msg ??
+          error ??
           "Error Insert"
         }`,
         "error"
@@ -629,7 +651,7 @@ const FormCustomerPage: React.FC = () => {
                       label="Lat"
                       value={lat}
                       className="h-[38px]  text-[0.93em] mb-3"
-                      type="text"
+                      type="number"
                       onChange={(e) =>
                         setLat({
                           valueData: e,
@@ -641,26 +663,34 @@ const FormCustomerPage: React.FC = () => {
                       }
                       onReset={() => {
                         setLat({ valueData: "", valueInput: "" });
-                      }}
-                    />
-                    <InputComponent
-                      label="Lng"
-                      value={lng}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setLng({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                      onReset={() => {
                         setLng({ valueData: "", valueInput: "" });
                       }}
                     />
+                    {lat.valueData && (
+                      <InputComponent
+                        mandatoy
+                        label="Lng"
+                        value={lng}
+                        className="h-[38px]  text-[0.93em] mb-3"
+                        type="number"
+                        onChange={(e) =>
+                          setLng({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        onReset={() => {
+                          setLng({ valueData: "", valueInput: "" });
+                        }}
+                      />
+                    )}
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
