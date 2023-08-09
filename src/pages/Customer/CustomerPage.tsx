@@ -24,7 +24,7 @@ export const CustomerPage: React.FC = (): any => {
   const [page, setPage] = useState<String>("1");
   const [refresh, setRefresh] = useState<boolean>(false);
   const [sort, setSort] = useState<any[]>([]);
-  const [isSort, setIsort] = useState<string>("createdAt");
+  const [isSort, setIsort] = useState<string>("updatedAt");
   const [isOrderBy, setOrderBy] = useState<number>(-1);
   const [limit, setLimit] = useState<number>(20);
   const [listFilter, setListFilter] = useState<IDataFilter[]>([]);

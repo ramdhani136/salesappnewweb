@@ -218,7 +218,7 @@ const FormCustomerPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      // navigate("/customer");
+      navigate("/customer");
     }
   };
 
@@ -352,25 +352,16 @@ const FormCustomerPage: React.FC = () => {
     setLoading(true);
 
     try {
-      let isBranch: string[] = [];
-
-      // if (nextState == undefined) {
-      //   if (branch.length > 0) {
-      //     isBranch = branch.map((item: any) => item._id);
-      //   } else {
-      //     Swal.fire("Error!", "Branch wajib diisi minimal satu!", "error");
-      //     setLoading(false);
-      //     return;
-      //   }
-      // }
-
       let data: any = {};
       if (nextState) {
         data = { nextState: nextState };
       } else {
         data = {
           name: name.valueData,
-          branch: isBranch,
+          type: type,
+          branch: branch.valueData,
+          customerGroup: group.valueData,
+          erpId: erpId.valueData,
         };
       }
 
@@ -397,6 +388,8 @@ const FormCustomerPage: React.FC = () => {
         "error"
       );
     }
+    ResetBranch();
+    ResetGroup();
     setLoading(false);
   };
   // Cek perubahan
@@ -560,15 +553,16 @@ const FormCustomerPage: React.FC = () => {
                       }}
                       onSelected={(e) => {
                         setBranch({ valueData: e.value, valueInput: e.name });
-                        ResetBranch();
-                        ResetGroup();
                         setGroup({
                           valueData: null,
                           valueInput: "",
                         });
+                        ResetBranch();
+                        ResetGroup();
                       }}
                       onReset={() => {
                         ResetBranch();
+                        ResetGroup();
                         setBranch({
                           valueData: null,
                           valueInput: "",
@@ -577,7 +571,6 @@ const FormCustomerPage: React.FC = () => {
                           valueData: null,
                           valueInput: "",
                         });
-                        ResetGroup();
                       }}
                       list={branchList}
                       type="text"
