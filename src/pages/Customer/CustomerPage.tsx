@@ -66,7 +66,6 @@ export const CustomerPage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
-        console.log(result.data);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,

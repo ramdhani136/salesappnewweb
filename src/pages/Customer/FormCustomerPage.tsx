@@ -123,12 +123,6 @@ const FormCustomerPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-      if (result.data.parent.name) {
-        setParent({
-          valueData: result.data.parent._id,
-          valueInput: result.data.parent.name,
-        });
-      }
 
       if (result.data.branch.length > 0) {
         setBranch(result.data.branch);
@@ -139,13 +133,10 @@ const FormCustomerPage: React.FC = () => {
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
-        parent: result.data.parent._id ?? "",
         branch: result.data.branch,
       });
 
-      if (result.data.desc) {
-        setDesc(result.data.desc);
-      }
+
       setStatus(
         result.data.status == "0"
           ? "Draft"
@@ -157,6 +148,7 @@ const FormCustomerPage: React.FC = () => {
       );
       setLoading(false);
     } catch (error: any) {
+   
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -164,7 +156,7 @@ const FormCustomerPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/customer");
+      // navigate("/customer");
     }
   };
 
