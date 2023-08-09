@@ -519,6 +519,9 @@ const FormCustomerPage: React.FC = () => {
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
+                      onReset={() => {
+                        setName({ valueData: "", valueInput: "" });
+                      }}
                     />
 
                     <Select
@@ -644,6 +647,9 @@ const FormCustomerPage: React.FC = () => {
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
+                      onReset={() => {
+                        setLat({ valueData: "", valueInput: "" });
+                      }}
                     />
                     <InputComponent
                       label="Lng"
@@ -659,6 +665,9 @@ const FormCustomerPage: React.FC = () => {
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
+                      onReset={() => {
+                        setLng({ valueData: "", valueInput: "" });
+                      }}
                     />
                     <label className="text-sm">Address</label>
                     <textarea
@@ -699,6 +708,9 @@ const FormCustomerPage: React.FC = () => {
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
+                      onReset={() => {
+                        setErpId({ valueData: "", valueInput: "" });
+                      }}
                     />
                     <InputComponent
                       label="Status"

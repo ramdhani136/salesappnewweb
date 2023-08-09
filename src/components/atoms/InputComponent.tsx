@@ -163,7 +163,7 @@ const InputComponent: React.FC<IProps> = ({
                 onReset();
               }
             }}
-            className={` right-1 top-[12px] absolute text-gray-300 ${closeIconClass} `}
+            className={` right-2 top-[12px] absolute text-gray-300 ${closeIconClass} `}
             style={{ fontSize: 14 }}
           />
         )}
