@@ -528,9 +528,9 @@ const FormCustomerPage: React.FC = () => {
                           });
                         }}
                         modalStyle="mt-2"
-                        disabled={
-                          id != null ? (status !== "Draft" ? true : false) : false
-                        }
+                        // disabled={
+                        //   id != null ? (status !== "Draft" ? true : false) : false
+                        // }
                       />
                     )}
                     <label className="text-sm">Address</label>
