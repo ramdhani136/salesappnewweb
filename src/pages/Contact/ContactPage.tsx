@@ -46,10 +46,9 @@ export const ContactPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
+      { header: "Status", accessor: "workflowState" },
       { header: "Position", accessor: "position" },
       { header: "Customer", accessor: "customer" },
-      { header: "Status", accessor: "workflowState" },
-      { header: "Group", accessor: "group" },
       { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
@@ -79,7 +78,6 @@ export const ContactPage: React.FC = (): any => {
             customer: <div>{item.customer.name}</div>,
             position: <div>{item.position}</div>,
             user: <div>{item.createdBy.name}</div>,
-            group: <div>{item.customer.customerGroup.name}</div>,
             branch: <div>{item.customer.branch.name}</div>,
 
             workflowState: (
