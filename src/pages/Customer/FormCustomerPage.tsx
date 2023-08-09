@@ -370,12 +370,8 @@ const FormCustomerPage: React.FC = () => {
       file && inData.append("img", file);
       inData.append("name", name.valueData);
       inData.append("type", type);
-      if (branch.valueData) {
-        inData.append("branch", branch.valueData);
-      }
-      if (group.valueData) {
-        inData.append("customerGroup", group.valueData);
-      }
+      inData.append("branch", branch.valueData);
+      inData.append("customerGroup", group.valueData);
       inData.append("erpId", erpId.valueData);
       inData.append("address", address);
       if (lat.valueData) {
