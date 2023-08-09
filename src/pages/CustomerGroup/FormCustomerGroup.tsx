@@ -203,7 +203,7 @@ const FormCustomerGroupPage: React.FC = () => {
         setParentMoreLoading(false);
       }
 
-      let filters: any = [];
+      let filters: any = [["status", "=", "1"]];
 
       if (id) {
         filters.push(["_id", "!=", id]);

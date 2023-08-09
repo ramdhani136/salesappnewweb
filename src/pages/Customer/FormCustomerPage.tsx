@@ -194,11 +194,10 @@ const FormCustomerPage: React.FC = () => {
         setGroupMoreLoading(false);
       }
 
-      let filters: any = [];
-
-      if (id) {
-        filters.push(["_id", "!=", id]);
-      }
+      let filters: any = [
+        ["branch._id", "=", branch.valueData],
+        ["status", "=", "1"],
+      ];
 
       const result: any = await GetDataServer(DataAPI.GROUP).FIND({
         search: search ?? "",
@@ -467,6 +466,11 @@ const FormCustomerPage: React.FC = () => {
                       onSelected={(e) => {
                         setBranch({ valueData: e.value, valueInput: e.name });
                         ResetBranch();
+                        ResetGroup();
+                        setGroup({
+                          valueData: null,
+                          valueInput: "",
+                        });
                       }}
                       onReset={() => {
                         ResetBranch();
@@ -474,52 +478,59 @@ const FormCustomerPage: React.FC = () => {
                           valueData: null,
                           valueInput: "",
                         });
+                        setGroup({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        ResetGroup();
                       }}
                       list={branchList}
                       type="text"
                       //   disabled={disabled}
                       className={`h-9 mb-1`}
                     />
-                    <InputComponent
-                      label="Group"
-                      value={group}
-                      infiniteScroll={{
-                        loading: GroupMoreLoading,
-                        hasMore: groupHasMore,
-                        next: () => {
-                          getGroup();
-                        },
-                        onSearch(e) {
-                          getGroup(e);
-                        },
-                      }}
-                      loading={groupLoading}
-                      list={groupList}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) => {
-                        ResetGroup();
+                    {branch.valueData && (
+                      <InputComponent
+                        label="Group"
+                        value={group}
+                        infiniteScroll={{
+                          loading: GroupMoreLoading,
+                          hasMore: groupHasMore,
+                          next: () => {
+                            getGroup();
+                          },
+                          onSearch(e) {
+                            getGroup(e);
+                          },
+                        }}
+                        loading={groupLoading}
+                        list={groupList}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) => {
+                          ResetGroup();
 
-                        setGroup({
-                          ...group,
-                          valueInput: e,
-                        });
-                      }}
-                      onSelected={(e) => {
-                        setGroup({ valueData: e.value, valueInput: e.name });
-                        ResetGroup();
-                      }}
-                      onReset={() => {
-                        ResetGroup();
-                        setGroup({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                      }}
-                      modalStyle="mt-2"
-                      // disabled={
-                      //   id != null ? (status !== "Draft" ? true : false) : false
-                      // }
-                    />
+                          setGroup({
+                            ...group,
+                            valueInput: e,
+                          });
+                        }}
+                        onSelected={(e) => {
+                          setGroup({ valueData: e.value, valueInput: e.name });
+                          ResetGroup();
+                        }}
+                        onReset={() => {
+                          ResetGroup();
+                          setGroup({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                        }}
+                        modalStyle="mt-2"
+                        // disabled={
+                        //   id != null ? (status !== "Draft" ? true : false) : false
+                        // }
+                      />
+                    )}
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
