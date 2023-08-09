@@ -352,22 +352,21 @@ const FormCustomerPage: React.FC = () => {
     setLoading(true);
 
     try {
-      let data: any = {};
+      const inData = new FormData();
       if (nextState) {
-        data = { nextState: nextState };
-      } else {
-        data = {
-          name: name.valueData,
-          type: type,
-          branch: branch.valueData,
-          customerGroup: group.valueData,
-          erpId: erpId.valueData,
-        };
+        inData.append("nextState", `${nextState}`);
       }
 
+      file && inData.append("img", file);
+      inData.append("name", name.valueData);
+      inData.append("type", type);
+      inData.append("branch", branch.valueData);
+      inData.append("customerGroup", group.valueData);
+      inData.append("erpId", erpId.valueData);
+
       let Action = id
-        ? GetDataServer(DataAPI.CUSTOMER).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.CUSTOMER).CREATE(data);
+        ? GetDataServer(DataAPI.CUSTOMER).UPDATE({ id: id, data: inData })
+        : GetDataServer(DataAPI.CUSTOMER).CREATE(inData);
 
       const result = await Action;
       navigate(`/customer/${result.data.data._id}`);
