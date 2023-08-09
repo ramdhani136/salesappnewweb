@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ProfileImg from "../../assets/images/iconuser.jpg";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -36,7 +37,9 @@ const FormCustomerPage: React.FC = () => {
     { title: "Company", value: "Company" },
   ];
   const [type, setType] = useState<string>("Company");
-
+  const browseRef = useRef<HTMLInputElement>(null);
+  const [img, setImg] = useState<any>(ProfileImg);
+  const [file, setFile] = useState<File>();
   // branch
   const [branchList, setBranchList] = useState<IListInput[]>([]);
   const [branchPage, setBranchPage] = useState<Number>(1);
@@ -66,6 +69,14 @@ const FormCustomerPage: React.FC = () => {
     valueInput: LocalStorage.getUser().name,
   });
   const [name, setName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [lat, setLat] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [lng, setLng] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -146,6 +157,25 @@ const FormCustomerPage: React.FC = () => {
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
+
+      if (result.data.location) {
+        setLat({
+          valueData: result.data.location.coordinates[1],
+          valueInput: result.data.location.coordinates[1],
+        });
+        setLng({
+          valueData: result.data.location.coordinates[0],
+          valueInput: result.data.location.coordinates[0],
+        });
+      }
+
+      if (result.data.img) {
+        setImg(
+          `${import.meta.env.VITE_PUBLIC_URI}/public/customer/${
+            result.data.img
+          }`
+        );
+      }
 
       setData(result.data);
 
@@ -369,6 +399,18 @@ const FormCustomerPage: React.FC = () => {
   }, [name, branch]);
   // End
 
+  const imageHandler = (e: any) => {
+    const reader: any = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImg(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+    setFile(e.target.files[0]);
+  };
+
+
   return (
     <>
       {Meta(metaData)}
@@ -516,7 +558,9 @@ const FormCustomerPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      //   disabled={disabled}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                       className={`h-9 mb-1`}
                     />
                     {branch.valueData && (
@@ -557,11 +601,45 @@ const FormCustomerPage: React.FC = () => {
                           });
                         }}
                         modalStyle="mt-2"
-                        // disabled={
-                        //   id != null ? (status !== "Draft" ? true : false) : false
-                        // }
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
                       />
                     )}
+                    <InputComponent
+                      label="Lat"
+                      value={lat}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="text"
+                      onChange={(e) =>
+                        setLat({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                    />
+                    <InputComponent
+                      label="Lng"
+                      value={lng}
+                      className="h-[38px]  text-[0.93em] mb-3"
+                      type="text"
+                      onChange={(e) =>
+                        setLng({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                    />
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
@@ -627,6 +705,26 @@ const FormCustomerPage: React.FC = () => {
                       }
                       disabled
                     />
+
+                    <img
+                      crossOrigin="anonymous"
+                      className="relative  object-contain mt-8 border shadow-sm w-[280px] h-[280px] rounded-md"
+                      src={img}
+                      alt={"pp"}
+                      onError={(e: any) => {
+                        e.target.src = ProfileImg;
+                      }}
+                    />
+                    {(!id || (id!=undefined && status === "Draft")) && (
+                      <input
+                        onChange={(e) => imageHandler(e)}
+                        type="file"
+                        name="image"
+                        className="border  w-[280px] mt-1 text-sm"
+                        accept="image/*"
+                        ref={browseRef}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
