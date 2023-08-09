@@ -130,8 +130,6 @@ const FormCustomerPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-    
-
       setData(result.data);
 
       setPrevData({
@@ -482,6 +480,46 @@ const FormCustomerPage: React.FC = () => {
                       //   disabled={disabled}
                       className={`h-9 mb-1`}
                     />
+                    <InputComponent
+                      label="Group"
+                      value={group}
+                      infiniteScroll={{
+                        loading: GroupMoreLoading,
+                        hasMore: groupHasMore,
+                        next: () => {
+                          getGroup();
+                        },
+                        onSearch(e) {
+                          getGroup(e);
+                        },
+                      }}
+                      loading={groupLoading}
+                      list={groupList}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) => {
+                        ResetGroup();
+
+                        setGroup({
+                          ...group,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setGroup({ valueData: e.value, valueInput: e.name });
+                        ResetGroup();
+                      }}
+                      onReset={() => {
+                        ResetGroup();
+                        setGroup({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      modalStyle="mt-2"
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
+                    />
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-100  w-full rounded-md h-[150px]"
@@ -531,46 +569,6 @@ const FormCustomerPage: React.FC = () => {
                         })
                       }
                       disabled
-                    />
-                    <InputComponent
-                      label="Group"
-                      value={group}
-                      infiniteScroll={{
-                        loading: GroupMoreLoading,
-                        hasMore: groupHasMore,
-                        next: () => {
-                          getGroup();
-                        },
-                        onSearch(e) {
-                          getGroup(e);
-                        },
-                      }}
-                      loading={groupLoading}
-                      list={groupList}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) => {
-                        ResetGroup();
-
-                        setGroup({
-                          ...group,
-                          valueInput: e,
-                        });
-                      }}
-                      onSelected={(e) => {
-                        setGroup({ valueData: e.value, valueInput: e.name });
-                        ResetGroup();
-                      }}
-                      onReset={() => {
-                        ResetGroup();
-                        setGroup({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                      }}
-                      modalStyle="mt-2"
-                      // disabled={
-                      //   id != null ? (status !== "Draft" ? true : false) : false
-                      // }
                     />
                   </div>
                 </div>
