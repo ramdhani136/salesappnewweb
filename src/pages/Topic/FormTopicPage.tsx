@@ -32,10 +32,10 @@ const FormTopicPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const dataType: any[] = [
-    { title: "Enabled", value: 1 },
-    { title: "Disabled", value: 0 },
+    { title: "Enabled", value: "1" },
+    { title: "Disabled", value: "0" },
   ];
-  const [allowTaggingItem, setAllowTaggingItem] = useState<number>(1);
+  const [allowTaggingItem, setAllowTaggingItem] = useState<String>("1");
 
   // Tags Restrict
   const [tagList, setTagList] = useState<IListInput[]>([]);
@@ -77,6 +77,9 @@ const FormTopicPage: React.FC = () => {
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
+    allowTaggingItem: allowTaggingItem,
+    tagRestrict: tagRestrict,
+    tagMandatory: tagMandatory,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -131,10 +134,20 @@ const FormTopicPage: React.FC = () => {
 
       setData(result.data);
 
-      setAllowTaggingItem(result.data.allowTaggingItem);
+      if (result.data.tags.restrict) {
+        setTageRestrict(result.data.tags.restrict);
+      }
+      if (result.data.tags.mandatory) {
+        setTagMandatory(result.data.tags.mandatory);
+      }
+
+      setAllowTaggingItem(`${result.data.tags.allowTaggingItem}`);
 
       setPrevData({
         name: result.data.name,
+        allowTaggingItem: `${result.data.tags.allowTaggingItem}`,
+        tagRestrict: result.data.tags.restrict,
+        tagMandatory: result.data.tags.mandatory,
       });
 
       setStatus(
@@ -293,6 +306,11 @@ const FormTopicPage: React.FC = () => {
       } else {
         updata = {
           name: name.valueData,
+          tags: {
+            mandatory: tagMandatory.map((item: any) => item._id),
+            restrict: tagRestrict.map((item: any) => item._id),
+            allowTaggingItem: allowTaggingItem,
+          },
         };
       }
 
@@ -329,7 +347,11 @@ const FormTopicPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
+      allowTaggingItem: allowTaggingItem,
+      tagRestrict: tagRestrict,
+      tagMandatory: tagMandatory,
     };
+
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
@@ -337,7 +359,7 @@ const FormTopicPage: React.FC = () => {
     }
   }, [name, tagMandatory, tagRestrict, allowTaggingItem]);
   // End
-
+  
   return (
     <>
       {Meta(metaData)}
