@@ -148,16 +148,25 @@ const SettingPage: React.FC = () => {
         setCallsheetTags(callsheet.tagsMandatory);
       }
 
+      if (visit.topicMandatory.length > 0) {
+        setVisitTopic(visit.topicMandatory);
+      }
+      if (callsheet.topicMandatory.length > 0) {
+        setCallsheetTopic(callsheet.topicMandatory);
+      }
+
       setPrevData({
         visit: {
           checkInDistance: visit.checkInDistance,
           checkOutDistance: visit.checkOutDistance ?? 0,
           notesLength: visit.notesLength ?? 0,
           tagsMandatory: visit.tagsMandatory,
+          topicMandatory: visit.topicMandatory,
         },
         callsheet: {
           notesLength: callsheet.notesLength,
           tagsMandatory: callsheet.tagsMandatory,
+          topicMandatory: callsheet.topicMandatory,
         },
         customer: {
           locationDistance: customer.locationDistance ?? 0,
@@ -269,10 +278,12 @@ const SettingPage: React.FC = () => {
         checkOutDistance: visitCheckOut.valueData,
         notesLength: visitNoteLength.valueData,
         tagsMandatory: visitTags,
+        topicMandatory: visitTopic,
       },
       callsheet: {
         notesLength: callsheetNoteLength.valueData,
         tagsMandatory: callsheetTags,
+        topicMandatory: callsheetTopic,
       },
       customer: {
         locationDistance: locationDistance.valueData,
@@ -292,6 +303,8 @@ const SettingPage: React.FC = () => {
     callsheetNoteLength,
     callsheetTags,
     locationDistance,
+    visitTopic,
+    callsheetTopic,
   ]);
 
   const getVisitTopic = async (search?: string): Promise<void> => {
@@ -387,10 +400,12 @@ const SettingPage: React.FC = () => {
           checkOutDistance: visitCheckOut.valueData,
           notesLength: visitNoteLength.valueData,
           tagsMandatory: visitTags,
+          topicMandatory: visitTopic.map((item: any) => item._id),
         },
         callsheet: {
           notesLength: callsheetNoteLength.valueData,
           tagsMandatory: callsheetTags,
+          topicMandatory: callsheetTopic.map((item: any) => item._id),
         },
         customer: {
           locationDistance: locationDistance.valueData,
@@ -739,8 +754,8 @@ const SettingPage: React.FC = () => {
                             })}
                           </ul>
                         )}
-                         {/* Topic */}
-                         <InputComponent
+                        {/* Topic */}
+                        <InputComponent
                           label="Topic (Mandatory)"
                           infiniteScroll={{
                             loading: callsheetTopicMoreLoading,
