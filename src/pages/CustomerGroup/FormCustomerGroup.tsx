@@ -195,14 +195,15 @@ const FormCustomerGroupPage: React.FC = () => {
     }
   };
 
-  const getParent = async (search?: string): Promise<void> => {
-    try {
-      if (!parentLoading) {
-        setParentMoreLoading(true);
-      } else {
-        setParentMoreLoading(false);
-      }
+  const getParent = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    if (data.refresh === undefined) {
+      data.refresh = true;
+    }
 
+    try {
       let filters: any = [["status", "=", "1"]];
 
       if (id) {
@@ -210,9 +211,9 @@ const FormCustomerGroupPage: React.FC = () => {
       }
 
       const result: any = await GetDataServer(DataAPI.GROUP).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${parentPage}`,
+        page: `${data.refresh ? 1 : parentPage}`,
         filters: filters,
       });
       if (result.data.length > 0) {
@@ -222,7 +223,11 @@ const FormCustomerGroupPage: React.FC = () => {
             value: item._id,
           };
         });
-        setParentList([...parentList, ...listInput]);
+        if (!data.refresh) {
+          setParentList([...parentList, ...listInput]);
+        } else {
+          setParentList([...listInput]);
+        }
         setParentHasMore(result.hasMore);
         setParentPage(result.nextPage);
       }
@@ -243,18 +248,18 @@ const FormCustomerGroupPage: React.FC = () => {
     setParentLoading(true);
   };
 
-  const getBranch = async (search?: string): Promise<void> => {
+  const getBranch = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    if (data.refresh === undefined) {
+      data.refresh = true;
+    }
     try {
-      if (!branchLoading) {
-        setBranchMoreLoading(true);
-      } else {
-        setBranchMoreLoading(false);
-      }
-
       const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${branchPage}`,
+        page: `${data.refresh ? 1 : branchPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -264,13 +269,17 @@ const FormCustomerGroupPage: React.FC = () => {
             value: item._id,
           };
         });
-        setBranchList([...branchList, ...listInput]);
+        if (!data.refresh) {
+          setBranchList([...branchList, ...listInput]);
+        } else {
+          setBranchList([...listInput]);
+        }
         setBranchHasMore(result.hasMore);
         setBranchPage(result.nextPage);
       }
 
       setBranchLoading(false);
-      setBranchMoreLoading(false);
+      setBranchHasMore(false);
     } catch (error: any) {
       setLoading(false);
       setBranchMoreLoading(false);
@@ -511,18 +520,25 @@ const FormCustomerGroupPage: React.FC = () => {
                         loading: parentMoreLoading,
                         hasMore: parentHasmore,
                         next: () => {
-                          getParent();
+                          setParentMoreLoading(true);
+                          getParent({
+                            refresh: false,
+                            search: parent.valueInput,
+                          });
                         },
                         onSearch(e) {
-                          getParent(e);
+                          ResetParent();
+                          getParent({ refresh: true, search: e });
                         },
+                      }}
+                      onCLick={() => {
+                        ResetParent();
+                        getParent({ refresh: true, search: parent.valueInput });
                       }}
                       loading={parentLoading}
                       list={parentList}
                       className="h-[38px]   text-[0.93em] mb-3"
                       onChange={(e) => {
-                        ResetParent();
-                        setParentLoading(true);
                         setParent({
                           ...parent,
                           valueInput: e,
@@ -530,10 +546,8 @@ const FormCustomerGroupPage: React.FC = () => {
                       }}
                       onSelected={(e) => {
                         setParent({ valueData: e.value, valueInput: e.name });
-                        ResetParent();
                       }}
                       onReset={() => {
-                        ResetParent();
                         setParent({
                           valueData: null,
                           valueInput: "",
@@ -551,18 +565,23 @@ const FormCustomerGroupPage: React.FC = () => {
                         loading: branchMoreLoading,
                         hasMore: branchHasMore,
                         next: () => {
-                          getBranch();
+                          getBranch({
+                            refresh: false,
+                            search: branchValue.valueInput,
+                          });
                         },
                         onSearch(e) {
-                          getBranch(e);
+                          ResetBranch();
+                          getBranch({
+                            refresh: true,
+                            search: branchValue.valueInput,
+                          });
                         },
                       }}
                       loading={branchLoading}
                       modalStyle="mt-2"
                       value={branchValue}
                       onChange={(e) => {
-                        ResetBranch();
-                        setBranchLoading(true);
                         setBranchValue({
                           ...branchValue,
                           valueInput: e,
@@ -584,7 +603,6 @@ const FormCustomerGroupPage: React.FC = () => {
                         setBranchValue({ valueData: "", valueInput: "" });
                       }}
                       onReset={() => {
-                        ResetBranch();
                         setBranchValue({
                           valueData: null,
                           valueInput: "",

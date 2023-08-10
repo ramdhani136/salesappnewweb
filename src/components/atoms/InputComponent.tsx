@@ -110,7 +110,7 @@ const InputComponent: React.FC<IProps> = ({
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         infiniteScroll.onSearch(value.valueInput);
-      }, 500);
+      }, 300);
 
       return () => {
         clearTimeout(timeoutId);
@@ -125,7 +125,7 @@ const InputComponent: React.FC<IProps> = ({
         </label>
       )}
       <div
-        onClick={onCLick}
+        // onClick={onCLick}
         className={`mt-1 w-full rounded-md h-8 bg-gray-50  relative ${
           mandatoy && !value.valueData && "border-red-500 border"
         } ${className}`}
@@ -137,7 +137,12 @@ const InputComponent: React.FC<IProps> = ({
           type={type ?? "text"}
           placeholder={placeholder}
           disabled={disabled}
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+           if(onCLick){
+            onCLick();
+           }
+            setOpen(!open)
+          }}
           onChange={(e) => {
             if (onChange) {
               onChange(e.target.value);
@@ -163,7 +168,7 @@ const InputComponent: React.FC<IProps> = ({
                 onReset();
               }
             }}
-            className={` right-2 top-[12px] absolute text-gray-300 ${closeIconClass} `}
+            className={` right-2 top-[12px] absolute z-50 text-gray-300 ${closeIconClass} `}
             style={{ fontSize: 14 }}
           />
         )}
