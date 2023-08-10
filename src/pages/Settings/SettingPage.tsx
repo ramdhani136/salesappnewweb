@@ -380,7 +380,7 @@ const SettingPage: React.FC = () => {
                           onSelected={(e) => {
                             const cekDup = visitTags.find(
                               (item: any) => item._id === e.value
-                            );
+                            ); 
 
                             if (!cekDup) {
                               let setTag = [
