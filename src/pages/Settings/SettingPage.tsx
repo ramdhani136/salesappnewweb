@@ -26,10 +26,20 @@ const SettingPage: React.FC = () => {
 
   const [scroll, setScroll] = useState<number>(0);
 
-  const [tags, setTags] = useState<IListInput[]>([]);
-  const [tagPage, setTagPage] = useState<Number>(1);
-  const [tagLoading, setTagLoading] = useState<boolean>(true);
-  const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
+  // Tagvisit
+  const [vTags, setVTags] = useState<IListInput[]>([]);
+  const [vTagPage, setVTagPage] = useState<Number>(1);
+  const [vTagLoading, setVTagLoading] = useState<boolean>(true);
+  const [vTagMoreLoading, setVTagMoreLoading] = useState<boolean>(false);
+  const [vTagHasmore, setVTagHasmore] = useState<boolean>(false);
+
+  // TagCallsheet
+  const [cTags, setCTags] = useState<IListInput[]>([]);
+  const [cTagPage, setCTagPage] = useState<Number>(1);
+  const [cTagLoading, setCTagLoading] = useState<boolean>(true);
+  const [cTagMoreLoading, setCTagMoreLoading] = useState<boolean>(false);
+  const [cTagHasmore, setCTagHasmore] = useState<boolean>(false);
+
   const [prevData, setPrevData] = useState<any>({});
   const [visitCheckIn, setVisitCheckIn] = useState<IValue>({
     valueData: 0,
@@ -54,7 +64,7 @@ const SettingPage: React.FC = () => {
 
   const [visitTags, setVisitTags] = useState<any[]>([]);
   const [callsheetTags, setCallsheetTags] = useState<any[]>([]);
-  const [tagHasmore, setTagHasmore] = useState<boolean>(false);
+
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const [visitTagValue, setVisitTagValue] = useState<IValue>({
@@ -132,18 +142,18 @@ const SettingPage: React.FC = () => {
     setLoading(false);
   };
 
-  const getTags = async (search?: string): Promise<void> => {
+  const getVTags = async (search?: string): Promise<void> => {
     try {
-      if (!tagLoading) {
-        setTagMoreLoading(true);
+      if (!vTagLoading) {
+        setVTagMoreLoading(true);
       } else {
-        setTagMoreLoading(false);
+        setVTagMoreLoading(false);
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
         search: search ?? "",
         limit: 10,
-        page: `${tagPage}`,
+        page: `${vTagPage}`,
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -152,25 +162,66 @@ const SettingPage: React.FC = () => {
             value: item._id,
           };
         });
-        setTags([...tags, ...listInput]);
-        setTagHasmore(result.hasMore);
-        setTagPage(result.nextPage);
+        setVTags([...vTags, ...listInput]);
+        setVTagHasmore(result.hasMore);
+        setVTagPage(result.nextPage);
       }
 
-      setTagLoading(false);
-      setTagMoreLoading(false);
+      setVTagLoading(false);
+      setVTagMoreLoading(false);
     } catch (error: any) {
-      setTagLoading(false);
-      setTagMoreLoading(false);
-      setTagHasmore(false);
+      setVTagLoading(false);
+      setVTagMoreLoading(false);
+      setVTagHasmore(false);
     }
   };
 
-  const ResetTags = () => {
-    setTags([]);
-    setTagHasmore(false);
-    setTagPage(1);
-    setTagLoading(true);
+  const ResetVTags = () => {
+    setVTags([]);
+    setVTagHasmore(false);
+    setVTagPage(1);
+    setVTagLoading(true);
+  };
+
+  const getCTags = async (search?: string): Promise<void> => {
+    try {
+      if (!cTagLoading) {
+        setCTagMoreLoading(true);
+      } else {
+        setCTagMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${cTagPage}`,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setCTags([...cTags, ...listInput]);
+        setCTagHasmore(result.hasMore);
+        setCTagPage(result.nextPage);
+      }
+
+      setCTagLoading(false);
+      setCTagMoreLoading(false);
+    } catch (error: any) {
+      setCTagLoading(false);
+      setCTagMoreLoading(false);
+      setCTagHasmore(false);
+    }
+  };
+
+  const ResetCTags = () => {
+    setCTags([]);
+    setCTagHasmore(false);
+    setCTagPage(1);
+    setCTagLoading(true);
   };
 
   useEffect(() => {
@@ -304,24 +355,23 @@ const SettingPage: React.FC = () => {
                         />
 
                         <InputComponent
-   
                           label="Mandatory Tags"
                           infiniteScroll={{
-                            loading: tagMoreLoading,
-                            hasMore: tagHasmore,
+                            loading: vTagMoreLoading,
+                            hasMore: vTagHasmore,
                             next: () => {
-                              getTags();
+                              getVTags();
                             },
                             onSearch(e) {
-                              getTags(e);
+                              getVTags(e);
                             },
                           }}
-                          loading={tagLoading}
+                          loading={vTagLoading}
                           modalStyle="mt-2"
                           value={visitTagValue}
                           onChange={(e) => {
-                            ResetTags();
-                            setTagLoading(true);
+                            ResetVTags();
+                            setVTagLoading(true);
                             setVisitTagValue({
                               ...visitTagValue,
                               valueInput: e,
@@ -343,13 +393,13 @@ const SettingPage: React.FC = () => {
                             setVisitTagValue({ valueData: "", valueInput: "" });
                           }}
                           onReset={() => {
-                            ResetTags();
+                            ResetVTags();
                             setVisitTagValue({
                               valueData: null,
                               valueInput: "",
                             });
                           }}
-                          list={tags}
+                          list={vTags}
                           type="text"
                           //   disabled={disabled}
                           className={`h-9 mb-1`}
@@ -416,21 +466,21 @@ const SettingPage: React.FC = () => {
                         <InputComponent
                           label="Mandatory Tags"
                           infiniteScroll={{
-                            loading: tagMoreLoading,
-                            hasMore: tagHasmore,
+                            loading: cTagMoreLoading,
+                            hasMore: cTagHasmore,
                             next: () => {
-                              getTags();
+                              getCTags();
                             },
                             onSearch(e) {
-                              getTags(e);
+                              getCTags(e);
                             },
                           }}
-                          loading={tagLoading}
+                          loading={cTagLoading}
                           modalStyle="mt-2"
                           value={callsheetTagValue}
                           onChange={(e) => {
-                            ResetTags();
-                            setTagLoading(true);
+                            ResetCTags();
+                            setCTagLoading(true);
                             setCallsheetTagValue({
                               ...callsheetTagValue,
                               valueInput: e,
@@ -455,13 +505,13 @@ const SettingPage: React.FC = () => {
                             });
                           }}
                           onReset={() => {
-                            ResetTags();
+                            ResetCTags();
                             setCallsheetTagValue({
                               valueData: null,
                               valueInput: "",
                             });
                           }}
-                          list={tags}
+                          list={cTags}
                           type="text"
                           //   disabled={disabled}
                           className={`h-9 mb-1`}
