@@ -77,8 +77,7 @@ const FormContactPage: React.FC = () => {
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
     position: position,
-    branch: branch.valueData,
-    group: group.valueData,
+    customer: customer.valueData,
     phone: phone.valueData,
   });
 
@@ -127,7 +126,7 @@ const FormContactPage: React.FC = () => {
         valueData: result.data.phone,
         valueInput: result.data.phone,
       });
-      // setAddress(result.data.address);
+
       setCustomer({
         valueData: result.data.customer._id,
         valueInput: result.data.customer.name,
@@ -149,44 +148,16 @@ const FormContactPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
-      // if (result.data.location) {
-      //   setLat({
-      //     valueData: result.data.location.coordinates[1],
-      //     valueInput: result.data.location.coordinates[1],
-      //   });
-      //   setLng({
-      //     valueData: result.data.location.coordinates[0],
-      //     valueInput: result.data.location.coordinates[0],
-      //   });
-      // }
-
-      // if (result.data.img) {
-      //   setImg(
-      //     `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
-      //       result.data.img
-      //     }`
-      //   );
-      // }
-
       setData(result.data);
 
       setPosition(result.data.position);
 
-      // setPrevData({
-      //   name: result.data.name,
-      //   type: result.data.type,
-      //   branch: result.data.branch._id,
-      //   group: result.data.customerGroup._id,
-      //   img: result.data.img
-      //     ? `${import.meta.env.VITE_PUBLIC_URI}/public/contact/${
-      //         result.data.img
-      //       }`
-      //     : ProfileImg,
-      //   address: result.data.address,
-      //   erpId: result.data.erpId ?? "",
-      //   lat: result.data.location ? result.data.location.coordinates[1] : "",
-      //   lng: result.data.location ? result.data.location.coordinates[0] : "",
-      // });
+      setPrevData({
+        name: result.data.name,
+        position: result.data.position,
+        customer: result.data.customer._id,
+        phone: `${result.data.phone}`,
+      });
 
       setStatus(
         result.data.status == "0"
@@ -256,6 +227,7 @@ const FormContactPage: React.FC = () => {
           return {
             name: item.name,
             value: item._id,
+            data: item,
           };
         });
         setCustomerLlist([...customerList, ...listInput]);
@@ -311,15 +283,14 @@ const FormContactPage: React.FC = () => {
         : GetDataServer(DataAPI.CONTACT).CREATE(updata);
 
       const result = await Action;
-      navigate(`/contact/${result.data.data._id}`);
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
+        navigate(`/contact/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       Swal.fire(
         "Error!",
@@ -341,9 +312,8 @@ const FormContactPage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       position: position,
-      branch: branch.valueData,
-      group: group.valueData,
-      phone: phone.valueData,
+      customer: customer.valueData,
+      phone: `${phone.valueData}`,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
@@ -480,16 +450,17 @@ const FormContactPage: React.FC = () => {
                           valueInput: e,
                         });
                       }}
-                      onSelected={(e) => {
+                      onSelected={(e: any) => {
                         setCustomer({ valueData: e.value, valueInput: e.name });
-                        setGroup({
-                          valueData: null,
-                          valueInput: "",
-                        });
                         setBranch({
-                          valueData: null,
-                          valueInput: "",
+                          valueData: e.data.branch._id,
+                          valueInput: e.data.branch.name,
                         });
+                        setGroup({
+                          valueData: e.data.customerGroup._id,
+                          valueInput: e.data.customerGroup.name,
+                        });
+
                         ResetCustomer();
                       }}
                       onReset={() => {
@@ -525,6 +496,7 @@ const FormContactPage: React.FC = () => {
                         />
                         <InputComponent
                           label="Branch"
+                          disabled
                           value={branch}
                           className="h-[38px]  text-[0.93em] mb-3"
                           type="text"
