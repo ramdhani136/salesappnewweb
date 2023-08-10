@@ -300,18 +300,18 @@ const FormCustomerPage: React.FC = () => {
     setGroupLoading(true);
   };
 
-  const getBranch = async (search?: string): Promise<void> => {
+  const getBranch = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!branchLoading) {
-        setBranchMoreLoading(true);
-      } else {
-        setBranchMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
-
       const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${branchPage}`,
+        page: `${data.refresh ? 1 : branchPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -321,7 +321,11 @@ const FormCustomerPage: React.FC = () => {
             value: item._id,
           };
         });
-        setBranchList([...branchList, ...listInput]);
+        if (!data.refresh) {
+          setBranchList([...branchList, ...listInput]);
+        } else {
+          setBranchList([...listInput]);
+        }
         setBranchHasMore(result.hasMore);
         setBranchPage(result.nextPage);
       }
@@ -329,7 +333,7 @@ const FormCustomerPage: React.FC = () => {
       setBranchLoading(false);
       setBranchMoreLoading(false);
     } catch (error: any) {
-      setLoading(false);
+      setBranchLoading(false);
       setBranchMoreLoading(false);
       setBranchHasMore(false);
     }
@@ -556,18 +560,28 @@ const FormCustomerPage: React.FC = () => {
                         loading: branchMoreLoading,
                         hasMore: branchHasMore,
                         next: () => {
-                          getBranch();
+                          setBranchMoreLoading(true);
+                          getBranch({
+                            refresh: false,
+                            search: branch.valueInput,
+                          });
                         },
                         onSearch(e) {
-                          getBranch(e);
+                          ResetBranch();
+                          getBranch({ refresh: true, search: e });
                         },
+                      }}
+                      onCLick={() => {
+                        ResetBranch();
+                        getBranch({
+                          refresh: true,
+                          search: branch.valueInput,
+                        });
                       }}
                       loading={branchLoading}
                       modalStyle="mt-2"
                       value={branch}
                       onChange={(e) => {
-                        ResetBranch();
-                        setBranchLoading(true);
                         setBranch({
                           ...branch,
                           valueInput: e,
@@ -579,11 +593,10 @@ const FormCustomerPage: React.FC = () => {
                           valueData: null,
                           valueInput: "",
                         });
-                        ResetBranch();
+
                         ResetGroup();
                       }}
                       onReset={() => {
-                        ResetBranch();
                         ResetGroup();
                         setBranch({
                           valueData: null,

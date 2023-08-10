@@ -565,6 +565,7 @@ const FormCustomerGroupPage: React.FC = () => {
                         loading: branchMoreLoading,
                         hasMore: branchHasMore,
                         next: () => {
+                          setBranchMoreLoading(true);
                           getBranch({
                             refresh: false,
                             search: branchValue.valueInput,
@@ -586,6 +587,10 @@ const FormCustomerGroupPage: React.FC = () => {
                           ...branchValue,
                           valueInput: e,
                         });
+                      }}
+                      onCLick={() => {
+                        ResetBranch();
+                        getBranch({ refresh: true, search: parent.valueInput });
                       }}
                       onSelected={(e) => {
                         const cekDup = branch.find(
