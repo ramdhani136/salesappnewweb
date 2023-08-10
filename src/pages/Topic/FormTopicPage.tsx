@@ -327,6 +327,7 @@ const FormTopicPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       Swal.fire(
         "Error!",
@@ -340,6 +341,7 @@ const FormTopicPage: React.FC = () => {
       );
     }
     ResetTag();
+    ResetMandatoryTag();
 
     setLoading(false);
   };
@@ -359,7 +361,7 @@ const FormTopicPage: React.FC = () => {
     }
   }, [name, tagMandatory, tagRestrict, allowTaggingItem]);
   // End
-  
+
   return (
     <>
       {Meta(metaData)}
@@ -517,7 +519,6 @@ const FormTopicPage: React.FC = () => {
                           valueData: "",
                           valueInput: "",
                         });
-                        ResetTag();
                       }}
                       onReset={() => {
                         ResetTag();
@@ -544,6 +545,14 @@ const FormTopicPage: React.FC = () => {
                                 });
 
                                 setTageRestrict(setTags);
+
+                                const checkTagMandatory = tagMandatory.filter(
+                                  (i: any) => {
+                                    return i._id !== item._id;
+                                  }
+                                );
+
+                                setTagMandatory(checkTagMandatory);
                               }}
                               key={index}
                               className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
@@ -613,14 +622,27 @@ const FormTopicPage: React.FC = () => {
                             ...tagMandatory,
                             { _id: e.value, name: e.name },
                           ];
+
+                          const missingDataInData2 = setTag.filter(
+                            (item1) =>
+                              !tagRestrict.some(
+                                (item2) => item2._id === item1._id
+                              )
+                          );
+
                           setTagMandatory(setTag);
+                          if (missingDataInData2.length > 0) {
+                            setTageRestrict([
+                              ...tagRestrict,
+                              ...missingDataInData2,
+                            ]);
+                          }
                         }
 
                         setTagValueMandatory({
                           valueData: "",
                           valueInput: "",
                         });
-                        ResetMandatoryTag();
                       }}
                       onReset={() => {
                         ResetMandatoryTag();
