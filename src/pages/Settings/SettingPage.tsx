@@ -304,6 +304,7 @@ const SettingPage: React.FC = () => {
                         />
 
                         <InputComponent
+   
                           label="Mandatory Tags"
                           infiniteScroll={{
                             loading: tagMoreLoading,
