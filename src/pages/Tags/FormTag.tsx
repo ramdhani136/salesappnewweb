@@ -16,17 +16,12 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
-
 const FormTagPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Branch"} - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    title: `${id ? data.name : "New Tag"} - Sales App Ekatunggal`,
+    description: "Halaman form tag -  Sales web system",
   };
 
   const navigate = useNavigate();
@@ -46,10 +41,8 @@ const FormTagPage: React.FC = () => {
   });
 
   const [status, setStatus] = useState<String>("Draft");
-  const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    desc: desc ?? "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -64,7 +57,7 @@ const FormTagPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.TAGS).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -105,11 +98,8 @@ const FormTagPage: React.FC = () => {
 
       setPrevData({
         name: result.data.name,
-        desc: result.data.desc ?? "",
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
-      }
+
       setStatus(
         result.data.status == "0"
           ? "Draft"
@@ -128,7 +118,7 @@ const FormTagPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/tag");
     }
   };
 
@@ -137,8 +127,8 @@ const FormTagPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
+          await GetDataServer(DataAPI.TAGS).DELETE(`${id}`);
+          navigate("/tag");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -164,18 +154,17 @@ const FormTagPage: React.FC = () => {
     try {
       let data: any = {
         name: name.valueData,
-        desc: desc,
       };
       if (nextState) {
         data.nextState = nextState;
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+        ? GetDataServer(DataAPI.TAGS).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.TAGS).CREATE(data);
 
       const result = await Action;
-      navigate(`/branch/${result.data.data._id}`);
+      navigate(`/tag/${result.data.data._id}`);
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
@@ -212,14 +201,13 @@ const FormTagPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      desc: desc ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [name]);
   // End
 
   return (
@@ -240,10 +228,10 @@ const FormTagPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/tag")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New branch" : data.name}
+                  {!id ? "New Tag" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent
@@ -323,16 +311,6 @@ const FormTagPage: React.FC = () => {
                         })
                       }
                       disabled
-                    />
-                    <label className="text-sm">Desc</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
