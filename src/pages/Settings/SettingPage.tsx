@@ -32,6 +32,26 @@ const SettingPage: React.FC = () => {
   const [vTagLoading, setVTagLoading] = useState<boolean>(true);
   const [vTagMoreLoading, setVTagMoreLoading] = useState<boolean>(false);
   const [vTagHasmore, setVTagHasmore] = useState<boolean>(false);
+  const [visitTagValue, setVisitTagValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [visitTags, setVisitTags] = useState<any[]>([]);
+  // End
+
+  // Tagvisit
+  const [visitTopicList, setVisitTopicList] = useState<IListInput[]>([]);
+  const [visitTopicPage, setVisitTopicPage] = useState<Number>(1);
+  const [visitTopicLoading, setVisitTopicLoading] = useState<boolean>(true);
+  const [visitTopicMoreLoading, setVisitTopicMoreLoading] =
+    useState<boolean>(false);
+  const [visitTopicHasMore, setVisitTopicHasMore] = useState<boolean>(false);
+  const [visitTopicValue, setVisitTopicValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [visitTopic, setVisitTopic] = useState<any[]>([]);
+  // End
 
   // TagCallsheet
   const [cTags, setCTags] = useState<IListInput[]>([]);
@@ -39,6 +59,12 @@ const SettingPage: React.FC = () => {
   const [cTagLoading, setCTagLoading] = useState<boolean>(true);
   const [cTagMoreLoading, setCTagMoreLoading] = useState<boolean>(false);
   const [cTagHasmore, setCTagHasmore] = useState<boolean>(false);
+  const [callsheetTagValue, setCallsheetTagValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [callsheetTags, setCallsheetTags] = useState<any[]>([]);
+  // End
 
   const [prevData, setPrevData] = useState<any>({});
   const [visitCheckIn, setVisitCheckIn] = useState<IValue>({
@@ -62,19 +88,7 @@ const SettingPage: React.FC = () => {
     valueInput: "0",
   });
 
-  const [visitTags, setVisitTags] = useState<any[]>([]);
-  const [callsheetTags, setCallsheetTags] = useState<any[]>([]);
-
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
-
-  const [visitTagValue, setVisitTagValue] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  const [callsheetTagValue, setCallsheetTagValue] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -139,6 +153,8 @@ const SettingPage: React.FC = () => {
       );
       navigate(-1);
     }
+    ResetCTags();
+    ResetVTags();
     setLoading(false);
   };
 
@@ -154,6 +170,7 @@ const SettingPage: React.FC = () => {
         search: search ?? "",
         limit: 10,
         page: `${vTagPage}`,
+        filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -195,6 +212,7 @@ const SettingPage: React.FC = () => {
         search: search ?? "",
         limit: 10,
         page: `${cTagPage}`,
+        filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -255,6 +273,48 @@ const SettingPage: React.FC = () => {
     callsheetTags,
     locationDistance,
   ]);
+
+  const getVisitTopic = async (search?: string): Promise<void> => {
+    try {
+      if (!visitTopicLoading) {
+        setVisitTopicMoreLoading(true);
+      } else {
+        setVisitTopicMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${visitTopicPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setVisitTopicList([...visitTopicList, ...listInput]);
+        setVisitTopicHasMore(result.hasMore);
+        setVisitTopicPage(result.nextPage);
+      }
+
+      setVisitTopicLoading(false);
+      setVisitTopicMoreLoading(false);
+    } catch (error: any) {
+      setVisitTopicLoading(false);
+      setVisitTopicMoreLoading(false);
+      setVisitTopicHasMore(false);
+    }
+  };
+
+  const ResetVisitTopic = () => {
+    setVisitTopicList([]);
+    setVisitTopicHasMore(false);
+    setVisitTopicPage(1);
+    setVisitTopicLoading(true);
+  };
 
   const OnUpdate = async () => {
     setLoading(true);
@@ -355,7 +415,7 @@ const SettingPage: React.FC = () => {
                         />
 
                         <InputComponent
-                          label="Mandatory Tags"
+                          label="Tags (Mandatory)"
                           infiniteScroll={{
                             loading: vTagMoreLoading,
                             hasMore: vTagHasmore,
@@ -380,7 +440,7 @@ const SettingPage: React.FC = () => {
                           onSelected={(e) => {
                             const cekDup = visitTags.find(
                               (item: any) => item._id === e.value
-                            ); 
+                            );
 
                             if (!cekDup) {
                               let setTag = [
@@ -391,7 +451,6 @@ const SettingPage: React.FC = () => {
                             }
 
                             setVisitTagValue({ valueData: "", valueInput: "" });
-                            ResetVTags();
                           }}
                           onReset={() => {
                             ResetVTags();
@@ -406,7 +465,7 @@ const SettingPage: React.FC = () => {
                           className={`h-9 mb-1`}
                         />
                         {visitTags.length > 0 && (
-                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                          <ul className="w-full h-auto rounded-sm borde mb-2r p-2 float-left">
                             {visitTags.map((item: any, index: number) => {
                               return (
                                 <li
@@ -418,6 +477,84 @@ const SettingPage: React.FC = () => {
                                     );
 
                                     setVisitTags(setTags);
+                                  }}
+                                  key={index}
+                                  className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                                >
+                                  {item.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+
+                        {/* Topic */}
+                        <InputComponent
+                          label="Topic (Mandatory)"
+                          infiniteScroll={{
+                            loading: visitTopicMoreLoading,
+                            hasMore: visitTopicHasMore,
+                            next: () => {
+                              getVisitTopic();
+                            },
+                            onSearch(e) {
+                              getVisitTopic(e);
+                            },
+                          }}
+                          loading={visitTopicLoading}
+                          modalStyle="mt-2"
+                          value={visitTopicValue}
+                          onChange={(e) => {
+                            ResetVisitTopic();
+                            setVisitTopicLoading(true);
+                            setVisitTopicValue({
+                              ...visitTopicValue,
+                              valueInput: e,
+                            });
+                          }}
+                          onSelected={(e) => {
+                            const cekDup = visitTopic.find(
+                              (item: any) => item._id === e.value
+                            );
+
+                            if (!cekDup) {
+                              let setTopic = [
+                                ...visitTopic,
+                                { _id: e.value, name: e.name },
+                              ];
+                              setVisitTopic(setTopic);
+                            }
+
+                            setVisitTopicValue({
+                              valueData: "",
+                              valueInput: "",
+                            });
+                          }}
+                          onReset={() => {
+                            ResetVisitTopic();
+                            setVisitTopicValue({
+                              valueData: null,
+                              valueInput: "",
+                            });
+                          }}
+                          list={visitTopicList}
+                          type="text"
+                          //   disabled={disabled}
+                          className={`h-9 mb-1`}
+                        />
+                        {visitTopic.length > 0 && (
+                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                            {visitTopic.map((item: any, index: number) => {
+                              return (
+                                <li
+                                  onClick={() => {
+                                    const setTopic = visitTopic.filter(
+                                      (i: any) => {
+                                        return i._id !== item._id;
+                                      }
+                                    );
+
+                                    setVisitTopic(setTopic);
                                   }}
                                   key={index}
                                   className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
@@ -504,7 +641,6 @@ const SettingPage: React.FC = () => {
                               valueData: "",
                               valueInput: "",
                             });
-                            ResetCTags();
                           }}
                           onReset={() => {
                             ResetCTags();
