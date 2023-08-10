@@ -21,8 +21,8 @@ const FormTopicPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Contact"} - Sales App Ekatunggal`,
-    description: "Halaman form Contact Sales web system",
+    title: `${id ? data.name : "New Topic"} - Sales App Ekatunggal`,
+    description: "Halaman form Topic - Sales web system",
   };
 
   const navigate = useNavigate();
@@ -145,7 +145,7 @@ const FormTopicPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      // navigate("/contact");
+      navigate("/topic");
     }
   };
 
@@ -154,8 +154,8 @@ const FormTopicPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.CONTACT).DELETE(`${id}`);
-          navigate("/contact");
+          await GetDataServer(DataAPI.TOPIC).DELETE(`${id}`);
+          navigate("/topic");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -184,13 +184,11 @@ const FormTopicPage: React.FC = () => {
         setTagMoreLoading(false);
       }
 
-      console.log("dd");
-
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
         search: search ?? "",
         limit: 10,
         page: `${tagPage}`,
-        // filters: [["status", "=", "1"]],
+        filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -245,15 +243,15 @@ const FormTopicPage: React.FC = () => {
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.CONTACT).UPDATE({ id: id, data: updata })
-        : GetDataServer(DataAPI.CONTACT).CREATE(updata);
+        ? GetDataServer(DataAPI.TOPIC).UPDATE({ id: id, data: updata })
+        : GetDataServer(DataAPI.TOPIC).CREATE(updata);
 
       const result = await Action;
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/contact/${result.data.data._id}`);
+        navigate(`/topic/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -304,10 +302,10 @@ const FormTopicPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/contact")}
+                  onClick={() => navigate("/topic")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Contact" : data.name}
+                  {!id ? "New Topic" : data.name}
                 </h4>
                 <div className="text-[0.9em]">
                   <ButtonStatusComponent
@@ -379,6 +377,21 @@ const FormTopicPage: React.FC = () => {
                       }}
                     />
 
+                    {id && (
+                      <InputComponent
+                        label="Status"
+                        value={{ valueData: status, valueInput: status }}
+                        className="h-[38px]  text-[0.93em] mb-3"
+                        type="text"
+                        onChange={(e) =>
+                          setCreatedAt({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        disabled
+                      />
+                    )}
                     <Select
                       title="Allow Item Tagging"
                       data={dataType}
@@ -428,9 +441,9 @@ const FormTopicPage: React.FC = () => {
                       }}
                       list={tagList}
                       type="text"
-                      // disabled={
-                      //   id != null ? (status !== "Draft" ? true : false) : false
-                      // }
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                       className={`h-9 mb-1`}
                     />
                   </div>
@@ -440,20 +453,6 @@ const FormTopicPage: React.FC = () => {
                       value={createdAt}
                       className="h-[38px]  text-[0.93em] mb-3"
                       type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-
-                    <InputComponent
-                      label="Status"
-                      value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="text"
                       onChange={(e) =>
                         setCreatedAt({
                           valueData: e,
@@ -473,6 +472,50 @@ const FormTopicPage: React.FC = () => {
                         })
                       }
                       disabled
+                    />
+                    <InputComponent
+                      label="Tags Mandatory"
+                      infiniteScroll={{
+                        loading: tagMoreLoading,
+                        hasMore: tagHasMore,
+                        next: () => {
+                          getTags();
+                        },
+                        onSearch(e) {
+                          getTags(e);
+                        },
+                      }}
+                      loading={tagLoading}
+                      modalStyle="mt-2"
+                      value={tagValueMandatory}
+                      onChange={(e) => {
+                        ResetTag();
+                        setTagValueMandatory({
+                          ...tagValueMandatory,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e: any) => {
+                        setTagValueMandatory({
+                          valueData: null,
+                          valueInput: "",
+                        });
+
+                        ResetTag();
+                      }}
+                      onReset={() => {
+                        ResetTag();
+                        setTagValueMandatory({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={tagList}
+                      type="text"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                      className={`h-9 mb-1`}
                     />
                   </div>
                 </div>
