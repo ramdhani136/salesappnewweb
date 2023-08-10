@@ -275,6 +275,7 @@ const FormCallsheetPage: React.FC = () => {
   };
 
   const getCustomer = async (search?: string): Promise<void> => {
+    console.log(customerPage);
     if (!loadingCustomer) {
       setCustomerMoreLoading(true);
     } else {
@@ -289,6 +290,7 @@ const FormCallsheetPage: React.FC = () => {
       try {
         let filters: [String, String, String][] = [
           ["customerGroup", "=", group.valueData],
+          ["status", "=", "1"],
         ];
 
         const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
@@ -620,8 +622,8 @@ const FormCallsheetPage: React.FC = () => {
 
                           setCustomer({ valueData: null, valueInput: "" });
                           setContact({ valueData: null, valueInput: "" });
-                          contactReset();
-                          getResetCustomer();
+                          // contactReset();
+                          // getResetCustomer();
                         }}
                         onCLick={getGroup}
                         list={listGroup}
@@ -650,6 +652,7 @@ const FormCallsheetPage: React.FC = () => {
                             getCustomer(e);
                           },
                         }}
+            
                         loading={loadingCustomer}
                         label="Customer"
                         value={customer}
@@ -660,10 +663,9 @@ const FormCallsheetPage: React.FC = () => {
                           setCustomer({ ...naming, valueInput: e });
                         }}
                         onSelected={(e) => {
-                          getResetCustomer();
                           setContact({ valueData: null, valueInput: "" });
+                          getResetCustomer();
                           contactReset();
-                          console.log(e);
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
