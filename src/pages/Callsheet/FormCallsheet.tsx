@@ -622,8 +622,8 @@ const FormCallsheetPage: React.FC = () => {
 
                           setCustomer({ valueData: null, valueInput: "" });
                           setContact({ valueData: null, valueInput: "" });
-                          // contactReset();
-                          // getResetCustomer();
+                          contactReset();
+                          getResetCustomer();
                         }}
                         onCLick={getGroup}
                         list={listGroup}
@@ -652,7 +652,10 @@ const FormCallsheetPage: React.FC = () => {
                             getCustomer(e);
                           },
                         }}
-            
+                        onCLick={() => {
+                          getResetCustomer()
+                          getCustomer(`${customer.valueInput}`);
+                        }}
                         loading={loadingCustomer}
                         label="Customer"
                         value={customer}
