@@ -46,6 +46,7 @@ export enum DataAPI {
   NOTE = "notes",
   CONFIG = "config",
   TAGS = "tag",
+  TOPIC = "topic",
 }
 
 class RequestData implements IData {
