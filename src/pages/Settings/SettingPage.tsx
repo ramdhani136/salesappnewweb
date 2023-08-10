@@ -39,7 +39,7 @@ const SettingPage: React.FC = () => {
   const [visitTags, setVisitTags] = useState<any[]>([]);
   // End
 
-  // Tagvisit
+  // Topicvisit
   const [visitTopicList, setVisitTopicList] = useState<IListInput[]>([]);
   const [visitTopicPage, setVisitTopicPage] = useState<Number>(1);
   const [visitTopicLoading, setVisitTopicLoading] = useState<boolean>(true);
@@ -51,6 +51,24 @@ const SettingPage: React.FC = () => {
     valueInput: "",
   });
   const [visitTopic, setVisitTopic] = useState<any[]>([]);
+  // End
+
+  // Topicvisit
+  const [callsheetTopicList, setCallsheetTopicList] = useState<IListInput[]>(
+    []
+  );
+  const [callsheetTopicPage, setCallsheetTopicPage] = useState<Number>(1);
+  const [callsheetTopicLoading, setCallsheetTopicLoading] =
+    useState<boolean>(true);
+  const [callsheetTopicMoreLoading, setCallsheetTopicMoreLoading] =
+    useState<boolean>(false);
+  const [callsheetTopicHasMore, setCallsheetTopicHasMore] =
+    useState<boolean>(false);
+  const [callsheetTopicValue, setCallsheetTopicValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [callsheetTopic, setCallsheetTopic] = useState<any[]>([]);
   // End
 
   // TagCallsheet
@@ -155,6 +173,8 @@ const SettingPage: React.FC = () => {
     }
     ResetCTags();
     ResetVTags();
+    ResetVisitTopic();
+    ResetCallsheetTopic();
     setLoading(false);
   };
 
@@ -314,6 +334,48 @@ const SettingPage: React.FC = () => {
     setVisitTopicHasMore(false);
     setVisitTopicPage(1);
     setVisitTopicLoading(true);
+  };
+
+  const getCallsheetTopic = async (search?: string): Promise<void> => {
+    try {
+      if (!callsheetTopicLoading) {
+        setCallsheetTopicMoreLoading(true);
+      } else {
+        setCallsheetTopicMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${callsheetTopicPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        setCallsheetTopicList([...callsheetTopicList, ...listInput]);
+        setCallsheetTopicHasMore(result.hasMore);
+        setCallsheetTopicPage(result.nextPage);
+      }
+
+      setCallsheetTopicLoading(false);
+      setCallsheetTopicMoreLoading(false);
+    } catch (error: any) {
+      setCallsheetTopicLoading(false);
+      setCallsheetTopicMoreLoading(false);
+      setCallsheetTopicHasMore(false);
+    }
+  };
+
+  const ResetCallsheetTopic = () => {
+    setCallsheetTopicList([]);
+    setCallsheetTopicHasMore(false);
+    setCallsheetTopicPage(1);
+    setCallsheetTopicLoading(true);
   };
 
   const OnUpdate = async () => {
@@ -655,7 +717,7 @@ const SettingPage: React.FC = () => {
                           className={`h-9 mb-1`}
                         />
                         {callsheetTags.length > 0 && (
-                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                          <ul className="w-full h-auto rounded-sm border mb-2 p-2 float-left">
                             {callsheetTags.map((item: any, index: number) => {
                               return (
                                 <li
@@ -667,6 +729,83 @@ const SettingPage: React.FC = () => {
                                     );
 
                                     setCallsheetTags(setTags);
+                                  }}
+                                  key={index}
+                                  className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                                >
+                                  {item.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                         {/* Topic */}
+                         <InputComponent
+                          label="Topic (Mandatory)"
+                          infiniteScroll={{
+                            loading: callsheetTopicMoreLoading,
+                            hasMore: callsheetTopicHasMore,
+                            next: () => {
+                              getCallsheetTopic();
+                            },
+                            onSearch(e) {
+                              getCallsheetTopic(e);
+                            },
+                          }}
+                          loading={callsheetTopicLoading}
+                          modalStyle="mt-2"
+                          value={callsheetTopicValue}
+                          onChange={(e) => {
+                            ResetCallsheetTopic();
+                            setCallsheetTopicLoading(true);
+                            setCallsheetTopicValue({
+                              ...callsheetTopicValue,
+                              valueInput: e,
+                            });
+                          }}
+                          onSelected={(e) => {
+                            const cekDup = callsheetTopic.find(
+                              (item: any) => item._id === e.value
+                            );
+
+                            if (!cekDup) {
+                              let setTopic = [
+                                ...callsheetTopic,
+                                { _id: e.value, name: e.name },
+                              ];
+                              setCallsheetTopic(setTopic);
+                            }
+
+                            setCallsheetTopicValue({
+                              valueData: "",
+                              valueInput: "",
+                            });
+                          }}
+                          onReset={() => {
+                            ResetCallsheetTopic();
+                            setCallsheetTopicValue({
+                              valueData: null,
+                              valueInput: "",
+                            });
+                          }}
+                          list={callsheetTopicList}
+                          type="text"
+                          //   disabled={disabled}
+                          className={`h-9 mb-1`}
+                        />
+                        {callsheetTopic.length > 0 && (
+                          <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                            {callsheetTopic.map((item: any, index: number) => {
+                              return (
+                                <li
+                                  onClick={() => {
+                                    const setTopic = callsheetTopic.filter(
+                                      (i: any) => {
+                                        return i._id !== item._id;
+                                      }
+                                    );
+
+                                    setCallsheetTopic(setTopic);
                                   }}
                                   key={index}
                                   className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
