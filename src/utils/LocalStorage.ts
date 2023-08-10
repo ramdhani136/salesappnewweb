@@ -8,7 +8,11 @@ export enum LocalStorageType {
   FILTERVISIT = "filtervisit",
   FILTERUSER = "filteruser",
   FILTERBRANCH = "filterbranch",
-  FILTERCG = "fiterCG",
+  FILTERCG = "fiterCustomer",
+  FILTERCUSTOMER = "fiterCG",
+  FILTERTAG = "fiterTags",
+  FILTERCONTACT = "filtercontact",
+  FILTERTOPIC = "filterTopic",
   
 }
 

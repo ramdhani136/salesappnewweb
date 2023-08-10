@@ -242,7 +242,7 @@ export const CustomerPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERCG}
+              localStorage={LocalStorageType.FILTERCUSTOMER}
               onRefresh={onRefresh}
             />
           </>

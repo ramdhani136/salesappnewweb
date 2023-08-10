@@ -242,7 +242,7 @@ export const ContactPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERCG}
+              localStorage={LocalStorageType.FILTERCONTACT}
               onRefresh={onRefresh}
             />
           </>

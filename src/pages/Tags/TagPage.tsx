@@ -16,7 +16,7 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
-export const TopicPage: React.FC = (): any => {
+export const TagPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -24,7 +24,7 @@ export const TopicPage: React.FC = (): any => {
   const [page, setPage] = useState<String>("1");
   const [refresh, setRefresh] = useState<boolean>(false);
   const [sort, setSort] = useState<any[]>([]);
-  const [isSort, setIsort] = useState<string>("updatedAt");
+  const [isSort, setIsort] = useState<string>("createdAt");
   const [isOrderBy, setOrderBy] = useState<number>(-1);
   const [limit, setLimit] = useState<number>(20);
   const [listFilter, setListFilter] = useState<IDataFilter[]>([]);
@@ -37,8 +37,8 @@ export const TopicPage: React.FC = (): any => {
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
 
   const metaData = {
-    title: "Topic -  Sales App Ekatunggal",
-    description: "Halaman Topic - sales web system",
+    title: "Tag -  Sales App Ekatunggal",
+    description: "Halaman tas sales web system",
   };
 
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ export const TopicPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
         limit: limit,
         page: page,
         filters: filter,
@@ -68,12 +68,14 @@ export const TopicPage: React.FC = (): any => {
           return {
             id: item._id,
             checked: false,
+            doc: item.name,
             name: (
-              <Link to={`/topic/${item._id}`}>
+              <Link to={`/tag/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
               </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
+
             workflowState: (
               <ButtonStatusComponent
                 status={item.status}
@@ -135,7 +137,7 @@ export const TopicPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Topic"), {
+  useKey("n", () => alert("Create new Tag"), {
     ctrl: true,
     alt: true,
   });
@@ -161,7 +163,7 @@ export const TopicPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.TOPIC).DELETE(item.id);
+            await GetDataServer(DataAPI.TAGS).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -171,12 +173,12 @@ export const TopicPage: React.FC = (): any => {
           }
           getAllData();
         } catch (error: any) {
-          getAllData();
           AlertModal.Default({
             icon: "error",
             title: "Error",
             text: error.response.data.msg ?? "Error Network",
           });
+          getAllData();
           setLoading(false);
           setActiveProgress(false);
         }
@@ -192,16 +194,16 @@ export const TopicPage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Topic List
+                Tag List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add New"
+                  name="Add Tag"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/topic/new")}
+                  callback={() => navigate("/tag/new")}
                 />
 
                 <IconButton
@@ -236,7 +238,7 @@ export const TopicPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERTOPIC}
+              localStorage={LocalStorageType.FILTERTAG}
               onRefresh={onRefresh}
             />
           </>

@@ -27,6 +27,9 @@ import { ContactPage } from "./Contact/ContactPage";
 import FormContactPage from "./Contact/FormContactPage";
 import { TopicPage } from "./Topic/TopicPage";
 import FormTopicPage from "./Topic/FormTopicPage";
+import FormTagPage from "./Tags/FormTag";
+import { TagPage } from "./Tags/TagPage";
+
 
 
 export {
@@ -58,5 +61,7 @@ export {
   ContactPage,
   FormContactPage,
   TopicPage,
-  FormTopicPage
+  FormTopicPage,
+  TagPage,
+  FormTagPage
 };

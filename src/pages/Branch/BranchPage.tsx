@@ -14,7 +14,6 @@ import {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
 export const BranchPage: React.FC = (): any => {
