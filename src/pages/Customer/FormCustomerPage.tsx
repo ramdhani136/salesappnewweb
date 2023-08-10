@@ -253,12 +253,13 @@ const FormCustomerPage: React.FC = () => {
     }
   };
 
-  const getGroup = async (search?: string): Promise<void> => {
+  const getGroup = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!groupLoading) {
-        setGroupMoreLoading(true);
-      } else {
-        setGroupMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       let filters: any = [
@@ -267,9 +268,9 @@ const FormCustomerPage: React.FC = () => {
       ];
 
       const result: any = await GetDataServer(DataAPI.GROUP).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${groupPage}`,
+        page: `${data.refresh ? 1 : groupPage}`,
         filters: filters,
       });
       if (result.data.length > 0) {
@@ -279,7 +280,11 @@ const FormCustomerPage: React.FC = () => {
             value: item._id,
           };
         });
-        setGroupList([...groupList, ...listInput]);
+        if (!data.refresh) {
+          setGroupList([...groupList, ...listInput]);
+        } else {
+          setGroupList([...listInput]);
+        }
         setGroupHasMore(result.hasMore);
         setGroupPage(result.nextPage);
       }
@@ -450,6 +455,8 @@ const FormCustomerPage: React.FC = () => {
     setFile(e.target.files[0]);
   };
 
+
+
   return (
     <>
       {Meta(metaData)}
@@ -593,11 +600,8 @@ const FormCustomerPage: React.FC = () => {
                           valueData: null,
                           valueInput: "",
                         });
-
-                        ResetGroup();
                       }}
                       onReset={() => {
-                        ResetGroup();
                         setBranch({
                           valueData: null,
                           valueInput: "",
@@ -623,18 +627,25 @@ const FormCustomerPage: React.FC = () => {
                           loading: GroupMoreLoading,
                           hasMore: groupHasMore,
                           next: () => {
-                            getGroup();
+                            setGroupMoreLoading(true);
+                            getGroup({
+                              refresh: false,
+                              search: group.valueInput,
+                            });
                           },
                           onSearch(e) {
-                            getGroup(e);
+                            ResetGroup();
+                            getGroup({ refresh: true, search: e });
                           },
+                        }}
+                        onCLick={() => {
+                          ResetGroup();
+                          getGroup({ refresh: true, search: group.valueInput });
                         }}
                         loading={groupLoading}
                         list={groupList}
                         className="h-[38px]   text-[0.93em] mb-3"
                         onChange={(e) => {
-                          ResetGroup();
-
                           setGroup({
                             ...group,
                             valueInput: e,
@@ -642,10 +653,8 @@ const FormCustomerPage: React.FC = () => {
                         }}
                         onSelected={(e) => {
                           setGroup({ valueData: e.value, valueInput: e.name });
-                          ResetGroup();
                         }}
                         onReset={() => {
-                          ResetGroup();
                           setGroup({
                             valueData: null,
                             valueInput: "",
