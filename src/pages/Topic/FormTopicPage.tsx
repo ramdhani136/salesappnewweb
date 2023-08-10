@@ -37,19 +37,29 @@ const FormTopicPage: React.FC = () => {
   ];
   const [allowTaggingItem, setAllowTaggingItem] = useState<number>(1);
 
-  // Tags
+  // Tags Restrict
   const [tagList, setTagList] = useState<IListInput[]>([]);
   const [tagPage, setTagePage] = useState<Number>(1);
   const [tagLoading, setTagLoading] = useState<boolean>(true);
   const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
   const [tagHasMore, setTagHasmore] = useState<boolean>(false);
-  const [tagMandatory, setTagMandatory] = useState<any[]>([]);
   const [tagRestrict, setTageRestrict] = useState<any[]>([]);
-  const [tagValueMandatory, setTagValueMandatory] = useState<IValue>({
+  const [tagValueRestrict, setTagValueRestrict] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
-  const [tagValueRestrict, setTagValueRestrict] = useState<IValue>({
+  // End
+
+  // Tags mandatory
+  const [mandatoryTagList, setMandatoryTagList] = useState<IListInput[]>([]);
+  const [mandatoryTagPage, setMandatoryTagePage] = useState<Number>(1);
+  const [mandatoryTagLoading, setMandatoryTagLoading] = useState<boolean>(true);
+  const [mandatoryTagMoreLoading, setMandatoryTagMoreLoading] =
+    useState<boolean>(false);
+  const [mandatoryTagHasMore, setMandatoryTagHasmore] =
+    useState<boolean>(false);
+  const [tagMandatory, setTagMandatory] = useState<any[]>([]);
+  const [tagValueMandatory, setTagValueMandatory] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -207,7 +217,7 @@ const FormTopicPage: React.FC = () => {
       setTagLoading(false);
       setTagMoreLoading(false);
     } catch (error: any) {
-      setLoading(false);
+      setTagLoading(false);
       setTagMoreLoading(false);
       setTagHasmore(false);
     }
@@ -218,6 +228,50 @@ const FormTopicPage: React.FC = () => {
     setTagHasmore(false);
     setTagePage(1);
     setTagLoading(true);
+  };
+
+  const getMandatoryTags = async (search?: string): Promise<void> => {
+    try {
+      if (!mandatoryTagLoading) {
+        setMandatoryTagMoreLoading(true);
+      } else {
+        setMandatoryTagMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${mandatoryTagPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+            data: item,
+          };
+        });
+        setMandatoryTagList([...mandatoryTagList, ...listInput]);
+        setMandatoryTagHasmore(result.hasMore);
+
+        setMandatoryTagePage(result.nextPage);
+      }
+
+      setMandatoryTagLoading(false);
+      setMandatoryTagMoreLoading(false);
+    } catch (error: any) {
+      setMandatoryTagLoading(false);
+      setMandatoryTagMoreLoading(false);
+      setMandatoryTagHasmore(false);
+    }
+  };
+
+  const ResetMandatoryTag = () => {
+    setMandatoryTagList([]);
+    setMandatoryTagHasmore(false);
+    setMandatoryTagePage(1);
+    setMandatoryTagLoading(true);
   };
 
   useEffect(() => {
@@ -424,12 +478,23 @@ const FormTopicPage: React.FC = () => {
                           valueInput: e,
                         });
                       }}
-                      onSelected={(e: any) => {
+                      onSelected={(e) => {
+                        const cekDup = tagRestrict.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let setTag = [
+                            ...tagRestrict,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setTageRestrict(setTag);
+                        }
+
                         setTagValueRestrict({
-                          valueData: null,
+                          valueData: "",
                           valueInput: "",
                         });
-
                         ResetTag();
                       }}
                       onReset={() => {
@@ -446,6 +511,27 @@ const FormTopicPage: React.FC = () => {
                       }
                       className={`h-9 mb-1`}
                     />
+                    {tagRestrict.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {tagRestrict.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                const setTags = tagRestrict.filter((i: any) => {
+                                  return i._id !== item._id;
+                                });
+
+                                setTageRestrict(setTags);
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
@@ -476,47 +562,81 @@ const FormTopicPage: React.FC = () => {
                     <InputComponent
                       label="Tags Mandatory"
                       infiniteScroll={{
-                        loading: tagMoreLoading,
-                        hasMore: tagHasMore,
+                        loading: mandatoryTagMoreLoading,
+                        hasMore: mandatoryTagHasMore,
                         next: () => {
-                          getTags();
+                          getMandatoryTags();
                         },
                         onSearch(e) {
-                          getTags(e);
+                          getMandatoryTags(e);
                         },
                       }}
-                      loading={tagLoading}
+                      loading={mandatoryTagLoading}
                       modalStyle="mt-2"
                       value={tagValueMandatory}
                       onChange={(e) => {
-                        ResetTag();
+                        ResetMandatoryTag();
                         setTagValueMandatory({
                           ...tagValueMandatory,
                           valueInput: e,
                         });
                       }}
-                      onSelected={(e: any) => {
+                      onSelected={(e) => {
+                        const cekDup = tagMandatory.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let setTag = [
+                            ...tagMandatory,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setTagMandatory(setTag);
+                        }
+
                         setTagValueMandatory({
-                          valueData: null,
+                          valueData: "",
                           valueInput: "",
                         });
-
-                        ResetTag();
+                        ResetMandatoryTag();
                       }}
                       onReset={() => {
-                        ResetTag();
+                        ResetMandatoryTag();
                         setTagValueMandatory({
                           valueData: null,
                           valueInput: "",
                         });
                       }}
-                      list={tagList}
+                      list={mandatoryTagList}
                       type="text"
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                       className={`h-9 mb-1`}
                     />
+                    {tagMandatory.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {tagMandatory.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                const setTags = tagMandatory.filter(
+                                  (i: any) => {
+                                    return i._id !== item._id;
+                                  }
+                                );
+
+                                setTagMandatory(setTags);
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>

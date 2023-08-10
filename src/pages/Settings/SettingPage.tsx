@@ -391,6 +391,7 @@ const SettingPage: React.FC = () => {
                             }
 
                             setVisitTagValue({ valueData: "", valueInput: "" });
+                            ResetVTags();
                           }}
                           onReset={() => {
                             ResetVTags();
@@ -503,6 +504,7 @@ const SettingPage: React.FC = () => {
                               valueData: "",
                               valueInput: "",
                             });
+                            ResetCTags();
                           }}
                           onReset={() => {
                             ResetCTags();
