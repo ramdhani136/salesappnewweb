@@ -1,8 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ProfileImg from "../../assets/images/iconuser.jpg";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -33,32 +32,28 @@ const FormTopicPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const dataType: any[] = [
-    { title: "Purchasing Staff", value: "Purchasing Staff" },
-    { title: "Purchasing Manager", value: "Purchasing Manager" },
+    { title: "Enabled", value: 1 },
+    { title: "Disabled", value: 0 },
   ];
-  const [position, setPosition] = useState<string>("Purchasing Staff");
+  const [allowTaggingItem, setAllowTaggingItem] = useState<number>(1);
 
-  // customer
-  const [customerList, setCustomerLlist] = useState<IListInput[]>([]);
-  const [customerPage, setCustomerPage] = useState<Number>(1);
-  const [customerLoading, setCustomerLoading] = useState<boolean>(true);
-  const [customerMoreLoading, setCustomerMoreLoading] =
-    useState<boolean>(false);
-  const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
-  const [customer, setCustomer] = useState<IValue>({
+  // Tags
+  const [tagList, setTagList] = useState<IListInput[]>([]);
+  const [tagPage, setTagePage] = useState<Number>(1);
+  const [tagLoading, setTagLoading] = useState<boolean>(true);
+  const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
+  const [tagHasMore, setTagHasmore] = useState<boolean>(false);
+  const [tagMandatory, setTagMandatory] = useState<any[]>([]);
+  const [tagRestrict, setTageRestrict] = useState<any[]>([]);
+  const [tagValueMandatory, setTagValueMandatory] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [tagValueRestrict, setTagValueRestrict] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
   // End
-  const [branch, setBranch] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [group, setGroup] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -68,17 +63,10 @@ const FormTopicPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
-  const [phone, setPhone] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
 
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    position: position,
-    customer: customer.valueData,
-    phone: phone.valueData,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -93,7 +81,7 @@ const FormTopicPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.CONTACT).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.TOPIC).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -122,23 +110,6 @@ const FormTopicPage: React.FC = () => {
         valueInput: result.data.name,
       });
 
-      setPhone({
-        valueData: result.data.phone,
-        valueInput: result.data.phone,
-      });
-
-      setCustomer({
-        valueData: result.data.customer._id,
-        valueInput: result.data.customer.name,
-      });
-      setBranch({
-        valueData: result.data.customer.branch._id,
-        valueInput: result.data.customer.branch.name,
-      });
-      setGroup({
-        valueData: result.data.customer.customerGroup._id,
-        valueInput: result.data.customer.customerGroup.name,
-      });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -150,13 +121,10 @@ const FormTopicPage: React.FC = () => {
 
       setData(result.data);
 
-      setPosition(result.data.position);
+      setAllowTaggingItem(result.data.allowTaggingItem);
 
       setPrevData({
         name: result.data.name,
-        position: result.data.position,
-        customer: result.data.customer._id,
-        phone: `${result.data.phone}`,
       });
 
       setStatus(
@@ -177,7 +145,7 @@ const FormTopicPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/contact");
+      // navigate("/contact");
     }
   };
 
@@ -208,19 +176,21 @@ const FormTopicPage: React.FC = () => {
     }
   };
 
-  const getCustomer = async (search?: string): Promise<void> => {
+  const getTags = async (search?: string): Promise<void> => {
     try {
-      if (!customerLoading) {
-        setCustomerMoreLoading(true);
+      if (!tagLoading) {
+        setTagMoreLoading(true);
       } else {
-        setCustomerMoreLoading(false);
+        setTagMoreLoading(false);
       }
 
-      const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
+      console.log("dd");
+
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
         search: search ?? "",
         limit: 10,
-        page: `${customerPage}`,
-        filters: [["status", "=", "1"]],
+        page: `${tagPage}`,
+        // filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -230,27 +200,26 @@ const FormTopicPage: React.FC = () => {
             data: item,
           };
         });
-        setCustomerLlist([...customerList, ...listInput]);
-        setCustomerHasMore(result.hasMore);
+        setTagList([...tagList, ...listInput]);
+        setTagHasmore(result.hasMore);
 
-        setCustomerPage(result.nextPage);
+        setTagePage(result.nextPage);
       }
 
-      setCustomerLoading(false);
-      setCustomerMoreLoading(false);
-      setCustomerHasMore(false);
+      setTagLoading(false);
+      setTagMoreLoading(false);
     } catch (error: any) {
       setLoading(false);
-      setCustomerMoreLoading(false);
-      setCustomerHasMore(false);
+      setTagMoreLoading(false);
+      setTagHasmore(false);
     }
   };
 
-  const ResetCustomer = () => {
-    setCustomerLlist([]);
-    setCustomerHasMore(false);
-    setCustomerPage(1);
-    setCustomerLoading(true);
+  const ResetTag = () => {
+    setTagList([]);
+    setTagHasmore(false);
+    setTagePage(1);
+    setTagLoading(true);
   };
 
   useEffect(() => {
@@ -272,9 +241,6 @@ const FormTopicPage: React.FC = () => {
       } else {
         updata = {
           name: name.valueData,
-          position: position,
-          customer: customer.valueData,
-          phone: phone.valueData,
         };
       }
 
@@ -303,7 +269,7 @@ const FormTopicPage: React.FC = () => {
         "error"
       );
     }
-    ResetCustomer();
+    ResetTag();
 
     setLoading(false);
   };
@@ -311,16 +277,13 @@ const FormTopicPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      position: position,
-      customer: customer.valueData,
-      phone: `${phone.valueData}`,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, position, branch, group, phone]);
+  }, [name, tagMandatory, tagRestrict, allowTaggingItem]);
   // End
 
   return (
@@ -417,112 +380,61 @@ const FormTopicPage: React.FC = () => {
                     />
 
                     <Select
-                      title="Position"
+                      title="Allow Item Tagging"
                       data={dataType}
-                      value={position}
-                      setValue={setPosition}
+                      value={allowTaggingItem}
+                      setValue={setAllowTaggingItem}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                     />
 
                     <InputComponent
-                      mandatoy
-                      label="Customer"
+                      label="Tags Restrict"
                       infiniteScroll={{
-                        loading: customerMoreLoading,
-                        hasMore: customerHasMore,
+                        loading: tagMoreLoading,
+                        hasMore: tagHasMore,
                         next: () => {
-                          getCustomer();
+                          getTags();
                         },
                         onSearch(e) {
-                          getCustomer(e);
+                          getTags(e);
                         },
                       }}
-                      loading={customerLoading}
+                      loading={tagLoading}
                       modalStyle="mt-2"
-                      value={customer}
+                      value={tagValueRestrict}
                       onChange={(e) => {
-                        ResetCustomer();
-                        setCustomerLoading(true);
-                        setCustomer({
-                          ...branch,
+                        ResetTag();
+                        setTagValueRestrict({
+                          ...tagValueRestrict,
                           valueInput: e,
                         });
                       }}
                       onSelected={(e: any) => {
-                        setCustomer({ valueData: e.value, valueInput: e.name });
-                        setBranch({
-                          valueData: e.data.branch._id,
-                          valueInput: e.data.branch.name,
-                        });
-                        setGroup({
-                          valueData: e.data.customerGroup._id,
-                          valueInput: e.data.customerGroup.name,
+                        setTagValueRestrict({
+                          valueData: null,
+                          valueInput: "",
                         });
 
-                        ResetCustomer();
+                        ResetTag();
                       }}
                       onReset={() => {
-                        ResetCustomer();
-                        setCustomer({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                        setBranch({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                        setGroup({
+                        ResetTag();
+                        setTagValueRestrict({
                           valueData: null,
                           valueInput: "",
                         });
                       }}
-                      list={customerList}
+                      list={tagList}
                       type="text"
                       // disabled={
                       //   id != null ? (status !== "Draft" ? true : false) : false
                       // }
                       className={`h-9 mb-1`}
                     />
-                    {customer.valueData && (
-                      <>
-                        <InputComponent
-                          mandatoy
-                          label="Group"
-                          value={group}
-                          className="h-[38px]   text-[0.93em] mb-3"
-                          disabled
-                        />
-                        <InputComponent
-                          label="Branch"
-                          disabled
-                          value={branch}
-                          className="h-[38px]  text-[0.93em] mb-3"
-                          type="text"
-                        />
-                      </>
-                    )}
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
-                    <InputComponent
-                      label="Phone"
-                      value={phone}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="number"
-                      onChange={(e) =>
-                        setPhone({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                      onReset={() => {
-                        setPhone({ valueData: "", valueInput: "" });
-                      }}
-                    />
                     <InputComponent
                       label="Date"
                       value={createdAt}

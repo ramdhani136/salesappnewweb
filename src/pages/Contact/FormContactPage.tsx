@@ -238,7 +238,6 @@ const FormContactPage: React.FC = () => {
 
       setCustomerLoading(false);
       setCustomerMoreLoading(false);
-      setCustomerHasMore(false);
     } catch (error: any) {
       setLoading(false);
       setCustomerMoreLoading(false);

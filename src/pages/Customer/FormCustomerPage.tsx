@@ -327,7 +327,7 @@ const FormCustomerPage: React.FC = () => {
       }
 
       setBranchLoading(false);
-      setBranchHasMore(false);
+      setBranchMoreLoading(false);
     } catch (error: any) {
       setLoading(false);
       setBranchMoreLoading(false);
