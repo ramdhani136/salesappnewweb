@@ -385,7 +385,7 @@ const FormTopicPage: React.FC = () => {
                 >
                   {!id ? "New Topic" : data.name}
                 </h4>
-                <div className="text-[0.9em]">
+                <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
@@ -439,7 +439,7 @@ const FormTopicPage: React.FC = () => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  text-sm mb-3"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -459,7 +459,7 @@ const FormTopicPage: React.FC = () => {
                       <InputComponent
                         label="Status"
                         value={{ valueData: status, valueInput: status }}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px]  text-sm mb-3"
                         type="text"
                         onChange={(e) =>
                           setCreatedAt({
@@ -555,7 +555,7 @@ const FormTopicPage: React.FC = () => {
                                 setTagMandatory(checkTagMandatory);
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>
@@ -568,7 +568,7 @@ const FormTopicPage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  text-sm mb-3"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -581,7 +581,7 @@ const FormTopicPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]   text-sm mb-3"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -673,7 +673,7 @@ const FormTopicPage: React.FC = () => {
                                 setTagMandatory(setTags);
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.75em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>

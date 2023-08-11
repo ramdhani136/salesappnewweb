@@ -128,11 +128,11 @@ const TableComponent: React.FC<Iprops> = ({
     >
       <div className="h-auto">
         <div className="w-full p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
-          <div className="text-[0.9em] ml-4 text-gray-600 font-semibold flex items-center">
+          <div className="text-md ml-4 text-gray-600 font-semibold flex items-center">
             ({data.length} {total ?`Of ${total}`:'Items'})
-            <div className="w-60 border h-9 rounded-sm  ml-4 bg-gray-50 flex items-center relative">
+            <div className="w-60 border h-10 rounded-md  ml-4 bg-gray-50 flex items-center relative">
               <input
-                className=" flex-1  px-3 pr-8 h-full bg-gray-50 placeholder:text-gray-300 placeholder:font-normal"
+                className=" flex-1  px-3 pr-8 h-full rounded-md bg-gray-50 placeholder:text-gray-300 placeholder:font-normal"
                 placeholder="Search"
                 onChange={(e) => setValue(e.target.value)}
                 value={value}
@@ -150,7 +150,7 @@ const TableComponent: React.FC<Iprops> = ({
               localStorage={localStorage}
             />
             {getSelected().length > 0 && (
-              <h4 className="ml-3 text-[#6f7477] text-[0.95em] font-normal">
+              <h4 className="ml-3 text-[#6f7477] text-md font-normal">
                 {getSelected().length} Items Selected
               </h4>
             )}
@@ -220,7 +220,7 @@ const TableComponent: React.FC<Iprops> = ({
           next={fetchMore}
           hasMore={hasMore}
           loader={
-            <div className="w-auto  left-1/2 inline py-1 px-2 text-center relative bottom-14  text-sm text-gray-400">
+            <div className="w-auto  left-1/2 inline py-1 px-2 text-center relative bottom-14  text-md text-gray-400">
               <SyncLoader
                 color="#36d7b6"
                 loading={true}
@@ -237,7 +237,7 @@ const TableComponent: React.FC<Iprops> = ({
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th className="font-normal text-gray-600 text-[0.95em] text-left pb-3 px-4">
+                    <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
                       <input
                         className="w-[14px] accent-slate-600"
                         type="checkbox"
@@ -249,7 +249,7 @@ const TableComponent: React.FC<Iprops> = ({
                     {columns.map((col, index) => (
                       <th
                         key={index}
-                        className="font-normal text-gray-800 text-[0.92em] text-left pb-3 "
+                        className="font-normal text-gray-800 text-md text-left pb-3 "
                       >
                         {col.header}
                       </th>
@@ -260,7 +260,7 @@ const TableComponent: React.FC<Iprops> = ({
                   {data.map((item: any, index) => (
                     <tr
                       key={index}
-                      className={`text-[0.9em] border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
+                      className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
                         item.checked && "bg-gray-200 border-gray-300 border"
                       }`}
                     >

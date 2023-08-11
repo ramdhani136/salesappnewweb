@@ -85,7 +85,7 @@ export const UsersPage: React.FC = (): any => {
               />
             ),
             updatedAt: (
-              <div className="inline text-gray-600 text-[0.93em]">
+              <div className="inline text-gray-600 text-md">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
               </div>
             ),

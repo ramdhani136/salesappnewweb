@@ -26,9 +26,7 @@ const Select: React.FC<ISelect> = ({
 }) => {
   return (
     <div className="w-full mb-4">
-      {title && (
-        <label className="block text-[14px] text-gray-700 ">{title}</label>
-      )}
+      {title && <label className="block text-md text-gray-700 ">{title}</label>}
       <select
         disabled={disabled}
         onChange={(e) => {
@@ -37,7 +35,7 @@ const Select: React.FC<ISelect> = ({
         value={value}
         className={`${
           disabled ? `cursor-not-allowed` : ``
-        } w-full px-3 text-sm mt-2 border h-9 rounded-md  bg-gray-50 outline-gray-200 ${ClassName}`}
+        } w-full px-3 text-md mt-2 border h-[40px] rounded-md  bg-gray-50 outline-gray-200 ${ClassName}`}
         name={title}
         onClick={onClick}
       >

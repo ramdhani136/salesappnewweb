@@ -53,14 +53,14 @@ const HeaderComponent: React.FC = () => {
             data.img &&
             `${import.meta.env.VITE_PUBLIC_URI}/images/users/${data.img}`
           }`}
-          sx={{ width: 35, height: 35 }}
+          sx={{ width: 40, height: 40 }}
           className={`mx-3 cursor-pointer`}
         />
         <div>
-          <h4 className=" text-gray-600 text-md text-[0.87em] font-medium -mt-1">
+          <h4 className=" text-gray-600 text-[0.92em] font-medium -mt-1">
             {data.name}
           </h4>
-          <h5 className="font-normal text-md text-[0.76em] text-gray-400 -mt-1">
+          <h5 className="font-normal text-sm text-gray-400 -mt-1">
             @{data.username}
           </h5>
         </div>

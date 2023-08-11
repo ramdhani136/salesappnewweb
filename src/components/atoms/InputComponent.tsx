@@ -126,7 +126,7 @@ const InputComponent: React.FC<IProps> = ({
       )}
       <div
         // onClick={onCLick}
-        className={`mt-1 w-full rounded-md h-8 bg-gray-50  relative ${
+        className={`mt-1 w-full rounded-md h-[40px] bg-gray-50  relative ${
           mandatoy && !value.valueData && "border-red-500 border"
         } ${className}`}
       >
@@ -155,7 +155,7 @@ const InputComponent: React.FC<IProps> = ({
                 : `${value.valueInput}`
               : `${value.valueInput}`
           }
-          className={`w-full  text-[0.95em]  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
+          className={`w-full  text-md  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
         />
        
         {(value.valueInput || type=="number")   && onReset && !disabled && (
@@ -255,7 +255,7 @@ const InputComponent: React.FC<IProps> = ({
           }}
           onMouseLeave={() => setOpenRemark(false)}
         >
-          <h6 className="italic text-[0.8em] text-gray-700">{remark}</h6>
+          <h6 className="italic text-[0.9em] text-gray-700">{remark}</h6>
           <h6
             className={` ${
               !openRemark && "hidden"

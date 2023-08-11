@@ -235,6 +235,7 @@ const FormCustomerGroupPage: React.FC = () => {
       setParentLoading(false);
       setParentMoreLoading(false);
     } catch (error: any) {
+  
       setParentLoading(false);
       setParentMoreLoading(false);
       setParentHasMore(false);
@@ -281,7 +282,7 @@ const FormCustomerGroupPage: React.FC = () => {
       setBranchLoading(false);
       setBranchHasMore(false);
     } catch (error: any) {
-      setLoading(false);
+      setBranchLoading(false);
       setBranchMoreLoading(false);
       setBranchHasMore(false);
     }
@@ -396,7 +397,7 @@ const FormCustomerGroupPage: React.FC = () => {
                 >
                   {!id ? "New Group" : data.name}
                 </h4>
-                <div className="text-[0.9em]">
+                <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
@@ -590,7 +591,7 @@ const FormCustomerGroupPage: React.FC = () => {
                       }}
                       onCLick={() => {
                         ResetBranch();
-                        getBranch({ refresh: true, search: parent.valueInput });
+                        getBranch({ refresh: true, search: branchValue.valueInput });
                       }}
                       onSelected={(e) => {
                         const cekDup = branch.find(
@@ -631,7 +632,7 @@ const FormCustomerGroupPage: React.FC = () => {
                                 setBranch(genBranch);
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-[0.8em] rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>

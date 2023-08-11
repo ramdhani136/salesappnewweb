@@ -345,7 +345,7 @@ const FormContactPage: React.FC = () => {
                 >
                   {!id ? "New Contact" : data.name}
                 </h4>
-                <div className="text-[0.9em]">
+                <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}

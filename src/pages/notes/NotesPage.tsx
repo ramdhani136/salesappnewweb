@@ -12,7 +12,7 @@ import TableComponent, {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { AlertModal, FetchApi } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
@@ -50,7 +50,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
       { header: "Topic", accessor: "topic", className: "w-[30%]" },
-      { header: "Notes", accessor: "result", className: "w-[35%]" },
+      { header: "Result", accessor: "result", className: "w-[35%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
       { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
@@ -73,7 +73,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         Children: FormContactPage,
         title: "",
         props: { params, onRefresh },
-
       })
     );
   };
@@ -161,7 +160,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
     setPage(1), setHasMore(false);
     setRefresh(true);
   };
-
 
   const getSelected = () => {
     const isSelect = data.filter((item) => item.checked === true);
@@ -260,13 +258,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
             setRefresh(true);
           }}
           disabled={false}
-          buttonInsert={{
-            className:"text-sm ",
-            onCLick: GetFormNote,
-            status: true,
-            title: "Add Note",
-            icon: { icon: AddIcon, className: "mr-1 mt-1", size: 13 },
-          }}
         />
       )}
     </div>

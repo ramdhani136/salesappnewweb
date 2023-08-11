@@ -76,7 +76,7 @@ const IconButton: React.FC<IProps> = ({
         )}
         {name && (
           <h5
-            className={`text-[0.86em]  font-normal ${
+            className={`text-sm  font-normal ${
               !primary ? "text-white" : "text-gray-800"
             } ${!Icon && "ml-1"} ${(!list || iconListDisabled) && "mr-1"}`}
           >
@@ -100,7 +100,7 @@ const IconButton: React.FC<IProps> = ({
             {list.map((item, index) => (
               <li
                 key={index}
-                className={`w-full  p-3 rounded-md hover:bg-gray-100 cursor-pointer text-[0.86em] text-gray-800 ${
+                className={`w-full  p-3 rounded-md hover:bg-gray-100 cursor-pointer text-md text-gray-800 ${
                   index + 1 !== list.length && "border-b border-gray-100"
                 } `}
                 onClick={item.onClick}

@@ -22,7 +22,7 @@ const TimeLineVertical: React.FC<IProps> = ({ data }) => {
         <h6 className="inline">{moment(date).fromNow()}</h6>
 
         {open && (
-          <h6 className="absolute left-0 -top-5 w-[150px] text-center text-[0.95em] p-1 py-[1px] bg-slate-900 text-white rounded-md">
+          <h6 className="absolute left-0 -top-5 w-[150px] text-center text-md p-1 py-[1px] bg-slate-900 text-white rounded-md">
            {moment(`${date}`).format("lll")}
           </h6>
         )}
@@ -32,7 +32,7 @@ const TimeLineVertical: React.FC<IProps> = ({ data }) => {
   // End
 
   return (
-    <ul className="mt-10 mb-8 text-sm ml-12">
+    <ul className="mt-10 mb-8 text-md ml-12">
       {data.length > 0 &&
         data.map((item, key) => (
           <li

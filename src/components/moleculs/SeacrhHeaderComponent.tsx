@@ -73,9 +73,9 @@ const SeacrhHeaderComponent: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className=" md:w-[23rem] lg:w-[18rem] relative">
+    <div className=" md:w-[23rem] lg:w-[20rem] relative">
       <div
-        className="border w-full  h-8 rounded-md bg-gray-100 border-gray-200 flex items-center"
+        className="border w-full  h-10 rounded-md bg-gray-100 border-gray-200 flex items-center"
         onClick={click}
       >
         <SearchOutlinedIcon
@@ -93,7 +93,7 @@ const SeacrhHeaderComponent: React.FC = () => {
           }}
           ref={inputRef}
           placeholder="Search a menu"
-          className="bg-gray-100 text-[0.9m] placeholder:text-[0.9em] font-normal px-1 flex-1 mr-2 outline-none"
+          className="bg-gray-100 text-md placeholder:text-md font-normal px-1 flex-1 mr-2 outline-none"
         />
         {value && (
           <CloseOutlinedIcon
@@ -102,9 +102,9 @@ const SeacrhHeaderComponent: React.FC = () => {
             className={`text-gray-300 cursor-pointer`}
           />
         )}
-        <div className="w-[55px] h-[25px] border bg-white rounded-md ml-1 mr-1 flex items-center justify-center text-gray-700">
+        <div className="w-[60px] h-[30px] border bg-white rounded-md ml-1 mr-1 flex items-center justify-center text-gray-700">
           {/* <ShortcutOutlinedIcon style={{ fontSize: 13 }} /> */}
-          <h6 className="text-[0.8em] ml-1 font-medium">Ctrl + G</h6>
+          <h6 className="text-[0.9em] ml-1 font-medium">Ctrl + G</h6>
         </div>
       </div>
       <ul
@@ -116,12 +116,12 @@ const SeacrhHeaderComponent: React.FC = () => {
         onMouseEnter={() => setOnsearch(true)}
         className={`${
           !active && "hidden"
-        } p-2 px-1 duration-500 w-full border  max-h-80 overflow-y-auto absolute scrollbar-none  top-8   bg-white rounded-b-md drop-shadow-sm text-[0.95em] text-gray-600`}
+        } p-2 px-1 duration-500 w-full border  max-h-80 overflow-y-auto absolute scrollbar-none  top-8   bg-white rounded-b-md drop-shadow-sm text-md text-gray-600`}
       >
         {filterMenu(menus).map((menu, id) => (
           <li
             key={id}
-            className="p-2 py-3 hover:bg-gray-100 rounded-md cursor-pointer"
+            className="p-2 py-3 my-1 text-md hover:bg-gray-100 rounded-md cursor-pointer"
             onClick={() => navigate(menu.link)}
           >
             {menu.name}

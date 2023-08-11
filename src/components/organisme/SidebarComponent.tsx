@@ -77,7 +77,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
         </div>
         <div className="mt-2 flex flex-col  gap-2 relative">
           {open && (
-            <h4 className="text-[#515254] text-[0.65em] font-bold ml-2">
+            <h4 className="text-[#515254] text-[0.75em] font-bold ml-2">
               MENU
             </h4>
           )}
@@ -87,12 +87,12 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
               key={id}
               className="group flex items-center text-sm gap-3 p-2 hover:bg-[#323335] text-[#b2b3b6]  rounded-md"
             >
-              <menu.icon style={{ fontSize: 16 }} />
+              <menu.icon style={{ fontSize: 18 }} />
               <h2
                 style={{
                   transitionDelay: `${id + 3}00ms`,
                 }}
-                className={`text-[0.93em] whitespace-pre duration-500 ${
+                className={`text-md whitespace-pre duration-500 ${
                   !open && "opacity-0 translate-x-28 overflow-hidden"
                 }`}
               >

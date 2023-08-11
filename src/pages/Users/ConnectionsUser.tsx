@@ -33,16 +33,16 @@ const ConnectionComponent: React.FC<IConnectionComponent> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      {title && <label className="text-[0.85em] mb-1">{title}</label>}
+      {title && <label className="text-sm mb-1">{title}</label>}
       {data.map((i, index) => (
-        <div key={index} className="mt-1 flex text-[0.8em] cursor-pointer mb-1">
+        <div key={index} className="mt-1 flex text-md cursor-pointer mb-1">
           <ul className="items-center flex px-[8px] py-[5px] rounded-md bg-gray-100">
             {i.count !== undefined && (
-              <li className="flex items-center justify-center text-[0.75em] border mr-2 rounded-md px-[5px] py-[1px] bg-red-400 text-white">
+              <li className="flex items-center justify-center text-sm border mr-2 rounded-md px-[5px] py-[1px] bg-red-400 text-white">
                 <h4> {i.count > 100 ? "99+" : i.count}</h4>
               </li>
             )}
-            <li onClick={i.onTitle} className="hover:underline text-[0.9em] ">
+            <li onClick={i.onTitle} className="hover:underline text-sm ">
               {i.title}
             </li>
           </ul>

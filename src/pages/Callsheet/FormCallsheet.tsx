@@ -555,7 +555,7 @@ const FormCallsheetPage: React.FC = () => {
                 >
                   {!id ? "New callsheet" : data.name}
                 </h4>
-                <div className="text-[0.9em]">
+                <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
@@ -973,7 +973,7 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id }} />}
+                  child={<NotesPage props={{docId:id}} />}
                 />
               )}
               <TimeLineVertical data={history} />

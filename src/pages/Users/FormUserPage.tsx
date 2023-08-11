@@ -338,7 +338,7 @@ const FormUserPage: React.FC = () => {
                 >
                   {!id ? "New User" : data.name}
                 </h4>
-                <div className="text-[0.9em]">
+                <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
@@ -487,7 +487,7 @@ const FormUserPage: React.FC = () => {
                     <li className="flex-1 px-2 list-none">
                       <label className="text-sm">Uri : </label>
                       <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md"
+                        className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md"
                         name="Site Uri"
                         value={erpSite.valueData}
                         onChange={(e) =>
@@ -497,7 +497,7 @@ const FormUserPage: React.FC = () => {
                           })
                         }
                       />
-                      <h4 className="italic text-[0.8em] text-gray-700">
+                      <h4 className="italic text-[0.9em] text-gray-700">
                         *Uri of the erpnext system so that it is connected to
                         the erp data ex: etm.digitalasiasolusindo.com
                       </h4>
@@ -505,7 +505,7 @@ const FormUserPage: React.FC = () => {
                     <li className="flex-1 px-2 list-none">
                       <label className="text-sm">Token : </label>
                       <textarea
-                        className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md"
+                        className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md"
                         name="Site Uri"
                         value={erpToken.valueData}
                         onChange={(e) =>
@@ -515,7 +515,7 @@ const FormUserPage: React.FC = () => {
                           })
                         }
                       />
-                      <h4 className="italic text-[0.8em] text-gray-700">
+                      <h4 className="italic text-[0.9em] text-gray-700">
                         *Get from user token in erpnext system
                       </h4>
                     </li>
@@ -642,12 +642,12 @@ const RoleContent: React.FC<any> = ({ id }) => {
                 type="checkbox"
                 className="mr-1 h-3 w-3 mt-[1.5px]"
               />
-              <h4 className="text-sm">{i.name}</h4>
+              <h4 className="text-md">{i.name}</h4>
             </div>
           );
         })}
         {roleP.length === 0 && (
-          <h4 className="text-center text-sm text-gray-300">No Data</h4>
+          <h4 className="text-center text-md text-gray-300">No Data</h4>
         )}
       </div>
     </>
