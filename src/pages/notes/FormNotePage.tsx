@@ -62,30 +62,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
-      console.log(result);
       setData(result.data);
-
-      // // set workflow
-      // if (result.workflow.length > 0) {
-      //   const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-      //     return {
-      //       name: item.action,
-      //       onClick: () => {
-      //         AlertModal.confirmation({
-      //           onConfirm: () => {
-      //             onSave(item.nextState.id);
-      //           },
-      //           confirmButtonText: "Yes, Save it!",
-      //         });
-      //       },
-      //     };
-      //   });
-
-      //   setWorkflow(isWorkflow);
-      // }
-      // end
-
-      // setHistory(result.history);
 
       setName({
         valueData: result.data.topic.name,
@@ -95,10 +72,10 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
       });
-      // setCreatedAt({
-      //   valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
-      //   valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
-      // });
+      setCreatedAt({
+        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
+      });
       setDesc(result.data.result);
       setData(result.data);
 
