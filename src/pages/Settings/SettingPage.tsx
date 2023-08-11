@@ -239,18 +239,19 @@ const SettingPage: React.FC = () => {
     setVTagLoading(true);
   };
 
-  const getCTags = async (search?: string): Promise<void> => {
+  const getCTags = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!cTagLoading) {
-        setCTagMoreLoading(true);
-      } else {
-        setCTagMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${cTagPage}`,
+        page: `${data.refresh ? 1 : cTagPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -260,7 +261,11 @@ const SettingPage: React.FC = () => {
             value: item._id,
           };
         });
-        setCTags([...cTags, ...listInput]);
+        if (!data.refresh) {
+          setCTags([...cTags, ...listInput]);
+        } else {
+          setCTags([...listInput]);
+        }
         setCTagHasmore(result.hasMore);
         setCTagPage(result.nextPage);
       }
@@ -717,18 +722,31 @@ const SettingPage: React.FC = () => {
                             loading: cTagMoreLoading,
                             hasMore: cTagHasmore,
                             next: () => {
-                              getCTags();
+                              setCTagMoreLoading(true);
+                              getCTags({
+                                refresh: false,
+                                search: callsheetTagValue.valueInput,
+                              });
                             },
                             onSearch(e) {
-                              getCTags(e);
+                              ResetCTags();
+                              getCTags({
+                                refresh: true,
+                                search: e,
+                              });
                             },
+                          }}
+                          onCLick={() => {
+                            ResetCTags();
+                            getCTags({
+                              refresh: true,
+                              search: callsheetTagValue.valueInput,
+                            });
                           }}
                           loading={cTagLoading}
                           modalStyle="mt-2"
                           value={callsheetTagValue}
                           onChange={(e) => {
-                            ResetCTags();
-                            setCTagLoading(true);
                             setCallsheetTagValue({
                               ...callsheetTagValue,
                               valueInput: e,
@@ -753,7 +771,6 @@ const SettingPage: React.FC = () => {
                             });
                           }}
                           onReset={() => {
-                            ResetCTags();
                             setCallsheetTagValue({
                               valueData: null,
                               valueInput: "",
