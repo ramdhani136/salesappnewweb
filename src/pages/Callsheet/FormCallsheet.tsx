@@ -768,7 +768,7 @@ const FormCallsheetPage: React.FC = () => {
                               : false
                             : false
                         }
-                        className={`h-9 mb-1`}
+                        className={`h-9 mb-4`}
                       />
                     )}
                     {group.valueData && (
@@ -839,7 +839,7 @@ const FormCallsheetPage: React.FC = () => {
                               : false
                             : false
                         }
-                        className={`h-9 mb-1`}
+                        className={`h-9 mb-4`}
                       />
                     )}
                     {customer.valueData && (
@@ -908,7 +908,7 @@ const FormCallsheetPage: React.FC = () => {
                               : false
                             : false
                         }
-                        className={`h-9 mb-1`}
+                        className={`h-9 mb-3`}
                       />
                     )}
                     {contact.valueData && (
