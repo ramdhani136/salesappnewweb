@@ -48,10 +48,6 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [customer, setCustomer] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
   const [contact, setContact] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -95,10 +91,21 @@ const FormCallsheetPage: React.FC = () => {
   });
   // End
 
+  // branch
+  const [customerList, setCustomerList] = useState<IListInput[]>([]);
+  const [customerPage, setCustomerPage] = useState<Number>(1);
+  const [customerLoading, setCustomerLoading] = useState<boolean>(true);
+  const [customerMoreLoading, setCustomerMoreLoading] =
+    useState<boolean>(false);
+  const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
+  const [customer, setCustomer] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
   const [callType, setCallType] = useState<string>("out");
   const [loading, setLoading] = useState<boolean>(true);
-  const [customerHasMore, setCustomerHasMore] = useState<boolean>(false);
-  const [customerPage, setCustomerPage] = useState<Number>(1);
   const [contactHasMore, setContactHasMore] = useState<boolean>(false);
   const [contactPage, setContactPage] = useState<Number>(1);
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
@@ -106,7 +113,6 @@ const FormCallsheetPage: React.FC = () => {
   const [loadingBranch, setLoadingBranch] = useState<boolean>(true);
   const [loadingContact, setLoadingContact] = useState<boolean>(true);
   const [loadingCustomer, setLoadingCustomer] = useState<boolean>(true);
-  const [customerMoreLoading, setCustomerMoreLoading] = useState<boolean>(true);
   const [contactMoreLoading, setContactMoreLoading] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
   const [listGroup, setListGroup] = useState<IListInput[]>([]);
@@ -114,13 +120,6 @@ const FormCallsheetPage: React.FC = () => {
   const [listBranch, setListBranch] = useState<IListInput[]>([]);
   const [listCustomer, setListCustomer] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
-
-  const getResetCustomer = () => {
-    setListCustomer([]);
-    setCustomerHasMore(false);
-    setCustomerPage(1);
-    setLoadingCustomer(true);
-  };
 
   const contactReset = () => {
     setPicPhone({ valueData: null, valueInput: "" });
@@ -330,51 +329,53 @@ const FormCallsheetPage: React.FC = () => {
     setGroupLoading(true);
   };
 
-  const getCustomer = async (search?: string): Promise<void> => {
-    console.log(customerPage);
-    if (!loadingCustomer) {
-      setCustomerMoreLoading(true);
-    } else {
-      setCustomerMoreLoading(false);
-    }
-
-    if (customerPage === 1) {
-      setListCustomer([]);
-    }
-
-    if (branch.valueData && group.valueData) {
-      try {
-        let filters: [String, String, String][] = [
-          ["customerGroup", "=", group.valueData],
-          ["status", "=", "1"],
-        ];
-
-        const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
-          page: `${customerPage}`,
-          filters: filters,
-          limit: 10,
-          search: search ?? "",
-        });
-        if (result.data.length > 0) {
-          let listInput: IListInput[] = result.data.map((item: any) => {
-            return {
-              name: item.name,
-              value: item._id,
-            };
-          });
-
-          setListCustomer([...listCustomer, ...listInput]);
-          setCustomerHasMore(result.hasMore);
-          setCustomerPage(result.nextPage);
-        }
-        setLoadingCustomer(false);
-        setCustomerMoreLoading(false);
-      } catch (error) {
-        setCustomerHasMore(false);
-        setLoadingCustomer(false);
-        setCustomerMoreLoading(false);
+  const getCustomer = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
+      const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : customerPage}`,
+        filters: [
+          ["status", "=", "1"],
+          ["customerGroup", "=", group.valueData],
+        ],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setCustomerList([...customerList, ...listInput]);
+        } else {
+          setCustomerList([...listInput]);
+        }
+        setCustomerHasMore(result.hasMore);
+        setCustomerPage(result.nextPage);
+      }
+
+      setCustomerLoading(false);
+      setCustomerMoreLoading(false);
+    } catch (error: any) {
+      setCustomerLoading(false);
+      setCustomerMoreLoading(false);
+      setCustomerHasMore(false);
     }
+  };
+
+  const ResetCustomer = () => {
+    setCustomerList([]);
+    setCustomerHasMore(false);
+    setCustomerPage(1);
+    setCustomerLoading(true);
   };
 
   const getContact = async (search?: string): Promise<void> => {
@@ -784,56 +785,73 @@ const FormCallsheetPage: React.FC = () => {
                     )}
                     {group.valueData && (
                       <InputComponent
+                        mandatoy
+                        label="Customer"
                         infiniteScroll={{
                           loading: customerMoreLoading,
                           hasMore: customerHasMore,
                           next: () => {
-                            getCustomer(`${customer.valueInput}`);
+                            setCustomerMoreLoading(true);
+                            getCustomer({
+                              refresh: false,
+                              search: customer.valueInput,
+                            });
                           },
                           onSearch(e) {
-                            getCustomer(e);
+                            ResetCustomer();
+                            getCustomer({ refresh: true, search: e });
                           },
                         }}
                         onCLick={() => {
-                          getResetCustomer();
-                          getCustomer(`${customer.valueInput}`);
+                          ResetCustomer();
+                          getCustomer({
+                            refresh: true,
+                            search: customer.valueInput,
+                          });
                         }}
-                        loading={loadingCustomer}
-                        label="Customer"
+                        loading={customerLoading}
+                        modalStyle="mt-2"
                         value={customer}
-                        className="h-[38px]   text-[0.93em] mb-3"
                         onChange={(e) => {
-                          getResetCustomer();
-                          setLoadingCustomer(true);
-                          setCustomer({ ...naming, valueInput: e });
+                          setCustomer({
+                            ...customer,
+                            valueInput: e,
+                          });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
                         }}
                         onSelected={(e) => {
-                          setContact({ valueData: null, valueInput: "" });
-                          getResetCustomer();
-                          contactReset();
                           setCustomer({
                             valueData: e.value,
                             valueInput: e.name,
                           });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
                         }}
-                        // onCLick={() => {
-                        //   // setCustomerHasMore(false);
-                        //   // setCustomerPage(1);
-                        //   // setLoadingCustomer(true);
-                        //   // setListCustomer([]);
-                        //   // getCustomer();
-                        // }}
-                        list={listCustomer}
-                        mandatoy
-                        modalStyle="top-9 max-h-[160px]"
                         onReset={() => {
-                          getResetCustomer();
-                          setCustomer({ valueData: null, valueInput: "" });
-                          setContact({ valueData: null, valueInput: "" });
-                          contactReset();
+                          setCustomer({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
                         }}
-                        // disabled={!id ? false : true}
-                        closeIconClass="top-[13.5px]"
+                        list={customerList}
+                        type="text"
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        className={`h-9 mb-1`}
                       />
                     )}
                     {customer.valueData && (
