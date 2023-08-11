@@ -129,7 +129,7 @@ const TableComponent: React.FC<Iprops> = ({
       <div className="h-auto">
         <div className="w-full p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
           <div className="text-md ml-4 text-gray-600 font-semibold flex items-center">
-            ({data.length} {total ?`Of ${total}`:'Items'})
+            ({data.length} {total ? `Of ${total}` : "Items"})
             <div className="w-60 border h-10 rounded-md  ml-4 bg-gray-50 flex items-center relative">
               <input
                 className=" flex-1  px-3 pr-8 h-full rounded-md bg-gray-50 placeholder:text-gray-300 placeholder:font-normal"
@@ -232,7 +232,7 @@ const TableComponent: React.FC<Iprops> = ({
           }
           scrollableTarget="scrollableDiv"
         >
-          <section className="w-95% p-4 h-auto overflow-x-auto ">
+          <section className="w-95% p-4 h-auto overflow-x-auto  ">
             {data.length > 0 ? (
               <table className="w-full">
                 <thead>

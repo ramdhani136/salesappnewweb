@@ -14,11 +14,9 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 import React from "react";
-import { type } from "os";
 import Swal from "sweetalert2";
 
 const FormCallsheetPage: React.FC = () => {
@@ -973,7 +971,7 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{docId:id}} />}
+                  child={<NotesPage props={{ docId: id }} />}
                 />
               )}
               <TimeLineVertical data={history} />

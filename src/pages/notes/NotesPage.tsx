@@ -70,7 +70,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
     dispatch(
       modalSet({
         active: true,
-        Children: FormContactPage,
+        Children: <div>halo</div>,
         title: "",
         props: { params, onRefresh },
       })
@@ -174,7 +174,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
+            await GetDataServer(DataAPI.NOTE).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -211,6 +211,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
   }, [filter, search]);
 
   return (
+    <>
     <div className="min-h-[300px] max-h-[400px] flex">
       {loading ? (
         <div className="w-full  flex items-center justify-center">
@@ -260,7 +261,15 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
           disabled={false}
         />
       )}
+     
     </div>
+      <a
+      onClick={GetFormNote}
+      className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
+    >
+      Add Row
+    </a>
+    </>
   );
 };
 
