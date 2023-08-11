@@ -45,8 +45,8 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic", accessor: "topic", className: "w-[30%]" },
-      { header: "Result", accessor: "result", className: "w-[35%]" },
+      { header: "Topic", accessor: "topic", className: "w-[25%]" },
+      { header: "Result", accessor: "result", className: "w-[40%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
       { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
@@ -103,7 +103,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
               </div>
             ),
-            result: <h4 className="mr-10">{item.result}</h4>,
+            result: <h4 className="mr-10 text-[0.95em]">{item.result}</h4>,
             tags: (
               <div className="p-2">
                 {item.tags &&

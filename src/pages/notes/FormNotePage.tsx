@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -7,6 +7,8 @@ import { IValue, TypeField } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
@@ -362,12 +364,27 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                   </li>
                 </ul>
               </div>
-              
             </div>
-            <div className="px-7 flex flex-col mt-3 py-2 border mx-5 rounded-md">
-              <h4>Files</h4>
+            <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
+              <div className="flex items-center justify-between mt-2 ">
+                <h4 className="text-sm inline">Files</h4>
+                <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
+                  Attach
+                  <AttachFileIcon style={{ fontSize: 16 }} />
+                </a>
+              </div>
+              <ul className=" w-full  my-3">
+                <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
+                  <h4 className=" underline cursor-pointer  text-sm text-blue-500 hover:text-blue-600 duration-100">
+                    Catatan.txt
+                  </h4>
+                  <CloseIcon
+                    style={{ fontSize: 16, fontWeight: "bold" }}
+                    className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+                  />
+                </li>
+              </ul>
             </div>
-            
           </>
         ) : (
           <LoadingComponent />
