@@ -524,8 +524,6 @@ const FormCallsheetPage: React.FC = () => {
       contact: contact.valueData,
     };
 
-    console.log(JSON.stringify(prevData))
-    console.log(JSON.stringify(actualData))
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
