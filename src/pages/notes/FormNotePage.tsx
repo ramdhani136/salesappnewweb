@@ -21,7 +21,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Notes"} - Sales App Ekatunggal`,
+    title: `${id ? data?.topic?.name : "New Notes"} - Sales App Ekatunggal`,
     description: "Halaman form Notes - Sales web system",
   };
 
@@ -63,7 +63,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
       console.log(result);
-      setData(result.data)
+      setData(result.data);
 
       // // set workflow
       // if (result.workflow.length > 0) {
@@ -87,19 +87,19 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
       // setHistory(result.history);
 
-      // setName({
-      //   valueData: result.data.name,
-      //   valueInput: result.data.name,
-      // });
-      // setUser({
-      //   valueData: result.data.createdBy._id,
-      //   valueInput: result.data.createdBy.name,
-      // });
+      setName({
+        valueData: result.data.topic.name,
+        valueInput: result.data.topic.name,
+      });
+      setUser({
+        valueData: result.data.createdBy._id,
+        valueInput: result.data.createdBy.name,
+      });
       // setCreatedAt({
       //   valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
       //   valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       // });
-
+      setDesc(result.data.result);
       setData(result.data);
 
       // setPrevData({
