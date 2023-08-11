@@ -367,17 +367,36 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             </div>
             <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
               <div className="flex items-center justify-between mt-2 ">
-                <h4 className="text-sm inline">Files</h4>
-                <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
-                  Attach
-                  <AttachFileIcon style={{ fontSize: 16 }} />
-                </a>
+                <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
+
+                <label htmlFor="imageUpload">
+                  <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
+                    <h4 className="text-gray-800"> Attach</h4>
+                    <AttachFileIcon
+                      className="text-gray-800"
+                      style={{ fontSize: 16 }}
+                    />
+                  </a>
+                </label>
+                <input
+                  type="file"
+                  name="imageUpload"
+                  id="imageUpload"
+                  className="hidden"
+                  multiple
+                  accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx"
+                  onChange={(e) => {
+                    console.log(e.target.files);
+                  }}
+                />
               </div>
               <ul className=" w-full  my-3">
                 <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
                   <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
                     <h4> Catatan.txt</h4>
-                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-800">(1K)</h4>
+                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
+                      (1K)
+                    </h4>
                   </div>
                   <CloseIcon
                     style={{ fontSize: 16, fontWeight: "bold" }}
@@ -387,14 +406,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
                   <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
                     <h4> Bukti Pembayarn.jpg</h4>
-                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-800">(1K)</h4>
+                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
+                      (1K)
+                    </h4>
                   </div>
                   <CloseIcon
                     style={{ fontSize: 16, fontWeight: "bold" }}
                     className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
                   />
                 </li>
-              
               </ul>
             </div>
           </>
