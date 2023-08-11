@@ -107,7 +107,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
                     return (
                       <button
                         key={index}
-                        className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1"
+                        className="border rounded-md bg-green-600 text-sm font-semibold text-white px-2 py-1 mr-1 mb-1"
                       >
                         {i.name}
                       </button>
