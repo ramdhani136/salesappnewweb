@@ -1,6 +1,6 @@
 import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
 import {
   ButtonStatusComponent,
@@ -74,7 +74,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         Children: FormNotePage,
         title: "",
         props: { id: id ?? undefined },
-        className: "w-[60%]",
+        className: "w-[65%]",
       })
     );
   };
@@ -94,7 +94,14 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
             id: item._id,
             checked: false,
             topic: (
-              <a href={`/notes/${props.name}/${item._id}`}>{item.topic.name}</a>
+              <b
+                className="font-medium"
+                onClick={() => {
+                  GetFormNote(item._id);
+                }}
+              >
+                {item.topic.name}
+              </b>
             ),
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
