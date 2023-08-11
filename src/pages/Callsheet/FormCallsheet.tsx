@@ -18,6 +18,8 @@ import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 import React from "react";
+import { type } from "os";
+import Swal from "sweetalert2";
 
 const FormCallsheetPage: React.FC = () => {
   let { id } = useParams();
@@ -33,7 +35,7 @@ const FormCallsheetPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [prevData, setPrevData] = useState<any>({});
+
   const dataCallType: any[] = [
     { title: "Incomming Call", value: "in" },
     { title: "Outgoing Call", value: "out" },
@@ -117,6 +119,13 @@ const FormCallsheetPage: React.FC = () => {
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
+  const [prevData, setPrevData] = useState<any>({
+    name: naming.valueData,
+    type: callType,
+    customer: customer.valueData,
+    contact: contact.valueData,
+  });
+
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
@@ -128,9 +137,7 @@ const FormCallsheetPage: React.FC = () => {
           return {
             name: item.action,
             onClick: () => {
-              onSave({
-                nextState: item.nextState.id,
-              });
+              onSave(item.nextState.id);
             },
           };
         });
@@ -179,6 +186,13 @@ const FormCallsheetPage: React.FC = () => {
           valueInput: result.data.contact.position,
         });
       }
+
+      setPrevData({
+        name: result.data.name,
+        type: result.data.type,
+        customer: result.data.customer._id,
+        contact: result.data.contact._id,
+      });
 
       setLoading(false);
     } catch (error: any) {
@@ -431,60 +445,54 @@ const FormCallsheetPage: React.FC = () => {
     }
   };
 
-  const onSave = async (data: {}): Promise<any> => {
-    // const progress = async (): Promise<void> => {
-    //   if (allow.barcode === false && allow.manual === false) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: "Allow required",
-    //     });
-    //     return;
-    //   }
-    //   try {
-    //     setLoading(true);
-    //     let result: any;
-    //     if (!id) {
-    //       result = await GetDataServer(DataAPI.CALLSHEET).CREATE({
-    //         startDate: startDate.valueData,
-    //         dueDate: dueDate.valueData,
-    //         workflowState: "Draft",
-    //         status: "0",
-    //         warehouse: warehouse.valueData,
-    //         allow: allow,
-    //       });
-    //       navigate(`/callsheet/${result.data.data.name}`);
-    //       navigate(0);
-    //     } else {
-    //       result = await GetDataServer(DataAPI.CALLSHEET).UPDATE({
-    //         id: id,
-    //         data: !data
-    //           ? {
-    //               startDate: startDate.valueData,
-    //               dueDate: dueDate.valueData,
-    //               allow: allow,
-    //             }
-    //           : data,
-    //       });
-    //       getData();
-    //     }
-    //   } catch (error: any) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: error.response.data.msg ?? "Error Network",
-    //     });
-    //     setLoading(false);
-    //   }
-    // };
-    // AlertModal.confirmation({
-    //   onConfirm: progress,
-    //   text: "You want to save this data!",
-    //   confirmButtonText: "Yes, Save it",
-    // });
-  };
+  const onSave = async (nextState?: String): Promise<any> => {
+    setLoading(true);
+    try {
+      let updata = {};
+      if (nextState) {
+        updata = { nextState: nextState };
+      } else {
+        updata = {
+          namingSeries: naming.valueData,
+          type: callType,
+          customer: customer.valueData,
+          contact: contact.valueData,
+        };
+      }
 
+      console.log(updata)
+
+      let Action = id
+        ? GetDataServer(DataAPI.CALLSHEET).UPDATE({ id: id, data: updata })
+        : GetDataServer(DataAPI.CALLSHEET).CREATE(updata);
+
+      const result = await Action;
+      if (id) {
+        getData();
+        Swal.fire({ icon: "success", text: "Saved" });
+      } else {
+        navigate(`/callsheet/${result.data.data._id}`);
+        navigate(0);
+      }
+    } catch (error: any) {
+      console.log(error);
+      setLoading(false);
+      Swal.fire(
+        "Error!",
+        `${
+          error?.response?.data?.msg?.message ??
+          error?.response?.data?.msg ??
+          error ??
+          "Error Insert"
+        }`,
+        "error"
+      );
+    }
+
+    setLoading(false);
+  };
   useEffect(() => {
+    getNaming();
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
@@ -493,6 +501,23 @@ const FormCallsheetPage: React.FC = () => {
       setListMoreAction([]);
     }
   }, []);
+
+  // Cek perubahan
+  useEffect(() => {
+    const actualData = {
+      name: naming.valueData,
+      type: callType,
+      customer: customer.valueData,
+      contact: contact.valueData,
+    };
+
+    if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
+      setChangeData(true);
+    } else {
+      setChangeData(false);
+    }
+  }, [naming.valueData, callType, customer.valueData, contact.valueData]);
+  // End
 
   return (
     <>
