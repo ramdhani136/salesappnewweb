@@ -73,6 +73,10 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         valueData: result.data.topic.name,
         valueInput: result.data.topic.name,
       });
+      setCustomer({
+        valueData: result.data.customer._id,
+        valueInput: result.data.customer.name,
+      });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
