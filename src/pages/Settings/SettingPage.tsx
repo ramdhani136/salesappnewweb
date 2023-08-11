@@ -187,8 +187,14 @@ const SettingPage: React.FC = () => {
     setLoading(false);
   };
 
-  const getVTags = async (search?: string): Promise<void> => {
+  const getVTags = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
       if (!vTagLoading) {
         setVTagMoreLoading(true);
       } else {
@@ -196,9 +202,9 @@ const SettingPage: React.FC = () => {
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${vTagPage}`,
+        page: `${data.refresh ? 1 : vTagPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -208,7 +214,11 @@ const SettingPage: React.FC = () => {
             value: item._id,
           };
         });
-        setVTags([...vTags, ...listInput]);
+        if (!data.refresh) {
+          setVTags([...vTags, ...listInput]);
+        } else {
+          setVTags([...listInput]);
+        }
         setVTagHasmore(result.hasMore);
         setVTagPage(result.nextPage);
       }
@@ -307,18 +317,19 @@ const SettingPage: React.FC = () => {
     callsheetTopic,
   ]);
 
-  const getVisitTopic = async (search?: string): Promise<void> => {
+  const getVisitTopic = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!visitTopicLoading) {
-        setVisitTopicMoreLoading(true);
-      } else {
-        setVisitTopicMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${visitTopicPage}`,
+        page: `${data.refresh ? 1 : visitTopicPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -328,7 +339,11 @@ const SettingPage: React.FC = () => {
             value: item._id,
           };
         });
-        setVisitTopicList([...visitTopicList, ...listInput]);
+        if (!data.refresh) {
+          setVisitTopicList([...visitTopicList, ...listInput]);
+        } else {
+          setVisitTopicList([...listInput]);
+        }
         setVisitTopicHasMore(result.hasMore);
         setVisitTopicPage(result.nextPage);
       }
@@ -497,18 +512,28 @@ const SettingPage: React.FC = () => {
                             loading: vTagMoreLoading,
                             hasMore: vTagHasmore,
                             next: () => {
-                              getVTags();
+                              setVTagMoreLoading(true);
+                              getVTags({
+                                refresh: false,
+                                search: visitTagValue.valueInput,
+                              });
                             },
                             onSearch(e) {
-                              getVTags(e);
+                              ResetVTags();
+                              getVTags({ refresh: true, search: e });
                             },
+                          }}
+                          onCLick={() => {
+                            ResetVTags();
+                            getVTags({
+                              refresh: true,
+                              search: visitTagValue.valueInput,
+                            });
                           }}
                           loading={vTagLoading}
                           modalStyle="mt-2"
                           value={visitTagValue}
                           onChange={(e) => {
-                            ResetVTags();
-                            setVTagLoading(true);
                             setVisitTagValue({
                               ...visitTagValue,
                               valueInput: e,
@@ -530,7 +555,6 @@ const SettingPage: React.FC = () => {
                             setVisitTagValue({ valueData: "", valueInput: "" });
                           }}
                           onReset={() => {
-                            ResetVTags();
                             setVisitTagValue({
                               valueData: null,
                               valueInput: "",
@@ -572,18 +596,28 @@ const SettingPage: React.FC = () => {
                             loading: visitTopicMoreLoading,
                             hasMore: visitTopicHasMore,
                             next: () => {
-                              getVisitTopic();
+                              setVisitTopicMoreLoading(true);
+                              getVisitTopic({
+                                refresh: false,
+                                search: visitTopicValue.valueInput,
+                              });
                             },
                             onSearch(e) {
-                              getVisitTopic(e);
+                              ResetVisitTopic();
+                              getVisitTopic({ refresh: true, search: e });
                             },
+                          }}
+                          onCLick={() => {
+                            ResetVisitTopic();
+                            getVisitTopic({
+                              refresh: true,
+                              search: visitTopicValue.valueInput,
+                            });
                           }}
                           loading={visitTopicLoading}
                           modalStyle="mt-2"
                           value={visitTopicValue}
                           onChange={(e) => {
-                            ResetVisitTopic();
-                            setVisitTopicLoading(true);
                             setVisitTopicValue({
                               ...visitTopicValue,
                               valueInput: e,
@@ -608,7 +642,6 @@ const SettingPage: React.FC = () => {
                             });
                           }}
                           onReset={() => {
-                            ResetVisitTopic();
                             setVisitTopicValue({
                               valueData: null,
                               valueInput: "",
