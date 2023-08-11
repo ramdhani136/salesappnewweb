@@ -2,24 +2,18 @@ import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
-import {
-  ButtonStatusComponent,
-  InfoDateComponent,
-} from "../../components/atoms";
+import { InfoDateComponent } from "../../components/atoms";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import TableComponent, {
   IColumns,
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import AddIcon from "@mui/icons-material/Add";
-import { AlertModal, FetchApi } from "../../utils";
+import { AlertModal } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
-import FormContactPage from "../Contact/FormContactPage";
 import FormNotePage from "./FormNotePage";
-// import ModalSetSTockManual from "./ModalSetSTockManual";
 
 interface IProps {
   props: any;
@@ -27,6 +21,7 @@ interface IProps {
 
 const NotesPage: React.FC<IProps> = ({ props }) => {
   const docId = props.docId;
+  const docData = props.data;
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -73,7 +68,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         active: true,
         Children: FormNotePage,
         title: "",
-        props: { id: id ?? undefined },
+        props: { id: id ?? undefined, doc: docData },
         className: "w-[65%] h-[95%]",
       })
     );

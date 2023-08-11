@@ -2,12 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {
-  ButtonStatusComponent,
-  IconButton,
-  InputComponent,
-  TimeLineVertical,
-} from "../../components/atoms";
+import { IconButton, InputComponent } from "../../components/atoms";
 import { IValue, TypeField } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
@@ -18,6 +13,7 @@ import Swal from "sweetalert2";
 
 const FormNotePage: React.FC<any> = ({ props }) => {
   const id = props.id;
+  const docData = props.doc;
 
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -29,7 +25,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
-  const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
   const [user, setUser] = useState<IValue>({
@@ -40,12 +35,16 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
+  const [customer, setCustomer] = useState<IValue>({
+    valueData: docData.customer._id,
+    valueInput: docData.customer.name,
+  });
 
   const [status, setStatus] = useState<String>("Draft");
-  const [desc, setDesc] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     tupic: topic.valueData,
-    desc: desc ?? "",
+    note: notes ?? "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -76,7 +75,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
-      setDesc(result.data.result);
+      setNotes(result.data.result);
       setData(result.data);
 
       // setPrevData({
@@ -141,7 +140,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       let data: any = {
         topic: topic.valueData,
-        desc: desc,
+        note: notes,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -189,14 +188,14 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const actualData = {
       topic: topic.valueData,
-      desc: desc ?? "",
+      note: notes ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [topic, notes]);
   // End
 
   return (
@@ -267,8 +266,14 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             </div>
             <div className=" px-5 flex flex-col ">
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
-                <div className="w-full h-auto  float-left rounded-md p-3 py-5">
+                <div className="w-full h-auto  float-left rounded-md p-3 pt-5">
                   <div className=" w-1/2 px-4 float-left ">
+                    <InputComponent
+                      label="Customer"
+                      value={customer}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      disabled
+                    />
                     <InputComponent
                       typeField={TypeField.TEXTAREA}
                       mandatoy
@@ -282,17 +287,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    />
-
-                    <label className="text-sm">Desc</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -326,6 +320,26 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     />
                   </div>
                 </div>
+                <div className="px-7 mb-2">
+                  <label className="text-sm">
+                    Result <a className="text-red-600">*</a>
+                  </label>
+                  <textarea
+                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${!notes && "border-red-500"}`}
+                    name="Site Uri"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    disabled={
+                      id != null ? (status !== "Draft" ? true : false) : false
+                    }
+                  />
+                </div>
+                <label className="text-sm ml-7">Tags</label>
+                <ul className="border mx-7 px-2 mt-2 py-3 mb-5 rounded-sm float-left w-[93%]">
+                  <li className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center">
+                    Price
+                  </li>
+                </ul>
               </div>
             </div>
           </>

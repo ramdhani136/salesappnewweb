@@ -971,7 +971,7 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id }} />}
+                  child={<NotesPage props={{ docId: id, data: data }} />}
                 />
               )}
               <TimeLineVertical data={history} />
