@@ -369,18 +369,19 @@ const SettingPage: React.FC = () => {
     setVisitTopicLoading(true);
   };
 
-  const getCallsheetTopic = async (search?: string): Promise<void> => {
+  const getCallsheetTopic = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!callsheetTopicLoading) {
-        setCallsheetTopicMoreLoading(true);
-      } else {
-        setCallsheetTopicMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${callsheetTopicPage}`,
+        page: `${data.refresh ? 1 : callsheetTopicPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -390,7 +391,11 @@ const SettingPage: React.FC = () => {
             value: item._id,
           };
         });
-        setCallsheetTopicList([...callsheetTopicList, ...listInput]);
+        if (!data.refresh) {
+          setCallsheetTopicList([...callsheetTopicList, ...listInput]);
+        } else {
+          setCallsheetTopicList([...listInput]);
+        }
         setCallsheetTopicHasMore(result.hasMore);
         setCallsheetTopicPage(result.nextPage);
       }
@@ -811,18 +816,31 @@ const SettingPage: React.FC = () => {
                             loading: callsheetTopicMoreLoading,
                             hasMore: callsheetTopicHasMore,
                             next: () => {
-                              getCallsheetTopic();
+                              setCallsheetTopicMoreLoading(true);
+                              getCallsheetTopic({
+                                refresh: false,
+                                search: callsheetTopicValue.valueInput,
+                              });
                             },
                             onSearch(e) {
-                              getCallsheetTopic(e);
+                              ResetCallsheetTopic();
+                              getCallsheetTopic({
+                                refresh: true,
+                                search: e,
+                              });
                             },
+                          }}
+                          onCLick={() => {
+                            ResetCallsheetTopic();
+                            getCallsheetTopic({
+                              refresh: true,
+                              search: callsheetTopicValue.valueInput,
+                            });
                           }}
                           loading={callsheetTopicLoading}
                           modalStyle="mt-2"
                           value={callsheetTopicValue}
                           onChange={(e) => {
-                            ResetCallsheetTopic();
-                            setCallsheetTopicLoading(true);
                             setCallsheetTopicValue({
                               ...callsheetTopicValue,
                               valueInput: e,
@@ -847,7 +865,6 @@ const SettingPage: React.FC = () => {
                             });
                           }}
                           onReset={() => {
-                            ResetCallsheetTopic();
                             setCallsheetTopicValue({
                               valueData: null,
                               valueInput: "",
