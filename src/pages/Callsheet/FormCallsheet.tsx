@@ -120,7 +120,6 @@ const FormCallsheetPage: React.FC = () => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const [prevData, setPrevData] = useState<any>({
-    name: naming.valueData,
     type: callType,
     customer: customer.valueData,
     contact: contact.valueData,
@@ -188,7 +187,6 @@ const FormCallsheetPage: React.FC = () => {
       }
 
       setPrevData({
-        name: result.data.name,
         type: result.data.type,
         customer: result.data.customer._id,
         contact: result.data.contact._id,
@@ -460,8 +458,6 @@ const FormCallsheetPage: React.FC = () => {
         };
       }
 
-      console.log(updata)
-
       let Action = id
         ? GetDataServer(DataAPI.CALLSHEET).UPDATE({ id: id, data: updata })
         : GetDataServer(DataAPI.CALLSHEET).CREATE(updata);
@@ -505,7 +501,6 @@ const FormCallsheetPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      name: naming.valueData,
       type: callType,
       customer: customer.valueData,
       contact: contact.valueData,
@@ -516,7 +511,7 @@ const FormCallsheetPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [naming.valueData, callType, customer.valueData, contact.valueData]);
+  }, [callType, customer.valueData, contact.valueData]);
   // End
 
   return (
@@ -709,9 +704,6 @@ const FormCallsheetPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
                       className={`h-9 mb-1`}
                     />
                   </div>
@@ -786,13 +778,6 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         list={groupList}
                         type="text"
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
                         className={`h-9 mb-4`}
                       />
                     )}
@@ -857,13 +842,6 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         list={customerList}
                         type="text"
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
                         className={`h-9 mb-4`}
                       />
                     )}
@@ -926,13 +904,6 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         list={contactList}
                         type="text"
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
                         className={`h-9 mb-3`}
                       />
                     )}
