@@ -48,11 +48,6 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [contact, setContact] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
   const [picPhone, setPicPhone] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -92,6 +87,18 @@ const FormCallsheetPage: React.FC = () => {
   // End
 
   // branch
+  const [contactList, sertContactList] = useState<IListInput[]>([]);
+  const [contactPage, setContactPage] = useState<Number>(1);
+  const [contactLoading, setContactLoading] = useState<boolean>(true);
+  const [contactMoreLoading, setContactMoreLoading] = useState<boolean>(false);
+  const [contactHasMore, setContactHasMore] = useState<boolean>(false);
+  const [contact, setContact] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // branch
   const [customerList, setCustomerList] = useState<IListInput[]>([]);
   const [customerPage, setCustomerPage] = useState<Number>(1);
   const [customerLoading, setCustomerLoading] = useState<boolean>(true);
@@ -106,29 +113,9 @@ const FormCallsheetPage: React.FC = () => {
 
   const [callType, setCallType] = useState<string>("out");
   const [loading, setLoading] = useState<boolean>(true);
-  const [contactHasMore, setContactHasMore] = useState<boolean>(false);
-  const [contactPage, setContactPage] = useState<Number>(1);
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
-  const [loadingGroup, setLoadingGroup] = useState<boolean>(true);
-  const [loadingBranch, setLoadingBranch] = useState<boolean>(true);
-  const [loadingContact, setLoadingContact] = useState<boolean>(true);
-  const [loadingCustomer, setLoadingCustomer] = useState<boolean>(true);
-  const [contactMoreLoading, setContactMoreLoading] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
-  const [listGroup, setListGroup] = useState<IListInput[]>([]);
-  const [listContact, setListContact] = useState<IListInput[]>([]);
-  const [listBranch, setListBranch] = useState<IListInput[]>([]);
-  const [listCustomer, setListCustomer] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
-
-  const contactReset = () => {
-    setPicPhone({ valueData: null, valueInput: "" });
-    setPicPosition({ valueData: null, valueInput: "" });
-    setListContact([]);
-    setContactHasMore(false);
-    setContactPage(1);
-    setLoadingContact(true);
-  };
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -378,53 +365,54 @@ const FormCallsheetPage: React.FC = () => {
     setCustomerLoading(true);
   };
 
-  const getContact = async (search?: string): Promise<void> => {
-    if (!loadingCustomer) {
-      setContactMoreLoading(true);
-    } else {
-      setContactMoreLoading(false);
-    }
-
-    if (contactPage === 1) {
-      setListContact([]);
-    }
-
-    if (customer.valueData) {
-      try {
-        let filters: [String, String, String][] = [
-          ["customer", "=", customer.valueData],
-        ];
-
-        const result: any = await GetDataServer(DataAPI.CONTACT).FIND({
-          page: `${contactPage}`,
-          filters: filters,
-          limit: 10,
-          search: search ?? "",
-        });
-        if (result.data.length > 0) {
-          let listInput: IListInput[] = result.data.map((item: any) => {
-            return {
-              name: item.name,
-              value: item._id,
-              other: {
-                phone: item.phone,
-                position: item.position,
-              },
-            };
-          });
-
-          setListContact([...listContact, ...listInput]);
-          setContactHasMore(result.hasMore);
-          setContactPage(result.nextPage);
-        }
-        setLoadingContact(false);
-        setContactMoreLoading(false);
-      } catch (error) {
-        setContactHasMore(false);
-        setLoadingContact(false);
-        setContactMoreLoading(false);
+  const getContact = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
+      const result: any = await GetDataServer(DataAPI.CONTACT).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : contactPage}`,
+        filters: [
+          ["status", "=", "1"],
+          ["customer", "=", customer.valueData],
+        ],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+            data: item,
+          };
+        });
+        if (!data.refresh) {
+          sertContactList([...contactList, ...listInput]);
+        } else {
+          sertContactList([...listInput]);
+        }
+        setContactHasMore(result.hasMore);
+        setContactPage(result.nextPage);
+      }
+
+      setContactLoading(false);
+      setContactMoreLoading(false);
+    } catch (error: any) {
+      setContactLoading(false);
+      setContactMoreLoading(false);
+      setContactHasMore(false);
     }
+  };
+
+  const ResetContact = () => {
+    sertContactList([]);
+    setContactHasMore(false);
+    setContactPage(1);
+    setContactLoading(true);
   };
 
   const onDelete = (): void => {
@@ -856,49 +844,71 @@ const FormCallsheetPage: React.FC = () => {
                     )}
                     {customer.valueData && (
                       <InputComponent
+                        mandatoy
+                        label="Contact"
                         infiniteScroll={{
                           loading: contactMoreLoading,
                           hasMore: contactHasMore,
                           next: () => {
-                            getContact(`${contact.valueInput}`);
+                            setContactMoreLoading(true);
+                            getContact({
+                              refresh: false,
+                              search: contact.valueInput,
+                            });
                           },
                           onSearch(e) {
-                            getContact(e);
+                            ResetContact();
+                            getContact({ refresh: true, search: e });
                           },
                         }}
-                        loading={loadingContact}
-                        label="Contact"
+                        onCLick={() => {
+                          ResetContact();
+                          getContact({
+                            refresh: true,
+                            search: contact.valueInput,
+                          });
+                        }}
+                        loading={contactLoading}
+                        modalStyle="mt-2"
                         value={contact}
-                        className="h-[38px]   text-[0.93em] mb-3"
                         onChange={(e) => {
-                          contactReset();
-                          setLoadingContact(true);
-                          setContact({ ...naming, valueInput: e });
+                          setContact({
+                            ...customer,
+                            valueInput: e,
+                          });
                         }}
                         onSelected={(e) => {
-                          contactReset();
-                          setPicPhone({
-                            valueData: e.other.phone,
-                            valueInput: e.other.phone,
-                          });
-                          setPicPosition({
-                            valueData: e.other.position,
-                            valueInput: e.other.position,
-                          });
                           setContact({
                             valueData: e.value,
                             valueInput: e.name,
                           });
+                          setPicPhone({
+                            valueData: e.data.phone,
+                            valueInput: e.data.phone,
+                          });
+                          setPicPosition({
+                            valueData: e.data.position,
+                            valueInput: e.data.position,
+                          });
                         }}
-                        list={listContact}
-                        mandatoy
-                        modalStyle="top-9 max-h-[160px]"
                         onReset={() => {
-                          contactReset();
-                          setContact({ valueData: null, valueInput: "" });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setPicPhone({ valueData: null, valueInput: "" });
+                          setPicPosition({ valueData: null, valueInput: "" });
                         }}
-                        // disabled={!id ? false : true}
-                        closeIconClass="top-[13.5px]"
+                        list={contactList}
+                        type="text"
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        className={`h-9 mb-1`}
                       />
                     )}
                     {contact.valueData && (
