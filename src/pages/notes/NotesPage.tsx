@@ -12,11 +12,12 @@ import TableComponent, {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import AddIcon from '@mui/icons-material/Add';
 import { AlertModal, FetchApi } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
+import FormContactPage from "../Contact/FormContactPage";
 // import ModalSetSTockManual from "./ModalSetSTockManual";
 
 interface IProps {
@@ -24,6 +25,7 @@ interface IProps {
 }
 
 const NotesPage: React.FC<IProps> = ({ props }) => {
+  const docId = props.docId;
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -50,9 +52,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       { header: "Topic", accessor: "topic", className: "w-[30%]" },
       { header: "Notes", accessor: "result", className: "w-[35%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
-      // { header: "Stock", accessor: "actual_qty", className: "w-[6.5%]" },
-      // { header: "Checked", accessor: "real_qty", className: "w-[6.5%]" },
-      // { header: "Uom", accessor: "uom", className: "w-[6.5%]" },
       { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
     []
@@ -67,21 +66,22 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
   //   }
   // };
 
-  // const ShowModalPackingId = (params?: {}) => {
-  //   dispatch(
-  //     modalSet({
-  //       active: true,
-  //       Children: ModalSetSTockManual,
-  //       title: "",
-  //       props: { params, onRefresh },
-  //     })
-  //   );
-  // };
+  const GetFormNote = (params?: {}) => {
+    dispatch(
+      modalSet({
+        active: true,
+        Children: FormContactPage,
+        title: "",
+        props: { params, onRefresh },
+
+      })
+    );
+  };
 
   const getData = async (): Promise<any> => {
     try {
       const result: any = await GetDataServer(DataAPI.NOTE).FIND({
-        // filters: [...filter, ["schedule.name", "=", `${props.name}`]],
+        filters: [...filter, ["doc._id", "=", `${docId}`]],
         limit: limit,
         page: page,
         orderBy: { sort: isOrderBy, state: isSort },
@@ -89,7 +89,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       });
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
-          
           return {
             id: item._id,
             checked: false,
@@ -105,55 +104,18 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
             tags: (
               <div className="p-2">
                 {item.tags &&
-                  item.tags.map((i: any,index:number) => {
+                  item.tags.map((i: any, index: number) => {
                     return (
-                      <button key={index} className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1">
+                      <button
+                        key={index}
+                        className="border rounded-md bg-green-600 text-[0.78em] font-semibold text-white px-2 py-1 mr-1 mb-1"
+                      >
                         {i.name}
                       </button>
                     );
                   })}
               </div>
             ),
-            // // item_code: props.allow.manual ? (
-            // //   <h4 onClick={() => getItem(item)}>{item.item_code}</h4>
-            // // ) : (
-            // //   <a href={`/schedule/${props.name}/${item._id}`}>
-            // //     {item.item_code}
-            // //   </a>
-            // // ),
-            // code: `${item.item_code} - ${item.item_name}`,
-
-            // // item_name: props.allow.manual ? (
-            // //   <h4 onClick={() => getItem(item)}>{item.item_name}</h4>
-            // // ) : (
-            // //   <a href={`/schedule/${props.name}/${item._id}`}>
-            // //     {item.item_name}
-            // //   </a>
-            // // ),
-            // stocker: <div className="text-left">{item.stocker}</div>,
-            // uom: <div className="text-center">{item.stock_uom}</div>,
-            // status: (
-            //   <ButtonStatusComponent
-            //     status={item.status}
-            //     name={
-            //       item.status == 0
-            //         ? "Open"
-            //         : item.status == 1
-            //         ? "Completed"
-            //         : "Not Match"
-            //     }
-            //   />
-            // ),
-            // real_qty: (
-            //   <div className="text-center font-medium text-[0.96em]">
-            //     {item.real_qty.toLocaleString()}
-            //   </div>
-            // ),
-            // actual_qty: (
-            //   <div className="text-center font-medium text-[0.96em]">
-            //     {item.actual_qty.toLocaleString()}
-            //   </div>
-            // ),
           };
         });
 
@@ -200,29 +162,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
     setRefresh(true);
   };
 
-  const getERPItem = (): void => {
-    AlertModal.confirmation({
-      onConfirm: async (): Promise<void> => {
-        try {
-          setLoading(true);
-          const uri = `${import.meta.env.VITE_PUBLIC_URI}/schedule/refresh/${
-            props.name
-          }`;
-          await FetchApi.get(uri);
-          onRefresh();
-        } catch (error) {
-          AlertModal.Default({
-            icon: "error",
-            title: "Error",
-            text: "Error Network",
-          });
-          setLoading(false);
-        }
-      },
-      confirmButtonText: "Yes, do it!",
-      text: "This will take a lot of time",
-    });
-  };
 
   const getSelected = () => {
     const isSelect = data.filter((item) => item.checked === true);
@@ -320,12 +259,13 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
             setLoading(true);
             setRefresh(true);
           }}
-          disabled={props.status != 1 && props.status != 0}
+          disabled={false}
           buttonInsert={{
-            onCLick: getERPItem,
-            status: props.status == 1 || props.status == 0,
-            title: "Update List",
-            icon: { icon: SyncAltIcon, className: "mr-1 mt-1", size: 13 },
+            className:"text-sm ",
+            onCLick: GetFormNote,
+            status: true,
+            title: "Add Note",
+            icon: { icon: AddIcon, className: "mr-1 mt-1", size: 13 },
           }}
         />
       )}
