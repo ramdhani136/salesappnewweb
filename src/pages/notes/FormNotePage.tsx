@@ -63,6 +63,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
       console.log(result);
+      setData(result.data)
 
       // // set workflow
       // if (result.workflow.length > 0) {
@@ -239,15 +240,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             >
               <div className="flex  items-center">
                 <h4 className="font-bold text-lg mr-2 cursor-pointer">
-                  {!id ? "New Notes" : data.name}
+                  {!id ? "New Notes" : data.topic.name}
                 </h4>
-                <div className="text-md">
+                {/* <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
                     name={data.workflowState ?? "Not Save"}
                   />
-                </div>
+                </div> */}
               </div>
               <div className="flex">
                 {listMoreAction.length > 0 && (
