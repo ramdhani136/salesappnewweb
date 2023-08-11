@@ -3,10 +3,18 @@ import React from "react";
 interface IProps {
   isVisible?: boolean;
   onClose?: (e?: any) => Promise<any> | void;
-  child?: React.FC<any>|null;
+  child?: React.FC<any> | null;
+  props?: {};
+  className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
 }
 
-const ModalComponent: React.FC<IProps> = ({ isVisible, onClose, child }) => {
+const ModalComponent: React.FC<IProps> = ({
+  isVisible,
+  onClose,
+  child,
+  props,
+  className,
+}) => {
   if (!isVisible) return null;
 
   const handleClose = (e: any): void => {
@@ -23,8 +31,16 @@ const ModalComponent: React.FC<IProps> = ({ isVisible, onClose, child }) => {
       id="wrapper"
       onClick={handleClose}
     >
-      <div className="w-auto h-auto bg-white rounded-md  border border-gray-500">
-        {Child && <Child />}
+      <div
+        className={`w-auto h-auto bg-white rounded-md   border border-gray-500 ${
+          className ?? ""
+        }   max-h-[90%] flex flex-col`}
+      >
+        {/* <h4 className="p-4">Form Notes </h4> */}
+        <div className=" rounded-md  scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300  ">
+          {" "}
+          {Child && <Child props={props} />}
+        </div>
       </div>
     </div>
   );

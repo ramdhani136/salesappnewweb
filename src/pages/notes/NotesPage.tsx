@@ -18,6 +18,7 @@ import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import FormContactPage from "../Contact/FormContactPage";
+import FormNotePage from "./FormNotePage";
 // import ModalSetSTockManual from "./ModalSetSTockManual";
 
 interface IProps {
@@ -66,13 +67,14 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
   //   }
   // };
 
-  const GetFormNote = (params?: {}) => {
+  const GetFormNote = (id?: string) => {
     dispatch(
       modalSet({
         active: true,
-        Children: <div>halo</div>,
+        Children: FormNotePage,
         title: "",
-        props: { params, onRefresh },
+        props: { id: id ?? undefined },
+        className: "w-[60%]",
       })
     );
   };
@@ -212,63 +214,64 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   return (
     <>
-    <div className="min-h-[300px] max-h-[400px] flex">
-      {loading ? (
-        <div className="w-full  flex items-center justify-center">
-          <LoadingComponent
-            animate={{ icon: HashLoader, color: "#36d7b6", size: 40 }}
-            showProgress={{
-              active: activeProgress,
-              currentIndex: currentIndex,
-              currentPercent: currentPercent,
-              onProgress: onDeleteProgress,
-              totalIndex: totalIndex,
+      <div className="min-h-[300px] max-h-[400px] flex">
+        {loading ? (
+          <div className="w-full  flex items-center justify-center">
+            <LoadingComponent
+              animate={{ icon: HashLoader, color: "#36d7b6", size: 40 }}
+              showProgress={{
+                active: activeProgress,
+                currentIndex: currentIndex,
+                currentPercent: currentPercent,
+                onProgress: onDeleteProgress,
+                totalIndex: totalIndex,
+              }}
+            />
+          </div>
+        ) : (
+          <TableComponent
+            moreSelected={[{ name: "Delete", onClick: onDelete }]}
+            setSearch={setSeacrh}
+            setData={setData}
+            listFilter={listFilter}
+            hasMore={hasMore}
+            fetchMore={getData}
+            columns={columns}
+            data={data}
+            total={totalData}
+            sort={sort}
+            isSort={isSort}
+            isOrderBy={isOrderBy}
+            setOrderBy={() => {
+              setData([]);
+              setHasMore(false);
+              setPage(1);
+              let getOrder = isOrderBy === 1 ? -1 : 1;
+              setOrderBy(getOrder);
+              setRefresh(true);
             }}
+            getAllData={getAllData}
+            filter={filter}
+            setFilter={setFilter}
+            className="ml-[3px]"
+            onRefresh={() => {
+              setData([]);
+              setPage(1), setHasMore(false);
+              setLoading(true);
+              setRefresh(true);
+            }}
+            disabled={false}
           />
-        </div>
-      ) : (
-        <TableComponent
-          moreSelected={[{ name: "Delete", onClick: onDelete }]}
-          setSearch={setSeacrh}
-          setData={setData}
-          listFilter={listFilter}
-          hasMore={hasMore}
-          fetchMore={getData}
-          columns={columns}
-          data={data}
-          total={totalData}
-          sort={sort}
-          isSort={isSort}
-          isOrderBy={isOrderBy}
-          setOrderBy={() => {
-            setData([]);
-            setHasMore(false);
-            setPage(1);
-            let getOrder = isOrderBy === 1 ? -1 : 1;
-            setOrderBy(getOrder);
-            setRefresh(true);
-          }}
-          getAllData={getAllData}
-          filter={filter}
-          setFilter={setFilter}
-          className="ml-[3px]"
-          onRefresh={() => {
-            setData([]);
-            setPage(1), setHasMore(false);
-            setLoading(true);
-            setRefresh(true);
-          }}
-          disabled={false}
-        />
-      )}
-     
-    </div>
+        )}
+      </div>
       <a
-      onClick={GetFormNote}
-      className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
-    >
-      Add Row
-    </a>
+        onClick={() => {
+          GetFormNote();
+        }}
+        className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
+      >
+        Add Row
+      </a>
     </>
   );
 };

@@ -29,6 +29,7 @@ import { TopicPage } from "./Topic/TopicPage";
 import FormTopicPage from "./Topic/FormTopicPage";
 import FormTagPage from "./Tags/FormTag";
 import { TagPage } from "./Tags/TagPage";
+import FormNotePage from "./notes/FormNotePage";
 
 
 
@@ -63,5 +64,6 @@ export {
   TopicPage,
   FormTopicPage,
   TagPage,
-  FormTagPage
+  FormTagPage,
+  FormNotePage
 };

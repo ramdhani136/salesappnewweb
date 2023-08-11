@@ -5,13 +5,16 @@ export interface ISliceModal {
   active: boolean;
   Children: React.FC<any> | null;
   title?: string;
-  props?: any;
+  props?: {};
+  className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
 }
 
 const data: ISliceModal = {
   active: false,
   Children: null,
   title: "",
+  props: {},
+  className: "",
 };
 
 export const modalSlice = createSlice({

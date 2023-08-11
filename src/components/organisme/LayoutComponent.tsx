@@ -46,7 +46,8 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
         active: false,
         Children: null,
         title: "",
-        props: null,
+        props: {},
+        className: "",
       })
     );
   };
@@ -58,6 +59,8 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
           isVisible={dataModal.active}
           onClose={onCLose}
           child={ChildModal}
+          props={dataModal.props}
+          className={dataModal.className ?? ""}
         />
         {<SidebarComponent user={user} />}
         <div className="bg-gray-100 flex-1">
