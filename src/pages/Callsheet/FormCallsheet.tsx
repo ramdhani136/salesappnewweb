@@ -13,7 +13,7 @@ import {
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, Meta } from "../../utils";
+import { AlertModal, LocalStorage, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemCallsheet";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
@@ -39,8 +39,8 @@ const FormCallsheetPage: React.FC = () => {
     { title: "Outgoing Call", value: "out" },
   ];
   const [user, setUser] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
+    valueData: LocalStorage.getUser()._id,
+    valueInput: LocalStorage.getUser().name,
   });
 
   const [naming, setNaming] = useState<IValue>({
@@ -48,15 +48,6 @@ const FormCallsheetPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [branch, setBranch] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [group, setGroup] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
   const [customer, setCustomer] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -79,6 +70,30 @@ const FormCallsheetPage: React.FC = () => {
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
+
+  // branch
+  const [branchList, setBranchList] = useState<IListInput[]>([]);
+  const [branchPage, setBranchPage] = useState<Number>(1);
+  const [branchLoading, setBranchLoading] = useState<boolean>(true);
+  const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
+  const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
+  const [branch, setBranch] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // branch
+  const [groupList, setGroupList] = useState<IListInput[]>([]);
+  const [groupPage, setGroupPage] = useState<Number>(1);
+  const [groupLoading, setGroupLoading] = useState<boolean>(true);
+  const [groupMoreLoading, setGroupMoreLoading] = useState<boolean>(false);
+  const [groupHasMore, setGroupHasMore] = useState<boolean>(false);
+  const [group, setGroup] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
 
   const [callType, setCallType] = useState<string>("out");
   const [loading, setLoading] = useState<boolean>(true);
@@ -220,9 +235,20 @@ const FormCallsheetPage: React.FC = () => {
     }
   };
 
-  const getBranch = async (): Promise<void> => {
+  const getBranch = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({});
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : branchPage}`,
+        filters: [["status", "=", "1"]],
+      });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
           return {
@@ -230,48 +256,78 @@ const FormCallsheetPage: React.FC = () => {
             value: item._id,
           };
         });
-
-        if (listInput.length === 1) {
-          setBranch({
-            valueData: listInput[0].value,
-            valueInput: listInput[0].name,
-          });
+        if (!data.refresh) {
+          setBranchList([...branchList, ...listInput]);
+        } else {
+          setBranchList([...listInput]);
         }
-
-        setListBranch(listInput);
+        setBranchHasMore(result.hasMore);
+        setBranchPage(result.nextPage);
       }
-      setLoadingBranch(false);
-    } catch (error) {
-      setLoadingBranch(false);
+
+      setBranchLoading(false);
+      setBranchMoreLoading(false);
+    } catch (error: any) {
+      setBranchLoading(false);
+      setBranchMoreLoading(false);
+      setBranchHasMore(false);
     }
   };
 
-  const getGroup = async (): Promise<void> => {
-    if (branch.valueData) {
-      try {
-        const result: any = await GetDataServer(DataAPI.GROUP).FIND({});
-        if (result.data.length > 0) {
-          let listInput: IListInput[] = result.data.map((item: any) => {
-            return {
-              name: item.name,
-              value: item._id,
-            };
-          });
+  const ResetBranch = () => {
+    setBranchList([]);
+    setBranchHasMore(false);
+    setBranchPage(1);
+    setBranchLoading(true);
+  };
 
-          if (listInput.length === 1) {
-            setGroup({
-              valueData: listInput[0].value,
-              valueInput: listInput[0].name,
-            });
-          }
-
-          setListGroup(listInput);
-        }
-        setLoadingGroup(false);
-      } catch (error) {
-        setLoadingGroup(false);
+  const getGroup = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
+      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : groupPage}`,
+        filters: [
+          ["status", "=", "1"],
+          ["branch._id", "=", branch.valueData],
+        ],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setGroupList([...groupList, ...listInput]);
+        } else {
+          setGroupList([...listInput]);
+        }
+        setGroupHasMore(result.hasMore);
+        setGroupPage(result.nextPage);
+      }
+
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+    } catch (error: any) {
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+      setGroupHasMore(false);
     }
+  };
+
+  const ResetGroup = () => {
+    setGroupList([]);
+    setGroupHasMore(false);
+    setGroupPage(1);
+    setGroupLoading(true);
   };
 
   const getCustomer = async (search?: string): Promise<void> => {
@@ -440,8 +496,6 @@ const FormCallsheetPage: React.FC = () => {
   };
 
   useEffect(() => {
-    getNaming();
-    getBranch();
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
@@ -573,71 +627,159 @@ const FormCallsheetPage: React.FC = () => {
                     />
 
                     <InputComponent
-                      loading={loadingBranch}
-                      label="Branch"
-                      value={branch}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) => setBranch({ ...naming, valueInput: e })}
-                      onSelected={(e) => {
-                        setBranch({
-                          valueData: e.value,
-                          valueInput: e.name,
-                        });
-                        setGroup({ valueData: null, valueInput: "" });
-                        setCustomer({ valueData: null, valueInput: "" });
-                        getResetCustomer();
-                        setContact({ valueData: null, valueInput: "" });
-                        contactReset();
-                        getGroup();
-                      }}
-                      onCLick={getBranch}
-                      list={listBranch}
                       mandatoy
-                      modalStyle="top-9 max-h-[160px]"
-                      onReset={() => {
-                        setBranch({ valueData: null, valueInput: "" });
-                        setGroup({ valueData: null, valueInput: "" });
-                        setCustomer({ valueData: null, valueInput: "" });
-                        getResetCustomer();
-                        setContact({ valueData: null, valueInput: "" });
-                        contactReset();
+                      label="Branch"
+                      infiniteScroll={{
+                        loading: branchMoreLoading,
+                        hasMore: branchHasMore,
+                        next: () => {
+                          setBranchMoreLoading(true);
+                          getBranch({
+                            refresh: false,
+                            search: branch.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetBranch();
+                          getBranch({ refresh: true, search: e });
+                        },
                       }}
-                      // disabled={!id ? false : true}
-                      closeIconClass="top-[13.5px]"
+                      onCLick={() => {
+                        ResetBranch();
+                        getBranch({
+                          refresh: true,
+                          search: branch.valueInput,
+                        });
+                      }}
+                      loading={branchLoading}
+                      modalStyle="mt-2"
+                      value={branch}
+                      onChange={(e) => {
+                        setBranch({
+                          ...branch,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setBranch({ valueData: e.value, valueInput: e.name });
+                        setGroup({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setCustomer({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setContact({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      onReset={() => {
+                        setBranch({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setGroup({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setCustomer({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setContact({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={branchList}
+                      type="text"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                      className={`h-9 mb-1`}
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
                       <InputComponent
-                        loading={loadingGroup}
-                        label="Group"
-                        value={group}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) => setGroup({ ...naming, valueInput: e })}
-                        onSelected={(e) => {
-                          setGroup({
-                            valueData: e.value,
-                            valueInput: e.name,
-                          });
-
-                          setCustomer({ valueData: null, valueInput: "" });
-                          setContact({ valueData: null, valueInput: "" });
-                          contactReset();
-                          getResetCustomer();
-                        }}
-                        onCLick={getGroup}
-                        list={listGroup}
                         mandatoy
-                        modalStyle="top-9 max-h-[160px]"
-                        onReset={() => {
-                          setGroup({ valueData: null, valueInput: "" });
-                          setCustomer({ valueData: null, valueInput: "" });
-                          setContact({ valueData: null, valueInput: "" });
-                          contactReset();
-                          getResetCustomer();
+                        label="Group"
+                        infiniteScroll={{
+                          loading: groupMoreLoading,
+                          hasMore: groupHasMore,
+                          next: () => {
+                            setGroupMoreLoading(true);
+                            getGroup({
+                              refresh: false,
+                              search: group.valueInput,
+                            });
+                          },
+                          onSearch(e) {
+                            ResetGroup();
+                            getGroup({ refresh: true, search: e });
+                          },
                         }}
-                        // disabled={!id ? false : true}
-                        closeIconClass="top-[13.5px]"
+                        onCLick={() => {
+                          ResetGroup();
+                          getGroup({
+                            refresh: true,
+                            search: group.valueInput,
+                          });
+                        }}
+                        loading={groupLoading}
+                        modalStyle="mt-2"
+                        value={group}
+                        onChange={(e) => {
+                          setGroup({
+                            ...branch,
+                            valueInput: e,
+                          });
+                          setCustomer({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                        }}
+                        onSelected={(e) => {
+                          setGroup({ valueData: e.value, valueInput: e.name });
+                          setCustomer({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                        }}
+                        onReset={() => {
+                          setGroup({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setCustomer({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                          setContact({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                        }}
+                        list={groupList}
+                        type="text"
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        className={`h-9 mb-1`}
                       />
                     )}
                     {group.valueData && (
@@ -653,7 +795,7 @@ const FormCallsheetPage: React.FC = () => {
                           },
                         }}
                         onCLick={() => {
-                          getResetCustomer()
+                          getResetCustomer();
                           getCustomer(`${customer.valueInput}`);
                         }}
                         loading={loadingCustomer}
