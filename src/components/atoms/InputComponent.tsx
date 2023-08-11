@@ -155,7 +155,7 @@ const InputComponent: React.FC<IProps> = ({
                 : `${value.valueInput}`
               : `${value.valueInput}`
           }
-          className={`w-full  text-md  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
+          className={`w-full  text-md text-gray-800  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
         />
        
         {(value.valueInput || type=="number")   && onReset && !disabled && (
