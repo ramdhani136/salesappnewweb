@@ -375,14 +375,26 @@ const FormNotePage: React.FC<any> = ({ props }) => {
               </div>
               <ul className=" w-full  my-3">
                 <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
-                  <h4 className=" underline cursor-pointer  text-sm text-blue-500 hover:text-blue-600 duration-100">
-                    Catatan.txt
-                  </h4>
+                  <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
+                    <h4> Catatan.txt</h4>
+                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-800">(1K)</h4>
+                  </div>
                   <CloseIcon
                     style={{ fontSize: 16, fontWeight: "bold" }}
                     className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
                   />
                 </li>
+                <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
+                  <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
+                    <h4> Bukti Pembayarn.jpg</h4>
+                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-800">(1K)</h4>
+                  </div>
+                  <CloseIcon
+                    style={{ fontSize: 16, fontWeight: "bold" }}
+                    className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+                  />
+                </li>
+              
               </ul>
             </div>
           </>
