@@ -9,6 +9,11 @@ export interface IListInput {
   value: any;
 }
 
+export enum TypeField {
+  INPUT = "input",
+  TEXTAREA = "textarea",
+}
+
 export interface IValue {
   valueData: any;
   valueInput: String;
@@ -23,6 +28,7 @@ interface IInfiniteScroll {
 }
 
 interface IProps {
+  typeField?: TypeField;
   className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
   inputStyle?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
   modalStyle?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
@@ -49,6 +55,7 @@ interface IProps {
 }
 
 const InputComponent: React.FC<IProps> = ({
+  typeField = TypeField.INPUT,
   className,
   inputStyle,
   mandatoy,
@@ -121,7 +128,7 @@ const InputComponent: React.FC<IProps> = ({
     <>
       {label && (
         <label className="text-sm text-gray-800">
-          {label} {(mandatoy && !disabled)&& <a className="text-red-600">*</a>}
+          {label} {mandatoy && !disabled && <a className="text-red-600">*</a>}
         </label>
       )}
       <div
@@ -130,35 +137,61 @@ const InputComponent: React.FC<IProps> = ({
           mandatoy && !value.valueData && "border-red-500 border"
         } ${className}`}
       >
-        <input
-          min={min}
-          max={max}
-          ref={inputRef}
-          type={type ?? "text"}
-          placeholder={placeholder}
-          disabled={disabled}
-          onClick={() => {
-           if(onCLick){
-            onCLick();
-           }
-            setOpen(!open)
-          }}
-          onChange={(e) => {
-            if (onChange) {
-              onChange(e.target.value);
-            }
-          }}
-          value={
-            type && inputRef.current === document.activeElement
-              ? `${value.valueData}` == "0"
-                ? ""
+        {typeField === TypeField.INPUT ? (
+          <input
+            min={min}
+            max={max}
+            ref={inputRef}
+            type={type ?? "text"}
+            placeholder={placeholder}
+            disabled={disabled}
+            onClick={() => {
+              if (onCLick) {
+                onCLick();
+              }
+              setOpen(!open);
+            }}
+            onChange={(e) => {
+              if (onChange) {
+                onChange(e.target.value);
+              }
+            }}
+            value={
+              type && inputRef.current === document.activeElement
+                ? `${value.valueData}` == "0"
+                  ? ""
+                  : `${value.valueInput}`
                 : `${value.valueInput}`
-              : `${value.valueInput}`
-          }
-          className={`w-full  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
-        />
-       
-        {(value.valueInput || type=="number")   && onReset && !disabled && (
+            }
+            className={`w-full  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
+          />
+        ) : (
+          <textarea
+            ref={inputRef}
+            placeholder={placeholder}
+            disabled={disabled}
+            onClick={() => {
+              if (onCLick) {
+                onCLick();
+              }
+              setOpen(!open);
+            }}
+            onChange={(e) => {
+              if (onChange) {
+                onChange(e.target.value);
+              }
+            }}
+            value={
+              type && inputRef.current === document.activeElement
+                ? `${value.valueData}` == "0"
+                  ? ""
+                  : `${value.valueInput}`
+                : `${value.valueInput}`
+            }
+            className={`w-full  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  py-2 px-3 ${inputStyle}`}
+          />
+        )}
+        {(value.valueInput || type == "number") && onReset && !disabled && (
           <CloseIcon
             onClick={() => {
               if (onReset) {

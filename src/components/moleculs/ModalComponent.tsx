@@ -32,9 +32,9 @@ const ModalComponent: React.FC<IProps> = ({
       onClick={handleClose}
     >
       <div
-        className={`w-auto h-auto bg-white rounded-md   border border-gray-500 ${
+        className={`bg-white rounded-md   border border-gray-500 ${
           className ?? ""
-        }   max-h-[90%] flex flex-col`}
+        }  max-h-[95%] flex flex-col`}
       >
         {/* <h4 className="p-4">Form Notes </h4> */}
         <div className=" rounded-md  scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300  ">

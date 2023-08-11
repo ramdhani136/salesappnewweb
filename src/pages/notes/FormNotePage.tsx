@@ -8,7 +8,7 @@ import {
   InputComponent,
   TimeLineVertical,
 } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
+import { IValue, TypeField } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -36,7 +36,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
   });
-  const [name, setName] = useState<IValue>({
+  const [topic, setTopic] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -44,7 +44,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   const [status, setStatus] = useState<String>("Draft");
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
-    name: name.valueData,
+    tupic: topic.valueData,
     desc: desc ?? "",
   });
 
@@ -64,7 +64,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
       setData(result.data);
 
-      setName({
+      setTopic({
         valueData: result.data.topic.name,
         valueInput: result.data.topic.name,
       });
@@ -140,7 +140,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     setLoading(true);
     try {
       let data: any = {
-        name: name.valueData,
+        topic: topic.valueData,
         desc: desc,
       };
       if (nextState) {
@@ -188,7 +188,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      name: name.valueData,
+      topic: topic.valueData,
       desc: desc ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -203,7 +203,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     <>
       {Meta(metaData)}
       <div
-        className="  max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
+        className="  pb-3 max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
       >
         {!loading ? (
@@ -270,13 +270,14 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
+                      typeField={TypeField.TEXTAREA}
                       mandatoy
-                      label="Name"
-                      value={name}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      label="Topic"
+                      value={topic}
+                      className="h-[60px]  text-[0.93em] mb-3 "
                       type="text"
                       onChange={(e) =>
-                        setName({
+                        setTopic({
                           valueData: e,
                           valueInput: e,
                         })
@@ -286,18 +287,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       }
                     />
 
-                    <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
                     <label className="text-sm">Desc</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
@@ -324,12 +313,11 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       disabled
                     />
                     <InputComponent
-                      label="Status"
-                      value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  text-[0.93em] mb-3"
-                      type="text"
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
                       onChange={(e) =>
-                        setCreatedAt({
+                        setUser({
                           valueData: e,
                           valueInput: e,
                         })
@@ -339,8 +327,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                   </div>
                 </div>
               </div>
-
-              <TimeLineVertical data={history} />
             </div>
           </>
         ) : (
