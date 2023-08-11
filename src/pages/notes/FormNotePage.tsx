@@ -35,6 +35,10 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
+  const [tagInput, setTagInput] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
   const [customer, setCustomer] = useState<IValue>({
     valueData: docData.customer._id,
     valueInput: docData.customer.name,
@@ -202,7 +206,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     <>
       {Meta(metaData)}
       <div
-        className="  pb-3 max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
+        className="  pb-3 max-h-[calc(100vh-30px)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
       >
         {!loading ? (
@@ -264,7 +268,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 )}
               </div>
             </div>
-            <div className=" px-5 flex flex-col ">
+            <div className=" px-5 flex flex-col mt-3  ">
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 pt-5">
                   <div className=" w-1/2 px-4 float-left ">
@@ -325,7 +329,9 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     Result <a className="text-red-600">*</a>
                   </label>
                   <textarea
-                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${!notes && "border-red-500"}`}
+                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
+                      !notes && "border-red-500"
+                    }`}
                     name="Site Uri"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -334,14 +340,34 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     }
                   />
                 </div>
-                <label className="text-sm ml-7">Tags</label>
-                <ul className="border mx-7 px-2 mt-2 py-3 mb-5 rounded-sm float-left w-[93%]">
+                <label className="text-sm ml-7 block">Tags</label>
+                <div className="mx-7 w-[300px]">
+                  <InputComponent
+                    placeholder="Search"
+                    value={tagInput}
+                    className="h-[35px]  text-[0.93em] mb-3"
+                    inputStyle="placeholder:text-[0.9em]"
+                    type="text"
+                    onChange={(e) =>
+                      setTagInput({
+                        valueData: e,
+                        valueInput: e,
+                      })
+                    }
+                  />
+                </div>
+                <ul className="border mx-7 px-2 -mt-2 py-3 mb-5 rounded-sm float-left w-[93%]">
                   <li className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center">
                     Price
                   </li>
                 </ul>
               </div>
+              
             </div>
+            <div className="px-7 flex flex-col mt-3 py-2 border mx-5 rounded-md">
+              <h4>Files</h4>
+            </div>
+            
           </>
         ) : (
           <LoadingComponent />

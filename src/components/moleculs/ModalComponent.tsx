@@ -38,7 +38,7 @@ const ModalComponent: React.FC<IProps> = ({
       >
         {/* <h4 className="p-4">Form Notes </h4> */}
         <div className=" rounded-md  scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300  ">
-          {" "}
+    
           {Child && <Child props={props} />}
         </div>
       </div>
