@@ -136,7 +136,12 @@ const FormCallsheetPage: React.FC = () => {
           return {
             name: item.action,
             onClick: () => {
-              onSave(item.nextState.id);
+              AlertModal.confirmation({
+                onConfirm: () => {
+                  onSave(item.nextState.id);
+                },
+                confirmButtonText: "Yes, Save it!",
+              });
             },
           };
         });
@@ -434,28 +439,42 @@ const FormCallsheetPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.CALLSHEET).DELETE(`${id}`);
           navigate("/callsheet");
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          setLoading(false);
+          Swal.fire(
+            "Error!",
+            `${
+              error?.response?.data?.msg?.message ??
+              error?.response?.data?.msg ??
+              error ??
+              "Error Insert"
+            }`,
+            "error"
+          );
         }
       };
 
       AlertModal.confirmation({ onConfirm: progress });
+      setLoading(false);
     }
   };
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let updata = {};
+      let updata: any = {};
       if (nextState) {
         updata = { nextState: nextState };
       } else {
         updata = {
-          namingSeries: naming.valueData,
           type: callType,
           customer: customer.valueData,
           contact: contact.valueData,
         };
+
+        if (!id) {
+          updata["namingSeries"] = naming.valueData;
+        }
       }
 
       let Action = id
@@ -471,7 +490,6 @@ const FormCallsheetPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       Swal.fire(
         "Error!",
@@ -506,12 +524,14 @@ const FormCallsheetPage: React.FC = () => {
       contact: contact.valueData,
     };
 
+    console.log(JSON.stringify(prevData))
+    console.log(JSON.stringify(actualData))
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [callType, customer.valueData, contact.valueData]);
+  }, [callType, customer, contact]);
   // End
 
   return (
@@ -562,7 +582,14 @@ const FormCallsheetPage: React.FC = () => {
                 {isChangeData && (
                   <IconButton
                     name={id ? "Update" : "Save"}
-                    callback={onSave}
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: onSave,
+                        confirmButtonText: `Yes, ${
+                          !id ? "Save it!" : "Update It"
+                        }`,
+                      });
+                    }}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
@@ -580,28 +607,32 @@ const FormCallsheetPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      loading={loadingNaming}
-                      label="Naming Series"
-                      value={naming}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) => setNaming({ ...naming, valueInput: e })}
-                      onSelected={(e) => {
-                        setNaming({
-                          valueData: e.value,
-                          valueInput: e.name,
-                        });
-                      }}
-                      onCLick={getNaming}
-                      list={listNaming}
-                      mandatoy
-                      modalStyle="top-9 max-h-[160px]"
-                      onReset={() =>
-                        setNaming({ valueData: null, valueInput: "" })
-                      }
-                      // disabled={!id ? false : true}
-                      closeIconClass="top-[13.5px]"
-                    />
+                    {!id && (
+                      <InputComponent
+                        loading={loadingNaming}
+                        label="Naming Series"
+                        value={naming}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) =>
+                          setNaming({ ...naming, valueInput: e })
+                        }
+                        onSelected={(e) => {
+                          setNaming({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        onCLick={getNaming}
+                        list={listNaming}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() =>
+                          setNaming({ valueData: null, valueInput: "" })
+                        }
+                        // disabled={!id ? false : true}
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
                     <Select
                       title="Call Type"
                       data={dataCallType}
@@ -704,10 +735,8 @@ const FormCallsheetPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      className={`h-9 mb-1`}
+                      className={`h-9 mb-4`}
                     />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
                       <InputComponent
                         mandatoy
@@ -781,6 +810,8 @@ const FormCallsheetPage: React.FC = () => {
                         className={`h-9 mb-4`}
                       />
                     )}
+                  </div>
+                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {group.valueData && (
                       <InputComponent
                         mandatoy

@@ -327,7 +327,7 @@ const FormTopicPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
-      console.log(error);
+   
       setLoading(false);
       Swal.fire(
         "Error!",
