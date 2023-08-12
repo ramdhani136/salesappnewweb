@@ -16,6 +16,7 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import CancelSharpIcon from "@mui/icons-material/CancelSharp";
 
 const FormTopicPage: React.FC = () => {
   let { id } = useParams();
@@ -534,7 +535,15 @@ const FormTopicPage: React.FC = () => {
                             ...tagRestrict,
                             { _id: e.value, name: e.name },
                           ];
-                          setTageRestrict(setTag);
+                          if (tagRestrict.length === 0) {
+                            const cekDupMandatory = tagMandatory.filter(
+                              (item: any) => item._id !== e.value
+                            );
+
+                            setTageRestrict([...setTag, ...cekDupMandatory]);
+                          } else {
+                            setTageRestrict(setTag);
+                          }
                         }
 
                         setTagValueRestrict({
@@ -586,6 +595,12 @@ const FormTopicPage: React.FC = () => {
                             </li>
                           );
                         })}
+                        <CancelSharpIcon
+                          style={{fontSize:"18px"}}
+                          onClick={() => {
+                            setTageRestrict([]);
+                          }}
+                        />
                       </ul>
                     )}
                   </div>
@@ -593,7 +608,7 @@ const FormTopicPage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-sm mb-3"
+                      className="h-[38px]  text-sm mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -606,7 +621,7 @@ const FormTopicPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-sm mb-3"
+                      className="h-[38px]   text-sm mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -670,7 +685,10 @@ const FormTopicPage: React.FC = () => {
                           );
 
                           setTagMandatory(setTag);
-                          if (missingDataInData2.length > 0) {
+                          if (
+                            missingDataInData2.length > 0 &&
+                            tagRestrict.length > 0
+                          ) {
                             setTageRestrict([
                               ...tagRestrict,
                               ...missingDataInData2,

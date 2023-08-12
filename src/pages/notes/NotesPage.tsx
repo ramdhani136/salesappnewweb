@@ -45,10 +45,10 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic", accessor: "topic", className: "w-[25%]" },
-      { header: "Notes", accessor: "result", className: "w-[40%]" },
+      { header: "Topic", accessor: "topic", className: "w-[28%]" },
+      { header: "Notes", accessor: "result", className: "w-[35%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
-      { header: "", accessor: "updatedAt", className: "w-[10%]" },
+      { header: "", accessor: "updatedAt", className: "w-[12%]" },
     ],
     []
   );

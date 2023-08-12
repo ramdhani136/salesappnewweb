@@ -364,7 +364,9 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     if (id) {
       getData();
       getFiles();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      if (docData.status != "1") {
+        setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      }
     } else {
       setLoading(false);
       setListMoreAction([]);
@@ -702,74 +704,76 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 {topicData && (
                   <>
                     <div className="mx-7 w-[300px]">
-                      <InputComponent
-                        label="Tags"
-                        remark={`${
-                          tagMandatory.length > 0
-                            ? `*Tag ${tagMandatory} wajib di lampirkan didalam topic ${topicData.name}`
-                            : ""
-                        }`}
-                        remarkStyle="mt-1 text-sm italic "
-                        infiniteScroll={{
-                          active: tagRestrict.length ? false : true,
-                          loading: tagMoreLoading,
-                          hasMore: tagHasMore,
-                          next: () => {
-                            setTagMoreLoading(true);
-                            getTags({
-                              refresh: false,
-                              search: tagInput.valueInput,
+                      {(!id || docData.status == "0") && (
+                        <InputComponent
+                          label="Tags"
+                          remark={`${
+                            tagMandatory.length > 0
+                              ? `*Tag ${tagMandatory} wajib di lampirkan didalam topic ${topicData.name}`
+                              : ""
+                          }`}
+                          remarkStyle="mt-1 text-sm italic "
+                          infiniteScroll={{
+                            active: tagRestrict.length ? false : true,
+                            loading: tagMoreLoading,
+                            hasMore: tagHasMore,
+                            next: () => {
+                              setTagMoreLoading(true);
+                              getTags({
+                                refresh: false,
+                                search: tagInput.valueInput,
+                              });
+                            },
+                            onSearch(e) {
+                              ResetTag();
+                              getTags({ refresh: true, search: e });
+                            },
+                          }}
+                          loading={tagRestrict.length > 0 ? false : tagLoading}
+                          modalStyle="mt-2"
+                          value={tagInput}
+                          onChange={(e) => {
+                            setTagInput({
+                              ...tagInput,
+                              valueInput: e,
                             });
-                          },
-                          onSearch(e) {
-                            ResetTag();
-                            getTags({ refresh: true, search: e });
-                          },
-                        }}
-                        loading={tagRestrict.length > 0 ? false : tagLoading}
-                        modalStyle="mt-2"
-                        value={tagInput}
-                        onChange={(e) => {
-                          setTagInput({
-                            ...tagInput,
-                            valueInput: e,
-                          });
-                        }}
-                        onSelected={(e) => {
-                          const cekDup = tags.find(
-                            (item: any) => item._id === e.value
-                          );
+                          }}
+                          onSelected={(e) => {
+                            const cekDup = tags.find(
+                              (item: any) => item._id === e.value
+                            );
 
-                          if (!cekDup) {
-                            let setTag = [
-                              ...tags,
-                              { _id: e.value, name: e.name },
-                            ];
-                            setTags(setTag);
-                          }
+                            if (!cekDup) {
+                              let setTag = [
+                                ...tags,
+                                { _id: e.value, name: e.name },
+                              ];
+                              setTags(setTag);
+                            }
 
-                          setTagInput({
-                            valueData: "",
-                            valueInput: "",
-                          });
-                        }}
-                        onReset={() => {
-                          setTagInput({
-                            valueData: "",
-                            valueInput: "",
-                          });
-                        }}
-                        list={tagRestrict.length > 0 ? tagRestrict : tagList}
-                        type="text"
-                        disabled={
-                          id != null
-                            ? docData.status !== "0"
-                              ? true
+                            setTagInput({
+                              valueData: "",
+                              valueInput: "",
+                            });
+                          }}
+                          onReset={() => {
+                            setTagInput({
+                              valueData: "",
+                              valueInput: "",
+                            });
+                          }}
+                          list={tagRestrict.length > 0 ? tagRestrict : tagList}
+                          type="text"
+                          disabled={
+                            id != null
+                              ? docData.status !== "0"
+                                ? true
+                                : false
                               : false
-                            : false
-                        }
-                        className={`h-9 mb-1`}
-                      />
+                          }
+                          className={`h-9 mb-1`}
+                        />
+                      )}
                     </div>
                     {tags.length > 0 && (
                       <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%]">
