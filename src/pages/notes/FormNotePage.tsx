@@ -702,7 +702,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             {topicData && id != undefined && id != null && id !== "" && (
               <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
                 <div className="flex items-center justify-between mt-2 ">
-                  <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
+                  <h4 className="text-sm inline">
+                    Files{" "}
+                    {!id ||
+                      (docData.status == "0" && (
+                        <h5 className="inline text-gray-500 italic text-[0.95em]">
+                          (Max Size: 2 MB)
+                        </h5>
+                      ))}
+                  </h4>
 
                   {!id ||
                     (docData.status == "0" && (
@@ -751,7 +759,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       files.map((item, index) => (
                         <li
                           key={index}
-                          className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center"
+                          className="mb-2 bg-gray-100 px-2 font-semibold w-[350px] py-2 flex justify-between items-center"
                         >
                           <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
                             <h4>{item.name}</h4>
@@ -759,13 +767,16 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                               (1K)
                             </h4> */}
                           </div>
-                          <CloseIcon
-                            style={{ fontSize: 16, fontWeight: "bold" }}
-                            className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
-                            onClick={() => {
-                              alert(item._id);
-                            }}
-                          />
+                          {!id ||
+                            (docData.status == "0" && (
+                              <CloseIcon
+                                style={{ fontSize: 16, fontWeight: "bold" }}
+                                className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+                                onClick={() => {
+                                  alert(item._id);
+                                }}
+                              />
+                            ))}
                         </li>
                       ))
                     )}
