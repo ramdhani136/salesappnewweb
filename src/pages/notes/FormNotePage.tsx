@@ -454,12 +454,19 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           });
                         },
                         onSearch(e) {
-                          ResetTopic;
+                          ResetTopic();
                           GetTopic({
                             refresh: true,
                             search: e,
                           });
                         },
+                      }}
+                      onCLick={() => {
+                        ResetTopic();
+                        GetTopic({
+                          refresh: true,
+                          search: topic.valueInput,
+                        });
                       }}
                       loading={topicLoading}
                       modalStyle="mt-2"
