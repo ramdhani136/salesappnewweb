@@ -18,6 +18,7 @@ import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
+import { RiseLoader } from "react-spinners";
 
 const FormNotePage: React.FC<any> = ({ props }) => {
   let id = props.id;
@@ -28,8 +29,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     title: `${id ? data?.topic?.name : "New Notes"} - Sales App Ekatunggal`,
     description: "Halaman form Notes - Sales web system",
   };
-
-  const navigate = useNavigate();
 
   // Tags
   const [tagList, setTagList] = useState<IListInput[]>([]);
@@ -73,13 +72,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueInput: docData.customer.name,
   });
 
-  const [status, setStatus] = useState<String>("Draft");
   const [notes, setNotes] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     topic: topic.valueData,
     note: notes ?? "",
     tags: tags,
   });
+
+  const [files, setFiles] = useState<any[]>([]);
+  const [filesIsLoading, setFileIsLoading] = useState<boolean>(false);
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -353,12 +354,36 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     if (id) {
       getData();
+      getFiles();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
     }
   }, []);
+
+  const getFiles = async () => {
+    setFileIsLoading(true);
+    try {
+      const result: any = await GetDataServer(DataAPI.FILES).FIND({
+        fields: ["name"],
+      });
+      setFiles(result.data);
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    setFileIsLoading(false);
+  };
 
   // Cek perubahan
   useEffect(() => {
@@ -674,7 +699,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 )}
               </div>
             </div>
-            {topicData && (
+            {topicData && id != undefined && id != null && id !== "" && (
               <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
                 <div className="flex items-center justify-between mt-2 ">
                   <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
@@ -703,32 +728,49 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     }}
                   />
                 </div>
-                <ul className=" w-full  my-3">
-                  <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
-                    <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
-                      <h4> Catatan.txt</h4>
-                      <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
-                        (1K)
-                      </h4>
-                    </div>
-                    <CloseIcon
-                      style={{ fontSize: 16, fontWeight: "bold" }}
-                      className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+
+                {filesIsLoading ? (
+                  <div className="w-full flex items-start justify-center h-[100px]">
+                    <RiseLoader
+                      color="#36d7b6"
+                      loading={true}
+                      // cssOverride={override}
+                      size={7}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                      className="mt-10 -ml-4"
                     />
-                  </li>
-                  <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
-                    <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
-                      <h4> Bukti Pembayarn.jpg</h4>
-                      <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
-                        (1K)
+                  </div>
+                ) : (
+                  <ul className=" w-full  my-3">
+                    {files.length === 0 ? (
+                      <h4 className="flex items-center justify-center h-[50px] text-sm text-gray-300">
+                        No Files
                       </h4>
-                    </div>
-                    <CloseIcon
-                      style={{ fontSize: 16, fontWeight: "bold" }}
-                      className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
-                    />
-                  </li>
-                </ul>
+                    ) : (
+                      files.map((item, index) => (
+                        <li
+                          key={index}
+                          className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center"
+                        >
+                          <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
+                            <h4>{item.name}</h4>
+                            {/* <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
+                              (1K)
+                            </h4> */}
+                          </div>
+                          <CloseIcon
+                            style={{ fontSize: 16, fontWeight: "bold" }}
+                            className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+                            onClick={() => {
+                              alert(item._id);
+                            }}
+                          />
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                )}
               </div>
             )}
           </>
