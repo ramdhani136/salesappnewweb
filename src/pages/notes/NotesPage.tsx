@@ -139,6 +139,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         setTotalData(result.total);
         setHasMore(result.hasMore);
         setPage(result.nextPage);
+
         if (!props?.refresh) {
           setData([...data, ...generateData]);
         } else {
@@ -148,6 +149,10 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       setRefresh(false);
       setLoading(false);
     } catch (error) {
+      if (props?.refresh) {
+        setData([]);
+      }
+
       setTotalData(0);
       setLoading(false);
       setRefresh(false);

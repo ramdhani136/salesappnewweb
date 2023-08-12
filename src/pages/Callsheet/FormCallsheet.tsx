@@ -496,6 +496,7 @@ const FormCallsheetPage: React.FC = () => {
       const result = await Action;
       if (id) {
         getData();
+
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/callsheet/${result.data.data._id}`);

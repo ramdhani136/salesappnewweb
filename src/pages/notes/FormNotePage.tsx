@@ -276,9 +276,16 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         setLoading(true);
         try {
           await GetDataServer(DataAPI.NOTE).DELETE(`${id}`);
-          // navigate("/branch");
+          Swal.fire({ icon: "success", text: "Deleted" });
+          props.onRefresh({ refresh: true });
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+            })
+          );
         } catch (error: any) {
-          setLoading(false);
           Swal.fire(
             "Error!",
             `${
@@ -295,6 +302,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
       AlertModal.confirmation({ onConfirm: progress });
     }
+    setLoading(false);
   };
 
   const onSave = async (): Promise<any> => {
@@ -854,6 +862,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                               href={`${
                                 import.meta.env.VITE_PUBLIC_URI
                               }/public/files/${item.name}`}
+                              target="_blank"
                             >
                               {item.name}
                             </a>
@@ -867,7 +876,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                                 style={{ fontSize: 16, fontWeight: "bold" }}
                                 className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
                                 onClick={() => {
-                                  DeleteFile(item._id);
+                                  AlertModal.confirmation({
+                                    text: "Delete this file?",
+                                    onConfirm: () => {
+                                      DeleteFile(item._id);
+                                    },
+                                  });
                                 }}
                               />
                             ))}
