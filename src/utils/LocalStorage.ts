@@ -13,6 +13,7 @@ export enum LocalStorageType {
   FILTERTAG = "fiterTags",
   FILTERCONTACT = "filtercontact",
   FILTERTOPIC = "filterTopic",
+  FILTERNAMING = "filternaming",
   
 }
 

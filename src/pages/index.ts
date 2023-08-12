@@ -30,6 +30,9 @@ import FormTopicPage from "./Topic/FormTopicPage";
 import FormTagPage from "./Tags/FormTag";
 import { TagPage } from "./Tags/TagPage";
 import FormNotePage from "./notes/FormNotePage";
+import FormNamingSeriesPage from "./NamingSeries/FormNamingSeriesPage";
+import { NamingSeriesPage } from "./NamingSeries/NamingSeriesPage";
+
 
 
 
@@ -65,5 +68,7 @@ export {
   FormTopicPage,
   TagPage,
   FormTagPage,
-  FormNotePage
+  FormNotePage,
+  FormNamingSeriesPage,
+  NamingSeriesPage
 };
