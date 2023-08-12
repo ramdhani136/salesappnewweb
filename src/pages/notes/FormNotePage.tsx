@@ -212,7 +212,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     <>
       {Meta(metaData)}
       <div
-        className="  pb-3 max-h-[calc(100vh-30px)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
+        className="  pb-3 max-h-[calc(100vh-13px)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
       >
         {!loading ? (

@@ -34,7 +34,7 @@ const ModalComponent: React.FC<IProps> = ({
       <div
         className={`bg-white rounded-md   border border-gray-500 ${
           className ?? ""
-        }  max-h-[95%] flex flex-col`}
+        }  max-h-[98%] flex flex-col`}
       >
         {/* <h4 className="p-4">Form Notes </h4> */}
         <div className=" rounded-md  scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300  ">

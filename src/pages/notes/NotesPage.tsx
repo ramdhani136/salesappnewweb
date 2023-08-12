@@ -46,7 +46,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
       { header: "Topic", accessor: "topic", className: "w-[25%]" },
-      { header: "Result", accessor: "result", className: "w-[40%]" },
+      { header: "Notes", accessor: "result", className: "w-[40%]" },
       { header: "Tags", accessor: "tags", className: "w-[20%]" },
       { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
@@ -69,7 +69,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         Children: FormNotePage,
         title: "",
         props: { id: id ?? undefined, doc: docData },
-        className: "w-[70%] h-[95%]",
+        className: "w-[70%] h-[98%]",
       })
     );
   };

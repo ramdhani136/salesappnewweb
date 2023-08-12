@@ -257,9 +257,16 @@ const FormCallsheetPage: React.FC = () => {
             value: item._id,
           };
         });
+
         if (!data.refresh) {
           setBranchList([...branchList, ...listInput]);
         } else {
+          if (listInput.length === 1) {
+            setBranch({
+              valueData: listInput[0].value,
+              valueInput: listInput[0].name,
+            });
+          }
           setBranchList([...listInput]);
         }
         setBranchHasMore(result.hasMore);
@@ -306,9 +313,16 @@ const FormCallsheetPage: React.FC = () => {
             value: item._id,
           };
         });
+
         if (!data.refresh) {
           setGroupList([...groupList, ...listInput]);
         } else {
+          if (listInput.length === 1) {
+            setGroup({
+              valueData: listInput[0].value,
+              valueInput: listInput[0].name,
+            });
+          }
           setGroupList([...listInput]);
         }
         setGroupHasMore(result.hasMore);
@@ -505,6 +519,8 @@ const FormCallsheetPage: React.FC = () => {
   };
   useEffect(() => {
     getNaming();
+    getBranch({ refresh: true });
+    getGroup({ refresh: true });
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
