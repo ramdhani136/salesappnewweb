@@ -199,18 +199,19 @@ const FormTopicPage: React.FC = () => {
     }
   };
 
-  const getTags = async (search?: string): Promise<void> => {
+  const getTags = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!tagLoading) {
-        setTagMoreLoading(true);
-      } else {
-        setTagMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${tagPage}`,
+        page: `${data.refresh ? 1 : tagPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -220,7 +221,11 @@ const FormTopicPage: React.FC = () => {
             value: item._id,
           };
         });
-        setTagList([...tagList, ...listInput]);
+        if (!data.refresh) {
+          setTagList([...tagList, ...listInput]);
+        } else {
+          setTagList([...listInput]);
+        }
         setTagHasmore(result.hasMore);
 
         setTagePage(result.nextPage);
@@ -242,18 +247,19 @@ const FormTopicPage: React.FC = () => {
     setTagLoading(true);
   };
 
-  const getMandatoryTags = async (search?: string): Promise<void> => {
+  const getMandatoryTags = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!mandatoryTagLoading) {
-        setMandatoryTagMoreLoading(true);
-      } else {
-        setMandatoryTagMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${mandatoryTagPage}`,
+        page: `${data.refresh ? 1 : mandatoryTagPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -264,7 +270,11 @@ const FormTopicPage: React.FC = () => {
             data: item,
           };
         });
-        setMandatoryTagList([...mandatoryTagList, ...listInput]);
+        if (!data.refresh) {
+          setMandatoryTagList([...mandatoryTagList, ...listInput]);
+        } else {
+          setMandatoryTagList([...listInput]);
+        }
         setMandatoryTagHasmore(result.hasMore);
 
         setMandatoryTagePage(result.nextPage);
@@ -326,7 +336,6 @@ const FormTopicPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
-   
       setLoading(false);
       Swal.fire(
         "Error!",
@@ -485,17 +494,31 @@ const FormTopicPage: React.FC = () => {
                         loading: tagMoreLoading,
                         hasMore: tagHasMore,
                         next: () => {
-                          getTags();
+                          setTagMoreLoading(true);
+                          getTags({
+                            refresh: false,
+                            search: tagValueRestrict.valueInput,
+                          });
                         },
                         onSearch(e) {
-                          getTags(e);
+                          ResetTag();
+                          getTags({
+                            refresh: true,
+                            search: e,
+                          });
                         },
+                      }}
+                      onCLick={() => {
+                        ResetTag();
+                        getTags({
+                          refresh: true,
+                          search: tagValueRestrict.valueInput,
+                        });
                       }}
                       loading={tagLoading}
                       modalStyle="mt-2"
                       value={tagValueRestrict}
                       onChange={(e) => {
-                        ResetTag();
                         setTagValueRestrict({
                           ...tagValueRestrict,
                           valueInput: e,
@@ -520,7 +543,6 @@ const FormTopicPage: React.FC = () => {
                         });
                       }}
                       onReset={() => {
-                        ResetTag();
                         setTagValueRestrict({
                           valueData: null,
                           valueInput: "",
@@ -595,17 +617,31 @@ const FormTopicPage: React.FC = () => {
                         loading: mandatoryTagMoreLoading,
                         hasMore: mandatoryTagHasMore,
                         next: () => {
-                          getMandatoryTags();
+                          setMandatoryTagMoreLoading(true);
+                          getMandatoryTags({
+                            refresh: false,
+                            search: tagValueMandatory.valueInput,
+                          });
                         },
                         onSearch(e) {
-                          getMandatoryTags(e);
+                          ResetMandatoryTag();
+                          getMandatoryTags({
+                            refresh: true,
+                            search: e,
+                          });
                         },
+                      }}
+                      onCLick={() => {
+                        ResetMandatoryTag();
+                        getMandatoryTags({
+                          refresh: true,
+                          search: tagValueMandatory.valueInput,
+                        });
                       }}
                       loading={mandatoryTagLoading}
                       modalStyle="mt-2"
                       value={tagValueMandatory}
                       onChange={(e) => {
-                        ResetMandatoryTag();
                         setTagValueMandatory({
                           ...tagValueMandatory,
                           valueInput: e,
@@ -644,7 +680,6 @@ const FormTopicPage: React.FC = () => {
                         });
                       }}
                       onReset={() => {
-                        ResetMandatoryTag();
                         setTagValueMandatory({
                           valueData: null,
                           valueInput: "",
