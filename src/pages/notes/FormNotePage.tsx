@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IconButton, InputComponent } from "../../components/atoms";
@@ -10,7 +10,7 @@ import {
 } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -55,6 +55,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
+  const fileRef: any = useRef();
   const [topicData, setTopicData] = useState<any>(null);
   // End
   const dispatch = useDispatch();
@@ -367,8 +368,96 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       const result: any = await GetDataServer(DataAPI.FILES).FIND({
         fields: ["name"],
+        filters: [["note", "=", id]],
       });
       setFiles(result.data);
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    setFileIsLoading(false);
+  };
+
+  const UploadFiles = async (e: any) => {
+    setFileIsLoading(true);
+    try {
+      const maxSize = 2 * 1024 * 1024;
+
+      let notValid: any[] = [];
+      let valid: any[] = [];
+      for (const file of e.target.files) {
+        if (file.size <= maxSize) {
+          valid = [...valid, file];
+        } else {
+          notValid = [...notValid, file.name];
+        }
+      }
+
+      if (valid.length > 0) {
+        valid.forEach(async (item) => {
+          try {
+            const inData = new FormData();
+            inData.append("file", item);
+            inData.append("note", id);
+            await FetchApi.post(
+              `${import.meta.env.VITE_PUBLIC_URI}/files`,
+              inData
+            );
+            getFiles();
+          } catch (error: any) {
+            Swal.fire(
+              "Error!",
+              `${
+                error.response.data.msg
+                  ? error.response.data.msg
+                  : error.message
+                  ? error.message
+                  : "Error Insert"
+              }`,
+              "error"
+            );
+          }
+        });
+      }
+
+      if (notValid.length > 0) {
+        Swal.fire(
+          "Error!",
+          `Ukuran file ${notValid} terlalu besar. Maksimal 2 MB diizinkan`,
+          "error"
+        );
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    fileRef.current.value = "";
+    setFileIsLoading(false);
+  };
+
+  const DeleteFile = async (id: string) => {
+    setFileIsLoading(true);
+    try {
+      await GetDataServer(DataAPI.FILES).DELETE(id);
+      getFiles();
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -706,9 +795,9 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     Files{" "}
                     {!id ||
                       (docData.status == "0" && (
-                        <h5 className="inline text-gray-500 italic text-[0.95em]">
+                        <a className="inline text-gray-500 italic text-[0.95em]">
                           (Max Size: 2 MB)
-                        </h5>
+                        </a>
                       ))}
                   </h4>
 
@@ -731,9 +820,8 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     className="hidden"
                     multiple
                     accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx"
-                    onChange={(e) => {
-                      console.log(e.target.files);
-                    }}
+                    onChange={(e) => UploadFiles(e)}
+                    ref={fileRef}
                   />
                 </div>
 
@@ -762,7 +850,13 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           className="mb-2 bg-gray-100 px-2 font-semibold w-[350px] py-2 flex justify-between items-center"
                         >
                           <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
-                            <h4>{item.name}</h4>
+                            <a
+                              href={`${
+                                import.meta.env.VITE_PUBLIC_URI
+                              }/public/files/${item.name}`}
+                            >
+                              {item.name}
+                            </a>
                             {/* <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
                               (1K)
                             </h4> */}
@@ -773,7 +867,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                                 style={{ fontSize: 16, fontWeight: "bold" }}
                                 className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
                                 onClick={() => {
-                                  alert(item._id);
+                                  DeleteFile(item._id);
                                 }}
                               />
                             ))}
