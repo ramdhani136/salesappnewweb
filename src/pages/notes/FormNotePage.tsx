@@ -31,6 +31,8 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   // Tags
   const [tagList, setTagList] = useState<IListInput[]>([]);
+  const [tagRestrict, setTagRestrict] = useState<IListInput[]>([]);
+  const [tagMandatory, setTagMandatory] = useState<IListInput[]>([]);
   const [tagPage, setTagePage] = useState<Number>(1);
   const [tagLoading, setTagLoading] = useState<boolean>(true);
   const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
@@ -85,6 +87,28 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
+  const getTagsMandatoryRestrict = (data: any[any]) => {
+    if (data.tags.restrict) {
+      let genRestrict: IListInput[] = data.tags.restrict.map((item: any) => {
+        return {
+          name: item.name,
+          value: item._id,
+        };
+      });
+      setTagRestrict(genRestrict);
+    } else {
+      setTagRestrict([]);
+    }
+    if (data.tags.mandatory) {
+      let genMandatory: IListInput[] = data.tags.mandatory.map((item: any) => {
+        return item.name;
+      });
+      setTagMandatory(genMandatory);
+    } else {
+      setTagMandatory([]);
+    }
+  };
+
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
@@ -113,10 +137,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
       if (result.data.topic) {
         try {
-          const getTopic = await GetDataServer(DataAPI.TOPIC).FINDONE(
+          const showTopic = await GetDataServer(DataAPI.TOPIC).FINDONE(
             result.data.topic._id
           );
-          setTopicData(getTopic.data);
+
+          setTopicData(showTopic.data);
+          getTagsMandatoryRestrict(showTopic.data);
         } catch (error) {
           throw error;
         }
@@ -332,7 +358,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   }, [topic, notes]);
   // End
 
-  console.log(topicData?.tags?.restrict)
   return (
     <>
       {Meta(metaData)}
@@ -448,12 +473,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       onSelected={(e) => {
                         setTopic({ valueData: e.value, valueInput: e.name });
                         setTopicData(e.data);
+                        getTagsMandatoryRestrict(e.data);
                       }}
                       onReset={() => {
                         setTopic({
                           valueData: null,
                           valueInput: "",
                         });
+                        setTagMandatory([]);
+                        setTagRestrict([]);
                         setTopicData(null);
                       }}
                       list={topicList}
@@ -513,6 +541,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       <InputComponent
                         label="Tags"
                         infiniteScroll={{
+                          active: tagRestrict.length ? false : true,
                           loading: tagMoreLoading,
                           hasMore: tagHasMore,
                           next: () => {
@@ -522,7 +551,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                             getTags(e);
                           },
                         }}
-                        loading={tagLoading}
+                        loading={tagRestrict.length > 0 ? false : tagLoading}
                         modalStyle="mt-2"
                         value={tagInput}
                         onChange={(e) => {
@@ -557,7 +586,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                             valueInput: "",
                           });
                         }}
-                        list={tagList}
+                        list={tagRestrict.length > 0 ? tagRestrict : tagList}
                         type="text"
                         disabled={
                           id != null

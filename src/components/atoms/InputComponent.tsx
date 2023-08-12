@@ -21,6 +21,7 @@ export interface IValue {
 }
 
 interface IInfiniteScroll {
+  active?: boolean;
   next: (e?: any) => Promise<any> | void;
   hasMore: boolean;
   onSearch: (e?: any) => Promise<any> | void;
@@ -84,6 +85,11 @@ const InputComponent: React.FC<IProps> = ({
   const inputRef = useRef<any>();
   const [open, setOpen] = useState<boolean>(false);
   const [openRemark, setOpenRemark] = useState<boolean>(false);
+  if (infiniteScroll) {
+    if (infiniteScroll.active === undefined) {
+      infiniteScroll.active = true;
+    }
+  }
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -101,7 +107,7 @@ const InputComponent: React.FC<IProps> = ({
   }, []);
 
   const filterData = (a: any[]) => {
-    if (!infiniteScroll) {
+    if (!infiniteScroll || !infiniteScroll?.active) {
       return _.filter(a, function (query) {
         var name = value
           ? query.name.toLowerCase().includes(value.valueInput.toLowerCase())
@@ -115,13 +121,15 @@ const InputComponent: React.FC<IProps> = ({
 
   infiniteScroll &&
     useEffect(() => {
-      const timeoutId = setTimeout(() => {
-        infiniteScroll.onSearch(value.valueInput);
-      }, 300);
+      if (infiniteScroll.active) {
+        const timeoutId = setTimeout(() => {
+          infiniteScroll.onSearch(value.valueInput);
+        }, 300);
 
-      return () => {
-        clearTimeout(timeoutId);
-      };
+        return () => {
+          clearTimeout(timeoutId);
+        };
+      }
     }, [value.valueInput]);
 
   return (
