@@ -514,6 +514,13 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       list={topicList}
                       type="text"
                       className={`h-24 mb-1`}
+                      disabled={
+                        id != null
+                          ? docData.status !== "0"
+                            ? true
+                            : false
+                          : false
+                      }
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
@@ -547,7 +554,11 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
                 <div className="px-7 mb-2">
                   <label className="text-sm">
-                    Result <a className="text-red-600">*</a>
+                    Result
+                    {!id ||
+                      (docData.status == "0" && (
+                        <a className="text-red-600">*</a>
+                      ))}
                   </label>
                   <textarea
                     className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
@@ -557,7 +568,11 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     disabled={
-                      id != null ? (status !== "Draft" ? true : false) : false
+                      id != null
+                        ? docData.status !== "0"
+                          ? true
+                          : false
+                        : false
                     }
                   />
                 </div>
@@ -626,7 +641,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         type="text"
                         disabled={
                           id != null
-                            ? status !== "Draft"
+                            ? docData.status !== "0"
                               ? true
                               : false
                             : false
@@ -639,11 +654,13 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         {tags.map((item: any, index: any) => (
                           <li
                             onClick={() => {
-                              const genTags = tags.filter((i: any) => {
-                                return i._id !== item._id;
-                              });
+                              if (!id || docData.status == "0") {
+                                const genTags = tags.filter((i: any) => {
+                                  return i._id !== item._id;
+                                });
 
-                              setTags(genTags);
+                                setTags(genTags);
+                              }
                             }}
                             key={index}
                             className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
@@ -662,15 +679,18 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                 <div className="flex items-center justify-between mt-2 ">
                   <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
 
-                  <label htmlFor="imageUpload">
-                    <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
-                      <h4 className="text-gray-800"> Attach</h4>
-                      <AttachFileIcon
-                        className="text-gray-800"
-                        style={{ fontSize: 16 }}
-                      />
-                    </a>
-                  </label>
+                  {!id ||
+                    (docData.status == "0" && (
+                      <label htmlFor="imageUpload">
+                        <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
+                          <h4 className="text-gray-800"> Attach</h4>
+                          <AttachFileIcon
+                            className="text-gray-800"
+                            style={{ fontSize: 16 }}
+                          />
+                        </a>
+                      </label>
+                    ))}
                   <input
                     type="file"
                     name="imageUpload"

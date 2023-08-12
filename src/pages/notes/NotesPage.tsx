@@ -92,9 +92,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
               <b
                 className="font-medium"
                 onClick={() => {
-                  if (docData.status == "0") {
-                    GetFormNote(item._id);
-                  }
+                  GetFormNote(item._id);
                 }}
               >
                 {item.topic.name}
