@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IconButton, InputComponent } from "../../components/atoms";
-import { IValue, TypeField } from "../../components/atoms/InputComponent";
+import {
+  IListInput,
+  IValue,
+  TypeField,
+} from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -25,6 +29,31 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const navigate = useNavigate();
 
+  // Tags
+  const [tagList, setTagList] = useState<IListInput[]>([]);
+  const [tagPage, setTagePage] = useState<Number>(1);
+  const [tagLoading, setTagLoading] = useState<boolean>(true);
+  const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
+  const [tagHasMore, setTagHasmore] = useState<boolean>(false);
+  const [tags, setTags] = useState<any[]>([]);
+  const [tagInput, setTagInput] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // Topic
+  const [topicList, setTopicList] = useState<IListInput[]>([]);
+  const [topicPage, setTopicPage] = useState<Number>(1);
+  const [topicLoading, setTopicLoading] = useState<boolean>(true);
+  const [topicMoreLoading, setTopicMoreLoading] = useState<boolean>(false);
+  const [topicHasMore, setTopicHasMore] = useState<boolean>(false);
+  const [topic, setTopic] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
@@ -33,14 +62,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
   });
-  const [topic, setTopic] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  const [tagInput, setTagInput] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
+
   const [customer, setCustomer] = useState<IValue>({
     valueData: docData.customer._id,
     valueInput: docData.customer.name,
@@ -116,6 +138,50 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
       // navigate("/branch");
     }
+  };
+
+  const getTags = async (search?: string): Promise<void> => {
+    try {
+      if (!tagLoading) {
+        setTagMoreLoading(true);
+      } else {
+        setTagMoreLoading(false);
+      }
+
+      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
+        search: search ?? "",
+        limit: 10,
+        page: `${tagPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+            data: item,
+          };
+        });
+        setTagList([...tagList, ...listInput]);
+        setTagHasmore(result.hasMore);
+
+        setTagePage(result.nextPage);
+      }
+
+      setTagLoading(false);
+      setTagMoreLoading(false);
+    } catch (error: any) {
+      setTagLoading(false);
+      setTagMoreLoading(false);
+      setTagHasmore(false);
+    }
+  };
+
+  const ResetTag = () => {
+    setTagList([]);
+    setTagHasmore(false);
+    setTagePage(1);
+    setTagLoading(true);
   };
 
   const onDelete = (): void => {
@@ -346,27 +412,78 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     }
                   />
                 </div>
-                <label className="text-sm ml-7 block">Tags</label>
                 <div className="mx-7 w-[300px]">
                   <InputComponent
-                    placeholder="Search"
+                    label="Tags"
+                    infiniteScroll={{
+                      loading: tagMoreLoading,
+                      hasMore: tagHasMore,
+                      next: () => {
+                        getTags();
+                      },
+                      onSearch(e) {
+                        getTags(e);
+                      },
+                    }}
+                    loading={tagLoading}
+                    modalStyle="mt-2"
                     value={tagInput}
-                    className="h-[35px]  text-[0.93em] mb-3"
-                    inputStyle="placeholder:text-[0.9em]"
-                    type="text"
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      ResetTag();
                       setTagInput({
-                        valueData: e,
+                        ...tagInput,
                         valueInput: e,
-                      })
+                      });
+                    }}
+                    onSelected={(e) => {
+                      const cekDup = tags.find(
+                        (item: any) => item._id === e.value
+                      );
+
+                      if (!cekDup) {
+                        let setTag = [...tags, { _id: e.value, name: e.name }];
+                        setTags(setTag);
+                      }
+
+                      setTagInput({
+                        valueData: "",
+                        valueInput: "",
+                      });
+                    }}
+                    onReset={() => {
+                      ResetTag();
+                      setTagInput({
+                        valueData: null,
+                        valueInput: "",
+                      });
+                    }}
+                    list={tagList}
+                    type="text"
+                    disabled={
+                      id != null ? (status !== "Draft" ? true : false) : false
                     }
+                    className={`h-9 mb-1`}
                   />
                 </div>
-                <ul className="border mx-7 px-2 -mt-2 py-3 mb-5 rounded-sm float-left w-[93%]">
-                  <li className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center">
-                    Price
-                  </li>
-                </ul>
+                {tags.length > 0 && (
+                  <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%]">
+                    {tags.map((item: any, index: any) => (
+                      <li
+                        onClick={() => {
+                          const genTags = tags.filter((i: any) => {
+                            return i._id !== item._id;
+                          });
+
+                          setTags(genTags);
+                        }}
+                        key={index}
+                        className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                      >
+                        {item.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
             <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
