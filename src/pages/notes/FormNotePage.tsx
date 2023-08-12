@@ -52,7 +52,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
-  const [topicData, setTopicData] = useState<{} | null>(null);
+  const [topicData, setTopicData] = useState<any>(null);
   // End
 
   const [scroll, setScroll] = useState<number>(0);
@@ -332,6 +332,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   }, [topic, notes]);
   // End
 
+  console.log(topicData?.tags?.restrict)
   return (
     <>
       {Meta(metaData)}
