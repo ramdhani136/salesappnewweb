@@ -22,8 +22,8 @@ const FormNamingSeriesPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Topic"} - Sales App Ekatunggal`,
-    description: "Halaman form Topic - Sales web system",
+    title: `${id ? data.name : "New Naming Series"} - Sales App Ekatunggal`,
+    description: "Halaman form naming series - Sales web system",
   };
 
   const navigate = useNavigate();
@@ -33,19 +33,21 @@ const FormNamingSeriesPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const dataType: any[] = [
-    { title: "Enabled", value: "1" },
-    { title: "Disabled", value: "0" },
+    { title: "Visit", value: "visit" },
+    { title: "Callsheet", value: "callsheet" },
+    { title: "Schedule", value: "schedule" },
+    { title: "Memo", value: "memo" },
   ];
-  const [allowTaggingItem, setAllowTaggingItem] = useState<String>("1");
+  const [doc, setDoc] = useState<String>("visit");
 
   // Tags Restrict
-  const [tagList, setTagList] = useState<IListInput[]>([]);
-  const [tagPage, setTagePage] = useState<Number>(1);
-  const [tagLoading, setTagLoading] = useState<boolean>(true);
-  const [tagMoreLoading, setTagMoreLoading] = useState<boolean>(false);
-  const [tagHasMore, setTagHasmore] = useState<boolean>(false);
-  const [tagRestrict, setTageRestrict] = useState<any[]>([]);
-  const [tagValueRestrict, setTagValueRestrict] = useState<IValue>({
+  const [branchList, setBranchList] = useState<IListInput[]>([]);
+  const [branchPage, setBranchPage] = useState<Number>(1);
+  const [branchLoading, setBranchLoading] = useState<boolean>(true);
+  const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
+  const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
+  const [branch, setBranch] = useState<any[]>([]);
+  const [branchValue, setBranchValue] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -78,9 +80,7 @@ const FormNamingSeriesPage: React.FC = () => {
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    allowTaggingItem: allowTaggingItem,
-    tagRestrict: tagRestrict,
-    tagMandatory: tagMandatory,
+    doc: doc,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -95,7 +95,7 @@ const FormNamingSeriesPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.TOPIC).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.NAMING).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -118,6 +118,7 @@ const FormNamingSeriesPage: React.FC = () => {
       // end
 
       setHistory(result.history);
+      console.log(result.data);
 
       setName({
         valueData: result.data.name,
@@ -135,20 +136,11 @@ const FormNamingSeriesPage: React.FC = () => {
 
       setData(result.data);
 
-      if (result.data.tags.restrict) {
-        setTageRestrict(result.data.tags.restrict);
-      }
-      if (result.data.tags.mandatory) {
-        setTagMandatory(result.data.tags.mandatory);
-      }
-
-      setAllowTaggingItem(`${result.data.tags.allowTaggingItem}`);
+      setDoc(result.data.doc);
 
       setPrevData({
         name: result.data.name,
-        allowTaggingItem: `${result.data.tags.allowTaggingItem}`,
-        tagRestrict: result.data.tags.restrict,
-        tagMandatory: result.data.tags.mandatory,
+        doc: `${result.data.doc}`,
       });
 
       setStatus(
@@ -169,7 +161,7 @@ const FormNamingSeriesPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/topic");
+      // navigate("/naming");
     }
   };
 
@@ -178,8 +170,8 @@ const FormNamingSeriesPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.TOPIC).DELETE(`${id}`);
-          navigate("/topic");
+          await GetDataServer(DataAPI.NAMING).DELETE(`${id}`);
+          navigate("/naming");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -200,7 +192,7 @@ const FormNamingSeriesPage: React.FC = () => {
     }
   };
 
-  const getTags = async (data: {
+  const GetBranch = async (data: {
     search?: string | String;
     refresh?: boolean;
   }): Promise<void> => {
@@ -209,10 +201,10 @@ const FormNamingSeriesPage: React.FC = () => {
         data.refresh = true;
       }
 
-      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
         search: data.search ?? "",
         limit: 10,
-        page: `${data.refresh ? 1 : tagPage}`,
+        page: `${data.refresh ? 1 : branchPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -223,29 +215,28 @@ const FormNamingSeriesPage: React.FC = () => {
           };
         });
         if (!data.refresh) {
-          setTagList([...tagList, ...listInput]);
+          setBranchList([...branchList, ...listInput]);
         } else {
-          setTagList([...listInput]);
+          setBranchList([...listInput]);
         }
-        setTagHasmore(result.hasMore);
-
-        setTagePage(result.nextPage);
+        setBranchHasMore(result.hasMore);
+        setBranchPage(result.nextPage);
       }
 
-      setTagLoading(false);
-      setTagMoreLoading(false);
+      setBranchLoading(false);
+      setBranchMoreLoading(false);
     } catch (error: any) {
-      setTagLoading(false);
-      setTagMoreLoading(false);
-      setTagHasmore(false);
+      setBranchLoading(false);
+      setBranchMoreLoading(false);
+      setBranchHasMore(false);
     }
   };
 
-  const ResetTag = () => {
-    setTagList([]);
-    setTagHasmore(false);
-    setTagePage(1);
-    setTagLoading(true);
+  const ResetBranch = () => {
+    setBranchList([]);
+    setBranchHasMore(false);
+    setBranchPage(1);
+    setBranchLoading(true);
   };
 
   const getMandatoryTags = async (data: {
@@ -318,22 +309,22 @@ const FormNamingSeriesPage: React.FC = () => {
           name: name.valueData,
           tags: {
             mandatory: tagMandatory.map((item: any) => item._id),
-            restrict: tagRestrict.map((item: any) => item._id),
-            allowTaggingItem: allowTaggingItem,
+
+            doc: doc,
           },
         };
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.TOPIC).UPDATE({ id: id, data: updata })
-        : GetDataServer(DataAPI.TOPIC).CREATE(updata);
+        ? GetDataServer(DataAPI.NAMING).UPDATE({ id: id, data: updata })
+        : GetDataServer(DataAPI.NAMING).CREATE(updata);
 
       const result = await Action;
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/topic/${result.data.data._id}`);
+        navigate(`/namingseries/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -349,8 +340,7 @@ const FormNamingSeriesPage: React.FC = () => {
         "error"
       );
     }
-    ResetTag();
-    ResetMandatoryTag();
+
 
     setLoading(false);
   };
@@ -358,9 +348,7 @@ const FormNamingSeriesPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      allowTaggingItem: allowTaggingItem,
-      tagRestrict: tagRestrict,
-      tagMandatory: tagMandatory,
+      doc: doc,
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -368,7 +356,7 @@ const FormNamingSeriesPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [name, tagMandatory, tagRestrict, allowTaggingItem]);
+  }, [name, branch, doc]);
   // End
 
   return (
@@ -389,10 +377,10 @@ const FormNamingSeriesPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/topic")}
+                  onClick={() => navigate("/namingseries")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Topic" : data.name}
+                  {!id ? "New Naming Series" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -480,10 +468,10 @@ const FormNamingSeriesPage: React.FC = () => {
                       />
                     )}
                     <Select
-                      title="Allow Item Tagging"
+                      title="Doc"
                       data={dataType}
-                      value={allowTaggingItem}
-                      setValue={setAllowTaggingItem}
+                      value={doc}
+                      setValue={setDoc}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -492,92 +480,92 @@ const FormNamingSeriesPage: React.FC = () => {
                     <InputComponent
                       label="Tags Restrict"
                       infiniteScroll={{
-                        loading: tagMoreLoading,
-                        hasMore: tagHasMore,
+                        loading: branchMoreLoading,
+                        hasMore: branchHasMore,
                         next: () => {
-                          setTagMoreLoading(true);
-                          getTags({
+                          setBranchMoreLoading(true);
+                          GetBranch({
                             refresh: false,
-                            search: tagValueRestrict.valueInput,
+                            search: branchValue.valueInput,
                           });
                         },
                         onSearch(e) {
-                          ResetTag();
-                          getTags({
+                          ResetBranch();
+                          GetBranch({
                             refresh: true,
                             search: e,
                           });
                         },
                       }}
                       onCLick={() => {
-                        ResetTag();
-                        getTags({
+                        ResetBranch();
+                        GetBranch({
                           refresh: true,
-                          search: tagValueRestrict.valueInput,
+                          search: branchValue.valueInput,
                         });
                       }}
-                      loading={tagLoading}
+                      loading={branchLoading}
                       modalStyle="mt-2"
-                      value={tagValueRestrict}
+                      value={branchValue}
                       onChange={(e) => {
-                        setTagValueRestrict({
-                          ...tagValueRestrict,
+                        setBranchValue({
+                          ...branchValue,
                           valueInput: e,
                         });
                       }}
                       onSelected={(e) => {
-                        const cekDup = tagRestrict.find(
+                        const cekDup = branch.find(
                           (item: any) => item._id === e.value
                         );
 
                         if (!cekDup) {
                           let setTag = [
-                            ...tagRestrict,
+                            ...branch,
                             { _id: e.value, name: e.name },
                           ];
-                          if (tagRestrict.length === 0) {
+                          if (branch.length === 0) {
                             const cekDupMandatory = tagMandatory.filter(
                               (item: any) => item._id !== e.value
                             );
 
-                            setTageRestrict([...setTag, ...cekDupMandatory]);
+                            setBranch([...setTag, ...cekDupMandatory]);
                           } else {
-                            setTageRestrict(setTag);
+                            setBranch(setTag);
                           }
                         }
 
-                        setTagValueRestrict({
+                        setBranchValue({
                           valueData: "",
                           valueInput: "",
                         });
                       }}
                       onReset={() => {
-                        setTagValueRestrict({
+                        setBranchValue({
                           valueData: null,
                           valueInput: "",
                         });
                       }}
-                      list={tagList}
+                      list={branchList}
                       type="text"
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                       className={`h-9 mb-1`}
                     />
-                    {tagRestrict.length > 0 && (
+                    {branch.length > 0 && (
                       <ul className="w-full h-auto rounded-sm border p-2 float-left">
-                        {tagRestrict.map((item: any, index: number) => {
+                        {branch.map((item: any, index: number) => {
                           return (
                             <li
                               onClick={() => {
                                 if (!id || data.status == "0") {
-                                  const setTags = tagRestrict.filter(
+                                  const setTags = branch.filter(
                                     (i: any) => {
                                       return i._id !== item._id;
                                     }
                                   );
 
-                                  setTageRestrict(setTags);
+                                  setBranch(setTags);
 
                                   const checkTagMandatory = tagMandatory.filter(
                                     (i: any) => {
@@ -600,7 +588,7 @@ const FormNamingSeriesPage: React.FC = () => {
                             <CancelSharpIcon
                               style={{ fontSize: "18px" }}
                               onClick={() => {
-                                setTageRestrict([]);
+                                setBranch([]);
                               }}
                             />
                           ))}
@@ -682,7 +670,7 @@ const FormNamingSeriesPage: React.FC = () => {
 
                           const missingDataInData2 = setTag.filter(
                             (item1) =>
-                              !tagRestrict.some(
+                              !branch.some(
                                 (item2) => item2._id === item1._id
                               )
                           );
@@ -690,10 +678,10 @@ const FormNamingSeriesPage: React.FC = () => {
                           setTagMandatory(setTag);
                           if (
                             missingDataInData2.length > 0 &&
-                            tagRestrict.length > 0
+                            branch.length > 0
                           ) {
-                            setTageRestrict([
-                              ...tagRestrict,
+                            setBranch([
+                              ...branch,
                               ...missingDataInData2,
                             ]);
                           }

@@ -64,7 +64,6 @@ export const NamingSeriesPage: React.FC = (): any => {
         search: search,
       });
 
-      console.log(result);
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
