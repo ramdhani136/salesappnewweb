@@ -40,7 +40,7 @@ const SeacrhHeaderComponent: React.FC = () => {
     { name: "New Customer Group", link: "/customergroup/new" },
     { name: "Memo List", link: "/memo" },
     { name: "New Memo", link: "/memo/new" },
-    { name: "Naming List", link: "/namingseries" },
+    { name: "Naming Series List", link: "/namingseries" },
     { name: "New Naming Series", link: "/namingseries/new" },
     { name: "Schedule List", link: "/schedule" },
     { name: "Tag List", link: "/tag" },

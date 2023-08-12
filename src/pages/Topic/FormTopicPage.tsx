@@ -595,12 +595,15 @@ const FormTopicPage: React.FC = () => {
                             </li>
                           );
                         })}
-                        <CancelSharpIcon
-                          style={{fontSize:"18px"}}
-                          onClick={() => {
-                            setTageRestrict([]);
-                          }}
-                        />
+                        {!id ||
+                          (data.status == "0" && (
+                            <CancelSharpIcon
+                              style={{ fontSize: "18px" }}
+                              onClick={() => {
+                                setTageRestrict([]);
+                              }}
+                            />
+                          ))}
                       </ul>
                     )}
                   </div>
