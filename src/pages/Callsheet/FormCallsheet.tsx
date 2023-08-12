@@ -641,7 +641,13 @@ const FormCallsheetPage: React.FC = () => {
                         onReset={() =>
                           setNaming({ valueData: null, valueInput: "" })
                         }
-                        // disabled={!id ? false : true}
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
                         closeIconClass="top-[13.5px]"
                       />
                     )}
@@ -650,7 +656,13 @@ const FormCallsheetPage: React.FC = () => {
                       data={dataCallType}
                       value={callType}
                       setValue={setCallType}
-                      disabled={false}
+                      disabled={
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
+                      }
                     />
                     <InputComponent
                       label="Date"
@@ -748,6 +760,13 @@ const FormCallsheetPage: React.FC = () => {
                       list={branchList}
                       type="text"
                       className={`h-9 mb-4`}
+                      disabled={
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
+                      }
                     />
                     {branch.valueData && (
                       <InputComponent
@@ -820,6 +839,13 @@ const FormCallsheetPage: React.FC = () => {
                         list={groupList}
                         type="text"
                         className={`h-9 mb-4`}
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
                       />
                     )}
                   </div>
@@ -886,6 +912,13 @@ const FormCallsheetPage: React.FC = () => {
                         list={customerList}
                         type="text"
                         className={`h-9 mb-4`}
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
                       />
                     )}
                     {customer.valueData && (
@@ -948,6 +981,13 @@ const FormCallsheetPage: React.FC = () => {
                         list={contactList}
                         type="text"
                         className={`h-9 mb-3`}
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
                       />
                     )}
                     {contact.valueData && (

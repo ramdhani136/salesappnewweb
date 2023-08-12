@@ -561,19 +561,23 @@ const FormTopicPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                const setTags = tagRestrict.filter((i: any) => {
-                                  return i._id !== item._id;
-                                });
+                                if (!id || data.status == "0") {
+                                  const setTags = tagRestrict.filter(
+                                    (i: any) => {
+                                      return i._id !== item._id;
+                                    }
+                                  );
 
-                                setTageRestrict(setTags);
+                                  setTageRestrict(setTags);
 
-                                const checkTagMandatory = tagMandatory.filter(
-                                  (i: any) => {
-                                    return i._id !== item._id;
-                                  }
-                                );
+                                  const checkTagMandatory = tagMandatory.filter(
+                                    (i: any) => {
+                                      return i._id !== item._id;
+                                    }
+                                  );
 
-                                setTagMandatory(checkTagMandatory);
+                                  setTagMandatory(checkTagMandatory);
+                                }
                               }}
                               key={index}
                               className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
@@ -698,13 +702,15 @@ const FormTopicPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                const setTags = tagMandatory.filter(
-                                  (i: any) => {
-                                    return i._id !== item._id;
-                                  }
-                                );
+                                if (!id || data.status == "0") {
+                                  const setTags = tagMandatory.filter(
+                                    (i: any) => {
+                                      return i._id !== item._id;
+                                    }
+                                  );
 
-                                setTagMandatory(setTags);
+                                  setTagMandatory(setTags);
+                                }
                               }}
                               key={index}
                               className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"

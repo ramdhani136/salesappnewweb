@@ -16,9 +16,11 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { modalSet } from "../../redux/slices/ModalSlice";
 
 const FormNotePage: React.FC<any> = ({ props }) => {
-  const id = props.id;
+  let id = props.id;
   const docData = props.doc;
 
   const [data, setData] = useState<any>({});
@@ -56,7 +58,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   });
   const [topicData, setTopicData] = useState<any>(null);
   // End
-
+  const dispatch = useDispatch();
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
@@ -293,28 +295,44 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     }
   };
 
-  const onSave = async (nextState?: String): Promise<any> => {
+  const onSave = async (): Promise<any> => {
     setLoading(true);
     try {
       let data: any = {
         topic: topic.valueData,
-        note: notes,
+        result: notes,
+        tags: tags.map((item: any) => item._id),
+        customer: customer.valueData,
+        doc: {
+          type: "callsheet",
+          _id: docData._id,
+          name: docData.name,
+        },
       };
-      if (nextState) {
-        data.nextState = nextState;
-      }
 
       let Action = id
         ? GetDataServer(DataAPI.NOTE).UPDATE({ id: id, data: data })
         : GetDataServer(DataAPI.NOTE).CREATE(data);
 
       const result = await Action;
-      // navigate(`/branch/${result.data.data._id}`);
+
       if (id) {
         getData();
+        props.onRefresh({ refresh: true });
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(0);
+        id = result.data.data._id;
+        Swal.fire({ icon: "success", text: "Saved" });
+        props.onRefresh({ refresh: true });
+        dispatch(
+          modalSet({
+            active: true,
+            Children: FormNotePage,
+            title: "",
+            props: { id: id, doc: docData, onRefresh: props.onRefresh },
+            className: "w-[63%] h-[98%]",
+          })
+        );
       }
     } catch (error: any) {
       Swal.fire(
@@ -495,7 +513,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       }}
                       list={topicList}
                       type="text"
-                      className={`h-20 mb-1`}
+                      className={`h-24 mb-1`}
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">

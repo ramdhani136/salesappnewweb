@@ -479,9 +479,9 @@ const FormContactPage: React.FC = () => {
                       }}
                       list={customerList}
                       type="text"
-                      // disabled={
-                      //   id != null ? (status !== "Draft" ? true : false) : false
-                      // }
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                       className={`h-9 mb-1`}
                     />
                     {customer.valueData && (

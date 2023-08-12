@@ -235,7 +235,6 @@ const FormCustomerGroupPage: React.FC = () => {
       setParentLoading(false);
       setParentMoreLoading(false);
     } catch (error: any) {
-  
       setParentLoading(false);
       setParentMoreLoading(false);
       setParentHasMore(false);
@@ -591,7 +590,10 @@ const FormCustomerGroupPage: React.FC = () => {
                       }}
                       onCLick={() => {
                         ResetBranch();
-                        getBranch({ refresh: true, search: branchValue.valueInput });
+                        getBranch({
+                          refresh: true,
+                          search: branchValue.valueInput,
+                        });
                       }}
                       onSelected={(e) => {
                         const cekDup = branch.find(
@@ -616,7 +618,9 @@ const FormCustomerGroupPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      //   disabled={disabled}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
                       className={`h-9 mb-1`}
                     />
                     {branch.length > 0 && (
@@ -625,11 +629,13 @@ const FormCustomerGroupPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                const genBranch = branch.filter((i: any) => {
-                                  return i._id !== item._id;
-                                });
+                                if (!id || data.status === "Draft") {
+                                  const genBranch = branch.filter((i: any) => {
+                                    return i._id !== item._id;
+                                  });
 
-                                setBranch(genBranch);
+                                  setBranch(genBranch);
+                                }
                               }}
                               key={index}
                               className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"

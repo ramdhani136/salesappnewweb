@@ -68,20 +68,20 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         active: true,
         Children: FormNotePage,
         title: "",
-        props: { id: id ?? undefined, doc: docData },
+        props: { id: id ?? undefined, doc: docData, onRefresh: getData },
         className: "w-[63%] h-[98%]",
       })
     );
   };
 
-  const getData = async (): Promise<any> => {
+  const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
       const result: any = await GetDataServer(DataAPI.NOTE).FIND({
         filters: [...filter, ["doc._id", "=", `${docId}`]],
         limit: limit,
-        page: page,
+        page: props?.refresh ? 1 : page,
         orderBy: { sort: isOrderBy, state: isSort },
-        search: search,
+        search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
@@ -92,7 +92,9 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
               <b
                 className="font-medium"
                 onClick={() => {
-                  GetFormNote(item._id);
+                  if (docData.status == "0") {
+                    GetFormNote(item._id);
+                  }
                 }}
               >
                 {item.topic.name}
@@ -103,7 +105,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
               </div>
             ),
-            result: <h4 className="mr-10 text-[0.95em]">{item.result}</h4>,
+            result: <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>,
             tags: (
               <div className="p-2">
                 {item.tags &&
@@ -139,7 +141,11 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         setTotalData(result.total);
         setHasMore(result.hasMore);
         setPage(result.nextPage);
-        setData([...data, ...generateData]);
+        if (!props?.refresh) {
+          setData([...data, ...generateData]);
+        } else {
+          setData([...generateData]);
+        }
       }
       setRefresh(false);
       setLoading(false);
@@ -262,18 +268,20 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
               setLoading(true);
               setRefresh(true);
             }}
-            disabled={false}
+            disabled={docData.status !== "0" ? true : false}
           />
         )}
       </div>
-      <a
-        onClick={() => {
-          GetFormNote();
-        }}
-        className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
-      >
-        Add Row
-      </a>
+      {docData.status == "0" && (
+        <a
+          onClick={() => {
+            GetFormNote();
+          }}
+          className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
+        >
+          Add Row
+        </a>
+      )}
     </>
   );
 };

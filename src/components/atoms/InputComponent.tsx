@@ -142,9 +142,7 @@ const InputComponent: React.FC<IProps> = ({
       )}
       <div
         // onClick={onCLick}
-        className={`mt-1 w-full rounded-md h-[40px] bg-gray-50  relative ${
-          mandatoy && !value.valueData && "border-red-500 border"
-        } ${className}`}
+        className={`mt-1 w-full rounded-md h-[40px] bg-gray-50  relative ${className}`}
       >
         {typeField === TypeField.INPUT ? (
           <input
@@ -172,7 +170,9 @@ const InputComponent: React.FC<IProps> = ({
                   : `${value.valueInput}`
                 : `${value.valueInput}`
             }
-            className={`w-full  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
+            className={`w-full  ${
+              mandatoy && !value.valueData && "border-red-500 border"
+            }  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  px-3 ${inputStyle}`}
           />
         ) : (
           <textarea
@@ -197,7 +197,9 @@ const InputComponent: React.FC<IProps> = ({
                   : `${value.valueInput}`
                 : `${value.valueInput}`
             }
-            className={`w-full  text-md text-gray-900  font-normal border h-full z-10 rounded-md bg-gray-50  py-2 px-3 ${inputStyle}`}
+            className={`w-full  ${
+              mandatoy && !value.valueData && "border-red-500 border"
+            }  text-md text-gray-900  font-normal border z-10 rounded-md bg-gray-50  py-2 px-3 ${inputStyle}`}
           />
         )}
         {(value.valueInput || type == "number") && onReset && !disabled && (
