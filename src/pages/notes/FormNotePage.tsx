@@ -485,7 +485,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       }}
                       onReset={() => {
                         setTopic({
-                          valueData: null,
+                          valueData: "",
                           valueInput: "",
                         });
                         setTagMandatory([]);
@@ -600,7 +600,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         }}
                         onReset={() => {
                           setTagInput({
-                            valueData: null,
+                            valueData: "",
                             valueInput: "",
                           });
                         }}
