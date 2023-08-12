@@ -218,7 +218,6 @@ const FormTopicPage: React.FC = () => {
           return {
             name: item.name,
             value: item._id,
-            data: item,
           };
         });
         setTagList([...tagList, ...listInput]);

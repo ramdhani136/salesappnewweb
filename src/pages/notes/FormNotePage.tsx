@@ -52,6 +52,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
+  const [topicData, setTopicData] = useState<{}>({});
   // End
 
   const [scroll, setScroll] = useState<number>(0);
@@ -159,7 +160,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
           return {
             name: item.name,
             value: item._id,
-            data: item,
           };
         });
         setTagList([...tagList, ...listInput]);
@@ -182,6 +182,54 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     setTagHasmore(false);
     setTagePage(1);
     setTagLoading(true);
+  };
+
+  const GetTopic = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+
+      const result: any = await GetDataServer(DataAPI.TOPIC).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : topicPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+            data: item,
+          };
+        });
+        if (!data.refresh) {
+          setTopicList([...topicList, ...listInput]);
+        } else {
+          setTopicList([...listInput]);
+        }
+        setTopicHasMore(result.hasMore);
+        setTopicPage(result.nextPage);
+      }
+
+      setTopicLoading(false);
+      setTopicMoreLoading(false);
+    } catch (error: any) {
+      setTopicLoading(false);
+      setTopicMoreLoading(false);
+      setTopicHasMore(false);
+    }
+  };
+
+  const ResetTopic = () => {
+    setTopicList([]);
+    setTopicHasMore(false);
+    setTopicPage(1);
+    setTopicLoading(true);
   };
 
   const onDelete = (): void => {
@@ -273,12 +321,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     }
   }, [topic, notes]);
   // End
-
+console.log(topicData)
   return (
     <>
       {Meta(metaData)}
       <div
-        className="  pb-3 max-h-[calc(100vh-13px)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
+        className="  pb-3 max-h-[calc(100vh-20)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
       >
         {!loading ? (
@@ -350,22 +398,52 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       className="h-[38px]   text-[0.93em] mb-3"
                       disabled
                     />
+
                     <InputComponent
-                      typeField={TypeField.TEXTAREA}
                       mandatoy
+                      typeField={TypeField.TEXTAREA}
                       label="Topic"
+                      infiniteScroll={{
+                        loading: topicMoreLoading,
+                        hasMore: topicHasMore,
+                        next: () => {
+                          setTopicMoreLoading(true);
+                          GetTopic({
+                            refresh: false,
+                            search: topic.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetTopic;
+                          GetTopic({
+                            refresh: true,
+                            search: e,
+                          });
+                        },
+                      }}
+                      loading={topicLoading}
+                      modalStyle="mt-2"
                       value={topic}
-                      className="h-[60px]  text-[0.93em] mb-3 "
-                      type="text"
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setTopic({
-                          valueData: e,
+                          ...topic,
                           valueInput: e,
-                        })
-                      }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setTopic({ valueData: e.value, valueInput: e.name });
+                        setTopicData(e.data);
+                      }}
+                      onReset={() => {
+                        setTopic({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                        setTopicData({});
+                      }}
+                      list={topicList}
+                      type="text"
+                      className={`h-20 mb-1`}
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
