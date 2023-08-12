@@ -544,7 +544,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         label="Tags"
                         remark={`${
                           tagMandatory.length > 0
-                            ? `*Tag ${tagMandatory} wajib di lampirkan didalam topic ${data.topic.name}`
+                            ? `*Tag ${tagMandatory} wajib di lampirkan didalam topic ${topicData.name}`
                             : ""
                         }`}
                         remarkStyle="mt-1 text-sm italic "
