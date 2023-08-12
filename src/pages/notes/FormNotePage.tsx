@@ -74,8 +74,9 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   const [status, setStatus] = useState<String>("Draft");
   const [notes, setNotes] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
-    tupic: topic.valueData,
+    topic: topic.valueData,
     note: notes ?? "",
+    tags: tags,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -117,7 +118,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       setData(result.data);
 
       setTopic({
-        valueData: result.data.topic.name,
+        valueData: result.data.topic._id,
         valueInput: result.data.topic.name,
       });
       setCustomer({
@@ -135,6 +136,14 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       setNotes(result.data.result);
       setData(result.data);
 
+      setTags(result.data.tags);
+
+      setPrevData({
+        topic: result.data.topic._id,
+        note: result.data.result,
+        tags: result.data.tags,
+      });
+
       if (result.data.topic) {
         try {
           const showTopic = await GetDataServer(DataAPI.TOPIC).FINDONE(
@@ -148,22 +157,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         }
       }
 
-      // setPrevData({
-      //   name: result.data.name,
-      //   desc: result.data.desc ?? "",
-      // });
-      // if (result.data.desc) {
-      //   setDesc(result.data.desc);
-      // }
-      // setStatus(
-      //   result.data.status == "0"
-      //     ? "Draft"
-      //     : result.data.status == "1"
-      //     ? "Submitted"
-      //     : result.data.status == "2"
-      //     ? "Canceled"
-      //     : "Closed"
-      // );
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -177,18 +170,19 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     }
   };
 
-  const getTags = async (search?: string): Promise<void> => {
+  const getTags = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
-      if (!tagLoading) {
-        setTagMoreLoading(true);
-      } else {
-        setTagMoreLoading(false);
+      if (data.refresh === undefined) {
+        data.refresh = true;
       }
 
       const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: search ?? "",
+        search: data.search ?? "",
         limit: 10,
-        page: `${tagPage}`,
+        page: `${data.refresh ? 1 : tagPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -198,7 +192,11 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             value: item._id,
           };
         });
-        setTagList([...tagList, ...listInput]);
+        if (!data.refresh) {
+          setTagList([...tagList, ...listInput]);
+        } else {
+          setTagList([...listInput]);
+        }
         setTagHasmore(result.hasMore);
 
         setTagePage(result.nextPage);
@@ -349,13 +347,15 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     const actualData = {
       topic: topic.valueData,
       note: notes ?? "",
+      tags: tags,
     };
+
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [topic, notes]);
+  }, [topic, notes, tags]);
   // End
 
   return (
@@ -560,17 +560,21 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           loading: tagMoreLoading,
                           hasMore: tagHasMore,
                           next: () => {
-                            getTags();
+                            setTagMoreLoading(true);
+                            getTags({
+                              refresh: false,
+                              search: tagInput.valueInput,
+                            });
                           },
                           onSearch(e) {
-                            getTags(e);
+                            ResetTag();
+                            getTags({ refresh: true, search: e });
                           },
                         }}
                         loading={tagRestrict.length > 0 ? false : tagLoading}
                         modalStyle="mt-2"
                         value={tagInput}
                         onChange={(e) => {
-                          ResetTag();
                           setTagInput({
                             ...tagInput,
                             valueInput: e,
@@ -595,7 +599,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           });
                         }}
                         onReset={() => {
-                          ResetTag();
                           setTagInput({
                             valueData: null,
                             valueInput: "",
