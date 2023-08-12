@@ -300,7 +300,7 @@ const InputComponent: React.FC<IProps> = ({
           <h6
             className={` ${
               !openRemark && "hidden"
-            } duration-300 bg-gray-900 text-white w-auto] text-center rounded-md absolute p-1 px-2  -top-7`}
+            } duration-300 bg-gray-900 text-white w-auto] text-sm text-center rounded-md absolute p-1 px-2  -top-7`}
           >
             {infoRemark}
           </h6>

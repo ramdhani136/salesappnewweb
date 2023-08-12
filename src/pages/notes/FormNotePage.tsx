@@ -474,6 +474,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         setTopic({ valueData: e.value, valueInput: e.name });
                         setTopicData(e.data);
                         getTagsMandatoryRestrict(e.data);
+                        setTags([]);
                       }}
                       onReset={() => {
                         setTopic({
@@ -483,6 +484,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         setTagMandatory([]);
                         setTagRestrict([]);
                         setTopicData(null);
+                        setTags([]);
                       }}
                       list={topicList}
                       type="text"
@@ -517,29 +519,35 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     />
                   </div>
                 </div>
-                {topicData && (
-                  <div className="px-7 mb-2">
-                    <label className="text-sm">
-                      Result <a className="text-red-600">*</a>
-                    </label>
-                    <textarea
-                      className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
-                        !notes && "border-red-500"
-                      }`}
-                      name="notes"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    />
-                  </div>
-                )}
+
+                <div className="px-7 mb-2">
+                  <label className="text-sm">
+                    Result <a className="text-red-600">*</a>
+                  </label>
+                  <textarea
+                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
+                      !notes && "border-red-500"
+                    }`}
+                    name="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    disabled={
+                      id != null ? (status !== "Draft" ? true : false) : false
+                    }
+                  />
+                </div>
+
                 {topicData && (
                   <>
                     <div className="mx-7 w-[300px]">
                       <InputComponent
                         label="Tags"
+                        remark={`${
+                          tagMandatory.length > 0
+                            ? `*Tag ${tagMandatory} wajib di lampirkan didalam topic ${data.topic.name}`
+                            : ""
+                        }`}
+                        remarkStyle="mt-1 text-sm italic "
                         infiniteScroll={{
                           active: tagRestrict.length ? false : true,
                           loading: tagMoreLoading,
