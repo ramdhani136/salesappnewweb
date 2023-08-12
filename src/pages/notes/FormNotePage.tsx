@@ -52,7 +52,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     valueData: "",
     valueInput: "",
   });
-  const [topicData, setTopicData] = useState<{}>({});
+  const [topicData, setTopicData] = useState<{} | null>(null);
   // End
 
   const [scroll, setScroll] = useState<number>(0);
@@ -111,6 +111,17 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       setNotes(result.data.result);
       setData(result.data);
 
+      if (result.data.topic) {
+        try {
+          const getTopic = await GetDataServer(DataAPI.TOPIC).FINDONE(
+            result.data.topic._id
+          );
+          setTopicData(getTopic.data);
+        } catch (error) {
+          throw error;
+        }
+      }
+
       // setPrevData({
       //   name: result.data.name,
       //   desc: result.data.desc ?? "",
@@ -129,7 +140,6 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       // );
       setLoading(false);
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -321,12 +331,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     }
   }, [topic, notes]);
   // End
-console.log(topicData)
+
   return (
     <>
       {Meta(metaData)}
       <div
-        className="  pb-3 max-h-[calc(100vh-20)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
+        className="   max-h-[calc(100vh-70px)]  overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
       >
         {!loading ? (
@@ -389,7 +399,11 @@ console.log(topicData)
               </div>
             </div>
             <div className=" px-5 flex flex-col mt-3  ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
+              <div
+                className={`border w-full flex-1  pb-4 bg-white rounded-md overflow-y-scroll scrollbar-none ${
+                  !topicData && "pb-28"
+                }`}
+              >
                 <div className="w-full h-auto  float-left rounded-md p-3 pt-5">
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
@@ -439,7 +453,7 @@ console.log(topicData)
                           valueData: null,
                           valueInput: "",
                         });
-                        setTopicData({});
+                        setTopicData(null);
                       }}
                       list={topicList}
                       type="text"
@@ -474,148 +488,163 @@ console.log(topicData)
                     />
                   </div>
                 </div>
-                <div className="px-7 mb-2">
-                  <label className="text-sm">
-                    Result <a className="text-red-600">*</a>
-                  </label>
-                  <textarea
-                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
-                      !notes && "border-red-500"
-                    }`}
-                    name="Site Uri"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    disabled={
-                      id != null ? (status !== "Draft" ? true : false) : false
-                    }
-                  />
-                </div>
-                <div className="mx-7 w-[300px]">
-                  <InputComponent
-                    label="Tags"
-                    infiniteScroll={{
-                      loading: tagMoreLoading,
-                      hasMore: tagHasMore,
-                      next: () => {
-                        getTags();
-                      },
-                      onSearch(e) {
-                        getTags(e);
-                      },
-                    }}
-                    loading={tagLoading}
-                    modalStyle="mt-2"
-                    value={tagInput}
-                    onChange={(e) => {
-                      ResetTag();
-                      setTagInput({
-                        ...tagInput,
-                        valueInput: e,
-                      });
-                    }}
-                    onSelected={(e) => {
-                      const cekDup = tags.find(
-                        (item: any) => item._id === e.value
-                      );
-
-                      if (!cekDup) {
-                        let setTag = [...tags, { _id: e.value, name: e.name }];
-                        setTags(setTag);
+                {topicData && (
+                  <div className="px-7 mb-2">
+                    <label className="text-sm">
+                      Result <a className="text-red-600">*</a>
+                    </label>
+                    <textarea
+                      className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
+                        !notes && "border-red-500"
+                      }`}
+                      name="notes"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
                       }
-
-                      setTagInput({
-                        valueData: "",
-                        valueInput: "",
-                      });
-                    }}
-                    onReset={() => {
-                      ResetTag();
-                      setTagInput({
-                        valueData: null,
-                        valueInput: "",
-                      });
-                    }}
-                    list={tagList}
-                    type="text"
-                    disabled={
-                      id != null ? (status !== "Draft" ? true : false) : false
-                    }
-                    className={`h-9 mb-1`}
-                  />
-                </div>
-                {tags.length > 0 && (
-                  <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%]">
-                    {tags.map((item: any, index: any) => (
-                      <li
-                        onClick={() => {
-                          const genTags = tags.filter((i: any) => {
-                            return i._id !== item._id;
-                          });
-
-                          setTags(genTags);
+                    />
+                  </div>
+                )}
+                {topicData && (
+                  <>
+                    <div className="mx-7 w-[300px]">
+                      <InputComponent
+                        label="Tags"
+                        infiniteScroll={{
+                          loading: tagMoreLoading,
+                          hasMore: tagHasMore,
+                          next: () => {
+                            getTags();
+                          },
+                          onSearch(e) {
+                            getTags(e);
+                          },
                         }}
-                        key={index}
-                        className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
-                      >
-                        {item.name}
-                      </li>
-                    ))}
-                  </ul>
+                        loading={tagLoading}
+                        modalStyle="mt-2"
+                        value={tagInput}
+                        onChange={(e) => {
+                          ResetTag();
+                          setTagInput({
+                            ...tagInput,
+                            valueInput: e,
+                          });
+                        }}
+                        onSelected={(e) => {
+                          const cekDup = tags.find(
+                            (item: any) => item._id === e.value
+                          );
+
+                          if (!cekDup) {
+                            let setTag = [
+                              ...tags,
+                              { _id: e.value, name: e.name },
+                            ];
+                            setTags(setTag);
+                          }
+
+                          setTagInput({
+                            valueData: "",
+                            valueInput: "",
+                          });
+                        }}
+                        onReset={() => {
+                          ResetTag();
+                          setTagInput({
+                            valueData: null,
+                            valueInput: "",
+                          });
+                        }}
+                        list={tagList}
+                        type="text"
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        className={`h-9 mb-1`}
+                      />
+                    </div>
+                    {tags.length > 0 && (
+                      <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%]">
+                        {tags.map((item: any, index: any) => (
+                          <li
+                            onClick={() => {
+                              const genTags = tags.filter((i: any) => {
+                                return i._id !== item._id;
+                              });
+
+                              setTags(genTags);
+                            }}
+                            key={index}
+                            className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                          >
+                            {item.name}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
                 )}
               </div>
             </div>
-            <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
-              <div className="flex items-center justify-between mt-2 ">
-                <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
+            {topicData && (
+              <div className="px-7  mt-3 py-2 border mx-5 rounded-md">
+                <div className="flex items-center justify-between mt-2 ">
+                  <h4 className="text-sm inline">Files (Max Size: 2 MB)</h4>
 
-                <label htmlFor="imageUpload">
-                  <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
-                    <h4 className="text-gray-800"> Attach</h4>
-                    <AttachFileIcon
-                      className="text-gray-800"
-                      style={{ fontSize: 16 }}
+                  <label htmlFor="imageUpload">
+                    <a className="flex items-center border text-sm px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 duration-100  hover:cursor-pointer">
+                      <h4 className="text-gray-800"> Attach</h4>
+                      <AttachFileIcon
+                        className="text-gray-800"
+                        style={{ fontSize: 16 }}
+                      />
+                    </a>
+                  </label>
+                  <input
+                    type="file"
+                    name="imageUpload"
+                    id="imageUpload"
+                    className="hidden"
+                    multiple
+                    accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx"
+                    onChange={(e) => {
+                      console.log(e.target.files);
+                    }}
+                  />
+                </div>
+                <ul className=" w-full  my-3">
+                  <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
+                    <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
+                      <h4> Catatan.txt</h4>
+                      <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
+                        (1K)
+                      </h4>
+                    </div>
+                    <CloseIcon
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                      className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
                     />
-                  </a>
-                </label>
-                <input
-                  type="file"
-                  name="imageUpload"
-                  id="imageUpload"
-                  className="hidden"
-                  multiple
-                  accept=".jpg, .jpeg, .png, .gif, .pdf, .doc, .docx"
-                  onChange={(e) => {
-                    console.log(e.target.files);
-                  }}
-                />
+                  </li>
+                  <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
+                    <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
+                      <h4> Bukti Pembayarn.jpg</h4>
+                      <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
+                        (1K)
+                      </h4>
+                    </div>
+                    <CloseIcon
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                      className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
+                    />
+                  </li>
+                </ul>
               </div>
-              <ul className=" w-full  my-3">
-                <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
-                  <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
-                    <h4> Catatan.txt</h4>
-                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
-                      (1K)
-                    </h4>
-                  </div>
-                  <CloseIcon
-                    style={{ fontSize: 16, fontWeight: "bold" }}
-                    className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
-                  />
-                </li>
-                <li className="mb-2 bg-gray-100 px-2 font-semibold w-[400px] py-2 flex justify-between items-center">
-                  <div className="flex  items-center cursor-pointer  text-[0.85em] text-blue-500 hover:text-blue-600 duration-100">
-                    <h4> Bukti Pembayarn.jpg</h4>
-                    <h4 className="ml-1 font-bold text-[0.9em] text-gray-600">
-                      (1K)
-                    </h4>
-                  </div>
-                  <CloseIcon
-                    style={{ fontSize: 16, fontWeight: "bold" }}
-                    className="text-gray-700 cursor-pointer hover:text-gray-800 duration-100"
-                  />
-                </li>
-              </ul>
-            </div>
+            )}
           </>
         ) : (
           <LoadingComponent />

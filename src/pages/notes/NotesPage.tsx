@@ -69,7 +69,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         Children: FormNotePage,
         title: "",
         props: { id: id ?? undefined, doc: docData },
-        className: "w-[70%] h-[98%]",
+        className: "w-[60%] h-[98%]",
       })
     );
   };
