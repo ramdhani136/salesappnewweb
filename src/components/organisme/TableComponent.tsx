@@ -238,11 +238,15 @@ const TableComponent: React.FC<Iprops> = ({
         >
           <section
             className={` p-4 h-auto overflow-x-auto ${
-              width ? width : "w-[95%]"
+              width && data.length > 0 ? width : "w-[95%]"
             }  scrollbar-w-2 scrollbar-track-gray-100 scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full  `}
           >
             {data.length > 0 ? (
-              <table className={`${auto ? "table-auto" : "w-full"}`}>
+              <table
+                className={`${
+                  auto && data.length > 0 ? "table-auto" : "w-full"
+                }`}
+              >
                 <thead>
                   <tr>
                     <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">

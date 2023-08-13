@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
+import { AlertModal, LocalStorageType, Meta } from "../../utils";
+import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import AddIcon from "@mui/icons-material/Add";
 import { TableComponent } from "../../components/organisme";
 import {
   IColumns,
@@ -18,6 +18,7 @@ import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
 export const ReportNotesPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
+  const [dataExport, setDataExport] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>(0);
@@ -68,6 +69,7 @@ export const ReportNotesPage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
+        setDataExport(result.data);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -201,6 +203,38 @@ export const ReportNotesPage: React.FC = (): any => {
     });
   };
 
+  const ExportToExcel = async () => {
+    try {
+      const getExport: any = await GetDataServer(DataAPI.NOTE).FIND({
+        limit: 0,
+        filters: filter,
+        orderBy: { sort: isOrderBy, state: isSort },
+        search: search,
+      });
+
+      const getDataExport = getExport.data.map((item: any) => {
+        return {
+          customer: item.customer.name,
+          topic: item.topic.name,
+          notes: item.result,
+          tags: `${item.tags.map((i: any) => i.name)}`,
+          group: item.customerGroup.name,
+          branch: item.branch.name,
+          user: item.createdBy.name,
+          data: item.createdAt,
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, "Notes.xlsx");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {Meta(metaData)}
@@ -213,11 +247,11 @@ export const ReportNotesPage: React.FC = (): any => {
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
-                  name="Action"
-                  className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
-                  }`}
-                  list={[{ name: "Delete", onClick: onDelete }]}
+                  name="Export"
+                  className={`duration-100 hover:border-[#1669bdec] hover:bg-[#1976d3ec]`}
+                  callback={() => {
+                    ExportToExcel();
+                  }}
                 />
               </div>
             </div>
