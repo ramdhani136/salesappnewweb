@@ -216,7 +216,7 @@ export const ReportNotesPage: React.FC = (): any => {
         return {
           customer: item.customer.name,
           topic: item.topic.name,
-          notes: item.result,
+          result: item.result,
           tags: `${item.tags.map((i: any) => i.name)}`,
           group: item.customerGroup.name,
           branch: item.branch.name,
