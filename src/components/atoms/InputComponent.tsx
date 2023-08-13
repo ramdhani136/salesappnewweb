@@ -131,7 +131,6 @@ const InputComponent: React.FC<IProps> = ({
         };
       }
     }, [value.valueInput]);
-    
 
   return (
     <>
@@ -237,7 +236,7 @@ const InputComponent: React.FC<IProps> = ({
             <div
               id="scrollableDiv"
               ref={modalRef}
-              className={`w-full ab  max-h-[200px] h-auto cursor-pointer  p-1 font-normal text-sm border  scrollbar-none z-50 overflow-y-auto absolute top-7 bg-white rounded-md ${modalStyle}`}
+              className={`w-full ab  max-h-[200px] h-auto cursor-pointer  p-1 font-normal text-md border  scrollbar-none z-50 overflow-y-auto absolute top-7 bg-white rounded-md ${modalStyle}`}
             >
               {!loading &&
                 filterData(list)?.map((item, id) => (
@@ -249,7 +248,7 @@ const InputComponent: React.FC<IProps> = ({
                       }
                     }}
                     key={id}
-                    className={`w-full hover:bg-gray-100 rounded-md border-[#ececec] px-3 py-2 ${itemModalStyle}`}
+                    className={`w-full text-md hover:bg-gray-100 rounded-md border-[#ececec] px-3 py-2 ${itemModalStyle}`}
                   >
                     {item.name}
                   </h4>

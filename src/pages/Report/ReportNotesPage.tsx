@@ -15,10 +15,10 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import moment from "moment";
 
 export const ReportNotesPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
-  const [dataExport, setDataExport] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>(0);
@@ -46,13 +46,13 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[12.5%]" },
+      { header: "Customer", accessor: "customer", className: "w-[15%]" },
       { header: "Topic", accessor: "topic", className: "w-[12.5%]" },
-      { header: "Result", accessor: "result", className: "w-[22.5%]" },
-      { header: "Group", accessor: "group", className: "w-[10%]" },
+      { header: "Result", accessor: "result", className: "w-[21%]" },
+      { header: "Tags", accessor: "tag", className: "w-[10%]" },
+      { header: "Group", accessor: "group", className: "w-[9%]" },
       { header: "Branch", accessor: "branch", className: "w-[15%]" },
       { header: "User", accessor: "user", className: "w-[10%]" },
-      { header: "Tags", accessor: "tag", className: "w-[10%]" },
       { header: "", accessor: "updatedAt", className: "w-[7.5%]" },
     ],
     []
@@ -69,7 +69,6 @@ export const ReportNotesPage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
-        setDataExport(result.data);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -221,7 +220,7 @@ export const ReportNotesPage: React.FC = (): any => {
           group: item.customerGroup.name,
           branch: item.branch.name,
           user: item.createdBy.name,
-          data: item.createdAt,
+          data: moment(item.createdAt).format('LLL') ,
         };
       });
 
@@ -257,7 +256,7 @@ export const ReportNotesPage: React.FC = (): any => {
             </div>
             <TableComponent
               auto={true}
-              width="w-[180%]"
+              width="w-[185%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
