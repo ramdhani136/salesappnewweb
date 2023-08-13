@@ -14,6 +14,7 @@ export enum LocalStorageType {
   FILTERCONTACT = "filtercontact",
   FILTERTOPIC = "filterTopic",
   FILTERNAMING = "filternaming",
+  FILTERREPORTNOTE = "filterreportnotes",
   
 }
 

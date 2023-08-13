@@ -3,9 +3,26 @@
 @tailwind utilities;
 
 em-emoji-picker {
-     
+  width: 300px;
+  padding-left: 10px;
+}
 
-       width:300px;
-       padding-left:10px;
-       
-      }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 20px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
