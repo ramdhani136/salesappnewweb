@@ -40,7 +40,7 @@ const FormNamingSeriesPage: React.FC = () => {
   ];
   const [doc, setDoc] = useState<String>("visit");
 
-  // Tags Restrict
+  // Tags branch
   const [branchList, setBranchList] = useState<IListInput[]>([]);
   const [branchPage, setBranchPage] = useState<Number>(1);
   const [branchLoading, setBranchLoading] = useState<boolean>(true);
@@ -48,21 +48,6 @@ const FormNamingSeriesPage: React.FC = () => {
   const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
   const [branch, setBranch] = useState<any[]>([]);
   const [branchValue, setBranchValue] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  // End
-
-  // Tags mandatory
-  const [mandatoryTagList, setMandatoryTagList] = useState<IListInput[]>([]);
-  const [mandatoryTagPage, setMandatoryTagePage] = useState<Number>(1);
-  const [mandatoryTagLoading, setMandatoryTagLoading] = useState<boolean>(true);
-  const [mandatoryTagMoreLoading, setMandatoryTagMoreLoading] =
-    useState<boolean>(false);
-  const [mandatoryTagHasMore, setMandatoryTagHasmore] =
-    useState<boolean>(false);
-  const [tagMandatory, setTagMandatory] = useState<any[]>([]);
-  const [tagValueMandatory, setTagValueMandatory] = useState<IValue>({
     valueData: "",
     valueInput: "",
   });
@@ -81,6 +66,7 @@ const FormNamingSeriesPage: React.FC = () => {
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
     doc: doc,
+    branch: branch.map((item: any) => item._id),
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -118,7 +104,6 @@ const FormNamingSeriesPage: React.FC = () => {
       // end
 
       setHistory(result.history);
-      console.log(result.data);
 
       setName({
         valueData: result.data.name,
@@ -134,6 +119,7 @@ const FormNamingSeriesPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
+      setBranch(result.data.branch);
       setData(result.data);
 
       setDoc(result.data.doc);
@@ -141,6 +127,7 @@ const FormNamingSeriesPage: React.FC = () => {
       setPrevData({
         name: result.data.name,
         doc: `${result.data.doc}`,
+        branch: result.data.branch.map((item: any) => item._id),
       });
 
       setStatus(
@@ -239,55 +226,6 @@ const FormNamingSeriesPage: React.FC = () => {
     setBranchLoading(true);
   };
 
-  const getMandatoryTags = async (data: {
-    search?: string | String;
-    refresh?: boolean;
-  }): Promise<void> => {
-    try {
-      if (data.refresh === undefined) {
-        data.refresh = true;
-      }
-
-      const result: any = await GetDataServer(DataAPI.TAGS).FIND({
-        search: data.search ?? "",
-        limit: 10,
-        page: `${data.refresh ? 1 : mandatoryTagPage}`,
-        filters: [["status", "=", "1"]],
-      });
-      if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: any) => {
-          return {
-            name: item.name,
-            value: item._id,
-            data: item,
-          };
-        });
-        if (!data.refresh) {
-          setMandatoryTagList([...mandatoryTagList, ...listInput]);
-        } else {
-          setMandatoryTagList([...listInput]);
-        }
-        setMandatoryTagHasmore(result.hasMore);
-
-        setMandatoryTagePage(result.nextPage);
-      }
-
-      setMandatoryTagLoading(false);
-      setMandatoryTagMoreLoading(false);
-    } catch (error: any) {
-      setMandatoryTagLoading(false);
-      setMandatoryTagMoreLoading(false);
-      setMandatoryTagHasmore(false);
-    }
-  };
-
-  const ResetMandatoryTag = () => {
-    setMandatoryTagList([]);
-    setMandatoryTagHasmore(false);
-    setMandatoryTagePage(1);
-    setMandatoryTagLoading(true);
-  };
-
   useEffect(() => {
     if (id) {
       getData();
@@ -307,11 +245,8 @@ const FormNamingSeriesPage: React.FC = () => {
       } else {
         updata = {
           name: name.valueData,
-          tags: {
-            mandatory: tagMandatory.map((item: any) => item._id),
-
-            doc: doc,
-          },
+          doc: doc,
+          branch: branch.map((item: any) => item._id),
         };
       }
 
@@ -341,7 +276,6 @@ const FormNamingSeriesPage: React.FC = () => {
       );
     }
 
-
     setLoading(false);
   };
   // Cek perubahan
@@ -349,6 +283,7 @@ const FormNamingSeriesPage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       doc: doc,
+      branch: branch.map((item: any) => item._id),
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -433,6 +368,7 @@ const FormNamingSeriesPage: React.FC = () => {
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
+                      remark="*Ex : CST.YYYY..MM..####."
                       mandatoy
                       label="Name"
                       value={name}
@@ -452,21 +388,6 @@ const FormNamingSeriesPage: React.FC = () => {
                       }}
                     />
 
-                    {id && (
-                      <InputComponent
-                        label="Status"
-                        value={{ valueData: status, valueInput: status }}
-                        className="h-[38px]  text-sm mb-3"
-                        type="text"
-                        onChange={(e) =>
-                          setCreatedAt({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled
-                      />
-                    )}
                     <Select
                       title="Doc"
                       data={dataType}
@@ -478,7 +399,7 @@ const FormNamingSeriesPage: React.FC = () => {
                     />
 
                     <InputComponent
-                      label="Tags Restrict"
+                      label="Branch"
                       infiniteScroll={{
                         loading: branchMoreLoading,
                         hasMore: branchHasMore,
@@ -523,15 +444,8 @@ const FormNamingSeriesPage: React.FC = () => {
                             ...branch,
                             { _id: e.value, name: e.name },
                           ];
-                          if (branch.length === 0) {
-                            const cekDupMandatory = tagMandatory.filter(
-                              (item: any) => item._id !== e.value
-                            );
 
-                            setBranch([...setTag, ...cekDupMandatory]);
-                          } else {
-                            setBranch(setTag);
-                          }
+                          setBranch(setTag);
                         }
 
                         setBranchValue({
@@ -559,21 +473,11 @@ const FormNamingSeriesPage: React.FC = () => {
                             <li
                               onClick={() => {
                                 if (!id || data.status == "0") {
-                                  const setTags = branch.filter(
-                                    (i: any) => {
-                                      return i._id !== item._id;
-                                    }
-                                  );
+                                const setTags = branch.filter((i: any) => {
+                                  return i._id !== item._id;
+                                });
 
-                                  setBranch(setTags);
-
-                                  const checkTagMandatory = tagMandatory.filter(
-                                    (i: any) => {
-                                      return i._id !== item._id;
-                                    }
-                                  );
-
-                                  setTagMandatory(checkTagMandatory);
+                                setBranch(setTags);
                                 }
                               }}
                               key={index}
@@ -609,6 +513,21 @@ const FormNamingSeriesPage: React.FC = () => {
                       }
                       disabled
                     />
+                    {id && (
+                      <InputComponent
+                        label="Status"
+                        value={{ valueData: status, valueInput: status }}
+                        className="h-[38px]  text-sm mb-3"
+                        type="text"
+                        onChange={(e) =>
+                          setCreatedAt({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        disabled
+                      />
+                    )}
                     <InputComponent
                       label="Created By"
                       value={user}
@@ -621,115 +540,6 @@ const FormNamingSeriesPage: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      label="Tags Mandatory"
-                      infiniteScroll={{
-                        loading: mandatoryTagMoreLoading,
-                        hasMore: mandatoryTagHasMore,
-                        next: () => {
-                          setMandatoryTagMoreLoading(true);
-                          getMandatoryTags({
-                            refresh: false,
-                            search: tagValueMandatory.valueInput,
-                          });
-                        },
-                        onSearch(e) {
-                          ResetMandatoryTag();
-                          getMandatoryTags({
-                            refresh: true,
-                            search: e,
-                          });
-                        },
-                      }}
-                      onCLick={() => {
-                        ResetMandatoryTag();
-                        getMandatoryTags({
-                          refresh: true,
-                          search: tagValueMandatory.valueInput,
-                        });
-                      }}
-                      loading={mandatoryTagLoading}
-                      modalStyle="mt-2"
-                      value={tagValueMandatory}
-                      onChange={(e) => {
-                        setTagValueMandatory({
-                          ...tagValueMandatory,
-                          valueInput: e,
-                        });
-                      }}
-                      onSelected={(e) => {
-                        const cekDup = tagMandatory.find(
-                          (item: any) => item._id === e.value
-                        );
-
-                        if (!cekDup) {
-                          let setTag = [
-                            ...tagMandatory,
-                            { _id: e.value, name: e.name },
-                          ];
-
-                          const missingDataInData2 = setTag.filter(
-                            (item1) =>
-                              !branch.some(
-                                (item2) => item2._id === item1._id
-                              )
-                          );
-
-                          setTagMandatory(setTag);
-                          if (
-                            missingDataInData2.length > 0 &&
-                            branch.length > 0
-                          ) {
-                            setBranch([
-                              ...branch,
-                              ...missingDataInData2,
-                            ]);
-                          }
-                        }
-
-                        setTagValueMandatory({
-                          valueData: "",
-                          valueInput: "",
-                        });
-                      }}
-                      onReset={() => {
-                        setTagValueMandatory({
-                          valueData: null,
-                          valueInput: "",
-                        });
-                      }}
-                      list={mandatoryTagList}
-                      type="text"
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                      className={`h-9 mb-1`}
-                    />
-                    {tagMandatory.length > 0 && (
-                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
-                        {tagMandatory.map((item: any, index: number) => {
-                          return (
-                            <li
-                              onClick={() => {
-                                if (!id || data.status == "0") {
-                                  const setTags = tagMandatory.filter(
-                                    (i: any) => {
-                                      return i._id !== item._id;
-                                    }
-                                  );
-
-                                  setTagMandatory(setTags);
-                                }
-                              }}
-                              key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
-                            >
-                              {item.name}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
                   </div>
                 </div>
               </div>
