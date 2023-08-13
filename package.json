@@ -105,7 +105,10 @@
   "sweetalert2": "^11.7.1",
   
     
-  "tailwind-scrollbar": "^2.1.0"
+  "tailwind-scrollbar": "^2.1.0",
+  
+    
+  "xlsx": "^0.18.5"
   
   },
   
