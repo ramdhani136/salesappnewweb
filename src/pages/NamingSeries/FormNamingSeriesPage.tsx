@@ -148,7 +148,7 @@ const FormNamingSeriesPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      // navigate("/naming");
+      navigate("/namingseries");
     }
   };
 
@@ -158,7 +158,7 @@ const FormNamingSeriesPage: React.FC = () => {
         setLoading(true);
         try {
           await GetDataServer(DataAPI.NAMING).DELETE(`${id}`);
-          navigate("/naming");
+          navigate("/namingseries");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
