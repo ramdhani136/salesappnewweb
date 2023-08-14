@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ProfileImg from "../../assets/images/iconuser.jpg";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -17,8 +16,11 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import { useDispatch } from "react-redux";
 
-const FormContactPage: React.FC = () => {
+const FormContactPage: React.FC<any> = ({ props }) => {
+  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -85,6 +87,8 @@ const FormContactPage: React.FC = () => {
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
+
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -253,19 +257,25 @@ const FormContactPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
     }
+    if (modal) {
+      setCustomer(props.customer);
+      setBranch(props.branch);
+      setGroup(props.group);
+      setName({ valueData: props.name, valueInput: props.name });
+    }
   }, []);
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let updata = {};
+      let updata: any = {};
       if (nextState) {
         updata = { nextState: nextState };
       } else {
@@ -277,17 +287,47 @@ const FormContactPage: React.FC = () => {
         };
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.CONTACT).UPDATE({ id: id, data: updata })
-        : GetDataServer(DataAPI.CONTACT).CREATE(updata);
+      if (modal) {
+        updata["status"] = "1";
+        updata["workflowState"] = "Submitted";
+      }
+
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.CONTACT).UPDATE({ id: id, data: updata })
+          : GetDataServer(DataAPI.CONTACT).CREATE(updata);
 
       const result = await Action;
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/contact/${result.data.data._id}`);
-        navigate(0);
+        if (modal) {
+          props.Callback({
+            valueData: result.data.data._id,
+            valueInput: result.data.data.name,
+          });
+          props.setPosition({
+            valueData: position,
+            valueInput: position,
+          });
+          props.setPhone({
+            valueData: phone.valueData,
+            valueInput: phone.valueData,
+          });
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+              props: {},
+              className: "",
+            })
+          );
+        } else {
+          navigate(`/contact/${result.data.data._id}`);
+          navigate(0);
+        }
       }
     } catch (error: any) {
       setLoading(false);
@@ -505,6 +545,7 @@ const FormContactPage: React.FC = () => {
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
+                      mandatoy
                       label="Phone"
                       value={phone}
                       className="h-[38px]  text-[0.93em] mb-3"

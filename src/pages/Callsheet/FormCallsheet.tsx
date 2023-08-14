@@ -19,6 +19,7 @@ import NotesPage from "../notes/NotesPage";
 import React from "react";
 import Swal from "sweetalert2";
 import FormCustomerPage from "../Customer/FormCustomerPage";
+import FormContactPage from "../Contact/FormContactPage";
 
 const FormCallsheetPage: React.FC = () => {
   let { id } = useParams();
@@ -936,6 +937,21 @@ const FormCallsheetPage: React.FC = () => {
                     )}
                     {customer.valueData && (
                       <InputComponent
+                        modal={{
+                          Children: FormContactPage,
+                          className: "w-[63%] h-[98%]",
+                          props: {
+                            modal: true,
+                            customer: customer,
+                            branch: branch,
+                            group: group,
+                            name: contact.valueInput,
+                            Callback: setContact,
+                            setPhone: setPicPhone,
+                            setPosition: setPicPosition,
+                          },
+                          title: "Form Contact",
+                        }}
                         mandatoy
                         label="Contact"
                         infiniteScroll={{
