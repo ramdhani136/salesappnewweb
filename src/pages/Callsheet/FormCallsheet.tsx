@@ -49,6 +49,10 @@ const FormCallsheetPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+  const [name, setName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
 
   const [picPhone, setPicPhone] = useState<IValue>({
     valueData: "",
@@ -159,6 +163,10 @@ const FormCallsheetPage: React.FC = () => {
       setBranch({
         valueData: result.data.branch._id,
         valueInput: result.data.branch.name,
+      });
+      setName({
+        valueData: result.data.name,
+        valueInput: result.data.name,
       });
       setGroup({
         valueData: result.data.customerGroup._id,
@@ -622,6 +630,15 @@ const FormCallsheetPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
+                    {id && (
+                      <InputComponent
+                        label="Name"
+                        value={name}
+                        className="h-[38px]  text-[0.93em] mb-3"
+                        type="text"
+                        disabled
+                      />
+                    )}
                     {!id && (
                       <InputComponent
                         loading={loadingNaming}
@@ -771,6 +788,8 @@ const FormCallsheetPage: React.FC = () => {
                           : false
                       }
                     />
+                  </div>
+                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
                       <InputComponent
                         mandatoy
@@ -850,8 +869,6 @@ const FormCallsheetPage: React.FC = () => {
                         }
                       />
                     )}
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
                     {group.valueData && (
                       <InputComponent
                         modal={{
