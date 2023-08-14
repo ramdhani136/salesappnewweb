@@ -860,6 +860,7 @@ const FormCallsheetPage: React.FC = () => {
                             modal: true,
                             group: group,
                             branch: branch,
+                            name: customer.valueInput,
                             Callback: setCustomer,
                           },
                           title: "Form Customer",

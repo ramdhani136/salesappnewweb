@@ -367,6 +367,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
     if (modal) {
       setBranch(props.branch);
       setGroup(props.group);
+      setName({ valueData: props.name, valueInput: props.name });
     }
   }, []);
 
