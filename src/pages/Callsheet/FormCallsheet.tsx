@@ -317,12 +317,12 @@ const FormCallsheetPage: React.FC = () => {
         if (!data.refresh) {
           setGroupList([...groupList, ...listInput]);
         } else {
-          if (listInput.length === 1) {
-            setGroup({
-              valueData: listInput[0].value,
-              valueInput: listInput[0].name,
-            });
-          }
+          // if (listInput.length === 1) {
+          //   setGroup({
+          //     valueData: listInput[0].value,
+          //     valueInput: listInput[0].name,
+          //   });
+          // }
           setGroupList([...listInput]);
         }
         setGroupHasMore(result.hasMore);
@@ -789,7 +789,6 @@ const FormCallsheetPage: React.FC = () => {
                           },
                         }}
                         onCLick={() => {
-                          ResetGroup();
                           getGroup({
                             refresh: true,
                             search: group.valueInput,
