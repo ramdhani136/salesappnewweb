@@ -15,8 +15,11 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import { useDispatch } from "react-redux";
 
-const FormTagPage: React.FC = () => {
+const FormTagPage: React.FC<any> = ({ props }) => {
+  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -26,6 +29,7 @@ const FormTagPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
@@ -155,22 +159,45 @@ const FormTagPage: React.FC = () => {
       let data: any = {
         name: name.valueData,
       };
+
+      if (modal) {
+        data["status"] = "1";
+        data["workflowState"] = "Submitted";
+      }
+
       if (nextState) {
         data.nextState = nextState;
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.TAGS).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.TAGS).CREATE(data);
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.TAGS).UPDATE({ id: id, data: data })
+          : GetDataServer(DataAPI.TAGS).CREATE(data);
 
       const result = await Action;
 
-      if (id) {
+      if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/tag/${result.data.data._id}`);
-        navigate(0);
+        if (modal) {
+          props.setTagInput({
+            valueData: name.valueData,
+            valueInput: name.valueInput,
+          });
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+              props: {},
+              className: "",
+            })
+          );
+        } else {
+          navigate(`/tag/${result.data.data._id}`);
+          navigate(0);
+        }
       }
     } catch (error: any) {
       Swal.fire(
@@ -189,12 +216,15 @@ const FormTagPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
+    }
+    if (modal) {
+      setName({ valueData: props.name, valueInput: props.name });
     }
   }, []);
 

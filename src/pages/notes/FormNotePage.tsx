@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { RiseLoader } from "react-spinners";
+import FormTagPage from "../Tags/FormTag";
 
 const FormNotePage: React.FC<any> = ({ props }) => {
   let id = props.id;
@@ -706,6 +707,16 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     <div className="mx-7 w-[300px]">
                       {(!id || docData.status == "0") && (
                         <InputComponent
+                          // modal={{
+                          //   Children: FormTagPage,
+                          //   className: "w-[63%] h-[98%]",
+                          //   props: {
+                          //     modal: true,
+                          //     name: tagInput.valueInput,
+                          //     setTagInput: setTagInput,
+                          //   },
+                          //   title: "Form Customer",
+                          // }}
                           label="Tags"
                           remark={`${
                             tagMandatory.length > 0
