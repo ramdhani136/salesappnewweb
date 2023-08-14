@@ -203,7 +203,6 @@ const FormSchedulePage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
-      console.log(error);
       Swal.fire(
         "Error!",
         `${
