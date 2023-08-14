@@ -43,7 +43,7 @@ const FormSchedulePage: React.FC = () => {
     valueInput: currentUser.name,
   });
   const [type, setType] = useState<string>("all");
-  const [notes, setNotes] = useState<IValue>({ valueData: "", valueInput: "" });
+  const [notes, setNotes] = useState<string>("");
   const [startDate, setStartDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -104,7 +104,7 @@ const FormSchedulePage: React.FC = () => {
       setData(result.data);
 
       setType(result.data.type);
-      setNotes({ valueData: result.data.notes, valueInput: result.data.notes });
+      setNotes(result.data.notes);
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -182,7 +182,7 @@ const FormSchedulePage: React.FC = () => {
       } else {
         data = {
           type: type,
-          notes: notes.valueData,
+          notes: notes,
           activeDate: startDate.valueData,
           closingDate: dueDate.valueData,
           namingSeries: naming.valueData,
@@ -267,7 +267,7 @@ const FormSchedulePage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       type: type,
-      notes: notes.valueData,
+      notes: notes,
       startDate: startDate.valueData,
       dueDate: dueDate.valueData,
     };
@@ -350,8 +350,8 @@ const FormSchedulePage: React.FC = () => {
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none h-auto float-left">
-                <div className="w-full h-auto   rounded-md p-3 py-5 float-left">
+              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
+                <div className="w-full h-auto  rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     {!id && (
                       <InputComponent
@@ -421,20 +421,13 @@ const FormSchedulePage: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      mandatoy
-                      typeField={TypeField.TEXTAREA}
-                      label="Notes"
+                    <label className="text-sm">Notes</label>
+                    <textarea
+                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] mb-10"
+                      name="Site Uri"
                       value={notes}
-                      className="h-40  text-[0.93em] mb-3"
-                      inputStyle="h-40"
-                      type="text"
-                      onChange={(e) =>
-                        setNotes({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
+                      onChange={(e) => setNotes(e.target.value)}
+                      disabled={id !== undefined && data.status != 0}
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
