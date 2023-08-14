@@ -85,7 +85,12 @@ const FormSchedulePage: React.FC = () => {
           return {
             name: item.action,
             onClick: () => {
-              onSave(item.nextstate.id);
+              AlertModal.confirmation({
+                onConfirm: () => {
+                  onSave(item.nextState.id);
+                },
+                confirmButtonText: "Yes, Save it!",
+              });
             },
           };
         });
@@ -113,18 +118,18 @@ const FormSchedulePage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
       setStartDate({
-        valueData: moment(result.data.startDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.startDate).format("YYYY-MM-DD"),
+        valueData: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.activeDate).format("YYYY-MM-DD"),
       });
       setDueDate({
-        valueData: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.dueDate).format("YYYY-MM-DD"),
+        valueData: moment(result.data.closingDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.closingDate).format("YYYY-MM-DD"),
       });
       setPrevData({
         type: result.data.type,
         notes: result.data.notes,
-        startDate: moment(result.data.startDate).format("YYYY-MM-DD"),
-        dueDate: moment(result.data.dueDate).format("YYYY-MM-DD"),
+        startDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        dueDate: moment(result.data.closingDate).format("YYYY-MM-DD"),
       });
       setLoading(false);
     } catch (error: any) {
@@ -169,15 +174,19 @@ const FormSchedulePage: React.FC = () => {
   const onSave = async (nextState?: string): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {
-        type: type,
-        notes: notes.valueData,
-        activeDate: startDate.valueData,
-        closingDate: dueDate.valueData,
-        namingSeries: naming.valueData,
-      };
+      let data: any = {};
       if (nextState) {
-        data.nextState = nextState;
+        data = {
+          nextState: nextState,
+        };
+      } else {
+        data = {
+          type: type,
+          notes: notes.valueData,
+          activeDate: startDate.valueData,
+          closingDate: dueDate.valueData,
+          namingSeries: naming.valueData,
+        };
       }
 
       let Action = id
@@ -194,6 +203,7 @@ const FormSchedulePage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
+      console.log(error);
       Swal.fire(
         "Error!",
         `${
@@ -319,7 +329,14 @@ const FormSchedulePage: React.FC = () => {
                 {isChangeData && (
                   <IconButton
                     name={id ? "Update" : "Save"}
-                    callback={onSave}
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: () => {
+                          onSave();
+                        },
+                        confirmButtonText: "Yes, Save it!",
+                      });
+                    }}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
