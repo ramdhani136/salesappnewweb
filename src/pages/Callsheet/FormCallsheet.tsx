@@ -18,6 +18,7 @@ import { IListIconButton } from "../../components/atoms/IconButton";
 import NotesPage from "../notes/NotesPage";
 import React from "react";
 import Swal from "sweetalert2";
+import FormCustomerPage from "../Customer/FormCustomerPage";
 
 const FormCallsheetPage: React.FC = () => {
   let { id } = useParams();
@@ -852,6 +853,12 @@ const FormCallsheetPage: React.FC = () => {
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     {group.valueData && (
                       <InputComponent
+                        modal={{
+                          Children: FormCustomerPage,
+                          className: "w-[63%] h-[98%]",
+                          props: { modal: true, group: group, branch: branch },
+                          title: "Form Customer",
+                        }}
                         mandatoy
                         label="Customer"
                         infiniteScroll={{

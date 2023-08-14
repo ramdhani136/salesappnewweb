@@ -17,8 +17,11 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import { useDispatch } from "react-redux";
 
-const FormCustomerPage: React.FC = () => {
+const FormCustomerPage: React.FC<any> = ({ props }) => {
+  const modal = props.modal ?? false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -63,6 +66,7 @@ const FormCustomerPage: React.FC = () => {
     valueInput: "",
   });
   // End
+  const dispatch = useDispatch();
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -352,12 +356,17 @@ const FormCustomerPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
+    }
+
+    if (modal) {
+      setBranch(props.branch);
+      setGroup(props.group);
     }
   }, []);
 
@@ -377,6 +386,12 @@ const FormCustomerPage: React.FC = () => {
       }
 
       file && inData.append("img", file);
+
+      if (modal) {
+        inData.append("status", "1");
+        inData.append("workflowState", "Submitted");
+      }
+
       inData.append("name", name.valueData);
       inData.append("type", type);
       inData.append("branch", branch.valueData);
@@ -393,17 +408,31 @@ const FormCustomerPage: React.FC = () => {
         inData.append("lng", lng.valueData);
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.CUSTOMER).UPDATE({ id: id, data: inData })
-        : GetDataServer(DataAPI.CUSTOMER).CREATE(inData);
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.CUSTOMER).UPDATE({ id: id, data: inData })
+          : GetDataServer(DataAPI.CUSTOMER).CREATE(inData);
 
       const result = await Action;
-      navigate(`/customer/${result.data.data._id}`);
+
       if (id && !file) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(0);
+        if (modal) {
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+              props: {},
+              className: "",
+            })
+          );
+        } else {
+          navigate(`/customer/${result.data.data._id}`);
+          navigate(0);
+        }
       }
     } catch (error: any) {
       console.log(error);
@@ -454,8 +483,6 @@ const FormCustomerPage: React.FC = () => {
     reader.readAsDataURL(e.target.files[0]);
     setFile(e.target.files[0]);
   };
-
-
 
   return (
     <>

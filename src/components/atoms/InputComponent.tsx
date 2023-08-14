@@ -4,6 +4,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HashLoader from "react-spinners/HashLoader";
 import SyncLoader from "react-spinners/SyncLoader";
+import { useDispatch } from "react-redux";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import AddIcon from "@mui/icons-material/Add";
 export interface IListInput {
   name: String;
   value: any;
@@ -12,6 +15,13 @@ export interface IListInput {
 export enum TypeField {
   INPUT = "input",
   TEXTAREA = "textarea",
+}
+
+interface IModal {
+  Children: React.FC<any> | null;
+  title?: string;
+  props?: {};
+  className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
 }
 
 export interface IValue {
@@ -38,6 +48,7 @@ interface IProps {
   closeIconClass?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
   mandatoy?: boolean;
   disabled?: boolean;
+  modal?: IModal;
   label?: String;
   value: IValue;
   onChange?: (e?: any) => Promise<any> | void;
@@ -63,6 +74,7 @@ const InputComponent: React.FC<IProps> = ({
   disabled,
   label,
   value,
+  modal,
   onChange,
   list,
   onSelected,
@@ -83,6 +95,7 @@ const InputComponent: React.FC<IProps> = ({
 }) => {
   const modalRef = useRef<any>();
   const inputRef = useRef<any>();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
   const [openRemark, setOpenRemark] = useState<boolean>(false);
   if (infiniteScroll) {
@@ -131,6 +144,20 @@ const InputComponent: React.FC<IProps> = ({
         };
       }
     }, [value.valueInput]);
+
+  const OpenModal = (): void => {
+    if (modal) {
+      dispatch(
+        modalSet({
+          active: true,
+          Children: modal.Children,
+          title: modal.title,
+          props: modal.props,
+          className: modal.className,
+        })
+      );
+    }
+  };
 
   return (
     <>
@@ -266,11 +293,35 @@ const InputComponent: React.FC<IProps> = ({
               )}
               {!loading &&
                 !infiniteScroll?.loading &&
-                filterData(list).length < 1 && (
+                filterData(list).length < 1 &&
+                modal && (
+                  <div
+                    onClick={OpenModal}
+                    className=" px-2 py-2 flex item-center  text-[13.5px] text-[#0088fc] mb-2  hover:cursor-pointer hover:bg-[#f4f5f7]"
+                  >
+                    <AddIcon
+                      className="stroke-[#0088fc]"
+                      style={{
+                        fontSize: "15px",
+                        marginTop: "3px",
+                        strokeWidth: "2",
+                        marginRight: "3px",
+                      }}
+                    />
+                    <h3 className="inline font-semibold">
+                      Create a new {label}
+                    </h3>
+                  </div>
+                )}
+              {!loading &&
+                !infiniteScroll?.loading &&
+                filterData(list).length < 1 &&
+                !modal && (
                   <h6 className="text-gray-300 text-center text-sm py-3">
                     No result
                   </h6>
                 )}
+
               {loading && (
                 <div className="flex items-center justify-center h-14">
                   <HashLoader
