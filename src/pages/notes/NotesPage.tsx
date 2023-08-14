@@ -45,10 +45,11 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic", accessor: "topic", className: "w-[28%]" },
-      { header: "Feedback", accessor: "feedback", className: "w-[35%]" },
-      { header: "Tags", accessor: "tags", className: "w-[20%]" },
-      { header: "", accessor: "updatedAt", className: "w-[12%]" },
+      { header: "Topic", accessor: "topic", className: "w-[20%]" },
+      { header: "Activity", accessor: "activity", className: "w-[25%]" },
+      { header: "Feedback", accessor: "feedback", className: "w-[25%]" },
+      { header: "Tags", accessor: "tags", className: "w-[15%]" },
+      { header: "", accessor: "updatedAt", className: "w-[10%]" },
     ],
     []
   );
@@ -103,7 +104,12 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
               </div>
             ),
-            feedback: <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>,
+            activity: (
+              <h4 className="mr-10 py-3 text-[0.95em]">{item.task??""}</h4>
+            ),
+            feedback: (
+              <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>
+            ),
             tags: (
               <div className="p-2">
                 {item.tags &&
@@ -241,6 +247,8 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
+            auto={true}
+            width="w-[140%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}

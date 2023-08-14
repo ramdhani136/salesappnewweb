@@ -25,7 +25,9 @@ const FormCallsheetPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Callsheet"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Callsheet"
+    } - Sales App Ekatunggal`,
     description: "Halaman form callsheet sales web system",
   };
 
@@ -779,7 +781,7 @@ const FormCallsheetPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      className={`h-9 mb-4`}
+                      className={`h-9 mb-10`}
                       disabled={
                         id != null
                           ? data.status !== "0"
