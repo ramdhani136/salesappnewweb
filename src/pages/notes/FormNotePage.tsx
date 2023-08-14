@@ -563,7 +563,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                   />
                 )}
 
-                {id && !isChangeData && (
+                {id && !isChangeData && docData.status == "0" && (
                   <IconButton
                     classModal="top-[29px]"
                     Icon={AddIcon}
