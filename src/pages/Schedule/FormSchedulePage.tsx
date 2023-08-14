@@ -257,7 +257,7 @@ const FormSchedulePage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       type: type,
-      notes: notes,
+      notes: notes.valueData,
       startDate: startDate.valueData,
       dueDate: dueDate.valueData,
     };
@@ -446,11 +446,12 @@ const FormSchedulePage: React.FC = () => {
                       }}
                       min={moment(Number(new Date())).format("YYYY-MM-DD")}
                       mandatoy
+                      
                     />
                     {startDate.valueData && (
                       <InputComponent
                         disabled={id !== undefined && data.status != 0}
-                        label="Due Date"
+                        label="Closing Date"
                         value={dueDate}
                         className="h-[38px]  text-[0.93em] mb-3"
                         type="date"

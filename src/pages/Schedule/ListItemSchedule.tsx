@@ -11,8 +11,7 @@ import TableComponent, {
   IColumns,
   IDataTables,
 } from "../../components/organisme/TableComponent";
-import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import GetDataServer, { DataAPI } from "../../utils/GetDataServer";;
 import { AlertModal, FetchApi } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
@@ -296,12 +295,6 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
             setRefresh(true);
           }}
           disabled={props.status != 1 && props.status != 0}
-          buttonInsert={{
-            onCLick: getERPItem,
-            status: props.status == 1 || props.status == 0,
-            title: "Update List",
-            icon: { icon: SyncAltIcon, className: "mr-1 mt-1", size: 13 },
-          }}
         />
       )}
     </div>
