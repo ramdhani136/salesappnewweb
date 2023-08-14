@@ -164,11 +164,12 @@ const FormTagPage: React.FC = () => {
         : GetDataServer(DataAPI.TAGS).CREATE(data);
 
       const result = await Action;
-      navigate(`/tag/${result.data.data._id}`);
+
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
+        navigate(`/tag/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {

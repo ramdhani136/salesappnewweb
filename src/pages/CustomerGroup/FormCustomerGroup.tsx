@@ -337,11 +337,12 @@ const FormCustomerGroupPage: React.FC = () => {
         : GetDataServer(DataAPI.GROUP).CREATE(data);
 
       const result = await Action;
-      navigate(`/customergroup/${result.data.data._id}`);
+
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
+        navigate(`/customergroup/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {

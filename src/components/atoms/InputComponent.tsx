@@ -89,7 +89,7 @@ const InputComponent: React.FC<IProps> = ({
   loading,
   remark,
   remarkStyle,
-  infoRemark,
+infoRemark,
   max,
   infiniteScroll,
 }) => {

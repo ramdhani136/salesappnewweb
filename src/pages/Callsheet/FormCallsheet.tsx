@@ -856,7 +856,12 @@ const FormCallsheetPage: React.FC = () => {
                         modal={{
                           Children: FormCustomerPage,
                           className: "w-[63%] h-[98%]",
-                          props: { modal: true, group: group, branch: branch },
+                          props: {
+                            modal: true,
+                            group: group,
+                            branch: branch,
+                            Callback: setCustomer,
+                          },
                           title: "Form Customer",
                         }}
                         mandatoy

@@ -21,7 +21,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 
 const FormCustomerPage: React.FC<any> = ({ props }) => {
-  const modal = props.modal ?? false;
+  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -420,6 +420,10 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
         if (modal) {
+          props.Callback({
+            valueData: result.data.data._id,
+            valueInput: result.data.data.name,
+          });
           dispatch(
             modalSet({
               active: false,

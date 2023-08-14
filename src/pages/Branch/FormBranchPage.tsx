@@ -175,11 +175,12 @@ const FormBranchPage: React.FC = () => {
         : GetDataServer(DataAPI.BRANCH).CREATE(data);
 
       const result = await Action;
-      navigate(`/branch/${result.data.data._id}`);
+
       if (id) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
+        navigate(`/branch/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
