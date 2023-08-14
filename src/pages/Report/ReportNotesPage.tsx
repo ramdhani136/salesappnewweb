@@ -220,7 +220,7 @@ export const ReportNotesPage: React.FC = (): any => {
           group: item.customerGroup.name,
           branch: item.branch.name,
           user: item.createdBy.name,
-          data: moment(item.createdAt).format('LLL') ,
+          data: moment(item.createdAt).format("LLL"),
         };
       });
 
@@ -255,6 +255,7 @@ export const ReportNotesPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              disabled={true}
               auto={true}
               width="w-[185%]"
               setSearch={setSeacrh}
