@@ -13,7 +13,7 @@ import moment from "moment";
 import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
-
+import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
@@ -546,6 +546,31 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     list={listMoreAction}
                     iconListDisabled
                     className={` duration-100 mr-2 px-2 `}
+                  />
+                )}
+
+                {id && !isChangeData && (
+                  <IconButton
+                    classModal="top-[29px]"
+                    Icon={AddIcon}
+                    name="Create New"
+                    iconSize={10}
+                    classIcon="mt-1"
+                    callback={() => {
+                      dispatch(
+                        modalSet({
+                          active: true,
+                          Children: FormNotePage,
+                          title: "",
+                          props: {
+                            doc: docData,
+                            onRefresh: props.onRefresh,
+                          },
+                          className: "w-[63%] h-[98%]",
+                        })
+                      );
+                    }}
+                    className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
 
