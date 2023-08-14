@@ -46,14 +46,15 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[15%]" },
-      { header: "Topic", accessor: "topic", className: "w-[12.5%]" },
-      { header: "Result", accessor: "result", className: "w-[21%]" },
+      { header: "Customer", accessor: "customer", className: "w-[12.5%]" },
+      { header: "Topic", accessor: "topic", className: "w-[12,5%]" },
+      { header: "Activity", accessor: "activity", className: "w-[15%]" },
+      { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
       { header: "Tags", accessor: "tag", className: "w-[10%]" },
-      { header: "Group", accessor: "group", className: "w-[9%]" },
-      { header: "Branch", accessor: "branch", className: "w-[15%]" },
-      { header: "User", accessor: "user", className: "w-[10%]" },
-      { header: "", accessor: "updatedAt", className: "w-[7.5%]" },
+      { header: "Group", accessor: "group", className: "w-[7.5%]" },
+      { header: "Branch", accessor: "branch", className: "w-[10%]" },
+      { header: "User", accessor: "user", className: "w-[7.5%]" },
+      { header: "", accessor: "updatedAt", className: "w-7.55%]" },
     ],
     []
   );
@@ -82,7 +83,8 @@ export const ReportNotesPage: React.FC = (): any => {
             topic: <h4 className="mx-2">{item.topic.name}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
             branch: item.branch.name,
-            result: <h4 className="mx-2">{item.result}</h4>,
+            activity: <h4 className="mx-2">{item.task}</h4>,
+            feedback: <h4 className="mx-2">{item.result}</h4>,
             user: <div>{item.createdBy.name}</div>,
             tag: (
               <ul className="float-left">
@@ -216,7 +218,8 @@ export const ReportNotesPage: React.FC = (): any => {
           date: moment(item.createdAt).format("LLL"),
           customer: item.customer.name,
           topic: item.topic.name,
-          result: item.result,
+          activity: item.task,
+          feedback: item.result,
           tags: `${item.tags.map((i: any) => i.name)}`,
           group: item.customerGroup.name,
           branch: item.branch.name,
@@ -257,7 +260,7 @@ export const ReportNotesPage: React.FC = (): any => {
             <TableComponent
               disabled={true}
               auto={true}
-              width="w-[185%]"
+              width="w-[200%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}

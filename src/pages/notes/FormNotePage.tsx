@@ -75,9 +75,11 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   });
 
   const [notes, setNotes] = useState<string>("");
+  const [task, setTask] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     topic: topic.valueData,
     note: notes ?? "",
+    task: task ?? "",
     tags: tags,
   });
 
@@ -139,6 +141,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
       setNotes(result.data.result);
+      setTask(result.data.task);
       setData(result.data);
 
       setTags(result.data.tags);
@@ -146,6 +149,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       setPrevData({
         topic: result.data.topic._id,
         note: result.data.result,
+        task: result.data.task,
         tags: result.data.tags,
       });
 
@@ -311,6 +315,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       let data: any = {
         topic: topic.valueData,
+        task: task,
         result: notes,
         tags: tags.map((item: any) => item._id),
         customer: customer.valueData,
@@ -490,6 +495,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     const actualData = {
       topic: topic.valueData,
       note: notes ?? "",
+      task: task ?? "",
       tags: tags,
     };
 
@@ -498,7 +504,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     } else {
       setChangeData(false);
     }
-  }, [topic, notes, tags]);
+  }, [topic, notes, tags, task]);
   // End
 
   return (
@@ -679,19 +685,20 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
                 <div className="px-7 mb-2">
                   <label className="text-sm">
-                    Result
+                    Activity
                     {!id ||
                       (docData.status == "0" && (
                         <a className="text-red-600">*</a>
                       ))}
                   </label>
                   <textarea
-                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] ${
-                      !notes && "border-red-500"
-                    }`}
-                    name="notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[120px] ${
+                      !task && "border-red-500"
+                    } mb-2`}
+                    name="task"
+                    value={task}
+                    placeholder="*Hal yang disampaikan kepada konsumen, contoh : Menawarkan item a dengan harga sekian"
+                    onChange={(e) => setTask(e.target.value)}
                     disabled={
                       id != null
                         ? docData.status !== "0"
@@ -700,6 +707,33 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         : false
                     }
                   />
+                  {task && (
+                    <>
+                      <label className="text-sm">
+                        Feedback
+                        {!id ||
+                          (docData.status == "0" && (
+                            <a className="text-red-600">*</a>
+                          ))}
+                      </label>
+                      <textarea
+                        placeholder="*Tanggapan konsumen dari hal yang disampaikan diatas, contoh : Konsumen menerima harga yang ditawarkan dan akan segera membuat po "
+                        className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[120px] ${
+                          !notes && "border-red-500"
+                        }`}
+                        name="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        disabled={
+                          id != null
+                            ? docData.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
+                      />
+                    </>
+                  )}
                 </div>
 
                 {topicData && (
