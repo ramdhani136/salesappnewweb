@@ -483,7 +483,7 @@ const FormSchedulePage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Customer List"
                   className="mt-5"
-                  child={<ListItemSchedule props={data} />}
+                  child={<ListItemSchedule props={{ docId: id, data: data }} />}
                 />
               )}
               <TimeLineVertical data={history} />

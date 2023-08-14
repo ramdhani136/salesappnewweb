@@ -1,28 +1,27 @@
 import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
-import {
-  ButtonStatusComponent,
-  InfoDateComponent,
-} from "../../components/atoms";
+import { InfoDateComponent } from "../../components/atoms";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import TableComponent, {
   IColumns,
   IDataTables,
 } from "../../components/organisme/TableComponent";
-import GetDataServer, { DataAPI } from "../../utils/GetDataServer";;
-import { AlertModal, FetchApi } from "../../utils";
+import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
+import { AlertModal } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
-import ModalSetSTockManual from "./ModalSetSTockManual";
+
 
 interface IProps {
   props: any;
 }
 
 const ListItemSchedule: React.FC<IProps> = ({ props }) => {
+  const docId = props.docId;
+  const docData = props.data;
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -46,13 +45,10 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "No", accessor: "no", className: "w-[5%]" },
-      { header: "Customer", accessor: "customer", className: "w-[30%]" },
-      { header: "Status", accessor: "status", className: "w-[15%]" },
-      { header: "Group", accessor: "group", className: "w-[12%]" },
-      { header: "Type", accessor: "type", className: "w-[8%]" },
-      { header: "Doc", accessor: "doc", className: "w-[15%]" },
-      { header: "", accessor: "updatedAt", className: "w-[10%]" },
+      { header: "Topic", accessor: "topic", className: "w-[28%]" },
+      { header: "Notes", accessor: "result", className: "w-[35%]" },
+      { header: "Tags", accessor: "tags", className: "w-[20%]" },
+      { header: "", accessor: "updatedAt", className: "w-[12%]" },
     ],
     []
   );
@@ -66,70 +62,65 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   //   }
   // };
 
-  const ShowModalPackingId = (params?: {}) => {
-    dispatch(
-      modalSet({
-        active: true,
-        Children: ModalSetSTockManual,
-        title: "",
-        props: { params, onRefresh },
-      })
-    );
+  const GetFormNote = (id?: string) => {
+    // dispatch(
+    //   modalSet({
+    //     active: true,
+    //     Children: FormNotePage,
+    //     title: "",
+    //     props: { id: id ?? undefined, doc: docData, onRefresh: getData },
+    //     className: "w-[63%] h-[98%]",
+    //   })
+    // );
   };
 
-  const getData = async (): Promise<any> => {
+  const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
-        filters: [...filter, ["schedule", "=", `${props._id}`]],
+      const result: any = await GetDataServer(DataAPI.NOTE).FIND({
+        filters: [...filter, ["doc._id", "=", `${docId}`]],
         limit: limit,
-        page: page,
+        page: props?.refresh ? 1 : page,
         orderBy: { sort: isOrderBy, state: isSort },
-        search: search,
+        search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
-        const generateData = result.data.map(
-          (item: any, index: number): IDataTables => {
-            return {
-              id: item._id,
-              checked: false,
-              no: `${index + 1}`,
-              customer: (
-                <a href={`/customer/${item.customer._id}`}>
-                  {item.customer.name}
-                </a>
-              ),
-              group: <a>{item.customerGroup.name}</a>,
-              type: (
-                <a href={item.closing ? `/${item.closing.doc.type}` : "#"}>
-                  {item.closing ? item.closing.doc.type : ""}
-                </a>
-              ),
-              doc: (
-                <a
-                  href={
-                    item.closing
-                      ? `/${item.closing.doc.type}/${item.closing.doc._id}`
-                      : "#"
-                  }
-                >
-                  {item.closing ? item.closing.doc.name : ""}
-                </a>
-              ),
-              status: (
-                <ButtonStatusComponent
-                  status={item.status}
-                  name={item.status == 0 ? "Open" : "Closed"}
-                />
-              ),
-
-              updatedAt: (
-                <div className="inline text-gray-600 text-[0.93em]">
-                  <InfoDateComponent date={item.updatedAt} className="-ml-9" />
-                </div>
-              ),
-            };
-          }
-        );
+        const generateData = result.data.map((item: any): IDataTables => {
+          return {
+            id: item._id,
+            checked: false,
+            topic: (
+              <b
+                className="font-medium"
+                onClick={() => {
+                  GetFormNote(item._id);
+                }}
+              >
+                {item.topic.name}
+              </b>
+            ),
+            updatedAt: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                <InfoDateComponent date={item.updatedAt} className="-ml-9" />
+              </div>
+            ),
+            result: <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>,
+            tags: (
+              <div className="p-2">
+                {item.tags &&
+                  item.tags.map((i: any, index: number) => {
+                    return (
+                      <button
+                        key={index}
+                        className="border rounded-md bg-green-600 text-sm font-semibold text-white px-2 py-1 mr-1 mb-1"
+                      >
+                        {i.name}
+                      </button>
+                    );
+                  })}
+              </div>
+            ),
+          };
+        });
 
         const genSort: any[] = result.filters.map((st: any): any => {
           return {
@@ -148,11 +139,20 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         setTotalData(result.total);
         setHasMore(result.hasMore);
         setPage(result.nextPage);
-        setData([...data, ...generateData]);
+
+        if (!props?.refresh) {
+          setData([...data, ...generateData]);
+        } else {
+          setData([...generateData]);
+        }
       }
       setRefresh(false);
       setLoading(false);
     } catch (error) {
+      if (props?.refresh) {
+        setData([]);
+      }
+
       setTotalData(0);
       setLoading(false);
       setRefresh(false);
@@ -174,30 +174,6 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     setRefresh(true);
   };
 
-  const getERPItem = (): void => {
-    AlertModal.confirmation({
-      onConfirm: async (): Promise<void> => {
-        try {
-          setLoading(true);
-          const uri = `${import.meta.env.VITE_PUBLIC_URI}/schedule/refresh/${
-            props.name
-          }`;
-          await FetchApi.get(uri);
-          onRefresh();
-        } catch (error) {
-          AlertModal.Default({
-            icon: "error",
-            title: "Error",
-            text: "Error Network",
-          });
-          setLoading(false);
-        }
-      },
-      confirmButtonText: "Yes, do it!",
-      text: "This will take a lot of time",
-    });
-  };
-
   const getSelected = () => {
     const isSelect = data.filter((item) => item.checked === true);
     return isSelect;
@@ -211,7 +187,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
+            await GetDataServer(DataAPI.NOTE).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -248,56 +224,68 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   }, [filter, search]);
 
   return (
-    <div className="min-h-[300px] max-h-[400px] flex">
-      {loading ? (
-        <div className="w-full  flex items-center justify-center">
-          <LoadingComponent
-            animate={{ icon: HashLoader, color: "#36d7b6", size: 40 }}
-            showProgress={{
-              active: activeProgress,
-              currentIndex: currentIndex,
-              currentPercent: currentPercent,
-              onProgress: onDeleteProgress,
-              totalIndex: totalIndex,
+    <>
+      <div className="min-h-[300px] max-h-[400px] flex">
+        {loading ? (
+          <div className="w-full  flex items-center justify-center">
+            <LoadingComponent
+              animate={{ icon: HashLoader, color: "#36d7b6", size: 40 }}
+              showProgress={{
+                active: activeProgress,
+                currentIndex: currentIndex,
+                currentPercent: currentPercent,
+                onProgress: onDeleteProgress,
+                totalIndex: totalIndex,
+              }}
+            />
+          </div>
+        ) : (
+          <TableComponent
+            moreSelected={[{ name: "Delete", onClick: onDelete }]}
+            setSearch={setSeacrh}
+            setData={setData}
+            listFilter={listFilter}
+            hasMore={hasMore}
+            fetchMore={getData}
+            columns={columns}
+            data={data}
+            total={totalData}
+            sort={sort}
+            isSort={isSort}
+            isOrderBy={isOrderBy}
+            setOrderBy={() => {
+              setData([]);
+              setHasMore(false);
+              setPage(1);
+              let getOrder = isOrderBy === 1 ? -1 : 1;
+              setOrderBy(getOrder);
+              setRefresh(true);
             }}
+            getAllData={getAllData}
+            filter={filter}
+            setFilter={setFilter}
+            className="ml-[3px]"
+            onRefresh={() => {
+              setData([]);
+              setPage(1), setHasMore(false);
+              setLoading(true);
+              setRefresh(true);
+            }}
+            disabled={docData.status !== "0" ? true : false}
           />
-        </div>
-      ) : (
-        <TableComponent
-          moreSelected={[{ name: "Delete", onClick: onDelete }]}
-          setSearch={setSeacrh}
-          setData={setData}
-          listFilter={listFilter}
-          hasMore={hasMore}
-          fetchMore={getData}
-          columns={columns}
-          data={data}
-          total={totalData}
-          sort={sort}
-          isSort={isSort}
-          isOrderBy={isOrderBy}
-          setOrderBy={() => {
-            setData([]);
-            setHasMore(false);
-            setPage(1);
-            let getOrder = isOrderBy === 1 ? -1 : 1;
-            setOrderBy(getOrder);
-            setRefresh(true);
+        )}
+      </div>
+      {docData.status == "0" && (
+        <a
+          onClick={() => {
+            GetFormNote();
           }}
-          getAllData={getAllData}
-          filter={filter}
-          setFilter={setFilter}
-          className="ml-[3px]"
-          onRefresh={() => {
-            setData([]);
-            setPage(1), setHasMore(false);
-            setLoading(true);
-            setRefresh(true);
-          }}
-          disabled={props.status != 1 && props.status != 0}
-        />
+          className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
+        >
+          Add Row
+        </a>
       )}
-    </div>
+    </>
   );
 };
 
