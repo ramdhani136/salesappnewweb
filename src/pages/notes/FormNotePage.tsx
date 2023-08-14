@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { RiseLoader } from "react-spinners";
 import FormTagPage from "../Tags/FormTag";
+import { result } from "lodash";
 
 const FormNotePage: React.FC<any> = ({ props }) => {
   let id = props.id;
@@ -312,6 +313,19 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const onSave = async (): Promise<any> => {
     setLoading(true);
+
+    if (!task) {
+      setLoading(false);
+      return Swal.fire("Error!", `Activity Wajib diisi!`, "error");
+    }
+    if (!result) {
+      setLoading(false);
+      return Swal.fire("Error!", `Feedback Wajib diisi!`, "error");
+    }
+    if (!topic.valueData) {
+      setLoading(false);
+      return Swal.fire("Error!", `Topic Wajib diisi!`, "error");
+    }
     try {
       let data: any = {
         topic: topic.valueData,
