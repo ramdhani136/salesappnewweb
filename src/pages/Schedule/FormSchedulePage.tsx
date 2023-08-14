@@ -56,6 +56,10 @@ const FormSchedulePage: React.FC = () => {
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
+  const [name, setName] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -99,6 +103,10 @@ const FormSchedulePage: React.FC = () => {
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
+      });
+      setName({
+        valueData: result.data.name,
+        valueInput: result.data.name,
       });
       setCreatedAt({
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
@@ -360,6 +368,21 @@ const FormSchedulePage: React.FC = () => {
                         closeIconClass="top-[13.5px]"
                       />
                     )}
+                    {id && (
+                      <InputComponent
+                        label="Name"
+                        value={name}
+                        className="h-[38px]  text-[0.93em] mb-3"
+                        type="text"
+                        onChange={(e) =>
+                          setName({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        disabled
+                      />
+                    )}
                     <Select
                       title="Doc"
                       data={dataType}
@@ -382,6 +405,7 @@ const FormSchedulePage: React.FC = () => {
                       disabled
                     />
                     <InputComponent
+                      mandatoy
                       typeField={TypeField.TEXTAREA}
                       label="Notes"
                       value={notes}
