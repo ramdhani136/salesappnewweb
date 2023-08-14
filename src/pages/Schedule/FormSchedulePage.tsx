@@ -10,18 +10,17 @@ import {
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
-import { IListInput, IValue } from "../../components/atoms/InputComponent";
+import {
+  IListInput,
+  IValue,
+  TypeField,
+} from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, Meta } from "../../utils";
+import { AlertModal, LocalStorage, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemSchedule";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
-
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
 
 const FormSchedulePage: React.FC = () => {
   let { id } = useParams();
@@ -31,25 +30,19 @@ const FormSchedulePage: React.FC = () => {
     description: "Halaman form schedule  Sales  web system",
   };
 
-  
-
   const navigate = useNavigate();
-
-
- 
+  const currentUser: any = LocalStorage.getUser();
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const [prevData, setPrevData] = useState<any>({});
   const [user, setUser] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
+    valueData: currentUser._id,
+    valueInput: currentUser.name,
   });
-  const [type, setType] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
+  const [type, setType] = useState<string>("all");
+  const [notes, setNotes] = useState<IValue>({ valueData: "", valueInput: "" });
   const [startDate, setStartDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -58,22 +51,13 @@ const FormSchedulePage: React.FC = () => {
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
-  const [warehouse, setWarehouse] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
-  const [allow, setAllow] = useState<IAllow>({ barcode: true, manual: false });
-
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingWarehouse, setLoadingWarehouse] = useState<boolean>(true);
-
-  const [listWarehouse, setListWarehouse] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
@@ -103,12 +87,8 @@ const FormSchedulePage: React.FC = () => {
 
       setData(result.data);
 
-      setAllow(result.data.allow);
-
-      setType({
-        valueData: result.data.type,
-        valueInput: result.data.type,
-      });
+      setType(result.data.type);
+      setNotes({ valueData: result.data.notes, valueInput: result.data.notes });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -143,24 +123,6 @@ const FormSchedulePage: React.FC = () => {
     }
   };
 
-  const getWarehouse = async (): Promise<void> => {
-    try {
-      const result: any = await GetDataServer(DataAPI.WAREHOUSE).FIND({});
-      if (result.data.length > 0) {
-        let listInput: IListInput[] = result.data.map((item: IListInput) => {
-          return {
-            name: item.name,
-            value: item.name,
-          };
-        });
-        setListWarehouse(listInput);
-      }
-      setLoadingWarehouse(false);
-    } catch (error) {
-      setLoadingWarehouse(false);
-    }
-  };
-
   const onDelete = (): void => {
     if (id) {
       const progress = async (): Promise<void> => {
@@ -168,7 +130,7 @@ const FormSchedulePage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.SCHEDULE).DELETE(`${id}`);
           navigate("/schedule");
-        } catch (error:any) {
+        } catch (error: any) {
           setLoading(false);
           Swal.fire(
             "Error!",
@@ -262,14 +224,13 @@ const FormSchedulePage: React.FC = () => {
     const actualData = {
       startDate: startDate.valueData,
       dueDate: dueDate.valueData,
-      allow: allow,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [startDate, dueDate, allow]);
+  }, [startDate, dueDate]);
   // End
 
   return (
@@ -335,8 +296,8 @@ const FormSchedulePage: React.FC = () => {
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
-                <div className="w-full h-auto  float-left rounded-md p-3 py-5">
+              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none h-auto float-left">
+                <div className="w-full h-auto   rounded-md p-3 py-5 float-left">
                   <div className=" w-1/2 px-4 float-left ">
                     <Select
                       title="Doc"
@@ -359,20 +320,20 @@ const FormSchedulePage: React.FC = () => {
                       }
                       disabled
                     />
-                    {id && (
-                      <InputComponent
-                        label="Created By"
-                        value={user}
-                        className="h-[38px]   text-[0.93em] mb-3"
-                        onChange={(e) =>
-                          setUser({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled
-                      />
-                    )}
+                    <InputComponent
+                      typeField={TypeField.TEXTAREA}
+                      label="Notes"
+                      value={notes}
+                      className="h-40  text-[0.93em] mb-3"
+                      inputStyle="h-40"
+                      type="text"
+                      onChange={(e) =>
+                        setNotes({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                    />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
@@ -418,6 +379,18 @@ const FormSchedulePage: React.FC = () => {
                         min={startDate.valueData}
                       />
                     )}
+                    <InputComponent
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-3"
+                      onChange={(e) =>
+                        setUser({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
                   </div>
                 </div>
               </div>
