@@ -83,7 +83,7 @@ const FormSchedulePage: React.FC = () => {
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
           return {
-            name: item.name,
+            name: item.action,
             onClick: () => {
               onSave(item.nextstate.id);
             },
@@ -446,7 +446,6 @@ const FormSchedulePage: React.FC = () => {
                       }}
                       min={moment(Number(new Date())).format("YYYY-MM-DD")}
                       mandatoy
-                      
                     />
                     {startDate.valueData && (
                       <InputComponent
