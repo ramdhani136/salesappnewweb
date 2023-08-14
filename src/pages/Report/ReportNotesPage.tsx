@@ -213,6 +213,7 @@ export const ReportNotesPage: React.FC = (): any => {
 
       const getDataExport = getExport.data.map((item: any) => {
         return {
+          date: moment(item.createdAt).format("LLL"),
           customer: item.customer.name,
           topic: item.topic.name,
           result: item.result,
@@ -220,7 +221,6 @@ export const ReportNotesPage: React.FC = (): any => {
           group: item.customerGroup.name,
           branch: item.branch.name,
           user: item.createdBy.name,
-          data: moment(item.createdAt).format("LLL"),
         };
       });
 
