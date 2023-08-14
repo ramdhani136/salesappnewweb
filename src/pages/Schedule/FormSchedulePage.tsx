@@ -36,7 +36,8 @@ const FormSchedulePage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [prevData, setPrevData] = useState<any>({});
+  const [loadingNaming, setLoadingName] = useState<boolean>(true);
+  const [listNaming, setListNaming] = useState<IListInput[]>([]);
   const [user, setUser] = useState<IValue>({
     valueData: currentUser._id,
     valueInput: currentUser.name,
@@ -46,6 +47,10 @@ const FormSchedulePage: React.FC = () => {
   const [startDate, setStartDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+  });
+  const [naming, setNaming] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
   });
   const [dueDate, setDueDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -59,7 +64,12 @@ const FormSchedulePage: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
-
+  const [prevData, setPrevData] = useState<any>({
+    type: type,
+    notes: notes,
+    startDate: startDate.valueData,
+    dueDate: dueDate.valueData,
+  });
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
@@ -71,10 +81,7 @@ const FormSchedulePage: React.FC = () => {
           return {
             name: item.name,
             onClick: () => {
-              onSave({
-                id_workflow: item.id_workflow,
-                id_state: item.nextstate.id,
-              });
+              onSave(item.nextstate.id);
             },
           };
         });
@@ -106,9 +113,10 @@ const FormSchedulePage: React.FC = () => {
         valueInput: moment(result.data.dueDate).format("YYYY-MM-DD"),
       });
       setPrevData({
+        type: result.data.type,
+        notes: result.data.notes,
         startDate: moment(result.data.startDate).format("YYYY-MM-DD"),
         dueDate: moment(result.data.dueDate).format("YYYY-MM-DD"),
-        allow: result.data.allow,
       });
       setLoading(false);
     } catch (error: any) {
@@ -150,57 +158,46 @@ const FormSchedulePage: React.FC = () => {
     }
   };
 
-  const onSave = async (data: {}): Promise<any> => {
-    // const progress = async (): Promise<void> => {
-    //   if (allow.barcode === false && allow.manual === false) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: "Allow required",
-    //     });
-    //     return;
-    //   }
-    //   try {
-    //     setLoading(true);
-    //     let result: any;
-    //     if (!id) {
-    //       result = await GetDataServer(DataAPI.SCHEDULE).CREATE({
-    //         startDate: startDate.valueData,
-    //         dueDate: dueDate.valueData,
-    //         workflowState: "Draft",
-    //         status: "0",
-    //         warehouse: warehouse.valueData,
-    //         allow: allow,
-    //       });
-    //       navigate(`/schedule/${result.data.data.name}`);
-    //       navigate(0);
-    //     } else {
-    //       result = await GetDataServer(DataAPI.SCHEDULE).UPDATE({
-    //         id: id,
-    //         data: !data
-    //           ? {
-    //               startDate: startDate.valueData,
-    //               dueDate: dueDate.valueData,
-    //               allow: allow,
-    //             }
-    //           : data,
-    //       });
-    //       getData();
-    //     }
-    //   } catch (error: any) {
-    //     AlertModal.Default({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: error.response.data.msg ?? "Error Network",
-    //     });
-    //     setLoading(false);
-    //   }
-    // };
-    // AlertModal.confirmation({
-    //   onConfirm: progress,
-    //   text: "You want to save this data!",
-    //   confirmButtonText: "Yes, Save it",
-    // });
+  const onSave = async (nextState?: string): Promise<any> => {
+    setLoading(true);
+    try {
+      let data: any = {
+        type: type,
+        notes: notes.valueData,
+        activeDate: startDate.valueData,
+        closingDate: dueDate.valueData,
+        namingSeries: naming.valueData,
+      };
+      if (nextState) {
+        data.nextState = nextState;
+      }
+
+      let Action = id
+        ? GetDataServer(DataAPI.SCHEDULE).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.SCHEDULE).CREATE(data);
+
+      const result = await Action;
+      navigate(`/schedule/${result.data.data._id}`);
+      if (id) {
+        getData();
+        Swal.fire({ icon: "success", text: "Saved" });
+      } else {
+        navigate(0);
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    setLoading(false);
   };
 
   const dataType: any[] = [
@@ -209,11 +206,40 @@ const FormSchedulePage: React.FC = () => {
     { title: "All", value: "all" },
   ];
 
+  const getNaming = async (): Promise<void> => {
+    try {
+      const result: any = await GetDataServer(DataAPI.NAMING).FIND({
+        filters: [["doc", "=", "schedule"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+
+        if (listInput.length === 1) {
+          setNaming({
+            valueData: listInput[0].value,
+            valueInput: listInput[0].name,
+          });
+        }
+
+        setListNaming(listInput);
+      }
+      setLoadingName(false);
+    } catch (error) {
+      setLoadingName(false);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
+      getNaming();
       setLoading(false);
       setListMoreAction([]);
     }
@@ -222,15 +248,18 @@ const FormSchedulePage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
+      type: type,
+      notes: notes,
       startDate: startDate.valueData,
       dueDate: dueDate.valueData,
     };
+
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [startDate, dueDate]);
+  }, [startDate, dueDate, type, notes]);
   // End
 
   return (
@@ -299,6 +328,38 @@ const FormSchedulePage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none h-auto float-left">
                 <div className="w-full h-auto   rounded-md p-3 py-5 float-left">
                   <div className=" w-1/2 px-4 float-left ">
+                    {!id && (
+                      <InputComponent
+                        loading={loadingNaming}
+                        label="Naming Series"
+                        value={naming}
+                        className="h-[38px]   text-[0.93em] mb-3"
+                        onChange={(e) =>
+                          setNaming({ ...naming, valueInput: e })
+                        }
+                        onSelected={(e) => {
+                          setNaming({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        onCLick={getNaming}
+                        list={listNaming}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() =>
+                          setNaming({ valueData: null, valueInput: "" })
+                        }
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
                     <Select
                       title="Doc"
                       data={dataType}
