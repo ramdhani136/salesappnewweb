@@ -46,22 +46,33 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Topic", accessor: "topic", className: "w-[28%]" },
-      { header: "Notes", accessor: "result", className: "w-[35%]" },
-      { header: "Tags", accessor: "tags", className: "w-[20%]" },
-      { header: "", accessor: "updatedAt", className: "w-[12%]" },
+      { header: "Customer", accessor: "customer", className: "w-auto" },
+      { header: "Group", accessor: "group", className: "w-auto" },
+      { header: "Branch", accessor: "branch", className: "w-auto" },
+      { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
     []
   );
 
   const AddCustomer = async (data: any[]) => {
     try {
+      setLoading(true);
+      dispatch(
+        modalSet({
+          active: false,
+          Children: null,
+          title: "",
+          props: {},
+          className: "",
+        })
+      );
       for (const item of data) {
         await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
           customer: item.id,
           schedule: docId,
         });
       }
+      getData();
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -95,8 +106,8 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.NOTE).FIND({
-        filters: [...filter, ["doc._id", "=", `${docId}`]],
+      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
+        filters: [...filter, ["schedule", "=", `${docId}`]],
         limit: limit,
         page: props?.refresh ? 1 : page,
         orderBy: { sort: isOrderBy, state: isSort },
@@ -107,26 +118,12 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           return {
             id: item._id,
             checked: false,
-            topic: <b className="font-medium">{item.topic.name}</b>,
+            customer: <b className="font-medium">{item.customer.name}</b>,
+            group: <h4>{item.customerGroup.name}</h4>,
+            branch: <h4>{item.branch.name}</h4>,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
-              </div>
-            ),
-            result: <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>,
-            tags: (
-              <div className="p-2">
-                {item.tags &&
-                  item.tags.map((i: any, index: number) => {
-                    return (
-                      <button
-                        key={index}
-                        className="border rounded-md bg-green-600 text-sm font-semibold text-white px-2 py-1 mr-1 mb-1"
-                      >
-                        {i.name}
-                      </button>
-                    );
-                  })}
               </div>
             ),
           };
@@ -197,7 +194,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.NOTE).DELETE(item.id);
+            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -251,6 +248,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
+          // width="w-[120%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}
