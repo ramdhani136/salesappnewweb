@@ -187,6 +187,17 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
             checked: false,
             customerId: item.customer._id,
             customer: <b className="font-medium">{item.customer.name}</b>,
+            doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
+            docType: (
+              <h4>
+                {item?.closing?.doc?.type
+                  ? item?.closing?.doc?.type === "callsheet"
+                    ? "Callsheet"
+                    : "Visit"
+                  : ""}
+              </h4>
+            ),
+            closingBy: <h4>{item?.closing?.user?.name ?? ""}</h4>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: <h4>{item.branch.name}</h4>,
             closingDate: (
@@ -206,6 +217,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                 )}
               </div>
             ),
+
             status: (
               <ButtonStatusComponent
                 status={item.status === "1" ? "2" : "0"}
@@ -339,7 +351,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
-            // width="w-[120%]"
+            width="w-[150%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}
