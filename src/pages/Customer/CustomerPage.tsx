@@ -79,7 +79,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
         const currentData = props.curentData;
         if (currentData.length > 0) {
           isFilterCustomer = currentData.map((item: any) => {
-            return ["_id", "!=", item.customerId];
+            return ["_id", "!=", item.customer._id];
           });
         }
       }

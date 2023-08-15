@@ -70,17 +70,16 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
             })
           );
           setActiveProgress(true);
-          for (const item of selectedData) {
+          for (let i = 0; i < selectedData.length; i++) {
             await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
-              customer: item.id,
+              customer: selectedData[i].id,
               schedule: docId,
             });
-            const index = data.indexOf(item);
-            let percent = (100 / data.length) * (index + 1);
-            setCurrentIndex(index);
-            setOnDeleteProgress(item.code);
+            let percent = (100 / selectedData.length) * (i + 1);
+            setCurrentIndex(i);
+            setOnDeleteProgress(selectedData[i].code);
             setCurrentPercent(percent);
-            setTotalIndex(data.length);
+            setTotalIndex(selectedData.length);
           }
           setActiveProgress(false);
           onRefresh();
@@ -135,7 +134,19 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     // }
   };
 
-  const ShowModalCustomer = () => {
+  const getAllList = async () => {
+    try {
+      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
+        filters: [...filter, ["schedule", "=", `${docId}`]],
+        limit: 0,
+        fields: ["customer"],
+      });
+      return result.data;
+    } catch (error) {}
+    return [];
+  };
+
+  const ShowModalCustomer = async () => {
     dispatch(
       modalSet({
         active: true,
@@ -145,7 +156,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           modal: true,
           onRefresh: getData,
           AddCustomer: AddCustomer,
-          curentData: data,
+          curentData: await getAllList(),
         },
         className: "w-[900px] h-[98%]",
       })
