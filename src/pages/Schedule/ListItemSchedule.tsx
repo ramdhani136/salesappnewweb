@@ -2,7 +2,10 @@ import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
-import { InfoDateComponent } from "../../components/atoms";
+import {
+  ButtonStatusComponent,
+  InfoDateComponent,
+} from "../../components/atoms";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import TableComponent, {
   IColumns,
@@ -47,6 +50,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
       { header: "Customer", accessor: "customer", className: "w-auto" },
+      { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
@@ -181,6 +185,12 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
             customer: <b className="font-medium">{item.customer.name}</b>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: <h4>{item.branch.name}</h4>,
+            status: (
+              <ButtonStatusComponent
+                status={item.status === "1" ? "2" : "0"}
+                name={item.status === "0" ? "Open" : "Closed"}
+              />
+            ),
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />

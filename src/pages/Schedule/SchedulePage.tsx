@@ -169,7 +169,7 @@ export const SchedulePage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULE).DELETE(item.doc);
+            await GetDataServer(DataAPI.SCHEDULE).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
