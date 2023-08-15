@@ -52,6 +52,10 @@ const FormSchedulePage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+  const [progress, setProgress] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
   const [dueDate, setDueDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -79,6 +83,12 @@ const FormSchedulePage: React.FC = () => {
     try {
       const result = await GetDataServer(DataAPI.SCHEDULE).FINDONE(`${id}`);
 
+      if (result?.progress) {
+        setProgress({
+          valueData: result.progress,
+          valueInput: `${result.progress}%`,
+        });
+      }
       // set workflow
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
@@ -435,7 +445,7 @@ const FormSchedulePage: React.FC = () => {
                       disabled={id !== undefined && data.status != 0}
                       label="Start Date"
                       value={startDate}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  text-[0.93em] mb-4"
                       type="date"
                       onChange={(e) => {
                         setStartDate({
@@ -462,7 +472,7 @@ const FormSchedulePage: React.FC = () => {
                         disabled={id !== undefined && data.status != 0}
                         label="Closing Date"
                         value={dueDate}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px]  text-[0.93em] mb-4"
                         type="date"
                         onChange={(e) =>
                           setDueDate({
@@ -477,15 +487,18 @@ const FormSchedulePage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
+                      className="h-[38px]   text-[0.93em] mb-4"
                       disabled
                     />
+                    {id && (
+                      <InputComponent
+                        label="Progress"
+                        value={progress}
+                        type="text"
+                        className="h-[38px]   text-[0.93em] mb-4"
+                        disabled
+                      />
+                    )}
                   </div>
                 </div>
               </div>
