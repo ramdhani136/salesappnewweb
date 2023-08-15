@@ -54,38 +54,85 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     []
   );
 
-  const AddCustomer = async (data: any[]) => {
-    try {
-      setLoading(true);
-      dispatch(
-        modalSet({
-          active: false,
-          Children: null,
-          title: "",
-          props: {},
-          className: "",
-        })
-      );
-      for (const item of data) {
-        await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
-          customer: item.id,
-          schedule: docId,
-        });
-      }
-      getData();
-    } catch (error: any) {
-      Swal.fire(
-        "Error!",
-        `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Insert"
-        }`,
-        "error"
-      );
-    }
+  const AddCustomer = async (selectedData: any[]) => {
+    AlertModal.confirmation({
+      confirmButtonText: "Yes",
+      onConfirm: async (): Promise<void> => {
+        setLoading(true);
+        try {
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+              props: {},
+              className: "",
+            })
+          );
+          setActiveProgress(true);
+          for (const item of selectedData) {
+            await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
+              customer: item.id,
+              schedule: docId,
+            });
+            const index = data.indexOf(item);
+            let percent = (100 / data.length) * (index + 1);
+            setCurrentIndex(index);
+            setOnDeleteProgress(item.code);
+            setCurrentPercent(percent);
+            setTotalIndex(data.length);
+          }
+          setActiveProgress(false);
+          onRefresh();
+        } catch (error: any) {
+          Swal.fire(
+            "Error!",
+            `${
+              error.response.data.msg
+                ? error.response.data.msg
+                : error.message
+                ? error.message
+                : "Error Insert"
+            }`,
+            "error"
+          );
+          onRefresh();
+          setLoading(false);
+          setActiveProgress(false);
+        }
+      },
+    });
+    // try {
+    //   setLoading(true);
+    //   dispatch(
+    //     modalSet({
+    //       active: false,
+    //       Children: null,
+    //       title: "",
+    //       props: {},
+    //       className: "",
+    //     })
+    //   );
+    //   for (const item of data) {
+    //     await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
+    //       customer: item.id,
+    //       schedule: docId,
+    //     });
+    //   }
+    //   getData();
+    // } catch (error: any) {
+    //   Swal.fire(
+    //     "Error!",
+    //     `${
+    //       error.response.data.msg
+    //         ? error.response.data.msg
+    //         : error.message
+    //         ? error.message
+    //         : "Error Insert"
+    //     }`,
+    //     "error"
+    //   );
+    // }
   };
 
   const ShowModalCustomer = () => {
@@ -98,6 +145,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           modal: true,
           onRefresh: getData,
           AddCustomer: AddCustomer,
+          curentData: data,
         },
         className: "w-[900px] h-[98%]",
       })
@@ -118,6 +166,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           return {
             id: item._id,
             checked: false,
+            customerId: item.customer._id,
             customer: <b className="font-medium">{item.customer.name}</b>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: <h4>{item.branch.name}</h4>,
@@ -248,7 +297,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
-          // width="w-[120%]"
+            // width="w-[120%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}

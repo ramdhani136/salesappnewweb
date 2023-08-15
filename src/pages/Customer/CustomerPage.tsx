@@ -37,7 +37,6 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
-  
 
   const metaData = {
     title: "Customer -  Sales App Ekatunggal",
@@ -75,10 +74,20 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
 
   const getData = async (): Promise<any> => {
     try {
+      let isFilterCustomer: [String, String, String][] = [];
+      if (modal) {
+        const currentData = props.curentData;
+        if (currentData.length > 0) {
+          isFilterCustomer = currentData.map((item: any) => {
+            return ["_id", "!=", item.customerId];
+          });
+        }
+      }
+
       const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
         limit: limit,
         page: page,
-        filters: filter,
+        filters: [...filter, ...isFilterCustomer],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
