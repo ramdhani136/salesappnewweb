@@ -217,26 +217,40 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
                 Customer List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
-                <IconButton
-                  Icon={AddIcon}
-                  name="Add New"
-                  className={`opacity-80 hover:opacity-100 duration-100 ${
-                    getSelected().length > 0 && "hidden"
-                  } `}
-                  callback={() => navigate("/customer/new")}
-                />
+                {!modal && (
+                  <IconButton
+                    Icon={AddIcon}
+                    name="Add New"
+                    className={`opacity-80 hover:opacity-100 duration-100 ${
+                      getSelected().length > 0 && "hidden"
+                    } `}
+                    callback={() => navigate("/customer/new")}
+                  />
+                )}
 
-                <IconButton
-                  name="Action"
-                  className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
-                  }`}
-                  list={[{ name: "Delete", onClick: onDelete }]}
-                />
+                {modal && (
+                  <IconButton
+                    Icon={AddIcon}
+                    name="Add Customer"
+                    className={`opacity-80 hover:opacity-100 duration-100 ${
+                      getSelected().length === 0 && "hidden"
+                    } `}
+                    callback={() => props.AddCustomer(getSelected())}
+                  />
+                )}
+
+                {!modal && (
+                  <IconButton
+                    name="Action"
+                    className={`duration-100 ${
+                      getSelected().length === 0 && "hidden"
+                    }`}
+                    list={[{ name: "Delete", onClick: onDelete }]}
+                  />
+                )}
               </div>
             </div>
             <TableComponent
-              width={`${modal && "w-[120%]"}`}
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}

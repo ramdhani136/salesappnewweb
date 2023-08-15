@@ -63,14 +63,22 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   //   }
   // };
 
-  const ShowModalCustomer = (id?: string) => {
+  const AddCustomer = async (data: any[]) => {
+    console.log(data);
+  };
+
+  const ShowModalCustomer = () => {
     dispatch(
       modalSet({
         active: true,
         Children: CustomerPage,
         title: "",
-        props: { modal: true, onRefresh: getData },
-        className: "w-[60%] h-[98%]",
+        props: {
+          modal: true,
+          onRefresh: getData,
+          AddCustomer: AddCustomer,
+        },
+        className: "w-[75%] h-[98%]",
       })
     );
   };
@@ -89,16 +97,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           return {
             id: item._id,
             checked: false,
-            topic: (
-              <b
-                className="font-medium"
-                onClick={() => {
-                  ShowModalCustomer(item._id);
-                }}
-              >
-                {item.topic.name}
-              </b>
-            ),
+            topic: <b className="font-medium">{item.topic.name}</b>,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
