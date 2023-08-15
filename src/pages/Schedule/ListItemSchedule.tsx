@@ -70,7 +70,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         Children: CustomerPage,
         title: "",
         props: { modal: true, onRefresh: getData },
-        className: "w-[63%] h-[98%]",
+        className: "w-[60%] h-[98%]",
       })
     );
   };

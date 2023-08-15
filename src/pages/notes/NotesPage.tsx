@@ -247,8 +247,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
-            auto={true}
-            width="w-[140%]"
+            width="w-[120%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}

@@ -37,7 +37,8 @@ interface IButtonInsert {
 interface Iprops {
   disabled?: Boolean;
   width?: string;
-  auto?: boolean;
+  height?: string;
+
   columns: IColumns[];
   data: IDataTables[];
   setData: any;
@@ -83,7 +84,6 @@ const TableComponent: React.FC<Iprops> = ({
   moreSelected,
   disabled,
   width,
-  auto,
 }) => {
   const [value, setValue] = useState<any>("");
   const [selectAll, setSelectAll] = useState<boolean>(false);
@@ -240,15 +240,11 @@ const TableComponent: React.FC<Iprops> = ({
         >
           <section
             className={` p-4 h-auto overflow-x-auto ${
-              width && data.length > 0 ? width : "w-[95%]"
+              width && data.length > 0 ? width : "w-[100%]"
             }  scrollbar-w-2 scrollbar-track-gray-100 scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full  `}
           >
             {data.length > 0 ? (
-              <table
-                className={`${
-                  auto && data.length > 0 ? "table-auto" : "w-full"
-                }`}
-              >
+              <table border={1} className={`w-full`}>
                 <thead>
                   <tr>
                     <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">

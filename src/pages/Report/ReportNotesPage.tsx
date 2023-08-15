@@ -259,7 +259,6 @@ export const ReportNotesPage: React.FC = (): any => {
             </div>
             <TableComponent
               disabled={true}
-              auto={true}
               width="w-[200%]"
               setSearch={setSeacrh}
               setData={setData}

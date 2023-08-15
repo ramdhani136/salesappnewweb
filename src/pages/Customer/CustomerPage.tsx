@@ -44,17 +44,32 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
 
   const navigate = useNavigate();
 
-  const columns: IColumns[] = useMemo(
-    () => [
-      { header: "Name", accessor: "name" },
-      { header: "Status", accessor: "workflowState" },
-      { header: "Group", accessor: "group" },
-      { header: "Branch", accessor: "branch" },
-      { header: "User", accessor: "user" },
-      { header: "", accessor: "updatedAt" },
-    ],
-    []
-  );
+  let columns: IColumns[] = [];
+
+  if (!modal) {
+    columns = useMemo(
+      () => [
+        { header: "Name", accessor: "name", className: "w-auto" },
+        { header: "Status", accessor: "workflowState", className: "w-auto" },
+        { header: "Group", accessor: "group", className: "w-auto" },
+        { header: "Branch", accessor: "branch", className: "w-auto" },
+        { header: "User", accessor: "user", className: "w-auto" },
+        { header: "", accessor: "updatedAt", className: "w-auto" },
+      ],
+      []
+    );
+  } else {
+    columns = useMemo(
+      () => [
+        { header: "Name", accessor: "name", className: "w-auto" },
+        { header: "Status", accessor: "workflowState", className: "w-auto" },
+        { header: "Group", accessor: "group", className: "w-auto" },
+        { header: "User", accessor: "user", className: "w-auto" },
+        { header: "", accessor: "updatedAt", className: "w-auto" },
+      ],
+      []
+    );
+  }
 
   const getData = async (): Promise<any> => {
     try {
@@ -221,6 +236,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
               </div>
             </div>
             <TableComponent
+              width={`${modal && "w-[120%]"}`}
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
