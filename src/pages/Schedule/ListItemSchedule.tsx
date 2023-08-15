@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { CustomerPage } from "../Customer/CustomerPage";
 import Swal from "sweetalert2";
+import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
 
 interface IProps {
   props: any;
@@ -51,7 +52,10 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     (): IColumns[] => [
       { header: "Customer", accessor: "customer", className: "w-auto" },
       { header: "Status", accessor: "status", className: "w-auto" },
-      { header: "Group", accessor: "group", className: "w-auto" },
+      { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
+      { header: "Doc", accessor: "doc", className: "w-auto" },
+      { header: "Type", accessor: "docType", className: "w-auto" },
+      { header: "Closing By", accessor: "closingBy", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
@@ -185,6 +189,23 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
             customer: <b className="font-medium">{item.customer.name}</b>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: <h4>{item.branch.name}</h4>,
+            closingDate: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                {item.closing ? (
+                  item.closing.date ? (
+                    <InfoDateComponent
+                      type={typeInfoDate.DateTime}
+                      date={item.updatedAt}
+                      className="-ml-14"
+                    />
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  ""
+                )}
+              </div>
+            ),
             status: (
               <ButtonStatusComponent
                 status={item.status === "1" ? "2" : "0"}

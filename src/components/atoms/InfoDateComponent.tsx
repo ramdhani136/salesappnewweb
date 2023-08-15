@@ -1,11 +1,22 @@
 import moment from "moment";
 import React, { useState } from "react";
+
+export enum typeInfoDate {
+  FormNow = "fromnow",
+  DateTime = "datetime",
+}
+
 interface IDateProps {
+  type?: typeInfoDate;
   date: String;
   className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
 }
 
-const InfoDateComponent: React.FC<IDateProps> = ({ date, className }) => {
+const InfoDateComponent: React.FC<IDateProps> = ({
+  date,
+  className,
+  type = typeInfoDate.FormNow,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   return (
     <div
@@ -13,8 +24,18 @@ const InfoDateComponent: React.FC<IDateProps> = ({ date, className }) => {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <h5 className="mr-2 inline">-</h5>
-      <h5 className="inline ">{moment(`${date}`).fromNow()}</h5>
+      {type === typeInfoDate.FormNow && (
+        <>
+          <h5 className="mr-2 inline">-</h5>
+          <h5 className="inline ">{moment(`${date}`).fromNow()}</h5>
+        </>
+      )}
+      {type === typeInfoDate.DateTime && (
+        <>
+          <h5 className="inline text-[1.1em] ">{moment(`${date}`).format("LL")}</h5>
+        </>
+      )}
+
       <h6
         className={`${
           !open && "hidden"
