@@ -36,6 +36,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   const [onDeleteProgress, setOnDeleteProgress] = useState<String>("");
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
 
   const metaData = {
     title: "Customer -  Sales App Ekatunggal",
@@ -139,6 +140,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
       setLoading(false);
       setRefresh(false);
     }
+    setLoadingMore(false);
   };
 
   const onRefresh = () => {
@@ -163,7 +165,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   });
 
   const getAllData = () => {
-    setLoading(true);
+    setLoadingMore(true);
     setData([]);
     setHasMore(false);
     setPage("1");
@@ -252,6 +254,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
               </div>
             </div>
             <TableComponent
+              loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}

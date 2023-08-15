@@ -11,6 +11,7 @@ import { IDataFilter } from "../moleculs/FilterTableComponent";
 import { LocalStorageType } from "../../utils";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { RiseLoader } from "react-spinners";
 
 export interface IDataTables {
   [key: string]: JSX.Element | String | number | boolean;
@@ -42,6 +43,7 @@ interface Iprops {
   data: IDataTables[];
   setData: any;
   fetchMore(): Promise<any>;
+  loadingMore?: boolean;
   hasMore: boolean;
   total: number;
   sort: IListIconButton[];
@@ -65,6 +67,7 @@ const TableComponent: React.FC<Iprops> = ({
   data,
   fetchMore,
   hasMore,
+  loadingMore,
   total,
   sort,
   isSort,
@@ -251,7 +254,18 @@ const TableComponent: React.FC<Iprops> = ({
             />
           </div>
         )}
-        {data.length > 0 ? (
+        {loadingMore && (
+          <div className="w-full  mt-20 flex justify-center">
+            <RiseLoader
+              color="#36d7b6"
+              loading={true}
+              size={8}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </div>
+        )}
+        {!loading && !loadingMore && data.length > 0 ? (
           <table
             className={`${
               data.length > 0 ? (width ? width : "w-full") : "w-full"
@@ -305,9 +319,12 @@ const TableComponent: React.FC<Iprops> = ({
             </tbody>
           </table>
         ) : (
-          <h4 className="text-center mt-28 text-gray-400 font-normal">
-            Data not found
-          </h4>
+          !loading &&
+          !loadingMore && (
+            <h4 className="text-center mt-28 text-gray-400 font-normal">
+              Data not found
+            </h4>
+          )
         )}
       </div>
     </div>
