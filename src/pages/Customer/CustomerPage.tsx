@@ -151,6 +151,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
 
   useEffect(() => {
     if (refresh) {
+      setLoadingMore(true);
       getData();
     }
   }, [refresh]);
@@ -165,7 +166,6 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   });
 
   const getAllData = () => {
-    setLoadingMore(true);
     setData([]);
     setHasMore(false);
     setPage("1");

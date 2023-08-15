@@ -265,7 +265,7 @@ const TableComponent: React.FC<Iprops> = ({
             />
           </div>
         )}
-        {!loading && !loadingMore && data.length > 0 ? (
+        {data.length > 0 ? (
           <table
             className={`${
               data.length > 0 ? (width ? width : "w-full") : "w-full"
