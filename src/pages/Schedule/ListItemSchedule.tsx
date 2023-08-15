@@ -13,7 +13,6 @@ import { AlertModal } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
-import ModalCustomer from "./ModalCustomer";
 import { CustomerPage } from "../Customer/CustomerPage";
 
 interface IProps {
@@ -54,14 +53,6 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     []
   );
 
-  // const getItem = async (data: any): Promise<void> => {
-  //   if (props.allow.barcode) {
-  //   } else {
-  //     if (props.status == 1) {
-  //       ShowModalPackingId(data);
-  //     }
-  //   }
-  // };
 
   const AddCustomer = async (data: any[]) => {
     console.log(data);
@@ -78,7 +69,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           onRefresh: getData,
           AddCustomer: AddCustomer,
         },
-        className: "w-[75%] h-[98%]",
+        className: "w-[900px] h-[98%]",
       })
     );
   };

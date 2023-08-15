@@ -34,7 +34,6 @@ import FormNamingSeriesPage from "./NamingSeries/FormNamingSeriesPage";
 import { NamingSeriesPage } from "./NamingSeries/NamingSeriesPage";
 import ReportPage from "./Report/ReportPage";
 import { ReportNotesPage } from "./Report/ReportNotesPage";
-import ModalCustomer from "./Schedule/ModalCustomer";
 
 
 
@@ -57,7 +56,7 @@ export {
   PackingIDPage,
   WorkflowPage,
   CallsheetPage,
-  ModalCustomer,
+
   FormCallsheetPage,
   VisitPage,
   FormVisitPage,
