@@ -1,5 +1,5 @@
 import { IconButton } from "../atoms";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import SyncLoader from "react-spinners/SyncLoader";
 import { IListIconButton } from "../atoms/IconButton";
@@ -37,8 +37,7 @@ interface IButtonInsert {
 interface Iprops {
   disabled?: Boolean;
   width?: string;
-  height?: string;
-
+  auto?: boolean;
   columns: IColumns[];
   data: IDataTables[];
   setData: any;
@@ -84,9 +83,12 @@ const TableComponent: React.FC<Iprops> = ({
   moreSelected,
   disabled,
   width,
+  auto,
 }) => {
   const [value, setValue] = useState<any>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState<boolean>(false);
+  const scrollableDivRef = useRef<HTMLDivElement>(null);
 
   const handleAllChecked = (event: any) => {
     const isData = data.map((item) => {
@@ -125,181 +127,273 @@ const TableComponent: React.FC<Iprops> = ({
     }
   }, [data]);
 
+  const handleScroll = async () => {
+    if (!loading && hasMore && scrollableDivRef.current) {
+      if (
+        scrollableDivRef.current.scrollTop +
+          scrollableDivRef.current.clientHeight >=
+        scrollableDivRef.current.scrollHeight - 1
+      ) {
+        setLoading(true);
+        await fetchMore();
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <div
-      className={`w-[97.5%] border border-[#e6e7e9] flex-1 bg-white ml-[1.25%]  mb-3 rounded-md drop-shadow-md overflow-auto  scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300 ${className}`}
+      className={`w-[97.5%] flex flex-col border border-[#e6e7e9] flex-1 bg-white ml-[1.25%]  mb-3 rounded-md drop-shadow-md overflow-hidden  ${className}`}
       id="scrollableDiv"
     >
-      <div className="h-auto">
-        <div className="w-full p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
-          <div className="text-md ml-4 text-gray-600 font-semibold flex items-center">
-            ({data.length} {total ? `Of ${total}` : "Items"})
-            <div className="w-60 border h-10 rounded-md  ml-4 bg-gray-50 flex items-center relative">
-              <input
-                className=" flex-1  px-3 pr-8 h-full rounded-md bg-gray-50 placeholder:text-gray-300 placeholder:font-normal"
-                placeholder="Search"
-                onChange={(e) => setValue(e.target.value)}
-                value={value}
-              />
-              <CloseIcon
-                className="mr-[5px] text-gray-200 cursor-pointer absolute right-0"
-                style={{ fontSize: 18 }}
-                onClick={() => setValue("")}
-              />
-            </div>
-            <FilterTableComponent
-              filter={filter}
-              setFilter={setFilter}
-              listFilter={listFilter}
-              localStorage={localStorage}
+      <div className="w-full  p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
+        <div className="text-md ml-4 text-gray-600 font-semibold flex items-center">
+          ({data.length} {total ? `Of ${total}` : "Items"})
+          <div className="w-60 border h-10 rounded-md  ml-4 bg-gray-50 flex items-center relative">
+            <input
+              className=" flex-1  px-3 pr-8 h-full rounded-md bg-gray-50 placeholder:text-gray-300 placeholder:font-normal"
+              placeholder="Search"
+              onChange={(e) => setValue(e.target.value)}
+              value={value}
             />
-            {getSelected().length > 0 && (
-              <h4 className="ml-3 text-[#6f7477] text-md font-normal">
-                {getSelected().length} Items Selected
-              </h4>
-            )}
+            <CloseIcon
+              className="mr-[5px] text-gray-200 cursor-pointer absolute right-0"
+              style={{ fontSize: 18 }}
+              onClick={() => setValue("")}
+            />
           </div>
-          <div className="flex">
-            {buttonInsert && buttonInsert.status && (
-              <IconButton
-                Icon={buttonInsert.icon?.icon}
-                callback={buttonInsert.onCLick}
-                name={buttonInsert.title ?? "New Data"}
-                className={`py-1 px-2 mr-[7px] opacity-70 bg-green-800 border-green-900 hover:opacity-100 duration-300  ${buttonInsert.className}`}
-                iconSize={buttonInsert.icon?.size ?? 17}
-                classIcon={buttonInsert.icon?.className}
-              />
-            )}
-            {getAllData != undefined && (
-              <IconButton
-                callback={getAllData}
-                name="All Data"
-                className="py-1 px-2 mr-[7px] hover:bg-gray-100 duration-100"
-                iconSize={17}
-                primary
-              />
-            )}
-
-            {getSelected().length > 0 && moreSelected && (
-              <IconButton
-                classModal="top-[29px]"
-                primary
-                Icon={MoreHorizIcon}
-                iconSize={15}
-                classIcon="mt-1"
-                list={moreSelected}
-                iconListDisabled
-                className={` duration-100 mr-2 px-2`}
-              />
-            )}
-
+          <FilterTableComponent
+            filter={filter}
+            setFilter={setFilter}
+            listFilter={listFilter}
+            localStorage={localStorage}
+          />
+          {getSelected().length > 0 && (
+            <h4 className="ml-3 text-[#6f7477] text-md font-normal">
+              {getSelected().length} Items Selected
+            </h4>
+          )}
+        </div>
+        <div className="flex">
+          {buttonInsert && buttonInsert.status && (
             <IconButton
-              Icon={RefreshIcon}
-              callback={onRefresh}
-              // name="Actions"
-              // list={list}
-              // iconListDisabled
-              classIcon="mt-1"
-              primary
-              iconSize={18}
-              className="mr-[7px] cursor-pointer py-[4.5px] opacity-70 px-[7px] hover:opacity-100 duration-100 "
+              Icon={buttonInsert.icon?.icon}
+              callback={buttonInsert.onCLick}
+              name={buttonInsert.title ?? "New Data"}
+              className={`py-1 px-2 mr-[7px] opacity-70 bg-green-800 border-green-900 hover:opacity-100 duration-300  ${buttonInsert.className}`}
+              iconSize={buttonInsert.icon?.size ?? 17}
+              classIcon={buttonInsert.icon?.className}
             />
-
+          )}
+          {getAllData != undefined && (
             <IconButton
-              callback={setOrderBy}
-              Icon={isOrderBy === 1 ? NorthIcon : SouthIcon}
-              className=" flex py-1 px-2 rounded-r-none  hover:bg-gray-100 duration-100"
-              iconSize={13}
-              primary
-            />
-            <IconButton
-              name={isSort}
-              list={sort}
-              className="py-[4.8px] px-2 border-l-0 rounded-l-none hover:bg-gray-100 duration-200"
+              callback={getAllData}
+              name="All Data"
+              className="py-1 px-2 mr-[7px] hover:bg-gray-100 duration-100"
               iconSize={17}
               primary
             />
-          </div>
+          )}
+
+          {getSelected().length > 0 && moreSelected && (
+            <IconButton
+              classModal="top-[29px]"
+              primary
+              Icon={MoreHorizIcon}
+              iconSize={15}
+              classIcon="mt-1"
+              list={moreSelected}
+              iconListDisabled
+              className={` duration-100 mr-2 px-2`}
+            />
+          )}
+
+          <IconButton
+            Icon={RefreshIcon}
+            callback={onRefresh}
+            // name="Actions"
+            // list={list}
+            // iconListDisabled
+            classIcon="mt-1"
+            primary
+            iconSize={18}
+            className="mr-[7px] cursor-pointer py-[4.5px] opacity-70 px-[7px] hover:opacity-100 duration-100 "
+          />
+
+          <IconButton
+            callback={setOrderBy}
+            Icon={isOrderBy === 1 ? NorthIcon : SouthIcon}
+            className=" flex py-1 px-2 rounded-r-none  hover:bg-gray-100 duration-100"
+            iconSize={13}
+            primary
+          />
+          <IconButton
+            name={isSort}
+            list={sort}
+            className="py-[4.8px] px-2 border-l-0 rounded-l-none hover:bg-gray-100 duration-200"
+            iconSize={17}
+            primary
+          />
         </div>
-        <InfiniteScroll
-          dataLength={data.length}
-          next={fetchMore}
-          hasMore={hasMore}
-          loader={
-            <div className="w-auto  left-1/2 inline py-1 px-2 text-center relative bottom-14  text-md text-gray-400">
-              <SyncLoader
-                color="#36d7b6"
-                loading={true}
-                size={8}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              />
-            </div>
-          }
-          scrollableTarget="scrollableDiv"
-        >
-          <section
-            className={` p-4 h-auto overflow-x-auto ${
-              width && data.length > 0 ? width : "w-[100%]"
-            }  scrollbar-w-2 scrollbar-track-gray-100 scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full  `}
+      </div>
+      <div
+        className="flex-1 overflow-auto pt-4 "
+        ref={scrollableDivRef}
+        onScroll={handleScroll}
+      >
+        {loading && (
+          <div className="w-auto  bottom-5 left-1/2 inline py-1 px-2 text-center absolute text-md text-gray-400">
+            <SyncLoader
+              color="#36d7b6"
+              loading={true}
+              size={8}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </div>
+        )}
+        {data.length > 0 ? (
+          <table
+            className={`${
+              data.length > 0 ? (width ? width : "w-full") : "w-full"
+            }`}
           >
-            {data.length > 0 ? (
-              <table border={1} className={`w-full`}>
-                <thead>
-                  <tr>
-                    <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
+            <thead>
+              <tr>
+                <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
+                  <input
+                    className="w-[14px] accent-slate-600"
+                    type="checkbox"
+                    onChange={(e) => handleAllChecked(e)}
+                    checked={selectAll}
+                    disabled={disabled ? true : false}
+                  />
+                </th>
+                {columns.map((col, index) => (
+                  <th
+                    key={index}
+                    className="font-normal text-gray-800 text-md text-left pb-3 "
+                  >
+                    {col.header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item: any, index) => (
+                <tr
+                  key={index}
+                  className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
+                    item.checked && "bg-gray-200 border-gray-300 border"
+                  }`}
+                >
+                  <td className="py-[15px] px-4">
+                    <input
+                      className="w-[14px] accent-slate-600"
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={() => handleChange(item.id)}
+                      disabled={disabled ? true : false}
+                    />
+                  </td>
+                  {columns.map((col: IColumns, id) => (
+                    <td className={`${col.className}`} key={id}>
+                      {item[`${col.accessor}`]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <h4 className="text-center mt-28 text-gray-400 font-normal">
+            Data not found
+          </h4>
+        )}
+      </div>
+      {/* <InfiniteScroll
+        dataLength={data.length}
+        next={fetchMore}
+        hasMore={hasMore}
+        loader={
+          <div className="w-auto  left-1/2 inline py-1 px-2 text-center relative bottom-14  text-md text-gray-400">
+            <SyncLoader
+              color="#36d7b6"
+              loading={true}
+              size={8}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </div>
+        }
+        scrollableTarget="scrollableDiv"
+      >
+        <section
+          className={` p-4 h-auto overflow-x-auto ${
+            width && data.length > 0 ? width : "w-[100%]"
+          }  scrollbar-w-2 scrollbar-track-gray-100 scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full  `}
+        >
+          {data.length > 0 ? (
+            <table
+              border={1}
+              className={`${
+                auto && data.length > 0 ? "table-auto w-full " : "w-full"
+              }`}
+            >
+              <thead>
+                <tr>
+                  <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
+                    <input
+                      className="w-[14px] accent-slate-600"
+                      type="checkbox"
+                      onChange={(e) => handleAllChecked(e)}
+                      checked={selectAll}
+                      disabled={disabled ? true : false}
+                    />
+                  </th>
+                  {columns.map((col, index) => (
+                    <th
+                      key={index}
+                      className="font-normal text-gray-800 text-md text-left pb-3 "
+                    >
+                      {col.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item: any, index) => (
+                  <tr
+                    key={index}
+                    className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
+                      item.checked && "bg-gray-200 border-gray-300 border"
+                    }`}
+                  >
+                    <td className="py-[15px] px-4">
                       <input
                         className="w-[14px] accent-slate-600"
                         type="checkbox"
-                        onChange={(e) => handleAllChecked(e)}
-                        checked={selectAll}
+                        checked={item.checked}
+                        onChange={() => handleChange(item.id)}
                         disabled={disabled ? true : false}
                       />
-                    </th>
-                    {columns.map((col, index) => (
-                      <th
-                        key={index}
-                        className="font-normal text-gray-800 text-md text-left pb-3 "
-                      >
-                        {col.header}
-                      </th>
+                    </td>
+                    {columns.map((col: IColumns, id) => (
+                      <td className={`${col.className}`} key={id}>
+                        {item[`${col.accessor}`]}
+                      </td>
                     ))}
                   </tr>
-                </thead>
-                <tbody>
-                  {data.map((item: any, index) => (
-                    <tr
-                      key={index}
-                      className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
-                        item.checked && "bg-gray-200 border-gray-300 border"
-                      }`}
-                    >
-                      <td className="py-[15px] px-4">
-                        <input
-                          className="w-[14px] accent-slate-600"
-                          type="checkbox"
-                          checked={item.checked}
-                          onChange={() => handleChange(item.id)}
-                          disabled={disabled ? true : false}
-                        />
-                      </td>
-                      {columns.map((col: IColumns, id) => (
-                        <td className={`${col.className}`} key={id}>
-                          {item[`${col.accessor}`]}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <h4 className="text-center mt-28 text-gray-400 font-normal">
-                Data not found
-              </h4>
-            )}
-          </section>
-        </InfiniteScroll>
-      </div>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h4 className="text-center mt-28 text-gray-400 font-normal">
+              Data not found
+            </h4>
+          )}
+        </section>
+      </InfiniteScroll> */}
     </div>
   );
 };

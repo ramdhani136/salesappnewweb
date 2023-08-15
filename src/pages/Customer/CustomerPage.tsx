@@ -251,6 +251,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
               </div>
             </div>
             <TableComponent
+              width="w-[120%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
