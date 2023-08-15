@@ -37,6 +37,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  
 
   const metaData = {
     title: "Customer -  Sales App Ekatunggal",

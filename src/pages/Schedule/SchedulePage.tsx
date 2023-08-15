@@ -35,6 +35,7 @@ export const SchedulePage: React.FC = (): any => {
   const [onDeleteProgress, setOnDeleteProgress] = useState<String>("");
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
 
   const metaData = {
     title: "Schedule - Sales App Ekatunggal",
@@ -122,6 +123,7 @@ export const SchedulePage: React.FC = (): any => {
       setLoading(false);
       setRefresh(false);
     }
+    setLoadingMore(false);
   };
 
   const onRefresh = () => {
@@ -132,6 +134,7 @@ export const SchedulePage: React.FC = (): any => {
 
   useEffect(() => {
     if (refresh) {
+      setLoadingMore(true);
       getData();
     }
   }, [refresh]);
@@ -218,6 +221,7 @@ export const SchedulePage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
@@ -237,7 +241,7 @@ export const SchedulePage: React.FC = (): any => {
                 setOrderBy(getOrder);
                 setRefresh(true);
               }}
-              // getAllData={getAllData}
+              getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERSCHEDULE}

@@ -36,6 +36,7 @@ export const ReportNotesPage: React.FC = (): any => {
   const [onDeleteProgress, setOnDeleteProgress] = useState<String>("");
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
 
   const metaData = {
     title: "Report Note -  Sales App Ekatunggal",
@@ -142,6 +143,7 @@ export const ReportNotesPage: React.FC = (): any => {
       setLoading(false);
       setRefresh(false);
     }
+    setLoadingMore(false);
   };
 
   const onRefresh = () => {
@@ -152,6 +154,7 @@ export const ReportNotesPage: React.FC = (): any => {
 
   useEffect(() => {
     if (refresh) {
+      setLoadingMore(false);
       getData();
     }
   }, [refresh]);
@@ -258,6 +261,7 @@ export const ReportNotesPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              loadingMore={loadingMore}
               disabled={true}
               width="w-[200%]"
               setSearch={setSeacrh}
@@ -279,7 +283,7 @@ export const ReportNotesPage: React.FC = (): any => {
                 setOrderBy(getOrder);
                 setRefresh(true);
               }}
-              // getAllData={getAllData}
+              getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERREPORTNOTE}
