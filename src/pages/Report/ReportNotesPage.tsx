@@ -280,7 +280,7 @@ export const ReportNotesPage: React.FC = (): any => {
                 setOrderBy(getOrder);
                 setRefresh(true);
               }}
-              getAllData={getAllData}
+              // getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERREPORTNOTE}

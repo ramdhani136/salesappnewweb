@@ -13,7 +13,8 @@ import { AlertModal } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
-
+import ModalCustomer from "./ModalCustomer";
+import { CustomerPage } from "../Customer/CustomerPage";
 
 interface IProps {
   props: any;
@@ -62,16 +63,16 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   //   }
   // };
 
-  const GetFormNote = (id?: string) => {
-    // dispatch(
-    //   modalSet({
-    //     active: true,
-    //     Children: FormNotePage,
-    //     title: "",
-    //     props: { id: id ?? undefined, doc: docData, onRefresh: getData },
-    //     className: "w-[63%] h-[98%]",
-    //   })
-    // );
+  const ShowModalCustomer = (id?: string) => {
+    dispatch(
+      modalSet({
+        active: true,
+        Children: CustomerPage,
+        title: "",
+        props: { modal: true, onRefresh: getData },
+        className: "w-[63%] h-[98%]",
+      })
+    );
   };
 
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
@@ -92,7 +93,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
               <b
                 className="font-medium"
                 onClick={() => {
-                  GetFormNote(item._id);
+                  ShowModalCustomer(item._id);
                 }}
               >
                 {item.topic.name}
@@ -278,7 +279,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
       {docData.status == "0" && (
         <a
           onClick={() => {
-            GetFormNote();
+            ShowModalCustomer();
           }}
           className="duration-100 hover:cursor-pointer hover:bg-gray-200 border px-2 py-1 ml-1 rounded-md inline bg-gray-100 text-[0.95em]"
         >

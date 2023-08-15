@@ -16,7 +16,8 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
-export const CustomerPage: React.FC = (): any => {
+export const CustomerPage: React.FC<any> = ({ props }): any => {
+  const modal = props ? props.modal ?? false : false;
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -239,7 +240,7 @@ export const CustomerPage: React.FC = (): any => {
                 setOrderBy(getOrder);
                 setRefresh(true);
               }}
-              getAllData={getAllData}
+              // getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERCUSTOMER}

@@ -48,7 +48,7 @@ interface Iprops {
   isSort: String;
   isOrderBy: number;
   setOrderBy(): void | Promise<void>;
-  getAllData(): void | Promise<void>;
+  getAllData?(): void | Promise<void>;
   onRefresh(): void | Promise<void>;
   buttonInsert?: IButtonInsert;
   listFilter: IDataFilter[];
@@ -170,13 +170,15 @@ const TableComponent: React.FC<Iprops> = ({
                 classIcon={buttonInsert.icon?.className}
               />
             )}
-            <IconButton
-              callback={getAllData}
-              name="All Data"
-              className="py-1 px-2 mr-[7px] hover:bg-gray-100 duration-100"
-              iconSize={17}
-              primary
-            />
+            {getAllData != undefined && (
+              <IconButton
+                callback={getAllData}
+                name="All Data"
+                className="py-1 px-2 mr-[7px] hover:bg-gray-100 duration-100"
+                iconSize={17}
+                primary
+              />
+            )}
 
             {getSelected().length > 0 && moreSelected && (
               <IconButton
