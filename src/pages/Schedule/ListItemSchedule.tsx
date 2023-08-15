@@ -14,6 +14,7 @@ import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { CustomerPage } from "../Customer/CustomerPage";
+import Swal from "sweetalert2";
 
 interface IProps {
   props: any;
@@ -53,9 +54,27 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     []
   );
 
-
   const AddCustomer = async (data: any[]) => {
-    console.log(data);
+    try {
+      for (const item of data) {
+        await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
+          customer: item.id,
+          schedule: docId,
+        });
+      }
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Insert"
+        }`,
+        "error"
+      );
+    }
   };
 
   const ShowModalCustomer = () => {
