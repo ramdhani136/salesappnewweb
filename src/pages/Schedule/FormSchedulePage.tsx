@@ -56,6 +56,7 @@ const FormSchedulePage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+
   const [dueDate, setDueDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -86,9 +87,12 @@ const FormSchedulePage: React.FC = () => {
       if (result?.progress) {
         setProgress({
           valueData: result.progress,
-          valueInput: `${result.progress}%`,
+          valueInput: `${result.progress}% (${result.closed} Of ${
+            result.open + result.closed
+          })`,
         });
       }
+
       // set workflow
       if (result.workflow.length > 0) {
         const isWorkflow = result.workflow.map((item: any): IListIconButton => {
