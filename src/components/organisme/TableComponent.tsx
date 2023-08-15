@@ -83,7 +83,6 @@ const TableComponent: React.FC<Iprops> = ({
   moreSelected,
   disabled,
   width,
-  auto,
 }) => {
   const [value, setValue] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
