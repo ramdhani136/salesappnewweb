@@ -163,6 +163,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
   });
 
   const getAllData = () => {
+    setLoading(true);
     setData([]);
     setHasMore(false);
     setPage("1");
@@ -270,7 +271,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
                 setOrderBy(getOrder);
                 setRefresh(true);
               }}
-              // getAllData={getAllData}
+              getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
               localStorage={LocalStorageType.FILTERCUSTOMER}
