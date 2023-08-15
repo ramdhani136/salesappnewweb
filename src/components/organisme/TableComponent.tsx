@@ -255,7 +255,7 @@ const TableComponent: React.FC<Iprops> = ({
           </div>
         )}
         {loadingMore && (
-          <div className="w-full h-[300px] items-center flex justify-center">
+          <div className="w-full h-[250px] items-center flex justify-center">
             <RiseLoader
               color="#36d7b6"
               loading={true}
