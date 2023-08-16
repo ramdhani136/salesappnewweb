@@ -49,7 +49,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
       { header: "Activity", accessor: "activity", className: "w-[25%]" },
       { header: "Feedback", accessor: "feedback", className: "w-[25%]" },
       { header: "Tags", accessor: "tags", className: "w-[15%]" },
-      { header: "", accessor: "updatedAt", className: "w-[10%]" },
+      { header: "", accessor: "updatedAt", className: "w-[11%]" },
     ],
     []
   );
