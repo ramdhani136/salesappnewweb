@@ -60,6 +60,7 @@ interface Iprops {
   setSearch: any;
   className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
   moreSelected?: IListIconButton[];
+  disabledRadio?: boolean;
 }
 
 const TableComponent: React.FC<Iprops> = ({
@@ -86,6 +87,7 @@ const TableComponent: React.FC<Iprops> = ({
   moreSelected,
   disabled,
   width,
+  disabledRadio = false,
 }) => {
   const [value, setValue] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -274,14 +276,17 @@ const TableComponent: React.FC<Iprops> = ({
             <thead>
               <tr>
                 <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
-                  <input
-                    className="w-[14px] accent-slate-600"
-                    type="checkbox"
-                    onChange={(e) => handleAllChecked(e)}
-                    checked={selectAll}
-                    disabled={disabled ? true : false}
-                  />
+                  {!disabledRadio && (
+                    <input
+                      className="w-[14px] accent-slate-600"
+                      type="checkbox"
+                      onChange={(e) => handleAllChecked(e)}
+                      checked={selectAll}
+                      disabled={disabled ? true : false}
+                    />
+                  )}
                 </th>
+
                 {columns.map((col, index) => (
                   <th
                     key={index}
@@ -301,13 +306,15 @@ const TableComponent: React.FC<Iprops> = ({
                   }`}
                 >
                   <td className="py-[15px] px-4">
-                    <input
-                      className="w-[14px] accent-slate-600"
-                      type="checkbox"
-                      checked={item.checked}
-                      onChange={() => handleChange(item.id)}
-                      disabled={disabled ? true : false}
-                    />
+                    {!disabledRadio && (
+                      <input
+                        className="w-[14px] accent-slate-600"
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={() => handleChange(item.id)}
+                        disabled={disabled ? true : false}
+                      />
+                    )}
                   </td>
                   {columns.map((col: IColumns, id) => (
                     <td className={`${col.className}`} key={id}>

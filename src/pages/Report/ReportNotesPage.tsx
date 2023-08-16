@@ -261,6 +261,7 @@ export const ReportNotesPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
               width="w-[180%]"

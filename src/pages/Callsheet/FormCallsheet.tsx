@@ -124,6 +124,7 @@ const FormCallsheetPage: React.FC = () => {
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+  const [task, setTask] = useState<any[]>([]);
 
   const [prevData, setPrevData] = useState<any>({
     type: callType,
@@ -135,7 +136,6 @@ const FormCallsheetPage: React.FC = () => {
     setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.CALLSHEET).FINDONE(`${id}`);
-      console.log(result);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -156,6 +156,10 @@ const FormCallsheetPage: React.FC = () => {
         setWorkflow(isWorkflow);
       }
       // end
+
+      if (result.data.taskNotes) {
+        setTask(result.data.taskNotes);
+      }
 
       setHistory(result.history);
 
@@ -559,6 +563,8 @@ const FormCallsheetPage: React.FC = () => {
     }
   }, [callType, customer, contact]);
   // End
+
+  console.log(task)
 
   return (
     <>
@@ -1072,6 +1078,13 @@ const FormCallsheetPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {id && (
+                <ToggleBodyComponent
+                  name="Tasks"
+                  className="mt-5"
+                  child={<NotesPage props={{ docId: id, data: data }} />}
+                />
+              )}
               {id && (
                 <ToggleBodyComponent
                   name="Result"
