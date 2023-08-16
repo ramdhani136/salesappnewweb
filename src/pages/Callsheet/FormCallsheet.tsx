@@ -20,6 +20,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import FormCustomerPage from "../Customer/FormCustomerPage";
 import FormContactPage from "../Contact/FormContactPage";
+import TaskPage from "../notes/TaskPage";
 
 const FormCallsheetPage: React.FC = () => {
   let { id } = useParams();
@@ -564,8 +565,6 @@ const FormCallsheetPage: React.FC = () => {
   }, [callType, customer, contact]);
   // End
 
-  console.log(task)
-
   return (
     <>
       {Meta(metaData)}
@@ -1082,7 +1081,7 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Tasks"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id, data: data }} />}
+                  child={<TaskPage props={{ data: task }} />}
                 />
               )}
               {id && (

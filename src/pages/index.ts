@@ -34,12 +34,7 @@ import FormNamingSeriesPage from "./NamingSeries/FormNamingSeriesPage";
 import { NamingSeriesPage } from "./NamingSeries/NamingSeriesPage";
 import ReportPage from "./Report/ReportPage";
 import { ReportNotesPage } from "./Report/ReportNotesPage";
-
-
-
-
-
-
+import TaskPage from "./notes/TaskPage";
 
 export {
   LoginPage,
@@ -56,7 +51,6 @@ export {
   PackingIDPage,
   WorkflowPage,
   CallsheetPage,
-
   FormCallsheetPage,
   VisitPage,
   FormVisitPage,
@@ -78,5 +72,6 @@ export {
   FormNamingSeriesPage,
   NamingSeriesPage,
   ReportPage,
-  ReportNotesPage
+  ReportNotesPage,
+  TaskPage,
 };
