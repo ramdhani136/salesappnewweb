@@ -166,7 +166,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           AddCustomer: AddCustomer,
           curentData: await getAllList(),
         },
-        className: "w-[900px] h-[98%]",
+        className: "w-[950px] h-[98%]",
       })
     );
   };
