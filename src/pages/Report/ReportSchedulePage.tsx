@@ -288,7 +288,7 @@ export const ReportSchedulePage: React.FC = (): any => {
           "Closing Date": item?.closing?.date
             ? moment(`${item?.closing?.date}`).format("l")
             : "",
-          notes: <h4 className="text-center">{`${notes}`}</h4>,
+          notes: `${notes}`,
           Doc: item?.closing?.doc?.name ?? "",
           Type: item?.closing?.doc?.type ?? "",
           "Closing By": item?.closing?.user?.name ?? "",
