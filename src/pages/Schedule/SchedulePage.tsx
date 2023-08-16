@@ -16,6 +16,7 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import ProgressBar from "@ramonak/react-progress-bar";
 export const SchedulePage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,12 +47,13 @@ export const SchedulePage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Name", accessor: "name" },
-      { header: "Status", accessor: "workflowState" },
-      { header: "User", accessor: "user" },
-      { header: "Start Date", accessor: "startDate" },
-      { header: "Due Date", accessor: "dueDate" },
-      { header: "", accessor: "updatedAt" },
+      { header: "Name", accessor: "name", className: "w-auto" },
+      { header: "Status", accessor: "workflowState", className: "w-auto" },
+      { header: "User", accessor: "user", className: "w-auto" },
+      { header: "Progress", accessor: "progress", className: "w-auto" },
+      { header: "Start Date", accessor: "startDate", className: "w-auto" },
+      { header: "Due Date", accessor: "dueDate", className: "w-auto" },
+      { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
     []
   );
@@ -68,10 +70,27 @@ export const SchedulePage: React.FC = (): any => {
 
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
+          let width = `w-[${item.progress}%]`;
           return {
             id: item._id,
             checked: false,
-            doc: item.name,
+            doc: <h4 className="mx-2">{item.name}</h4>,
+            progress: (
+              <div className="w-[180px] mx-2">
+                {+item.progress > 0 ? (
+                  <ProgressBar
+                    labelSize="12px"
+                    className="text-center "
+                    completed={+item.progress}
+                    labelClassName="text-white"
+                    completedClassName={`bg-green-600 ${width} `}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            ),
+
             name: (
               <Link to={`/schedule/${item._id}`}>
                 <b className="font-medium">{item.name}</b>

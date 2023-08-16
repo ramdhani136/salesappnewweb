@@ -45,6 +45,9 @@
   "@mui/material": "^5.11.9",
   
     
+  "@ramonak/react-progress-bar": "^5.0.3",
+  
+    
   "@reduxjs/toolkit": "^1.9.3",
   
     

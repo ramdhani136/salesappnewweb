@@ -181,6 +181,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
+       
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
