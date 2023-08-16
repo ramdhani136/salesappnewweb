@@ -589,7 +589,7 @@ const FormTopicPage: React.FC = () => {
                                 }
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150  bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 list-none px-2 py-1 rounded-md mr-1  text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>
@@ -734,7 +734,7 @@ const FormTopicPage: React.FC = () => {
                                 }
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150  list-none px-2 py-1 rounded-md mr-1  bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>
