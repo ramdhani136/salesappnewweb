@@ -59,7 +59,7 @@ export const ReportSchedulePage: React.FC = (): any => {
       { header: "Start Date", accessor: "startDate", className: "w-auto" },
       { header: "Due Date", accessor: "dueDate", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
-      { header: "Notes", accessor: "notes", className: "w-auto text-center" },
+      { header: "Notes", accessor: "notes", className: "w-auto " },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
@@ -332,7 +332,7 @@ export const ReportSchedulePage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[210%]"
+              width="w-[230%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
