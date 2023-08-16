@@ -230,6 +230,10 @@ export const ReportSchedulePage: React.FC = (): any => {
       });
 
       const getDataExport = getExport.data.map((item: any, index: any) => {
+        let notes: string[] = [item.schedule.notes];
+        if (item.notes) {
+          notes.push(item.notes);
+        }
         return {
           No: index + 1,
           Customer: item.customer.name,
@@ -239,6 +243,7 @@ export const ReportSchedulePage: React.FC = (): any => {
           "Closing Date": item?.closing?.date
             ? moment(`${item?.closing?.date}`).format("l")
             : "",
+          notes: `${notes}`,
           Doc: item?.closing?.doc?.name ?? "",
           Type: item?.closing?.doc?.type ?? "",
           "Closing By": item?.closing?.user?.name ?? "",
