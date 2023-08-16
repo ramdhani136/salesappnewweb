@@ -263,7 +263,7 @@ export const ReportNotesPage: React.FC = (): any => {
             <TableComponent
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[200%]"
+              width="w-[180%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
