@@ -83,7 +83,7 @@ const TaskPage: React.FC<IProps> = ({ props }) => {
             notes: <h4 className="mx-2">{item.notes}</h4>,
             from: <h4 className="mx-2">{item.from}</h4>,
             doc: <h4 className="mx-2">{item.name}</h4>,
-            action: <button className="border px-2 py-1 rounded-md ">Create Note</button>
+            action: <button className="border px-2 py-1 rounded-md text-md ">Create Note</button>
           };
         });
 
