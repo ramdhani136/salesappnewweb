@@ -1081,7 +1081,9 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Tasks"
                   className="mt-5"
-                  child={<TaskPage props={{ data: task }} />}
+                  child={
+                    <TaskPage props={{docId: id, data: task, status: data.status }} />
+                  }
                 />
               )}
               {id && (
