@@ -48,13 +48,22 @@ export const ReportSchedulePage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Customer", accessor: "customer", className: "w-[320px]" },
+      { header: "Schedule", accessor: "schedule", className: "w-auto" },
+      {
+        header: "Schedule Status",
+        accessor: "scheduleStatus",
+        className: "w-auto text-center",
+      },
+      { header: "Customer", accessor: "customer", className: "w-[270px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
+      { header: "Start Date", accessor: "startDate", className: "w-auto" },
+      { header: "Due Date", accessor: "dueDate", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
+      { header: "Notes", accessor: "notes", className: "w-auto text-center" },
       { header: "Doc", accessor: "doc", className: "w-auto" },
-      { header: "Type", accessor: "docType", className: "w-[150px]" },
+      { header: "Type", accessor: "docType", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
-      { header: "Group", accessor: "group", className: "w-[130px]" },
+      { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
@@ -73,15 +82,23 @@ export const ReportSchedulePage: React.FC = (): any => {
 
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
+          let notes: string[] = [`${item.schedule.notes}`];
+          if (item.notes) {
+            notes.push(item.notes);
+          }
           return {
             id: item._id,
             checked: false,
-            customerId: item.customer._id,
+            schedule: item.schedule.name,
+            scheduleStatus: (
+              <h4 className="text-center">{item.schedule.status}</h4>
+            ),
             customer: (
-              <b className="font-medium  py-4 float-left">
+              <b className="font-medium  py-3 float-left">
                 {item.customer.name}
               </b>
             ),
+            notes: <h4>{`${notes}`}</h4>,
             doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
             docType: (
               <h4>
@@ -102,11 +119,37 @@ export const ReportSchedulePage: React.FC = (): any => {
                     <InfoDateComponent
                       type={typeInfoDate.DateTime}
                       date={item.updatedAt}
-                      className="-ml-14"
+                      // className="-ml-14"
                     />
                   ) : (
                     ""
                   )
+                ) : (
+                  ""
+                )}
+              </div>
+            ),
+            startDate: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                {item?.schedule?.activeDate ? (
+                  <InfoDateComponent
+                    type={typeInfoDate.DateTime}
+                    date={`${item?.schedule?.activeDate}`}
+                    className="-ml-14"
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            ),
+            dueDate: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                {item?.schedule?.closingDate ? (
+                  <InfoDateComponent
+                    type={typeInfoDate.DateTime}
+                    date={`${item?.schedule?.closingDate}`}
+                    className="-ml-14"
+                  />
                 ) : (
                   ""
                 )}
@@ -245,7 +288,7 @@ export const ReportSchedulePage: React.FC = (): any => {
           "Closing Date": item?.closing?.date
             ? moment(`${item?.closing?.date}`).format("l")
             : "",
-          notes: `${notes}`,
+          notes: <h4 className="text-center">{`${notes}`}</h4>,
           Doc: item?.closing?.doc?.name ?? "",
           Type: item?.closing?.doc?.type ?? "",
           "Closing By": item?.closing?.user?.name ?? "",
@@ -289,7 +332,7 @@ export const ReportSchedulePage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[130%]"
+              width="w-[210%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
