@@ -1077,7 +1077,7 @@ const FormCallsheetPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {id && (
+              {id && task.length > 0 && (
                 <ToggleBodyComponent
                   name="Tasks"
                   className="mt-5"
