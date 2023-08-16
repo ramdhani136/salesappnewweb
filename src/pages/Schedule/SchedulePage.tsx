@@ -79,11 +79,11 @@ export const SchedulePage: React.FC = (): any => {
               <div className="w-[180px] mx-2">
                 {+item.progress > 0 ? (
                   <ProgressBar
-                    labelSize="12px"
-                    className="text-center "
+                    width={width}
+                    className="text-center  "
                     completed={+item.progress}
-                    labelClassName="text-white"
-                    completedClassName={`bg-green-600 ${width} `}
+                    labelClassName="text-sm text-white "
+                    completedClassName={`bg-green-500 `}
                   />
                 ) : (
                   ""
