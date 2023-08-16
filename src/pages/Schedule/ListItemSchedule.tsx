@@ -50,12 +50,13 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Customer", accessor: "customer", className: "w-auto" },
+      { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
+      { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
     ],

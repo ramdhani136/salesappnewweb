@@ -135,6 +135,7 @@ const FormCallsheetPage: React.FC = () => {
     setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.CALLSHEET).FINDONE(`${id}`);
+      console.log(result);
 
       // set workflow
       if (result.workflow.length > 0) {
