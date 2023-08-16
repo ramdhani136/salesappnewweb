@@ -71,8 +71,8 @@ const TaskPage: React.FC<IProps> = ({ props }) => {
       if (docData.length > 0) {
         const generateData = docData.map((item: any): IDataTables => {
           return {
-            title: <h4 className="mx-2 py-2">{item.title}</h4>,
-            notes: <h4 className="mx-2">{item.notes}</h4>,
+            title: <h4 className="mx-2 ">{item.title}</h4>,
+            notes: <h4 className="mx-2 py-2">{item.notes}</h4>,
             from: <h4 className="mx-2">{item.from}</h4>,
             doc: <h4 className="mx-2">{item.name}</h4>,
             action:
