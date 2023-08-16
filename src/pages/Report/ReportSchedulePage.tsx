@@ -16,6 +16,7 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import moment from "moment";
+import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
 
 export const ReportSchedulePage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -46,16 +47,16 @@ export const ReportSchedulePage: React.FC = (): any => {
   const navigate = useNavigate();
 
   const columns: IColumns[] = useMemo(
-    () => [
-      { header: "Customer", accessor: "customer", className: "w-[12.5%]" },
-      { header: "Topic", accessor: "topic", className: "w-[12,5%]" },
-      { header: "Activity", accessor: "activity", className: "w-[15%]" },
-      { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
-      { header: "Tags", accessor: "tag", className: "w-[10%]" },
-      { header: "Group", accessor: "group", className: "w-[7.5%]" },
-      { header: "Branch", accessor: "branch", className: "w-[10%]" },
-      { header: "User", accessor: "user", className: "w-[7.5%]" },
-      { header: "", accessor: "updatedAt", className: "w-7.55%]" },
+    (): IColumns[] => [
+      { header: "Customer", accessor: "customer", className: "w-[320px]" },
+      { header: "Status", accessor: "status", className: "w-auto" },
+      { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
+      { header: "Doc", accessor: "doc", className: "w-auto" },
+      { header: "Type", accessor: "docType", className: "w-[150px]" },
+      { header: "Closing By", accessor: "closingBy", className: "w-auto" },
+      { header: "Group", accessor: "group", className: "w-[130px]" },
+      { header: "Branch", accessor: "branch", className: "w-auto" },
+      { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
     []
   );
@@ -71,45 +72,56 @@ export const ReportSchedulePage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
-        console.log(result);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
             checked: false,
-
+            customerId: item.customer._id,
             customer: (
-              // <Link to={`/report/notes/${item._id}`}>
-              <b className="font-medium mx-2">{item.customer.name}</b>
-              // </Link>
+              <b className="font-medium  py-4 float-left">
+                {item.customer.name}
+              </b>
             ),
-            topic: <h4 className="mx-2">{item.topic.name}</h4>,
-            group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
-            branch: item.branch.name,
-            activity: <h4 className="mx-2">{item.task}</h4>,
-            feedback: <h4 className="mx-2">{item.result}</h4>,
-            user: <div>{item.createdBy.name}</div>,
-            tag: (
-              <ul className="float-left">
-                {item.tags.map((i: any, ind: any) => (
-                  <li
-                    key={ind}
-                    className=" inline list-none border rounded-md px-2 py-1 mr-1 mb-1 text-white text-sm bg-green-700 float-left"
-                  >
-                    {i.name}
-                  </li>
-                ))}
-              </ul>
+            doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
+            docType: (
+              <h4>
+                {item?.closing?.doc?.type
+                  ? item?.closing?.doc?.type === "callsheet"
+                    ? "Callsheet"
+                    : "Visit"
+                  : ""}
+              </h4>
+            ),
+            closingBy: <h4>{item?.closing?.user?.name ?? ""}</h4>,
+            group: <h4>{item.customerGroup.name}</h4>,
+            branch: <h4>{item.branch.name}</h4>,
+            closingDate: (
+              <div className="inline text-gray-600 text-[0.93em]">
+                {item.closing ? (
+                  item.closing.date ? (
+                    <InfoDateComponent
+                      type={typeInfoDate.DateTime}
+                      date={item.updatedAt}
+                      className="-ml-14"
+                    />
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  ""
+                )}
+              </div>
             ),
 
-            workflowState: (
+            status: (
               <ButtonStatusComponent
-                status={item.status}
-                name={item.workflowState}
+                status={item.status === "1" ? "2" : "0"}
+                name={item.status === "0" ? "Open" : "Closed"}
               />
             ),
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt} className="-ml-14" />
+                <InfoDateComponent date={item.updatedAt} className="-ml-9" />
               </div>
             ),
           };
@@ -185,7 +197,7 @@ export const ReportSchedulePage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.NOTE).DELETE(item.id);
+            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -210,24 +222,29 @@ export const ReportSchedulePage: React.FC = (): any => {
 
   const ExportToExcel = async () => {
     try {
-      const getExport: any = await GetDataServer(DataAPI.NOTE).FIND({
+      const getExport: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
         limit: 0,
         filters: filter,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
 
-      const getDataExport = getExport.data.map((item: any) => {
+      const getDataExport = getExport.data.map((item: any, index: any) => {
         return {
-          date: moment(item.createdAt).format("LLL"),
-          customer: item.customer.name,
-          topic: item.topic.name,
-          activity: item.task,
-          feedback: item.result,
-          tags: `${item.tags.map((i: any) => i.name)}`,
-          group: item.customerGroup.name,
-          branch: item.branch.name,
-          user: item.createdBy.name,
+          No: index + 1,
+          Customer: item.customer.name,
+          Status: item.status == "0" ? "Open" : "Closed",
+          "Start Date": moment(`${item.schedule.activeDate}`).format("l"),
+          "Due Date": moment(`${item.schedule.closingDate}`).format("l"),
+          "Closing Date": item?.closing?.date
+            ? moment(`${item?.closing?.date}`).format("l")
+            : "",
+          Doc: item?.closing?.doc?.name ?? "",
+          Type: item?.closing?.doc?.type ?? "",
+          "Closing By": item?.closing?.user?.name ?? "",
+          "Created By": item?.createdBy?.name ?? "",
+          Group: item?.customerGroup?.name ?? "",
+          Branch: item?.branch?.name ?? "",
         };
       });
 
@@ -265,7 +282,7 @@ export const ReportSchedulePage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[180%]"
+              width="w-[130%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
@@ -288,7 +305,7 @@ export const ReportSchedulePage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERREPORTNOTE}
+              localStorage={LocalStorageType.FILTERREPORTSCHEDULE}
               onRefresh={onRefresh}
             />
           </>

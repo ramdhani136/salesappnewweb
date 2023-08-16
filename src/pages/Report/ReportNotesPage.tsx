@@ -216,8 +216,9 @@ export const ReportNotesPage: React.FC = (): any => {
         search: search,
       });
 
-      const getDataExport = getExport.data.map((item: any) => {
+      const getDataExport = getExport.data.map((item: any, index: any) => {
         return {
+          No: index + 1,
           date: moment(item.createdAt).format("LLL"),
           customer: item.customer.name,
           topic: item.topic.name,
