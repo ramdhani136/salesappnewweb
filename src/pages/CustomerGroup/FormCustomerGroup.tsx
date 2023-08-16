@@ -639,7 +639,7 @@ const FormCustomerGroupPage: React.FC = () => {
                                 }
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150 hover:bg-red-700 list-none px-2 py-1 text-sm rounded-md mr-1 bg-red-600 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>
