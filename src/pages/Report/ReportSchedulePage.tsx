@@ -236,6 +236,8 @@ export const ReportSchedulePage: React.FC = (): any => {
         }
         return {
           No: index + 1,
+          "Schedule Name": item.schedule.name,
+          "Schedule Status": item.schedule.status,
           Customer: item.customer.name,
           Status: item.status == "0" ? "Open" : "Closed",
           "Start Date": moment(`${item.schedule.activeDate}`).format("l"),
