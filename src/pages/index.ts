@@ -35,6 +35,7 @@ import { NamingSeriesPage } from "./NamingSeries/NamingSeriesPage";
 import ReportPage from "./Report/ReportPage";
 import { ReportNotesPage } from "./Report/ReportNotesPage";
 import TaskPage from "./notes/TaskPage";
+import { ReportSchedulePage } from "./Report/ReportSchedulePage";
 
 export {
   LoginPage,
@@ -74,4 +75,5 @@ export {
   ReportPage,
   ReportNotesPage,
   TaskPage,
+  ReportSchedulePage
 };

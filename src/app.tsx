@@ -34,6 +34,7 @@ import {
   FormNamingSeriesPage,
   ReportPage,
   ReportNotesPage,
+  ReportSchedulePage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -194,6 +195,10 @@ const App: React.FC = () => {
           <Route
             path="/report/notes"
             element={<LayoutComponent Child={ReportNotesPage} />}
+          />
+          <Route
+            path="/report/schedule"
+            element={<LayoutComponent Child={ReportSchedulePage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
