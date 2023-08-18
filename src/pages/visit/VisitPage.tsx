@@ -91,7 +91,6 @@ export const VisitPage: React.FC = (): any => {
                 name={item.workflowState}
               />
             ),
-            // warehouse: item.warehouse,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
@@ -208,14 +207,14 @@ export const VisitPage: React.FC = (): any => {
                 Visit List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
-                <IconButton
+                {/* <IconButton
                   Icon={AddIcon}
                   name="Add visit"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     getSelected().length > 0 && "hidden"
                   } `}
                   callback={() => navigate("/visit/new")}
-                />
+                /> */}
 
                 <IconButton
                   name="Action"
