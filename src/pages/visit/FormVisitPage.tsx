@@ -831,13 +831,14 @@ const FormVisitPage: React.FC = () => {
                       className={`h-9 mb-10`}
                       disabled={
                         id != null
-                          ? data.status !== "0"
+                          ? data.status !== "0" || data.checkOut!=undefined
                             ? true
                             : false
                           : false
                       }
                     />
                   </div>
+                
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
                       <InputComponent
@@ -911,7 +912,7 @@ const FormVisitPage: React.FC = () => {
                         className={`h-9 mb-4`}
                         disabled={
                           id != null
-                            ? data.status !== "0"
+                            ? data.status !== "0" || data.checkOut!=undefined
                               ? true
                               : false
                             : false
@@ -994,7 +995,7 @@ const FormVisitPage: React.FC = () => {
                         className={`h-9 mb-4`}
                         disabled={
                           id != null
-                            ? data.status !== "0"
+                            ? data.status !== "0" || data.checkOut!=undefined
                               ? true
                               : false
                             : false
@@ -1126,7 +1127,7 @@ const FormVisitPage: React.FC = () => {
                     <div className="w-full float-left">
                       {images.map((item: any, index: any) => {
                         return (
-                          <>
+                          <div key={index}>
                             <img
                               onClick={() => openImageViewer(index)}
                               src={item}
@@ -1135,7 +1136,7 @@ const FormVisitPage: React.FC = () => {
                                 item.includes("blob:") && "p-10"
                               }`}
                             />
-                          </>
+                          </div>
                         );
                       })}
                     </div>
