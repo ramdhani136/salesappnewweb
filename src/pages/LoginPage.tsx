@@ -38,7 +38,7 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (event: any) => {
     setIsloading(true);
-    const uri = `http://localhost:5000/users/login`;
+    const uri = `${import.meta.env.VITE_PUBLIC_URI}/users/login`;
     event.preventDefault();
     try {
       const login: any = await axios.post(
