@@ -264,6 +264,7 @@ export const ReportSchedulePage: React.FC = (): any => {
   };
 
   const ExportToExcel = async () => {
+    setLoading(true);
     try {
       const getExport: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
         limit: 0,
@@ -306,6 +307,7 @@ export const ReportSchedulePage: React.FC = (): any => {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   return (

@@ -208,6 +208,7 @@ export const ReportNotesPage: React.FC = (): any => {
   };
 
   const ExportToExcel = async () => {
+    setLoading(true);
     try {
       const getExport: any = await GetDataServer(DataAPI.NOTE).FIND({
         limit: 0,
@@ -239,6 +240,7 @@ export const ReportNotesPage: React.FC = (): any => {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   return (
