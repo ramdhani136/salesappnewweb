@@ -13,7 +13,10 @@ import {
   IColumns,
   IDataTables,
 } from "../../components/organisme/TableComponent";
-import { LoadingComponent, ProgressBarComponent } from "../../components/moleculs";
+import {
+  LoadingComponent,
+  ProgressBarComponent,
+} from "../../components/moleculs";
 import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import ProgressBar from "@ramonak/react-progress-bar";
@@ -53,6 +56,7 @@ export const SchedulePage: React.FC = (): any => {
       { header: "Progress", accessor: "progress", className: "w-auto" },
       { header: "Start Date", accessor: "startDate", className: "w-auto" },
       { header: "Due Date", accessor: "dueDate", className: "w-auto" },
+      { header: "Created By", accessor: "createdBy", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
     []
@@ -73,6 +77,7 @@ export const SchedulePage: React.FC = (): any => {
           let width = item.progress;
           return {
             id: item._id,
+            createdBy: item.createdBy.name,
             checked: false,
             doc: <h4 className="mx-2">{item.name}</h4>,
             progress: (
@@ -234,6 +239,7 @@ export const SchedulePage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              width="w-[105%]"
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}

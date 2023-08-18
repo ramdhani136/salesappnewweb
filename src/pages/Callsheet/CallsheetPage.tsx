@@ -50,6 +50,7 @@ export const CallsheetPage: React.FC = (): any => {
       { header: "Status", accessor: "workflowState" },
       { header: "Type", accessor: "type" },
       { header: "Group", accessor: "group" },
+      { header: "Created By", accessor: "createdBy" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -72,6 +73,7 @@ export const CallsheetPage: React.FC = (): any => {
             id: item._id,
             checked: false,
             doc: item.name,
+            createdBy: item.createdBy.name,
             name: (
               <Link to={`/callsheet/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
