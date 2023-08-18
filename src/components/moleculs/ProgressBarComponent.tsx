@@ -7,7 +7,7 @@ interface IProps {
 const ProgressBarComponent: React.FC<IProps> = ({ percentage = 0 }) => {
   return (
     <div className="relative ">
-      <div className="overflow-hidden h-[1.1rem] mb-4 text-xs flex rounded bg-green-200">
+      <div className="overflow-hidden h-[1.1rem] mb-4 text-xs flex rounded bg-gray-200">
         <div
           style={{ width: `${percentage}%` }}
           className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
