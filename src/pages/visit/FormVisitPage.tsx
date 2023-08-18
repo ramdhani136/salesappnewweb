@@ -1094,7 +1094,7 @@ const FormVisitPage: React.FC = () => {
               {id && images.length > 0 && (
                 <ToggleBodyComponent
                   name="Image & Signature"
-                  className="mt-5"
+                  className="mt-5 py-8"
                   child={
                     <div className="w-full float-left">
                       {images.map((item: any) => {
