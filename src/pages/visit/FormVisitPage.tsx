@@ -128,7 +128,6 @@ const FormVisitPage: React.FC = () => {
   const [task, setTask] = useState<any[]>([]);
 
   const [prevData, setPrevData] = useState<any>({
-    type: type,
     customer: customer.valueData,
     contact: contact.valueData,
   });
@@ -208,7 +207,6 @@ const FormVisitPage: React.FC = () => {
       }
 
       setPrevData({
-        type: result.data.type,
         customer: result.data.customer._id,
         contact: result?.data?.contact?._id ?? "",
       });
@@ -555,7 +553,6 @@ const FormVisitPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      type: type,
       customer: customer.valueData,
       contact: contact.valueData,
     };
