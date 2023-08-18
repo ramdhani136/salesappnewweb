@@ -1132,7 +1132,7 @@ const FormVisitPage: React.FC = () => {
                               src={item}
                               alt={item}
                               className={`rounded-md w-auto mr-5  h-[250px] border float-left  object-contain cursor-pointer ${
-                                item.includes("blob:") && "p-16"
+                                item.includes("blob:") && "p-10"
                               }`}
                             />
                           </>
