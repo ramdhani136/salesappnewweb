@@ -22,14 +22,14 @@ import FormCustomerPage from "../Customer/FormCustomerPage";
 import FormContactPage from "../Contact/FormContactPage";
 import TaskPage from "../notes/TaskPage";
 
-const FormCallsheetPage: React.FC = () => {
+const FormVisitPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${
-      id ? data.name ?? "Loading .." : "New Callsheet"
+      id ? data.name ?? "Loading .." : "New Visit"
     } - Sales App Ekatunggal`,
-    description: "Halaman form callsheet sales web system",
+    description: "Halaman form visit sales web system",
   };
 
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const FormCallsheetPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.CALLSHEET).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.VISIT).FINDONE(`${id}`);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -166,7 +166,7 @@ const FormCallsheetPage: React.FC = () => {
 
       setData(result.data);
 
-      setCallType(result.data.type);
+      // setCallType(result.data.type);
 
       setBranch({
         valueData: result.data.branch._id,
@@ -190,7 +190,7 @@ const FormCallsheetPage: React.FC = () => {
         valueInput: result.data.createdBy.name,
       });
 
-      if (result.data.contact) {
+      if (result?.data?.contact) {
         setContact({
           valueData: result.data.contact._id,
           valueInput: result.data.contact.name,
@@ -210,11 +210,12 @@ const FormCallsheetPage: React.FC = () => {
       setPrevData({
         type: result.data.type,
         customer: result.data.customer._id,
-        contact: result.data.contact._id,
+        contact: result?.data?.contact?._id ?? "",
       });
 
       setLoading(false);
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -222,14 +223,14 @@ const FormCallsheetPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/callsheet");
+      navigate("/visit");
     }
   };
 
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "callsheet"]],
+        filters: [["doc", "=", "visit"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -467,8 +468,8 @@ const FormCallsheetPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.CALLSHEET).DELETE(`${id}`);
-          navigate("/callsheet");
+          await GetDataServer(DataAPI.VISIT).DELETE(`${id}`);
+          navigate("/visit");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -508,8 +509,8 @@ const FormCallsheetPage: React.FC = () => {
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.CALLSHEET).UPDATE({ id: id, data: updata })
-        : GetDataServer(DataAPI.CALLSHEET).CREATE(updata);
+        ? GetDataServer(DataAPI.VISIT).UPDATE({ id: id, data: updata })
+        : GetDataServer(DataAPI.VISIT).CREATE(updata);
 
       const result = await Action;
       if (id) {
@@ -517,7 +518,7 @@ const FormCallsheetPage: React.FC = () => {
 
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/callsheet/${result.data.data._id}`);
+        navigate(`/visit/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -583,10 +584,10 @@ const FormCallsheetPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/callsheet")}
+                  onClick={() => navigate("/visit")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New callsheet" : data.name}
+                  {!id ? "New visit" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -1082,7 +1083,9 @@ const FormCallsheetPage: React.FC = () => {
                   name="Tasks"
                   className="mt-5"
                   child={
-                    <TaskPage props={{docId: id, data: task, status: data.status }} />
+                    <TaskPage
+                      props={{ docId: id, data: task, status: data.status }}
+                    />
                   }
                 />
               )}
@@ -1104,4 +1107,4 @@ const FormCallsheetPage: React.FC = () => {
   );
 };
 
-export default React.memo(FormCallsheetPage);
+export default React.memo(FormVisitPage);
