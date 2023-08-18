@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ImageViewer from "react-simple-image-viewer";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -58,6 +59,19 @@ const FormVisitPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+
+  const [isViewerOpen, setIsViewerOpen] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  const openImageViewer = useCallback((index: number) => {
+    setIsViewerOpen(true);
+    setCurrentIndex(index);
+  }, []);
+
+  const closeImageViewer = (index: number) => {
+    setIsViewerOpen(false);
+    setCurrentIndex(index);
+  };
 
   const [picPhone, setPicPhone] = useState<IValue>({
     valueData: "",
@@ -246,7 +260,7 @@ const FormVisitPage: React.FC = () => {
       navigate("/visit");
     }
   };
-  console.log(images);
+
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
@@ -587,6 +601,19 @@ const FormVisitPage: React.FC = () => {
 
   return (
     <>
+      {isViewerOpen && (
+        <ImageViewer
+          src={images}
+          currentIndex={currentIndex}
+          onClose={() => closeImageViewer(0)}
+          disableScroll={false}
+          backgroundStyle={{
+            zIndex: 20000000,
+            backgroundColor: "rgba(0, 0, 0, 0.792)",
+          }}
+          closeOnClickOutside={true}
+        />
+      )}
       {Meta(metaData)}
       <div
         className="  max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
@@ -1097,13 +1124,18 @@ const FormVisitPage: React.FC = () => {
                   className="mt-5 py-8"
                   child={
                     <div className="w-full float-left">
-                      {images.map((item: any) => {
+                      {images.map((item: any, index: any) => {
                         return (
-                          <img
-                            src={item}
-                            alt={item}
-                            className={`rounded-md w-auto mr-5  h-[250px] border float-left  object-contain cursor-pointer ${item.includes("blob:")&&"p-16"}`}
-                          />
+                          <>
+                            <img
+                              onClick={() => openImageViewer(index)}
+                              src={item}
+                              alt={item}
+                              className={`rounded-md w-auto mr-5  h-[250px] border float-left  object-contain cursor-pointer ${
+                                item.includes("blob:") && "p-16"
+                              }`}
+                            />
+                          </>
                         );
                       })}
                     </div>
