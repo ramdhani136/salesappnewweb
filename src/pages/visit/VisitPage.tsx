@@ -79,11 +79,11 @@ export const VisitPage: React.FC = (): any => {
             ),
             customer: <div>{item.customer.name}</div>,
             group: <div>{item.customerGroup.name}</div>,
-            // type: (
-            //   <div>
-            //     {item.type === "in" ? "Incoming Call" : "Outgoing Call"}
-            //   </div>
-            // ),
+            type: (
+              <div>
+                {item.type === "insite" ? "In Site" : "Out Site"}
+              </div>
+            ),
 
             workflowState: (
               <ButtonStatusComponent
