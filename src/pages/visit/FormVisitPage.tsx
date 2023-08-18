@@ -21,9 +21,11 @@ import Swal from "sweetalert2";
 import FormCustomerPage from "../Customer/FormCustomerPage";
 import FormContactPage from "../Contact/FormContactPage";
 import TaskPage from "../notes/TaskPage";
+import { Buffer } from "buffer";
 
 const FormVisitPage: React.FC = () => {
   let { id } = useParams();
+
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${
@@ -127,6 +129,8 @@ const FormVisitPage: React.FC = () => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [task, setTask] = useState<any[]>([]);
 
+  const [images, setImages] = useState<string[]>([]);
+
   const [prevData, setPrevData] = useState<any>({
     customer: customer.valueData,
     contact: contact.valueData,
@@ -159,6 +163,22 @@ const FormVisitPage: React.FC = () => {
 
       if (result.data.taskNotes) {
         setTask(result.data.taskNotes);
+      }
+
+      if (result?.data?.signature) {
+        const signature = Buffer.from(`${result.data.signature}`, "base64");
+
+        var blob = new Blob([signature.buffer], { type: "image/png" });
+        var url: any = URL.createObjectURL(blob);
+
+        setImages([...images, url]);
+      }
+
+      if (result?.data?.img) {
+        setImages([
+          ...images,
+          `${import.meta.env.VITE_PUBLIC_URI}/public/${result.data.img}`,
+        ]);
       }
 
       setHistory(result.history);
@@ -213,7 +233,6 @@ const FormVisitPage: React.FC = () => {
 
       setLoading(false);
     } catch (error: any) {
-      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -505,7 +524,6 @@ const FormVisitPage: React.FC = () => {
         }
       }
 
-      console.log(updata);
 
       let Action = id
         ? GetDataServer(DataAPI.VISIT).UPDATE({ id: id, data: updata })
@@ -1071,6 +1089,23 @@ const FormVisitPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {id && images.length > 0 && (
+                <ToggleBodyComponent
+                  name="Image & Signature"
+                  className="mt-5"
+                  child={
+                    <div className="w-full float-left">
+                      {images.map((item: any) => (
+                        <img
+                          src={item}
+                          alt={item}
+                          className="rounded-sm w-[350px]  h-[300px] border float-left  object-contain cursor-pointer"
+                        />
+                      ))}
+                    </div>
+                  }
+                />
+              )}
               {id && task.length > 0 && (
                 <ToggleBodyComponent
                   name="Tasks"
@@ -1086,7 +1121,9 @@ const FormVisitPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id, data: data }} type="visit" />}
+                  child={
+                    <NotesPage props={{ docId: id, data: data }} type="visit" />
+                  }
                 />
               )}
               <TimeLineVertical data={history} />
