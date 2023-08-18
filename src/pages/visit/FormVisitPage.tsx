@@ -498,7 +498,6 @@ const FormVisitPage: React.FC = () => {
         updata = { nextState: nextState };
       } else {
         updata = {
-          type: type,
           customer: customer.valueData,
           contact: contact.valueData,
         };

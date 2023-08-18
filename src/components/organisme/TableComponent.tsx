@@ -328,7 +328,7 @@ const TableComponent: React.FC<Iprops> = ({
         ) : (
           !loading &&
           !loadingMore && (
-            <h4 className="text-center py-40 text-gray-400 font-normal">
+            <h4 className="text-center py-32 text-gray-400 font-normal">
               Data not found
             </h4>
           )
