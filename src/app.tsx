@@ -7,15 +7,15 @@ import {
   SchedulePage,
   NotFoundPage,
   FormSchedulePage,
-  ScheduleItemPage,
+  // ScheduleItemPage,
   UsersPage,
   RoleProfilePage,
   PackingIDPage,
   WorkflowPage,
   CallsheetPage,
   FormCallsheetPage,
-  VisitPage,
-  FormVisitPage,
+  // VisitPage,
+  // FormVisitPage,
   FormUserPage,
   SettingPage,
   BranchPage,
@@ -61,14 +61,14 @@ const App: React.FC = () => {
             path="/callsheet/:id"
             element={<LayoutComponent Child={FormCallsheetPage} />}
           />
-          <Route
+          {/* <Route
             path="/visit"
             element={<LayoutComponent Child={VisitPage} />}
           />
           <Route
             path="/visit/:id"
             element={<LayoutComponent Child={FormVisitPage} />}
-          />
+          /> */}
 
           <Route
             path="/schedule"

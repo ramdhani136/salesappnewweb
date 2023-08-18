@@ -45,11 +45,11 @@ const TaskPage: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Title", accessor: "title", className: "w-[25%]" },
-      { header: "Notes", accessor: "notes", className: "w-[30%]" },
+      { header: "Title", accessor: "title", className: "w-[30%]" },
+      { header: "Notes", accessor: "notes", className: "w-[40%]" },
       { header: "From", accessor: "from", className: "w-[15%]" },
       { header: "Doc", accessor: "doc", className: "w-[15%]" },
-      { header: "Action", accessor: "action", className: "w-[15%]" },
+      // { header: "Action", accessor: "action", className: "w-[15%]" },
     ],
     []
   );
