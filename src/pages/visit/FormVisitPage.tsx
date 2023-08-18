@@ -1132,7 +1132,7 @@ const FormVisitPage: React.FC = () => {
                               onClick={() => openImageViewer(index)}
                               src={item}
                               alt={item}
-                              className={`rounded-md w-auto mr-5  h-[250px] border float-left  object-contain cursor-pointer ${
+                              className={`rounded-sm w-auto mr-5  h-[220px] border float-left  object-contain cursor-pointer ${
                                 item.includes("blob:") && "p-10"
                               }`}
                             />
