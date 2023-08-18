@@ -141,7 +141,7 @@ const LoginPage: React.FC = () => {
           )}
         </div>
         <div className="mt-24 text-lg text-center md:text-[1.5em] lg:text-sm text-white">
-          &copy; (IT) PT. Ekatunggal Tunas Mandiri - 2022 (SOETM)
+          &copy; (IT) PT. Ekatunggal Tunas Mandiri - 2023 (SALESETM)
         </div>
       </div>
     </>
