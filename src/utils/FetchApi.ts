@@ -12,7 +12,7 @@ FetchApi.interceptors.request.use(
       const decoded: any = jwt_decode(token);
       if (decoded.exp * 1000 < currentDate.getTime()) {
         try {
-          const uri = `http://localhost:5000/users/token`;
+          const uri = `${import.meta.env.VITE_PUBLIC_URI}/users/token`;
           const result = await axios.get(uri, {
             withCredentials: true,
           });
@@ -42,6 +42,5 @@ FetchApi.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
 
 export { FetchApi };
