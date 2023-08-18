@@ -29,7 +29,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
     { name: "Dashboard", link: "/", icon: HomeIcon },
     { name: "Schedules", link: "/schedule", icon: EventNoteIcon },
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
-    // { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
+    { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
     { name: "Settings", link: "/setting", icon: SettingsIcon },

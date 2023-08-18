@@ -35,6 +35,8 @@ import {
   ReportPage,
   ReportNotesPage,
   ReportSchedulePage,
+  VisitPage,
+  FormVisitPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -61,14 +63,18 @@ const App: React.FC = () => {
             path="/callsheet/:id"
             element={<LayoutComponent Child={FormCallsheetPage} />}
           />
-          {/* <Route
+          <Route
             path="/visit"
             element={<LayoutComponent Child={VisitPage} />}
           />
           <Route
             path="/visit/:id"
             element={<LayoutComponent Child={FormVisitPage} />}
-          /> */}
+          />
+          <Route
+            path="/visit/new"
+            element={<LayoutComponent Child={FormVisitPage} />}
+          />
 
           <Route
             path="/schedule"

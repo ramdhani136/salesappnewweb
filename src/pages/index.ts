@@ -10,8 +10,8 @@ import { PackingIDPage } from "./PackingID/PackingIDPage";
 import { WorkflowPage } from "./Workflows/WorkflowPage";
 import { CallsheetPage } from "./Callsheet/CallsheetPage";
 import FormCallsheetPage from "./Callsheet/FormCallsheet";
-// import { VisitPage } from "./visit/VisitPage";
-// import FormVisitPage from "./visit/FormVisitPage";
+import { VisitPage } from "./visit/VisitPage";
+import FormVisitPage from "./visit/FormVisitPage";
 import FormUserPage from "./Users/FormUserPage";
 import SettingPage from "./Settings/SettingPage";
 import { BranchPage } from "./Branch/BranchPage";
@@ -47,8 +47,8 @@ export {
   WorkflowPage,
   CallsheetPage,
   FormCallsheetPage,
-  // VisitPage,
-  // FormVisitPage,
+  VisitPage,
+  FormVisitPage,
   FormUserPage,
   SettingPage,
   BranchPage,
