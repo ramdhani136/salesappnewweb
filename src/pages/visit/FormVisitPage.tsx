@@ -40,8 +40,8 @@ const FormVisitPage: React.FC = () => {
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
   const dataCallType: any[] = [
-    { title: "Incomming Call", value: "in" },
-    { title: "Outgoing Call", value: "out" },
+    { title: "In site", value: "insite" },
+    { title: "Out Site", value: "outsite" },
   ];
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -120,7 +120,7 @@ const FormVisitPage: React.FC = () => {
   });
   // End
 
-  const [callType, setCallType] = useState<string>("out");
+  const [type, settype] = useState<string>("insite");
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
@@ -128,7 +128,7 @@ const FormVisitPage: React.FC = () => {
   const [task, setTask] = useState<any[]>([]);
 
   const [prevData, setPrevData] = useState<any>({
-    type: callType,
+    type: type,
     customer: customer.valueData,
     contact: contact.valueData,
   });
@@ -498,7 +498,7 @@ const FormVisitPage: React.FC = () => {
         updata = { nextState: nextState };
       } else {
         updata = {
-          type: callType,
+          type: type,
           customer: customer.valueData,
           contact: contact.valueData,
         };
@@ -507,6 +507,8 @@ const FormVisitPage: React.FC = () => {
           updata["namingSeries"] = naming.valueData;
         }
       }
+
+      console.log(updata);
 
       let Action = id
         ? GetDataServer(DataAPI.VISIT).UPDATE({ id: id, data: updata })
@@ -522,6 +524,7 @@ const FormVisitPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       Swal.fire(
         "Error!",
@@ -553,7 +556,7 @@ const FormVisitPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      type: callType,
+      type: type,
       customer: customer.valueData,
       contact: contact.valueData,
     };
@@ -563,7 +566,7 @@ const FormVisitPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [callType, customer, contact]);
+  }, [type, customer, contact]);
   // End
 
   return (
@@ -681,17 +684,11 @@ const FormVisitPage: React.FC = () => {
                       />
                     )}
                     <Select
-                      title="Call Type"
+                      title="Type"
                       data={dataCallType}
-                      value={callType}
-                      setValue={setCallType}
-                      disabled={
-                        id != null
-                          ? data.status !== "0"
-                            ? true
-                            : false
-                          : false
-                      }
+                      value={type}
+                      setValue={settype}
+                      disabled
                     />
                     <InputComponent
                       label="Date"
@@ -1093,7 +1090,7 @@ const FormVisitPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id, data: data }}  />}
+                  child={<NotesPage props={{ docId: id, data: data }} />}
                 />
               )}
               <TimeLineVertical data={history} />
