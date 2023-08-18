@@ -27,7 +27,7 @@ const ModalComponent: React.FC<IProps> = ({
 
   return (
     <div
-      className="w-[100%] h-[100vh] inset-0 fixed  z-[100] flex justify-center items-center  bg-black bg-opacity-50  "
+      className="w-[100%] h-[100vh] inset-0 fixed  z-[100] flex justify-center items-center  bg-black bg-opacity-70  "
       id="wrapper"
       onClick={handleClose}
     >
