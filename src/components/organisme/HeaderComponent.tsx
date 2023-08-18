@@ -1,19 +1,18 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Avatar } from "@mui/material";
 // import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import { IconMenuHeader, SeacrhHeaderComponent } from "../moleculs";
+import { SeacrhHeaderComponent } from "../moleculs";
 import SettingsIcon from "@mui/icons-material/Settings";
-import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import React, { useEffect, useState } from "react";
 import { LocalStorage, LocalStorageType } from "../../utils";
-import jwt_decode from "jwt-decode";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HeaderComponent: React.FC = () => {
   const [data, setData] = useState<any>([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const getUser = async (): Promise<any> => {
     try {
       const userLogin = LocalStorage.getUser();
@@ -54,7 +53,7 @@ const HeaderComponent: React.FC = () => {
             `${import.meta.env.VITE_PUBLIC_URI}/images/users/${data.img}`
           }`}
           sx={{ width: 40, height: 40 }}
-          className={`mx-3 cursor-pointer`}
+          className={`mx-1 cursor-pointer`}
         />
         <div>
           <h4 className=" text-gray-600 text-[0.92em] font-medium -mt-1">
@@ -67,6 +66,9 @@ const HeaderComponent: React.FC = () => {
         <SettingsIcon
           onClick={() => {
             navigate(`/user/${data._id}`);
+            if (location.pathname.split("/")[1] === "user") {
+              navigate(0);
+            }
           }}
           className="ml-3 cursor-pointer"
           style={{ fontSize: 15 }}

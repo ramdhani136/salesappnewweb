@@ -7,7 +7,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
-import { LocalStorage, LocalStorageType, useKey } from "../../utils";
+import {
+  AlertModal,
+  LocalStorage,
+  LocalStorageType,
+  useKey,
+} from "../../utils";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -44,8 +49,14 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
   );
 
   const onLogout = () => {
-    LocalStorage.removeData(LocalStorageType.TOKEN);
-    navigate("/login");
+    AlertModal.confirmation({
+      text:"You want to log out of your account?",
+      onConfirm: () => {
+        LocalStorage.removeData(LocalStorageType.TOKEN);
+        navigate("/login");
+      },
+      confirmButtonText:"Yes, Logout!"
+    });
   };
 
   return (
