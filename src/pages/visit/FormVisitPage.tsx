@@ -165,21 +165,24 @@ const FormVisitPage: React.FC = () => {
         setTask(result.data.taskNotes);
       }
 
+      let isImages: string[] = [];
+
       if (result?.data?.signature) {
         const signature = Buffer.from(`${result.data.signature}`, "base64");
 
         var blob = new Blob([signature.buffer], { type: "image/png" });
         var url: any = URL.createObjectURL(blob);
 
-        setImages([...images, url]);
+        isImages.push(url);
       }
 
       if (result?.data?.img) {
-        setImages([
-          ...images,
-          `${import.meta.env.VITE_PUBLIC_URI}/public/${result.data.img}`,
-        ]);
+        isImages.push(
+          `${import.meta.env.VITE_PUBLIC_URI}/public/${result.data.img}`
+        );
       }
+
+      setImages(isImages);
 
       setHistory(result.history);
 
@@ -243,7 +246,7 @@ const FormVisitPage: React.FC = () => {
       navigate("/visit");
     }
   };
-
+  console.log(images);
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
@@ -523,7 +526,6 @@ const FormVisitPage: React.FC = () => {
           updata["namingSeries"] = naming.valueData;
         }
       }
-
 
       let Action = id
         ? GetDataServer(DataAPI.VISIT).UPDATE({ id: id, data: updata })
@@ -1095,13 +1097,15 @@ const FormVisitPage: React.FC = () => {
                   className="mt-5"
                   child={
                     <div className="w-full float-left">
-                      {images.map((item: any) => (
-                        <img
-                          src={item}
-                          alt={item}
-                          className="rounded-sm w-[350px]  h-[300px] border float-left  object-contain cursor-pointer"
-                        />
-                      ))}
+                      {images.map((item: any) => {
+                        return (
+                          <img
+                            src={item}
+                            alt={item}
+                            className={`rounded-md w-auto mr-5  h-[250px] border float-left  object-contain cursor-pointer ${item.includes("blob:")&&"p-16"}`}
+                          />
+                        );
+                      })}
                     </div>
                   }
                 />
