@@ -13,7 +13,7 @@ import {
   IColumns,
   IDataTables,
 } from "../../components/organisme/TableComponent";
-import { LoadingComponent } from "../../components/moleculs";
+import { LoadingComponent, ProgressBarComponent } from "../../components/moleculs";
 import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 import ProgressBar from "@ramonak/react-progress-bar";
@@ -70,21 +70,15 @@ export const SchedulePage: React.FC = (): any => {
 
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
-          let width = `w-[${item.progress}%]`;
+          let width = item.progress;
           return {
             id: item._id,
             checked: false,
             doc: <h4 className="mx-2">{item.name}</h4>,
             progress: (
-              <div className="w-[180px] mx-2">
+              <div className="w-[180px] mx-2 mt-5">
                 {+item.progress > 0 ? (
-                  <ProgressBar
-                    width={width}
-                    className="text-center  "
-                    completed={+item.progress}
-                    labelClassName="text-sm text-white "
-                    completedClassName={`bg-green-500 `}
-                  />
+                  <ProgressBarComponent percentage={80} />
                 ) : (
                   ""
                 )}
