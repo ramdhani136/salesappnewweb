@@ -10,9 +10,9 @@ const ProgressBarComponent: React.FC<IProps> = ({ percentage = 0 }) => {
       <div className="overflow-hidden h-[1.1rem] mb-4 text-xs flex rounded bg-gray-200">
         <div
           style={{ width: `${percentage}%` }}
-          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
+          className="shadow-none flex flex-col text-center duration-300 whitespace-nowrap text-white justify-center bg-green-500"
         ></div>
-        <span className="text-xs font-semibold duration-100 inline-block text-white absolute   w-full mt-[1px] text-center">
+        <span className="text-xs font-semibold inline-block text-white absolute   w-full mt-[1px] text-center">
           {percentage}%
         </span>
       </div>
