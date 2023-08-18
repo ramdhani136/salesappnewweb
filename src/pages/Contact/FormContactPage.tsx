@@ -298,14 +298,14 @@ const FormContactPage: React.FC<any> = ({ props }) => {
           : GetDataServer(DataAPI.CONTACT).CREATE(updata);
 
       const result = await Action;
-      if (id) {
+      if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
         if (modal) {
           props.Callback({
-            valueData: result.data.data._id,
-            valueInput: result.data.data.name,
+            valueData: result?.data?.data?._id,
+            valueInput: result?.data?.data?.name,
           });
           props.setPosition({
             valueData: position,

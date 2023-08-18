@@ -25,6 +25,7 @@ import { result } from "lodash";
 const FormNotePage: React.FC<any> = ({ props }) => {
   let id = props.id;
   const docData = props.doc;
+  const type = props.type ?? "callsheet";
 
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -334,7 +335,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         tags: tags.map((item: any) => item._id),
         customer: customer.valueData,
         doc: {
-          type: "callsheet",
+          type: type,
           _id: docData._id,
           name: docData.name,
         },

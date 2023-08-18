@@ -1086,7 +1086,7 @@ const FormVisitPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id, data: data }} />}
+                  child={<NotesPage props={{ docId: id, data: data }} type="visit" />}
                 />
               )}
               <TimeLineVertical data={history} />

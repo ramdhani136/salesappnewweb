@@ -17,9 +17,10 @@ import FormNotePage from "./FormNotePage";
 
 interface IProps {
   props: any;
+  type: string;
 }
 
-const NotesPage: React.FC<IProps> = ({ props }) => {
+const NotesPage: React.FC<IProps> = ({ props, type }) => {
   const docId = props.docId;
   const docData = props.data;
   const [data, setData] = useState<IDataTables[]>([]);
@@ -53,9 +54,6 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
     ],
     []
   );
-  
-
-
 
   const GetFormNote = (id?: string) => {
     dispatch(
@@ -63,7 +61,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
         active: true,
         Children: FormNotePage,
         title: "",
-        props: { id: id ?? undefined, doc: docData, onRefresh: getData },
+        props: { id: id ?? undefined, doc: docData, onRefresh: getData, type:type },
         className: "w-[63%] h-[98%]",
       })
     );
@@ -99,7 +97,7 @@ const NotesPage: React.FC<IProps> = ({ props }) => {
               </div>
             ),
             activity: (
-              <h4 className="mr-10 py-3 text-[0.95em]">{item.task??""}</h4>
+              <h4 className="mr-10 py-3 text-[0.95em]">{item.task ?? ""}</h4>
             ),
             feedback: (
               <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>
