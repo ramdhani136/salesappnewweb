@@ -15,6 +15,7 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { capitalizeFirstLetter } from "../../utils/CapitalistFirstText";
 
 const FormMemoPage: React.FC = () => {
   let { id } = useParams();
@@ -111,8 +112,14 @@ const FormMemoPage: React.FC = () => {
   const [notes, setNotes] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
-    name: name.valueData,
     title: title ?? "",
+    notes: notes ?? "",
+    branch: branch,
+    startDate: startDate.valueData,
+    dueDate: dueDate.valueData,
+    display: display,
+    group: group,
+    userGroup: userGroup,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -176,11 +183,63 @@ const FormMemoPage: React.FC = () => {
         valueInput: moment(result.data.closingDate).format("YYYY-MM-DD"),
       });
 
+      if (result.data.display) {
+        const getDisplay = result.data.display.map((item: any) => {
+          return {
+            _id: item,
+            name: capitalizeFirstLetter(item),
+          };
+        });
+        setDisplay(getDisplay);
+      }
+
+      if (result.data.customerGroup) {
+        const genGroup = result.data.customerGroup.map((item: any) => {
+          return {
+            _id: item._id,
+            name: item.name,
+          };
+        });
+        setGroup(genGroup);
+      }
+
+      if (result.data.branch) {
+        const genBranch = result.data.branch.map((item: any) => {
+          return {
+            _id: item._id,
+            name: item.name,
+          };
+        });
+        setBranch(genBranch);
+      }
+
       setData(result.data);
 
       setPrevData({
-        name: result.data.name,
-        desc: result.data.desc ?? "",
+        title: result?.data?.title ?? "",
+        notes: result?.data?.notes ?? "",
+        branch: result.data.branch
+          ? result.data.branch.map((item: any) => {
+              return { _id: item._id, name: item.name };
+            })
+          : [],
+        startDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        dueDate: moment(result.data.closingDate).format("YYYY-MM-DD"),
+        display: result.data.display
+          ? result.data.display.map((item: any) => {
+              return { _id: item, name: capitalizeFirstLetter(item) };
+            })
+          : [],
+        group: result?.data?.customerGroup
+          ? result.data.customerGroup.map((item: any) => {
+              return { _id: item._id, name: item.name };
+            })
+          : [],
+        userGroup: result?.data?.userGroup
+          ? result.data.userGroup.map((item: any) => {
+              return { _id: item._id, name: item.name };
+            })
+          : [],
       });
       if (result.data.title) {
         setTitle(result.data.title);
@@ -381,7 +440,7 @@ const FormMemoPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
+          await GetDataServer(DataAPI.MEMO).DELETE(`${id}`);
           navigate("/memo");
         } catch (error: any) {
           setLoading(false);
@@ -406,12 +465,28 @@ const FormMemoPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {
-        name: name.valueData,
-        title: title,
-      };
+      let data: any = {};
+
       if (nextState) {
-        data.nextState = nextState;
+        data = { nextState: nextState };
+      } else {
+        if (display.length === 0) {
+          throw new Error("Display wajib diisi!");
+        }
+
+        data = {
+          title: title,
+          notes: notes,
+          activeDate: startDate.valueData,
+          closingDate: dueDate.valueData,
+          display: display.map((item: any) => item._id),
+          customerGroup: group.map((item: any) => item._id),
+          branch: branch.map((item: any) => item._id),
+          userGroup: userGroup.map((item: any) => item._id),
+        };
+        if (!id) {
+          data["namingSeries"] = naming.valueData;
+        }
       }
 
       let Action = id
@@ -431,11 +506,11 @@ const FormMemoPage: React.FC = () => {
       Swal.fire(
         "Error!",
         `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Insert"
+          error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
         }`,
         "error"
       );
@@ -457,15 +532,32 @@ const FormMemoPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      name: name.valueData,
       title: title ?? "",
+      notes: notes ?? "",
+      branch: branch,
+      startDate: startDate.valueData,
+      dueDate: dueDate.valueData,
+      display: display,
+      group: group,
+      userGroup: userGroup,
     };
+
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, title, notes]);
+  }, [
+    name,
+    title,
+    notes,
+    display,
+    startDate,
+    dueDate,
+    branch,
+    group,
+    userGroup,
+  ]);
   // End
 
   return (
@@ -661,11 +753,11 @@ const FormMemoPage: React.FC = () => {
                         );
 
                         if (!cekDup) {
-                          let getBranch = [
+                          let genBranch = [
                             ...branch,
                             { _id: e.value, name: e.name },
                           ];
-                          setBranch(getBranch);
+                          setBranch(genBranch);
                         }
 
                         setBranchValue({ valueData: "", valueInput: "" });
@@ -689,7 +781,7 @@ const FormMemoPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                if (!id || data.status === "Draft") {
+                                if (!id || data.status === "0") {
                                   const genBranch = branch.filter((i: any) => {
                                     return i._id !== item._id;
                                   });
@@ -906,7 +998,7 @@ const FormMemoPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                if (!id || data.status === "Draft") {
+                                if (!id || data.status === "0") {
                                   const genGroup = group.filter((i: any) => {
                                     return i._id !== item._id;
                                   });
