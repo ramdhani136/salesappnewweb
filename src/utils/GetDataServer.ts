@@ -49,6 +49,7 @@ export enum DataAPI {
   TOPIC = "topic",
   FILES = "files",
   MEMO = "memo",
+  USERGROUP = "usergroup",
 }
 
 class RequestData implements IData {

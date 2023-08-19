@@ -81,6 +81,20 @@ const FormMemoPage: React.FC = () => {
   // End
 
   // branch
+  const [userGroup, setUserGroup] = useState<any[]>([]);
+  const [userGroupList, setUserGroupList] = useState<IListInput[]>([]);
+  const [userGroupPage, setUserGroupPage] = useState<Number>(1);
+  const [userGroupLoading, setUserGroupLoading] = useState<boolean>(true);
+  const [userGroupMoreLoading, setUserGroupMoreLoading] =
+    useState<boolean>(false);
+  const [userGroupHasMore, setUserGroupHasMore] = useState<boolean>(false);
+  const [userGroupValue, setUserGroupValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // branch
   const [group, setGroup] = useState<any[]>([]);
   const [groupList, setGroupList] = useState<IListInput[]>([]);
   const [groupPage, setGroupPage] = useState<Number>(1);
@@ -286,6 +300,52 @@ const FormMemoPage: React.FC = () => {
     setGroupHasMore(false);
     setGroupPage(1);
     setGroupLoading(true);
+  };
+
+  const getUserGroup = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    if (data.refresh === undefined) {
+      data.refresh = true;
+    }
+    try {
+      const result: any = await GetDataServer(DataAPI.USERGROUP).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : userGroupPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setUserGroupList([...userGroupList, ...listInput]);
+        } else {
+          setUserGroupList([...listInput]);
+        }
+        setUserGroupHasMore(result.hasMore);
+        setUserGroupPage(result.nextPage);
+      }
+
+      setUserGroupLoading(false);
+      setUserGroupMoreLoading(false);
+    } catch (error: any) {
+      setUserGroupLoading(false);
+      setUserGroupMoreLoading(false);
+      setUserGroupHasMore(false);
+    }
+  };
+
+  const ResetUserGroup = () => {
+    setUserGroupList([]);
+    setUserGroupHasMore(false);
+    setUserGroupPage(1);
+    setUserGroupLoading(true);
   };
 
   const getNaming = async (): Promise<void> => {
@@ -550,7 +610,7 @@ const FormMemoPage: React.FC = () => {
                     />
                     <label className="text-sm">Notes</label>
                     <textarea
-                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[200px]"
+                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[227px]"
                       name="title"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
@@ -852,6 +912,94 @@ const FormMemoPage: React.FC = () => {
                                   });
 
                                   setGroup(genGroup);
+                                }
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    <InputComponent
+                      remark="*Fill in if you want to be displayed in a particular user group"
+                      label="User Group"
+                      infiniteScroll={{
+                        loading: userGroupMoreLoading,
+                        hasMore: userGroupHasMore,
+                        next: () => {
+                          setUserGroupMoreLoading(true);
+                          getUserGroup({
+                            refresh: false,
+                            search: userGroupValue.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetUserGroup();
+                          getUserGroup({
+                            refresh: true,
+                            search: userGroupValue.valueInput,
+                          });
+                        },
+                      }}
+                      loading={userGroupLoading}
+                      modalStyle="mt-2"
+                      value={userGroupValue}
+                      onChange={(e) => {
+                        setUserGroupValue({
+                          ...userGroupValue,
+                          valueInput: e,
+                        });
+                      }}
+                      onCLick={() => {
+                        ResetUserGroup();
+                        getUserGroup({
+                          refresh: true,
+                          search: userGroupValue.valueInput,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        const cekDup = userGroup.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let genUg = [
+                            ...userGroup,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setUserGroup(genUg);
+                        }
+
+                        setUserGroupValue({ valueData: "", valueInput: "" });
+                      }}
+                      onReset={() => {
+                        setUserGroupValue({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={userGroupList}
+                      type="text"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                      className={`h-9 mb-3`}
+                    />
+                    {userGroup.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {userGroup.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                if (!id || data.status === "Draft") {
+                                  const genUg = userGroup.filter((i: any) => {
+                                    return i._id !== item._id;
+                                  });
+
+                                  setUserGroup(genUg);
                                 }
                               }}
                               key={index}
