@@ -39,6 +39,8 @@ import {
   FormVisitPage,
   MemoPage,
   FormMemoPage,
+  WorkflowStatePage,
+  FromWorkflowState,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -126,6 +128,18 @@ const App: React.FC = () => {
           <Route
             path="/branch/new"
             element={<LayoutComponent Child={FormBranchPage} />}
+          />
+          <Route
+            path="/workflowstate"
+            element={<LayoutComponent Child={WorkflowStatePage} />}
+          />
+          <Route
+            path="/workflowstate/:id"
+            element={<LayoutComponent Child={FromWorkflowState} />}
+          />
+          <Route
+            path="/workflowstate/new"
+            element={<LayoutComponent Child={FromWorkflowState} />}
           />
           <Route
             path="/memo"

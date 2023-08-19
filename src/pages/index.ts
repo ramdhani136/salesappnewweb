@@ -35,6 +35,10 @@ import TaskPage from "./notes/TaskPage";
 import { ReportSchedulePage } from "./Report/ReportSchedulePage";
 import { MemoPage } from "./Memo/MemoPage";
 import FormMemoPage from "./Memo/FormMemoPage";
+import { WorkflowStatePage } from "./WorkflowState/WorkflowStatePage";
+import FromWorkflowState from "./WorkflowState/FormWorkflowStatePage";
+
+
 
 export {
   LoginPage,
@@ -74,4 +78,6 @@ export {
   ReportSchedulePage,
   MemoPage,
   FormMemoPage,
+  WorkflowStatePage,
+  FromWorkflowState
 };

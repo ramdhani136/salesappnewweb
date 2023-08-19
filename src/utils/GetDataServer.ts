@@ -50,6 +50,10 @@ export enum DataAPI {
   FILES = "files",
   MEMO = "memo",
   USERGROUP = "usergroup",
+  WORKFLOWSTATE = "workflowstate",
+  WORKFLOWACTION = "workflowaction",
+  WORKFLOWTRANSITION = "workflowtransition",
+  WORKFLOWCHANGER = "workflowchanger",
 }
 
 class RequestData implements IData {
