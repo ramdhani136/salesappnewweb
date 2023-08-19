@@ -437,7 +437,7 @@ const FormSchedulePage: React.FC = () => {
                     />
                     <label className="text-sm">Notes</label>
                     <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px] mb-10"
+                      className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md h-[150px] mb-10"
                       name="Site Uri"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
