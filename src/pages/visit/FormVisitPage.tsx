@@ -837,7 +837,20 @@ const FormVisitPage: React.FC = () => {
                           : false
                       }
                     />
+                     {/* <InputComponent
+                      label="Check In"
+                      value={user}
+                      className="h-[38px]   text-[0.93em] mb-10"
+                      onChange={(e) =>
+                        setUser({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    /> */}
                   </div>
+                  
                 
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     {branch.valueData && (
