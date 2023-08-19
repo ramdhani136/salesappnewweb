@@ -33,6 +33,8 @@ import ReportPage from "./Report/ReportPage";
 import { ReportNotesPage } from "./Report/ReportNotesPage";
 import TaskPage from "./notes/TaskPage";
 import { ReportSchedulePage } from "./Report/ReportSchedulePage";
+import { MemoPage } from "./Memo/MemoPage";
+import FormMemoPage from "./Memo/FormMemoPage";
 
 export {
   LoginPage,
@@ -70,4 +72,6 @@ export {
   ReportNotesPage,
   TaskPage,
   ReportSchedulePage,
+  MemoPage,
+  FormMemoPage,
 };
