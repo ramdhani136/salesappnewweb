@@ -14,7 +14,7 @@ import {
   useKey,
 } from "../../utils";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SettingsIcon from "@mui/icons-material/Settings";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
@@ -28,6 +28,7 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
   const menus = [
     { name: "Dashboard", link: "/", icon: HomeIcon },
     { name: "Schedules", link: "/schedule", icon: EventNoteIcon },
+    { name: "Memo", link: "/memo", icon: AssignmentTurnedInIcon },
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
     { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
