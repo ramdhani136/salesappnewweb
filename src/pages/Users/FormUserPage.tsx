@@ -487,7 +487,7 @@ const FormUserPage: React.FC = () => {
                     <li className="flex-1 px-2 list-none">
                       <label className="text-sm">Uri : </label>
                       <textarea
-                        className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md"
+                        className="border mt-1 px-2 py-1 h-16 text-md bg-gray-50  w-full rounded-md"
                         name="Site Uri"
                         value={erpSite.valueData}
                         onChange={(e) =>
@@ -505,7 +505,7 @@ const FormUserPage: React.FC = () => {
                     <li className="flex-1 px-2 list-none">
                       <label className="text-sm">Token : </label>
                       <textarea
-                        className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md"
+                        className="border mt-1 px-2 py-1 h-16 text-md bg-gray-50  w-full rounded-md"
                         name="Site Uri"
                         value={erpToken.valueData}
                         onChange={(e) =>
