@@ -624,7 +624,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Customer"
                       value={customer}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]   mb-3"
                       disabled
                     />
 
@@ -698,7 +698,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-3"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -711,7 +711,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]   mb-3"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -732,7 +732,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       ))}
                   </label>
                   <textarea
-                    className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[120px] ${
+                    className={`border mt-1 p-2  bg-gray-50  w-full rounded-md h-[120px] ${
                       !task && "border-red-500"
                     } mb-2`}
                     name="task"
@@ -758,7 +758,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       </label>
                       <textarea
                         placeholder="*Tanggapan konsumen dari hal yang disampaikan diatas, contoh : Konsumen menerima harga yang ditawarkan dan akan segera membuat po "
-                        className={`border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[120px] ${
+                        className={`border mt-1 p-2  bg-gray-50  w-full rounded-md h-[120px] ${
                           !notes && "border-red-500"
                         }`}
                         name="notes"
