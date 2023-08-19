@@ -45,15 +45,14 @@ export const WorkflowPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Name", accessor: "name", className: "w-[25%]" },
+      { header: "Name", accessor: "name" },
       {
         header: "Status",
         accessor: "status",
-        className: "w-[15%]",
       },
-      { header: "Doc", accessor: "doc", className: "w-[20%]" },
-      { header: "User", accessor: "user", className: "w-[20%]" },
-      { header: "", accessor: "updatedAt", className: "w-[20%]" },
+      { header: "Doc", accessor: "doc" },
+      { header: "User", accessor: "user" },
+      { header: "", accessor: "updatedAt" },
     ],
     []
   );
@@ -63,7 +62,6 @@ export const WorkflowPage: React.FC = (): any => {
       const result: any = await GetDataServer(DataAPI.WORKFLOW).FIND({
         limit: limit,
         page: page,
-        fields: ["name", "user.name", "workflowState", "updatedAt", "status"],
         filters: filter,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
@@ -74,7 +72,7 @@ export const WorkflowPage: React.FC = (): any => {
           return {
             id: item._id,
             checked: false,
-            doc: item.name,
+            doc: item.doc,
             name: (
               <b
                 onClick={() => navigate(`/workflow/${item._id}`)}
@@ -86,7 +84,7 @@ export const WorkflowPage: React.FC = (): any => {
             status: (
               <ButtonStatusComponent
                 status={item.status}
-                name={item.status==1?'Active':'Non Active'}
+                name={item.status == 1 ? "Active" : "Non Active"}
               />
             ),
             user: <div>{item.user.name}</div>,
