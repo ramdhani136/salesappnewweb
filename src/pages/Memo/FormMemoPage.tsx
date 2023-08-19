@@ -600,7 +600,7 @@ const FormMemoPage: React.FC = () => {
 
                     <label className="text-sm">Title</label>
                     <textarea
-                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[70px]"
+                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[90px]"
                       name="title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
