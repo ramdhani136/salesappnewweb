@@ -842,20 +842,29 @@ const FormVisitPage: React.FC = () => {
                       }
                     />
 
-                    <InputComponent
-                      label="Check In (Date)"
-                      value={user}
-                      className="h-[38px]  mb-4"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                     <h4 className="text-sm text-gray-800 mt-4 mb-2">Check In (Address)</h4>
-                    <textarea className="w-full border rounded-md h-16 bg-gray-50 px-3 py-2 text-md text-gray-900" />
+                    {id && (
+                      <>
+                        <InputComponent
+                          label="Check In (Date)"
+                          className="h-[38px]  mb-4"
+                          value={{
+                            valueData: data?.checkIn?.createdAt,
+                            valueInput: moment(
+                              `${data?.checkIn?.createdAt}`
+                            ).format("LLL"),
+                          }}
+                          disabled
+                        />
+                        <h4 className="text-sm text-gray-800 mt-4 mb-2">
+                          Check In (Address)
+                        </h4>
+                        <textarea
+                          disabled
+                          value={data?.checkIn?.address ?? ""}
+                          className="w-full border rounded-md h-20 bg-gray-50 px-3 py-2 text-md text-gray-900"
+                        />
+                      </>
+                    )}
                   </div>
 
                   <div className=" w-1/2 px-4 float-left  mb-4">
@@ -1135,20 +1144,29 @@ const FormVisitPage: React.FC = () => {
                         />
                       </>
                     )}
-                    <InputComponent
-                      label="Check Out (Date)"
-                      value={user}
-                      className="h-[38px]  mb-4"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <h4 className="text-sm text-gray-800 mt-4 mb-2">Check Out (Address)</h4>
-                    <textarea className="w-full border rounded-md h-16 bg-gray-50 px-3 py-2 text-md text-gray-900" />
+                    {id && data?.checkOut?.createdAt && (
+                      <>
+                        <InputComponent
+                          label="Check Out (Date)"
+                          value={{
+                            valueData: data?.checkOut?.createdAt,
+                            valueInput: moment(
+                              `${data?.checkOut?.createdAt}`
+                            ).format("LLL"),
+                          }}
+                          className="h-[38px]  mb-4"
+                          disabled
+                        />
+                        <h4 className="text-sm text-gray-800 mt-4 mb-2">
+                          Check Out (Address)
+                        </h4>
+                        <textarea
+                          disabled
+                          value={data?.checkOut?.address ?? ""}
+                          className="w-full border rounded-md h-20 bg-gray-50 px-3 py-2 text-md text-gray-900 mb-10"
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
