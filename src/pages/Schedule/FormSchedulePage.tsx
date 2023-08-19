@@ -372,7 +372,7 @@ const FormSchedulePage: React.FC = () => {
                         loading={loadingNaming}
                         label="Naming Series"
                         value={naming}
-                        className="h-[38px]   text-[0.93em] mb-3"
+                        className="h-[38px]  mb-4"
                         onChange={(e) =>
                           setNaming({ ...naming, valueInput: e })
                         }
@@ -403,7 +403,7 @@ const FormSchedulePage: React.FC = () => {
                       <InputComponent
                         label="Name"
                         value={name}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px] mb-4"
                         type="text"
                         onChange={(e) =>
                           setName({
@@ -425,7 +425,7 @@ const FormSchedulePage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -444,12 +444,12 @@ const FormSchedulePage: React.FC = () => {
                       disabled={id !== undefined && data.status != 0}
                     />
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       disabled={id !== undefined && data.status != 0}
                       label="Start Date"
                       value={startDate}
-                      className="h-[38px]  text-[0.93em] mb-4"
+                      className="h-[38px] mb-4"
                       type="date"
                       onChange={(e) => {
                         setStartDate({
@@ -476,7 +476,7 @@ const FormSchedulePage: React.FC = () => {
                         disabled={id !== undefined && data.status != 0}
                         label="Closing Date"
                         value={dueDate}
-                        className="h-[38px]  text-[0.93em] mb-4"
+                        className="h-[38px]  mb-4"
                         type="date"
                         onChange={(e) =>
                           setDueDate({
@@ -491,7 +491,7 @@ const FormSchedulePage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-4"
+                      className="h-[38px]   mb-4"
                       disabled
                     />
                     {id && (
@@ -499,7 +499,7 @@ const FormSchedulePage: React.FC = () => {
                         label="Progress"
                         value={progress}
                         type="text"
-                        className="h-[38px]   text-[0.93em] mb-4"
+                        className="h-[38px] mb-4"
                         disabled
                       />
                     )}

@@ -566,7 +566,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -676,7 +676,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                         }}
                         loading={groupLoading}
                         list={groupList}
-                        className="h-[38px]   text-[0.93em] mb-3"
+                        className="h-[38px]   mb-4"
                         onChange={(e) => {
                           setGroup({
                             ...group,
@@ -705,7 +705,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Lat"
                       value={lat}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="number"
                       onChange={(e) =>
                         setLat({
@@ -726,7 +726,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                         mandatoy
                         label="Lng"
                         value={lng}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px]   mb-4"
                         type="number"
                         onChange={(e) =>
                           setLng({
@@ -757,11 +757,11 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                       }
                     />
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -774,7 +774,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="ErpId"
                       value={erpId}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]   mb-4"
                       type="text"
                       onChange={(e) =>
                         setErpId({
@@ -792,7 +792,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Status"
                       value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="text"
                       onChange={(e) =>
                         setCreatedAt({
@@ -805,7 +805,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]   mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,

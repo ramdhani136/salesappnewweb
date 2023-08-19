@@ -372,7 +372,7 @@ const FormNamingSeriesPage: React.FC = () => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  text-sm mb-3"
+                      className="h-[38px]   mb-4"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -499,11 +499,11 @@ const FormNamingSeriesPage: React.FC = () => {
                       </ul>
                     )}
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-sm mb-4"
+                      className="h-[38px]  mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -517,7 +517,7 @@ const FormNamingSeriesPage: React.FC = () => {
                       <InputComponent
                         label="Status"
                         value={{ valueData: status, valueInput: status }}
-                        className="h-[38px]  text-sm mb-3"
+                        className="h-[38px]  mb-4"
                         type="text"
                         onChange={(e) =>
                           setCreatedAt({
@@ -531,7 +531,7 @@ const FormNamingSeriesPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-sm mb-4"
+                      className="h-[38px]   mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,

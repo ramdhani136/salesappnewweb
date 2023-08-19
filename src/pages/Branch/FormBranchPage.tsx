@@ -300,7 +300,7 @@ const FormBranchPage: React.FC = () => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px] mb-3"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -316,7 +316,7 @@ const FormBranchPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]  mb-3"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -340,7 +340,7 @@ const FormBranchPage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-3"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -353,7 +353,7 @@ const FormBranchPage: React.FC = () => {
                     <InputComponent
                       label="Status"
                       value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-3"
                       type="text"
                       onChange={(e) =>
                         setCreatedAt({

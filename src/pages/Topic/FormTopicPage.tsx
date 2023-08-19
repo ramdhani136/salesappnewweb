@@ -448,7 +448,7 @@ const FormTopicPage: React.FC = () => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  mb-3"
+                      className="h-[38px]  mb-4"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -468,7 +468,7 @@ const FormTopicPage: React.FC = () => {
                       <InputComponent
                         label="Status"
                         value={{ valueData: status, valueInput: status }}
-                        className="h-[38px]  mb-3"
+                        className="h-[38px]  mb-4"
                         type="text"
                         onChange={(e) =>
                           setCreatedAt({
@@ -607,7 +607,7 @@ const FormTopicPage: React.FC = () => {
                       </ul>
                     )}
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       label="Date"
                       value={createdAt}

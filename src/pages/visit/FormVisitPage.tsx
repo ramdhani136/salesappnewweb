@@ -11,7 +11,11 @@ import {
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
-import { IListInput, IValue } from "../../components/atoms/InputComponent";
+import {
+  IListInput,
+  IValue,
+  TypeField,
+} from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -689,7 +693,7 @@ const FormVisitPage: React.FC = () => {
                       <InputComponent
                         label="Name"
                         value={name}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px]  mb-4"
                         type="text"
                         disabled
                       />
@@ -699,7 +703,7 @@ const FormVisitPage: React.FC = () => {
                         loading={loadingNaming}
                         label="Naming Series"
                         value={naming}
-                        className="h-[38px]   text-[0.93em] mb-3"
+                        className="h-[38px]   mb-4"
                         onChange={(e) =>
                           setNaming({ ...naming, valueInput: e })
                         }
@@ -736,7 +740,7 @@ const FormVisitPage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -749,7 +753,7 @@ const FormVisitPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px] mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -828,19 +832,20 @@ const FormVisitPage: React.FC = () => {
                       }}
                       list={branchList}
                       type="text"
-                      className={`h-9 mb-10`}
+                      className={`h-9 mb-4`}
                       disabled={
                         id != null
-                          ? data.status !== "0" || data.checkOut!=undefined
+                          ? data.status !== "0" || data.checkOut != undefined
                             ? true
                             : false
                           : false
                       }
                     />
-                     {/* <InputComponent
-                      label="Check In"
+
+                    <InputComponent
+                      label="Check In (Date)"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-10"
+                      className="h-[38px]  mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -848,11 +853,12 @@ const FormVisitPage: React.FC = () => {
                         })
                       }
                       disabled
-                    /> */}
+                    />
+                     <h4 className="text-sm text-gray-800 mt-4 mb-2">Check In (Address)</h4>
+                    <textarea className="w-full border rounded-md h-16 bg-gray-50 px-3 py-2 text-md text-gray-900" />
                   </div>
-                  
-                
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     {branch.valueData && (
                       <InputComponent
                         mandatoy
@@ -925,7 +931,7 @@ const FormVisitPage: React.FC = () => {
                         className={`h-9 mb-4`}
                         disabled={
                           id != null
-                            ? data.status !== "0" || data.checkOut!=undefined
+                            ? data.status !== "0" || data.checkOut != undefined
                               ? true
                               : false
                             : false
@@ -1008,7 +1014,7 @@ const FormVisitPage: React.FC = () => {
                         className={`h-9 mb-4`}
                         disabled={
                           id != null
-                            ? data.status !== "0" || data.checkOut!=undefined
+                            ? data.status !== "0" || data.checkOut != undefined
                               ? true
                               : false
                             : false
@@ -1089,7 +1095,7 @@ const FormVisitPage: React.FC = () => {
                         }}
                         list={contactList}
                         type="text"
-                        className={`h-9 mb-3`}
+                        className={`h-9 mb-4`}
                         disabled={
                           id != null
                             ? data.status !== "0"
@@ -1104,7 +1110,7 @@ const FormVisitPage: React.FC = () => {
                         <InputComponent
                           label="Phone"
                           value={picPhone}
-                          className="h-[38px]  text-[0.93em] mb-3"
+                          className="h-[38px] mb-4"
                           type="text"
                           onChange={(e) =>
                             setCreatedAt({
@@ -1117,7 +1123,7 @@ const FormVisitPage: React.FC = () => {
                         <InputComponent
                           label="Position"
                           value={picPosition}
-                          className="h-[38px]  text-[0.93em] mb-3"
+                          className="h-[38px] mb-4"
                           type="text"
                           onChange={(e) =>
                             setCreatedAt({
@@ -1129,6 +1135,20 @@ const FormVisitPage: React.FC = () => {
                         />
                       </>
                     )}
+                    <InputComponent
+                      label="Check Out (Date)"
+                      value={user}
+                      className="h-[38px]  mb-4"
+                      onChange={(e) =>
+                        setUser({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      disabled
+                    />
+                    <h4 className="text-sm text-gray-800 mt-4 mb-2">Check Out (Address)</h4>
+                    <textarea className="w-full border rounded-md h-16 bg-gray-50 px-3 py-2 text-md text-gray-900" />
                   </div>
                 </div>
               </div>

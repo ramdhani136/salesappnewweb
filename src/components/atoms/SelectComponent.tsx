@@ -26,7 +26,7 @@ const Select: React.FC<ISelect> = ({
 }) => {
   return (
     <div className="w-full mb-4">
-      {title && <label className="block text-md text-gray-700 ">{title}</label>}
+      {title && <label className="block text-sm text-gray-700 ">{title}</label>}
       <select
         disabled={disabled}
         onChange={(e) => {

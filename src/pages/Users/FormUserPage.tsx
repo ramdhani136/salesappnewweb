@@ -421,7 +421,7 @@ const FormUserPage: React.FC = () => {
                           type="text"
                           //   disabled={disabled}
 
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-4`}
                         />
                         <InputComponent
                           mandatoy
@@ -432,7 +432,7 @@ const FormUserPage: React.FC = () => {
                           }
                           type="text"
                           //   disabled={disabled}
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-4`}
                         />
                         <InputComponent
                           label="Phone"
@@ -442,7 +442,7 @@ const FormUserPage: React.FC = () => {
                           }
                           type="text"
                           //   disabled={disabled}
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-4`}
                         />
                       </div>
                       <div className="flex-1">
@@ -454,7 +454,7 @@ const FormUserPage: React.FC = () => {
                           }
                           type="text"
                           //   disabled={disabled}
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-4`}
                         />
                         <Select
                           title="Status"
@@ -472,7 +472,7 @@ const FormUserPage: React.FC = () => {
                           type="password"
                           //   disabled={disabled}
                           remark="*Only filled if you want to change the previous password"
-                          className={`h-9 mb-3`}
+                          className={`h-9 mb-4`}
                         />
                       </div>
                     </div>

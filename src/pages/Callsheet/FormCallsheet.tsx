@@ -642,7 +642,7 @@ const FormCallsheetPage: React.FC = () => {
                       <InputComponent
                         label="Name"
                         value={name}
-                        className="h-[38px]  text-[0.93em] mb-3"
+                        className="h-[38px]   mb-4"
                         type="text"
                         disabled
                       />
@@ -652,7 +652,7 @@ const FormCallsheetPage: React.FC = () => {
                         loading={loadingNaming}
                         label="Naming Series"
                         value={naming}
-                        className="h-[38px]   text-[0.93em] mb-3"
+                        className="h-[38px]   mb-4"
                         onChange={(e) =>
                           setNaming({ ...naming, valueInput: e })
                         }
@@ -695,7 +695,7 @@ const FormCallsheetPage: React.FC = () => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px] mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -708,7 +708,7 @@ const FormCallsheetPage: React.FC = () => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
@@ -797,7 +797,7 @@ const FormCallsheetPage: React.FC = () => {
                       }
                     />
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     {branch.valueData && (
                       <InputComponent
                         mandatoy
@@ -1034,7 +1034,7 @@ const FormCallsheetPage: React.FC = () => {
                         }}
                         list={contactList}
                         type="text"
-                        className={`h-9 mb-3`}
+                        className={`h-9 mb-4`}
                         disabled={
                           id != null
                             ? data.status !== "0"
@@ -1049,7 +1049,7 @@ const FormCallsheetPage: React.FC = () => {
                         <InputComponent
                           label="Phone"
                           value={picPhone}
-                          className="h-[38px]  text-[0.93em] mb-3"
+                          className="h-[38px] mb-4"
                           type="text"
                           onChange={(e) =>
                             setCreatedAt({
@@ -1062,7 +1062,7 @@ const FormCallsheetPage: React.FC = () => {
                         <InputComponent
                           label="Position"
                           value={picPosition}
-                          className="h-[38px]  text-[0.93em] mb-3"
+                          className="h-[38px] mb-4"
                           type="text"
                           onChange={(e) =>
                             setCreatedAt({

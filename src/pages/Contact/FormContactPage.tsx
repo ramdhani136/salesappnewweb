@@ -439,7 +439,7 @@ const FormContactPage: React.FC<any> = ({ props }) => {
                       mandatoy
                       label="Name"
                       value={name}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="text"
                       onChange={(e) =>
                         setName({
@@ -530,25 +530,25 @@ const FormContactPage: React.FC<any> = ({ props }) => {
                           mandatoy
                           label="Group"
                           value={group}
-                          className="h-[38px]   text-[0.93em] mb-3"
+                          className="h-[38px]    mb-4"
                           disabled
                         />
                         <InputComponent
                           label="Branch"
                           disabled
                           value={branch}
-                          className="h-[38px]  text-[0.93em] mb-3"
+                          className="h-[38px]  mb-4"
                           type="text"
                         />
                       </>
                     )}
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       mandatoy
                       label="Phone"
                       value={phone}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]   mb-4"
                       type="number"
                       onChange={(e) =>
                         setPhone({
@@ -566,7 +566,7 @@ const FormContactPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Date"
                       value={createdAt}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px] mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -580,7 +580,7 @@ const FormContactPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Status"
                       value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  text-[0.93em] mb-3"
+                      className="h-[38px]  mb-4"
                       type="text"
                       onChange={(e) =>
                         setCreatedAt({
@@ -593,7 +593,7 @@ const FormContactPage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       label="Created By"
                       value={user}
-                      className="h-[38px]   text-[0.93em] mb-3"
+                      className="h-[38px]   mb-4"
                       onChange={(e) =>
                         setUser({
                           valueData: e,
