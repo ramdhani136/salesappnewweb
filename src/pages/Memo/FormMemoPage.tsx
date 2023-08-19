@@ -46,7 +46,7 @@ const FormMemoPage: React.FC = () => {
   });
 
   const [startDate, setStartDate] = useState<IValue>({
-    valueData:null,
+    valueData: null,
     valueInput: "",
   });
 
@@ -54,6 +54,44 @@ const FormMemoPage: React.FC = () => {
     valueData: null,
     valueInput: "",
   });
+
+  const [display, setDisplay] = useState<any[]>([]);
+  const [displayList, setDisplayList] = useState<IListInput[]>([
+    { name: "Visit", value: "visit" },
+    { name: "Callsheet", value: "callsheet" },
+    { name: "Dahsboard", value: "dashboard" },
+    { name: "Modal", value: "alert" },
+  ]);
+  const [displayInput, setDisplayInput] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+
+  // branch
+  const [branch, setBranch] = useState<any[]>([]);
+  const [branchList, setBranchList] = useState<IListInput[]>([]);
+  const [branchPage, setBranchPage] = useState<Number>(1);
+  const [branchLoading, setBranchLoading] = useState<boolean>(true);
+  const [branchMoreLoading, setBranchMoreLoading] = useState<boolean>(false);
+  const [branchHasMore, setBranchHasMore] = useState<boolean>(false);
+  const [branchValue, setBranchValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  // branch
+  const [group, setGroup] = useState<any[]>([]);
+  const [groupList, setGroupList] = useState<IListInput[]>([]);
+  const [groupPage, setGroupPage] = useState<Number>(1);
+  const [groupLoading, setGroupLoading] = useState<boolean>(true);
+  const [groupMoreLoading, setGroupMoreLoading] = useState<boolean>(false);
+  const [groupHasMore, setGroupHasMore] = useState<boolean>(false);
+  const [groupValue, setGroupValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
 
   const [status, setStatus] = useState<String>("Draft");
   const [notes, setNotes] = useState<string>("");
@@ -156,6 +194,98 @@ const FormMemoPage: React.FC = () => {
 
       navigate("/memo");
     }
+  };
+
+  const getBranch = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    if (data.refresh === undefined) {
+      data.refresh = true;
+    }
+    try {
+      const result: any = await GetDataServer(DataAPI.BRANCH).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : branchPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setBranchList([...branchList, ...listInput]);
+        } else {
+          setBranchList([...listInput]);
+        }
+        setBranchHasMore(result.hasMore);
+        setBranchPage(result.nextPage);
+      }
+
+      setBranchLoading(false);
+      setBranchHasMore(false);
+    } catch (error: any) {
+      setBranchLoading(false);
+      setBranchMoreLoading(false);
+      setBranchHasMore(false);
+    }
+  };
+
+  const ResetBranch = () => {
+    setBranchList([]);
+    setBranchHasMore(false);
+    setBranchPage(1);
+    setBranchLoading(true);
+  };
+
+  const getGroup = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    if (data.refresh === undefined) {
+      data.refresh = true;
+    }
+    try {
+      const result: any = await GetDataServer(DataAPI.GROUP).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : groupPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setGroupList([...groupList, ...listInput]);
+        } else {
+          setGroupList([...listInput]);
+        }
+        setGroupHasMore(result.hasMore);
+        setGroupPage(result.nextPage);
+      }
+
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+    } catch (error: any) {
+      setGroupLoading(false);
+      setGroupMoreLoading(false);
+      setGroupHasMore(false);
+    }
+  };
+
+  const ResetGroup = () => {
+    setGroupList([]);
+    setGroupHasMore(false);
+    setGroupPage(1);
+    setGroupLoading(true);
   };
 
   const getNaming = async (): Promise<void> => {
@@ -428,9 +558,97 @@ const FormMemoPage: React.FC = () => {
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                     />
+                    <InputComponent
+                      remark="*Fill in if you want to be displayed in a particular branch"
+                      label="Branch"
+                      infiniteScroll={{
+                        loading: branchMoreLoading,
+                        hasMore: branchHasMore,
+                        next: () => {
+                          setBranchMoreLoading(true);
+                          getBranch({
+                            refresh: false,
+                            search: branchValue.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetBranch();
+                          getBranch({
+                            refresh: true,
+                            search: branchValue.valueInput,
+                          });
+                        },
+                      }}
+                      loading={branchLoading}
+                      modalStyle="mt-2"
+                      value={branchValue}
+                      onChange={(e) => {
+                        setBranchValue({
+                          ...branchValue,
+                          valueInput: e,
+                        });
+                      }}
+                      onCLick={() => {
+                        ResetBranch();
+                        getBranch({
+                          refresh: true,
+                          search: branchValue.valueInput,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        const cekDup = branch.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let getBranch = [
+                            ...branch,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setBranch(getBranch);
+                        }
+
+                        setBranchValue({ valueData: "", valueInput: "" });
+                      }}
+                      onReset={() => {
+                        setBranchValue({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={branchList}
+                      type="text"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                      className={`h-9 mb-3`}
+                    />
+                    {branch.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {branch.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                if (!id || data.status === "Draft") {
+                                  const genBranch = branch.filter((i: any) => {
+                                    return i._id !== item._id;
+                                  });
+
+                                  setBranch(genBranch);
+                                }
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-4">
-                  <InputComponent
+                    <InputComponent
                       disabled={id !== undefined && data.status != 0}
                       label="Start At"
                       value={startDate}
@@ -498,6 +716,153 @@ const FormMemoPage: React.FC = () => {
                       }
                       disabled
                     />
+                    <InputComponent
+                      remark="*Select you want to display anywhere"
+                      label="Display"
+                      value={displayInput}
+                      className="h-[38px]  mb-3"
+                      onChange={(e) =>
+                        setDisplayInput({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      list={displayList}
+                      onSelected={(e) => {
+                        const cekDup = display.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let getDisplay = [
+                            ...display,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setDisplay(getDisplay);
+                        }
+
+                        setDisplayInput({ valueData: "", valueInput: "" });
+                      }}
+                      onReset={() => {
+                        setDisplayInput({
+                          valueData: "",
+                          valueInput: "",
+                        });
+                      }}
+                    />
+                    {display.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {display.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                if (!id || data.status === "0") {
+                                  const genDisplay = display.filter(
+                                    (i: any) => {
+                                      return i._id !== item._id;
+                                    }
+                                  );
+
+                                  setDisplay(genDisplay);
+                                }
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    <InputComponent
+                      remark="*Fill in if you want to be displayed in a particular customer group"
+                      label="Group"
+                      infiniteScroll={{
+                        loading: groupMoreLoading,
+                        hasMore: groupHasMore,
+                        next: () => {
+                          setGroupMoreLoading(true);
+                          getGroup({
+                            refresh: false,
+                            search: groupValue.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetGroup();
+                          getGroup({
+                            refresh: true,
+                            search: groupValue.valueInput,
+                          });
+                        },
+                      }}
+                      loading={groupLoading}
+                      modalStyle="mt-2"
+                      value={groupValue}
+                      onChange={(e) => {
+                        setGroupValue({
+                          ...groupValue,
+                          valueInput: e,
+                        });
+                      }}
+                      onCLick={() => {
+                        ResetGroup();
+                        getGroup({
+                          refresh: true,
+                          search: groupValue.valueInput,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        const cekDup = group.find(
+                          (item: any) => item._id === e.value
+                        );
+
+                        if (!cekDup) {
+                          let getGroup = [
+                            ...group,
+                            { _id: e.value, name: e.name },
+                          ];
+                          setGroup(getGroup);
+                        }
+
+                        setGroupValue({ valueData: "", valueInput: "" });
+                      }}
+                      onReset={() => {
+                        setGroupValue({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      list={groupList}
+                      type="text"
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                      className={`h-9 mb-3`}
+                    />
+                    {group.length > 0 && (
+                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                        {group.map((item: any, index: number) => {
+                          return (
+                            <li
+                              onClick={() => {
+                                if (!id || data.status === "Draft") {
+                                  const genGroup = group.filter((i: any) => {
+                                    return i._id !== item._id;
+                                  });
+
+                                  setGroup(genGroup);
+                                }
+                              }}
+                              key={index}
+                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
+                            >
+                              {item.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>

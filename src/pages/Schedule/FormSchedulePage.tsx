@@ -13,7 +13,6 @@ import {
 import {
   IListInput,
   IValue,
-  TypeField,
 } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
@@ -45,8 +44,8 @@ const FormSchedulePage: React.FC = () => {
   const [type, setType] = useState<string>("all");
   const [notes, setNotes] = useState<string>("");
   const [startDate, setStartDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+    valueData: null,
+    valueInput:"",
   });
   const [naming, setNaming] = useState<IValue>({
     valueData: "",
@@ -58,8 +57,8 @@ const FormSchedulePage: React.FC = () => {
   });
 
   const [dueDate, setDueDate] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+    valueData: null,
+    valueInput:"",
   });
   const [name, setName] = useState<IValue>({
     valueData: "",
