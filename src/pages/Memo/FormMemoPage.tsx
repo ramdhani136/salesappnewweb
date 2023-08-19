@@ -8,7 +8,7 @@ import {
   InputComponent,
   TimeLineVertical,
 } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
+import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -31,6 +31,11 @@ const FormMemoPage: React.FC = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
+  const [naming, setNaming] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
@@ -40,11 +45,22 @@ const FormMemoPage: React.FC = () => {
     valueInput: "",
   });
 
+  const [startDate, setStartDate] = useState<IValue>({
+    valueData:null,
+    valueInput: "",
+  });
+
+  const [dueDate, setDueDate] = useState<IValue>({
+    valueData: null,
+    valueInput: "",
+  });
+
   const [status, setStatus] = useState<String>("Draft");
-  const [desc, setDesc] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    desc: desc ?? "",
+    title: title ?? "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -55,6 +71,9 @@ const FormMemoPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+
+  const [loadingNaming, setLoadingName] = useState<boolean>(true);
+  const [listNaming, setListNaming] = useState<IListInput[]>([]);
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -96,14 +115,26 @@ const FormMemoPage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
+      setStartDate({
+        valueData: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.activeDate).format("YYYY-MM-DD"),
+      });
+      setDueDate({
+        valueData: moment(result.data.closingDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.closingDate).format("YYYY-MM-DD"),
+      });
+
       setData(result.data);
 
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
+      if (result.data.title) {
+        setTitle(result.data.title);
+      }
+      if (result.data.notes) {
+        setNotes(result.data.notes);
       }
       setStatus(
         result.data.status == "0"
@@ -124,6 +155,34 @@ const FormMemoPage: React.FC = () => {
       });
 
       navigate("/memo");
+    }
+  };
+
+  const getNaming = async (): Promise<void> => {
+    try {
+      const result: any = await GetDataServer(DataAPI.NAMING).FIND({
+        filters: [["doc", "=", "memo"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+
+        if (listInput.length === 1) {
+          setNaming({
+            valueData: listInput[0].value,
+            valueInput: listInput[0].name,
+          });
+        }
+
+        setListNaming(listInput);
+      }
+      setLoadingName(false);
+    } catch (error) {
+      setLoadingName(false);
     }
   };
 
@@ -159,7 +218,7 @@ const FormMemoPage: React.FC = () => {
     try {
       let data: any = {
         name: name.valueData,
-        desc: desc,
+        title: title,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -195,6 +254,7 @@ const FormMemoPage: React.FC = () => {
   };
 
   useEffect(() => {
+    getNaming();
     if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
@@ -208,14 +268,14 @@ const FormMemoPage: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      desc: desc ?? "",
+      title: title ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [name, title, notes]);
   // End
 
   return (
@@ -291,51 +351,132 @@ const FormMemoPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-10">
                   <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      mandatoy
-                      label="Name"
-                      value={name}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    />
+                    {!id && (
+                      <InputComponent
+                        loading={loadingNaming}
+                        label="Naming Series"
+                        value={naming}
+                        className="h-[38px]   mb-4"
+                        onChange={(e) =>
+                          setNaming({ ...naming, valueInput: e })
+                        }
+                        onSelected={(e) => {
+                          setNaming({
+                            valueData: e.value,
+                            valueInput: e.name,
+                          });
+                        }}
+                        onCLick={getNaming}
+                        list={listNaming}
+                        mandatoy
+                        modalStyle="top-9 max-h-[160px]"
+                        onReset={() =>
+                          setNaming({ valueData: null, valueInput: "" })
+                        }
+                        disabled={
+                          id != null
+                            ? data.status !== "0"
+                              ? true
+                              : false
+                            : false
+                        }
+                        closeIconClass="top-[13.5px]"
+                      />
+                    )}
+                    {id && (
+                      <InputComponent
+                        mandatoy
+                        label="Name"
+                        value={name}
+                        className="h-[38px] mb-4"
+                        type="text"
+                        disabled
+                      />
+                    )}
 
                     <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]  mb-3"
+                      label="Status"
+                      value={{ valueData: status, valueInput: status }}
+                      className="h-[38px]  mb-4"
+                      type="text"
                       onChange={(e) =>
-                        setUser({
+                        setCreatedAt({
                           valueData: e,
                           valueInput: e,
                         })
                       }
                       disabled
                     />
-                    <label className="text-sm">Desc</label>
+
+                    <label className="text-sm">Title</label>
                     <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
+                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[70px]"
+                      name="title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      disabled={
+                        id != null ? (status !== "Draft" ? true : false) : false
+                      }
+                    />
+                    <label className="text-sm">Notes</label>
+                    <textarea
+                      className="border mt-1 p-2 bg-gray-50  w-full rounded-md h-[200px]"
+                      name="title"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
                     />
                   </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
+                  <div className=" w-1/2 px-4 float-left  mb-4">
+                  <InputComponent
+                      disabled={id !== undefined && data.status != 0}
+                      label="Start At"
+                      value={startDate}
+                      className="h-[38px] mb-4"
+                      type="date"
+                      onChange={(e) => {
+                        setStartDate({
+                          valueData: e,
+                          valueInput: e,
+                        });
+                        if (
+                          moment(Number(new Date(e))).format("YYYY-MM-DD") >
+                          moment(Number(new Date(dueDate.valueData))).format(
+                            "YYYY-MM-DD"
+                          )
+                        ) {
+                          setDueDate({
+                            valueData: e,
+                            valueInput: e,
+                          });
+                        }
+                      }}
+                      min={moment(Number(new Date())).format("YYYY-MM-DD")}
+                      mandatoy
+                    />
+                    {startDate.valueData && (
+                      <InputComponent
+                        disabled={id !== undefined && data.status != 0}
+                        label="Closing At"
+                        value={dueDate}
+                        className="h-[38px]  mb-4"
+                        type="date"
+                        onChange={(e) =>
+                          setDueDate({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        mandatoy
+                        min={startDate.valueData}
+                      />
+                    )}
                     <InputComponent
-                      label="Date"
+                      label="Created At"
                       value={createdAt}
-                      className="h-[38px]  mb-3"
+                      className="h-[38px]  mb-4"
                       type="date"
                       onChange={(e) =>
                         setCreatedAt({
@@ -346,12 +487,11 @@ const FormMemoPage: React.FC = () => {
                       disabled
                     />
                     <InputComponent
-                      label="Status"
-                      value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  mb-3"
-                      type="text"
+                      label="Created By"
+                      value={user}
+                      className="h-[38px]  mb-4"
                       onChange={(e) =>
-                        setCreatedAt({
+                        setUser({
                           valueData: e,
                           valueInput: e,
                         })
