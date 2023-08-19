@@ -15,6 +15,7 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import moment from "moment";
 
 export const MemoPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -47,8 +48,12 @@ export const MemoPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
+      { header: "Title", accessor: "title" },
       { header: "Status", accessor: "workflowState" },
       { header: "User", accessor: "user" },
+      { header: "Active Date", accessor: "activeDate" },
+      { header: "Due Date", accessor: "dueDate" },
+      { header: "Display", accessor: "display" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -70,12 +75,30 @@ export const MemoPage: React.FC = (): any => {
             id: item._id,
             checked: false,
             doc: item.name,
+            title: <h4>{item.title}</h4>,
+            activeDate: <h4>{moment(`${item.activeDate}`).format("LL")}</h4>,
+            dueDate: <h4>{moment(`${item.closingDate}`).format("LL")}</h4>,
             name: (
               <Link to={`/memo/${item._id}`}>
                 <b className="font-medium">{item.name}</b>
               </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
+            display: (
+              <div className="p-2">
+                {item.display &&
+                  item.display.map((i: any, index: number) => {
+                    return (
+                      <button
+                        key={index}
+                        className="border rounded-md bg-red-600 border-red-700  text-sm  text-white px-2 py-1 mr-1 mb-1"
+                      >
+                        {i}
+                      </button>
+                    );
+                  })}
+              </div>
+            ),
 
             workflowState: (
               <ButtonStatusComponent
@@ -219,6 +242,7 @@ export const MemoPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+            width="w-[120%]"
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}
