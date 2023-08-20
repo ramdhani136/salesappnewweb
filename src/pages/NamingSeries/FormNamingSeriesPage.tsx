@@ -237,6 +237,9 @@ const FormNamingSeriesPage: React.FC = () => {
   }, []);
 
   const onSave = async (nextState?: String): Promise<any> => {
+    if (!name.valueData) {
+      throw new Error("Nama wajib diisi!");
+    }
     setLoading(true);
     try {
       let updata = {};
@@ -263,14 +266,16 @@ const FormNamingSeriesPage: React.FC = () => {
         navigate(0);
       }
     } catch (error: any) {
-      setLoading(false);
       Swal.fire(
         "Error!",
         `${
-          error?.response?.data?.msg?.message ??
-          error?.response?.data?.msg ??
-          error ??
-          "Error Insert"
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
         }`,
         "error"
       );
@@ -473,11 +478,11 @@ const FormNamingSeriesPage: React.FC = () => {
                             <li
                               onClick={() => {
                                 if (!id || data.status == "0") {
-                                const setTags = branch.filter((i: any) => {
-                                  return i._id !== item._id;
-                                });
+                                  const setTags = branch.filter((i: any) => {
+                                    return i._id !== item._id;
+                                  });
 
-                                setBranch(setTags);
+                                  setBranch(setTags);
                                 }
                               }}
                               key={index}

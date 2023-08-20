@@ -275,6 +275,15 @@ const FormContactPage: React.FC<any> = ({ props }) => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
+      if (!name.valueData) {
+        throw new Error("Nama wajib diisi!");
+      }
+      if (!customer.valueData) {
+        throw new Error("Customer wajib diisi!");
+      }
+      if (!phone.valueData) {
+        throw new Error("Phone wajib diisi!");
+      }
       let updata: any = {};
       if (nextState) {
         updata = { nextState: nextState };
@@ -330,14 +339,16 @@ const FormContactPage: React.FC<any> = ({ props }) => {
         }
       }
     } catch (error: any) {
-      setLoading(false);
       Swal.fire(
         "Error!",
         `${
-          error?.response?.data?.msg?.message ??
-          error?.response?.data?.msg ??
-          error ??
-          "Error Insert"
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
         }`,
         "error"
       );
