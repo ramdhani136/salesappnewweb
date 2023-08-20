@@ -223,85 +223,117 @@ const FormUserPage: React.FC = () => {
   };
 
   const onSave = async (nextStateId?: String): Promise<void> => {
-    const inData = new FormData();
+    try {
+      const inData = new FormData();
 
-    file && inData.append("imgfile", file);
+      file && inData.append("imgfile", file);
 
-    if (nextStateId) {
-      inData.append("nextState", `${nextStateId}`);
-    }
-    inData.append("name", name.valueData);
-    inData.append("username", username.valueData);
-    inData.append("email", email.valueData);
-    inData.append("phone", phone.valueData);
-    password.valueData && inData.append("password", password.valueData);
-    inData.append("ErpToken", erpToken.valueData ?? "");
-    inData.append("ErpSite", erpSite.valueData ?? "");
-    inData.append("status", status);
-    inData.append("workflowState", status === "0" ? "Disabled" : "Enabled");
-
-    let response: any;
-    if (id) {
-      setLoading(true);
-      try {
-        response = await FetchApi.put(
-          `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
-          inData
-        );
-
-        if (response.data.status === 200) {
-          Swal.fire("Success!", `Data updated successfully`, "success");
-          getData();
-          if (file) {
-            navigate(0);
-          }
-        } else {
-          throw response.data.msg;
-        }
-      } catch (error: any) {
-        Swal.fire(
-          "Error!",
-          `${
-            error.response.status === 403
-              ? "Access Denied"
-              : error.response.data.msg ?? "Error update"
-          }`,
-          error
-        );
-        setLoading(false);
+      if (nextStateId) {
+        inData.append("nextState", `${nextStateId}`);
       }
-    } else {
-      setLoading(true);
-      try {
-        response = await FetchApi.post(
-          `${import.meta.env.VITE_PUBLIC_URI}/users`,
-          inData
-        );
-        if (response.data.status) {
-          Swal.fire("Success!", `Data saved successfully`, "success");
+      if (name.valueData) {
+        inData.append("name", name.valueData);
+      } else {
+        throw new Error("Name wajib diisi!");
+      }
+      if (username.valueData) {
+        inData.append("username", username.valueData);
+      } else {
+        throw new Error("Username wajib diisi!");
+      }
+      inData.append("email", email.valueData);
+      inData.append("phone", phone.valueData);
+      password.valueData && inData.append("password", password.valueData);
+      inData.append("ErpToken", erpToken.valueData ?? "");
+      inData.append("ErpSite", erpSite.valueData ?? "");
+      inData.append("status", status);
+      inData.append("workflowState", status === "0" ? "Disabled" : "Enabled");
 
-          if (response.data.status !== 200) {
+      let response: any;
+      if (id) {
+        setLoading(true);
+        try {
+          response = await FetchApi.put(
+            `${import.meta.env.VITE_PUBLIC_URI}/users/${id}`,
+            inData
+          );
+
+          if (response.data.status === 200) {
+            Swal.fire("Success!", `Data updated successfully`, "success");
+            getData();
+            if (file) {
+              navigate(0);
+            }
+          } else {
             throw response.data.msg;
           }
-
-          navigate(`/user/${response.data.data._id}`);
-
-          navigate(0);
-        } else {
-          Swal.fire("error!", `Check your data!`, "error");
+        } catch (error: any) {
+          Swal.fire(
+            "Error!",
+            `${
+              error?.response?.data?.error
+                ? error.response.data.error
+                : error?.response?.data?.msg
+                ? error?.response?.data?.msg
+                : error?.message
+                ? error?.message
+                : error ?? "Error Network"
+            }`,
+            "error"
+          );
+          setLoading(false);
         }
-      } catch (error: any) {
-        Swal.fire(
-          "Error!",
-          `${
-            error.response.status === 403
-              ? "Access Denied"
-              : error.response.data.msg ?? "Error Insert"
-          }`,
-          "error"
-        );
-        setLoading(false);
+      } else {
+        setLoading(true);
+        try {
+          response = await FetchApi.post(
+            `${import.meta.env.VITE_PUBLIC_URI}/users`,
+            inData
+          );
+          if (response.data.status) {
+            Swal.fire("Success!", `Data saved successfully`, "success");
+
+            if (response.data.status !== 200) {
+              throw response.data.msg;
+            }
+
+            navigate(`/user/${response.data.data._id}`);
+
+            navigate(0);
+          } else {
+            Swal.fire("error!", `Check your data!`, "error");
+          }
+        } catch (error: any) {
+          Swal.fire(
+            "Error!",
+            `${
+              error?.response?.data?.error
+                ? error.response.data.error
+                : error?.response?.data?.msg
+                ? error?.response?.data?.msg
+                : error?.message
+                ? error?.message
+                : error ?? "Error Network"
+            }`,
+            "error"
+          );
+        }
       }
+      setLoading(false);
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Network"
+        }`,
+        "error"
+      );
     }
   };
 

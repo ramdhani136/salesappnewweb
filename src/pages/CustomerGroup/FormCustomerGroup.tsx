@@ -310,6 +310,10 @@ const FormCustomerGroupPage: React.FC = () => {
     try {
       let isBranch: string[] = [];
 
+      if(!name.valueData){
+        throw new Error("Nama wajib disii!")
+      }
+
       if (nextState == undefined) {
         if (branch.length > 0) {
           isBranch = branch.map((item: any) => item._id);
@@ -349,9 +353,13 @@ const FormCustomerGroupPage: React.FC = () => {
       Swal.fire(
         "Error!",
         `${
-          error.response.data.msg.message ??
-          error.response.data.msg ??
-          "Error Insert"
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
         }`,
         "error"
       );
