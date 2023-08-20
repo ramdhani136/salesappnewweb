@@ -190,7 +190,7 @@ const FormCallsheetPage: React.FC = () => {
         valueInput: result.data.createdBy.name,
       });
 
-      if (result.data.contact) {
+      if (result?.data?.contact) {
         setContact({
           valueData: result.data.contact._id,
           valueInput: result.data.contact.name,
@@ -210,7 +210,7 @@ const FormCallsheetPage: React.FC = () => {
       setPrevData({
         type: result.data.type,
         customer: result.data.customer._id,
-        contact: result.data.contact._id,
+        contact: result?.data?.contact?._id ?? "",
       });
 
       setLoading(false);
@@ -496,6 +496,12 @@ const FormCallsheetPage: React.FC = () => {
       if (nextState) {
         updata = { nextState: nextState };
       } else {
+        if (!customer.valueData) {
+          throw new Error("Customer wajib diisi!");
+        }
+        if (!contact.valueData) {
+          throw new Error("Contact wajib diisi!");
+        }
         updata = {
           type: callType,
           customer: customer.valueData,
@@ -1082,7 +1088,9 @@ const FormCallsheetPage: React.FC = () => {
                   name="Tasks"
                   className="mt-5"
                   child={
-                    <TaskPage props={{docId: id, data: task, status: data.status }} />
+                    <TaskPage
+                      props={{ docId: id, data: task, status: data.status }}
+                    />
                   }
                 />
               )}
@@ -1090,7 +1098,12 @@ const FormCallsheetPage: React.FC = () => {
                 <ToggleBodyComponent
                   name="Result"
                   className="mt-5"
-                  child={<NotesPage props={{ docId: id, data: data }} type="callsheet" />}
+                  child={
+                    <NotesPage
+                      props={{ docId: id, data: data }}
+                      type="callsheet"
+                    />
+                  }
                 />
               )}
               <TimeLineVertical data={history} />

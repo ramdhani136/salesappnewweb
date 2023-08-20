@@ -10,10 +10,7 @@ import {
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
-import {
-  IListInput,
-  IValue,
-} from "../../components/atoms/InputComponent";
+import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -45,7 +42,7 @@ const FormSchedulePage: React.FC = () => {
   const [notes, setNotes] = useState<string>("");
   const [startDate, setStartDate] = useState<IValue>({
     valueData: null,
-    valueInput:"",
+    valueInput: "",
   });
   const [naming, setNaming] = useState<IValue>({
     valueData: "",
@@ -58,7 +55,7 @@ const FormSchedulePage: React.FC = () => {
 
   const [dueDate, setDueDate] = useState<IValue>({
     valueData: null,
-    valueInput:"",
+    valueInput: "",
   });
   const [name, setName] = useState<IValue>({
     valueData: "",
@@ -193,6 +190,9 @@ const FormSchedulePage: React.FC = () => {
           nextState: nextState,
         };
       } else {
+        if (!notes) {
+          throw new Error("Notes wajib diisi!");
+        }
         data = {
           type: type,
           notes: notes,
@@ -219,9 +219,9 @@ const FormSchedulePage: React.FC = () => {
       Swal.fire(
         "Error!",
         `${
-          error.response.data.msg
+          error?.response?.data?.msg
             ? error.response.data.msg
-            : error.message
+            : error?.message
             ? error.message
             : "Error Insert"
         }`,

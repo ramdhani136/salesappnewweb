@@ -535,6 +535,11 @@ const FormVisitPage: React.FC = () => {
       if (nextState) {
         updata = { nextState: nextState };
       } else {
+
+        if(!customer.valueData){
+          throw new Error("Customer wajib diisi!")
+        }
+
         updata = {
           customer: customer.valueData,
           contact: contact.valueData,
