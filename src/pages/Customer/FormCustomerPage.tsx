@@ -393,10 +393,22 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
         inData.append("workflowState", "Submitted");
       }
 
-      inData.append("name", name.valueData);
+      if (name.valueData) {
+        inData.append("name", name.valueData);
+      } else {
+        throw new Error("Nama wajib diisi!");
+      }
       inData.append("type", type);
-      inData.append("branch", branch.valueData);
-      inData.append("customerGroup", group.valueData);
+      if (branch.valueData) {
+        inData.append("branch", branch.valueData);
+      } else {
+        throw new Error("Branch wajib diisi!");
+      }
+      if(group.valueData){
+        inData.append("customerGroup", group.valueData);
+      }else{
+        throw new Error("Group wajib diisi!");
+      }
       inData.append("erpId", erpId.valueData);
       inData.append("address", address);
       if (lat.valueData) {
@@ -440,15 +452,16 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
         }
       }
     } catch (error: any) {
-      console.log(error);
-      setLoading(false);
       Swal.fire(
         "Error!",
         `${
-          error?.response?.data?.msg?.message ??
-          error?.response?.data?.msg ??
-          error ??
-          "Error Insert"
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
         }`,
         "error"
       );
