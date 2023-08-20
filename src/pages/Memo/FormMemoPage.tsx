@@ -979,7 +979,13 @@ const FormMemoPage: React.FC = () => {
                           valueData: "",
                           valueInput: "",
                         });
-                      }}
+                      }}disabled={
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
+                      }
                     />
                     {display.length > 0 && (
                       <ul className="w-full h-auto rounded-sm border p-2 float-left">

@@ -6,6 +6,7 @@ import ChatsComponent from "./ChatsComponent";
 import ChatsConversions from "./ChatsConversions";
 import ChatMessageComponent from "./ChatMessageComponent";
 import ChatBubleComponent from "./ChatBubleComponent";
+import ReportSalesAnalytic from "./ReportSalesAnalytic";
 
 export {
   LayoutComponent,
@@ -16,4 +17,5 @@ export {
   ChatsConversions,
   ChatMessageComponent,
   ChatBubleComponent,
+  ReportSalesAnalytic
 };
