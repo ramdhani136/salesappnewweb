@@ -57,9 +57,9 @@ const ReportSalesAnalytic: React.FC<any> = () => {
         return {
           label: item.entity,
           data: isGenData,
-          borderColor: item.entity == "Area 1" ? "rgb(255, 99, 132)" : "gray",
+          borderColor: item.entity == "Area 1" ? "rgb(230, 113, 112)" : "gray",
           backgroundColor:
-            item.entity == "Area 1" ? "rgb(255, 99, 132)" : "gray",
+            item.entity == "Area 1" ? "rgb(230, 113, 112)" : "gray",
         };
       });
 
