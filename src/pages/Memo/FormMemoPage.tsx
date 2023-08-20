@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
@@ -11,11 +11,12 @@ import {
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { capitalizeFirstLetter } from "../../utils/CapitalistFirstText";
+import ProfileImg from "../../assets/images/iconuser.jpg";
 
 const FormMemoPage: React.FC = () => {
   let { id } = useParams();
@@ -25,6 +26,7 @@ const FormMemoPage: React.FC = () => {
     description: "Halaman form memo - Sales web system",
   };
 
+  const browseRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const [scroll, setScroll] = useState<number>(0);
@@ -106,6 +108,8 @@ const FormMemoPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
+
+  const [img, setImg] = useState<any>(ProfileImg);
   // End
 
   const [status, setStatus] = useState<String>("Draft");
@@ -120,6 +124,7 @@ const FormMemoPage: React.FC = () => {
     display: display,
     group: group,
     userGroup: userGroup,
+    img: img,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -131,8 +136,20 @@ const FormMemoPage: React.FC = () => {
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
+  const [file, setFile] = useState<File>();
   const [loadingNaming, setLoadingName] = useState<boolean>(true);
   const [listNaming, setListNaming] = useState<IListInput[]>([]);
+
+  const imageHandler = (e: any) => {
+    const reader: any = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImg(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+    setFile(e.target.files[0]);
+  };
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -182,6 +199,10 @@ const FormMemoPage: React.FC = () => {
         valueData: moment(result.data.closingDate).format("YYYY-MM-DD"),
         valueInput: moment(result.data.closingDate).format("YYYY-MM-DD"),
       });
+
+      if (result.data.img) {
+        setImg(`${import.meta.env.VITE_PUBLIC_URI}/public/${result.data.img}`);
+      }
 
       if (result.data.display) {
         const getDisplay = result.data.display.map((item: any) => {
@@ -240,6 +261,9 @@ const FormMemoPage: React.FC = () => {
               return { _id: item._id, name: item.name };
             })
           : [],
+        img: result?.data?.img
+          ? `${import.meta.env.VITE_PUBLIC_URI}/public/${result.data.img}`
+          : ProfileImg,
       });
       if (result.data.title) {
         setTitle(result.data.title);
@@ -465,39 +489,73 @@ const FormMemoPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {};
+      const inData = new FormData();
 
       if (nextState) {
-        data = { nextState: nextState };
+        inData.append("nextState", `${nextState}`);
       } else {
         if (display.length === 0) {
           throw new Error("Display wajib diisi!");
         }
+        file && inData.append("img", file);
+        if (title) {
+          inData.append("title", title);
+        } else {
+          throw new Error("Title wajib diisi!");
+        }
+        if (notes) {
+          inData.append("notes", notes);
+        } else {
+          throw new Error("Notes wajib diisi!");
+        }
+        if (startDate.valueData) {
+          inData.append("activeDate", startDate.valueData);
+        } else {
+          throw new Error("Start At Wajib Diisi!");
+        }
+        if (dueDate.valueData) {
+          inData.append("closingDate", dueDate.valueData);
+        } else {
+          throw new Error("Closing At Wajib Diisi!");
+        }
+        inData.append(
+          "display",
+          JSON.stringify(display.map((item: any) => item._id))
+        );
 
-        data = {
-          title: title,
-          notes: notes,
-          activeDate: startDate.valueData,
-          closingDate: dueDate.valueData,
-          display: display.map((item: any) => item._id),
-          customerGroup: group.map((item: any) => item._id),
-          branch: branch.map((item: any) => item._id),
-          userGroup: userGroup.map((item: any) => item._id),
-        };
+        inData.append(
+          "customerGroup",
+          JSON.stringify(group.map((item: any) => item._id))
+        );
+        inData.append(
+          "branch",
+          JSON.stringify(branch.map((item: any) => item._id))
+        );
+        inData.append(
+          "userGroup",
+          JSON.stringify(userGroup.map((item: any) => item._id))
+        );
         if (!id) {
-          data["namingSeries"] = naming.valueData;
+          inData.append("namingSeries", naming.valueData);
         }
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.MEMO).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.MEMO).CREATE(data);
+        ? FetchApi.put(`${import.meta.env.VITE_PUBLIC_URI}/memo/${id}`, inData)
+        : await FetchApi.post(
+            `${import.meta.env.VITE_PUBLIC_URI}/memo`,
+            inData
+          );
 
       const result = await Action;
 
       if (id) {
-        getData();
-        Swal.fire({ icon: "success", text: "Saved" });
+        if (!file) {
+          getData();
+          Swal.fire({ icon: "success", text: "Saved" });
+        } else {
+          navigate(0);
+        }
       } else {
         navigate(`/memo/${result.data.data._id}`);
         navigate(0);
@@ -506,7 +564,9 @@ const FormMemoPage: React.FC = () => {
       Swal.fire(
         "Error!",
         `${
-          error?.response?.data?.msg
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
             ? error?.response?.data?.msg
             : error?.message
             ? error?.message
@@ -540,6 +600,7 @@ const FormMemoPage: React.FC = () => {
       display: display,
       group: group,
       userGroup: userGroup,
+      img: img,
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -557,6 +618,7 @@ const FormMemoPage: React.FC = () => {
     branch,
     group,
     userGroup,
+    img,
   ]);
   // End
 
@@ -776,7 +838,7 @@ const FormMemoPage: React.FC = () => {
                       className={`h-9 mb-3`}
                     />
                     {branch.length > 0 && (
-                      <ul className="w-full h-auto rounded-sm border p-2 float-left">
+                      <ul className="w-full h-auto mb-4 rounded-sm border p-2 float-left">
                         {branch.map((item: any, index: number) => {
                           return (
                             <li
@@ -790,7 +852,7 @@ const FormMemoPage: React.FC = () => {
                                 }
                               }}
                               key={index}
-                              className=" mb-1 cursor-pointer duration-150list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
+                              className=" mb-1 cursor-pointer duration-150 list-none px-2 py-1 text-sm rounded-md mr-1   bg-red-600 border-red-700  hover:bg-red-700 hover:border-red-800 text-white float-left flex items-center"
                             >
                               {item.name}
                             </li>
@@ -798,6 +860,23 @@ const FormMemoPage: React.FC = () => {
                         })}
                       </ul>
                     )}
+                    <img
+                      crossOrigin="anonymous"
+                      className="relative mt-4  object-contain border shadow-sm w-[300px] h-auto rounded-md"
+                      src={img}
+                      alt={"img"}
+                      onError={(e: any) => {
+                        e.target.src = ProfileImg;
+                      }}
+                    />
+                    <input
+                      onChange={(e) => imageHandler(e)}
+                      type="file"
+                      name="image"
+                      className="border  w-[280px] mt-1 text-sm"
+                      accept="image/*"
+                      ref={browseRef}
+                    />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
