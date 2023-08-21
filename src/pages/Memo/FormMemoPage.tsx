@@ -759,7 +759,7 @@ const FormMemoPage: React.FC = () => {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
+                        id != null ? (data.status !== "0" ? true : false) : false
                       }
                     />
                     <label className="text-sm">Notes</label>
@@ -769,7 +769,7 @@ const FormMemoPage: React.FC = () => {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
+                        id != null ? (data.status !== "0" ? true : false) : false
                       }
                     />
                     <InputComponent
@@ -833,7 +833,7 @@ const FormMemoPage: React.FC = () => {
                       list={branchList}
                       type="text"
                       disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
+                        id != null ? (data.status !== "0" ? true : false) : false
                       }
                       className={`h-9 mb-3`}
                     />
@@ -869,14 +869,16 @@ const FormMemoPage: React.FC = () => {
                         e.target.src = ProfileImg;
                       }}
                     />
-                    <input
-                      onChange={(e) => imageHandler(e)}
-                      type="file"
-                      name="image"
-                      className="border  w-[280px] mt-1 text-sm"
-                      accept="image/*"
-                      ref={browseRef}
-                    />
+                    {(!id || data.status == "0") && (
+                      <input
+                        onChange={(e) => imageHandler(e)}
+                        type="file"
+                        name="image"
+                        className="border  w-[280px] mt-1 text-sm"
+                        accept="image/*"
+                        ref={browseRef}
+                      />
+                    )}
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
@@ -979,7 +981,8 @@ const FormMemoPage: React.FC = () => {
                           valueData: "",
                           valueInput: "",
                         });
-                      }}disabled={
+                      }}
+                      disabled={
                         id != null
                           ? data.status !== "0"
                             ? true
@@ -1073,7 +1076,7 @@ const FormMemoPage: React.FC = () => {
                       list={groupList}
                       type="text"
                       disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
+                        id != null ? (data.status !== "0" ? true : false) : false
                       }
                       className={`h-9 mb-3`}
                     />
@@ -1161,7 +1164,7 @@ const FormMemoPage: React.FC = () => {
                       list={userGroupList}
                       type="text"
                       disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
+                        id != null ? (data.status !== "0" ? true : false) : false
                       }
                       className={`h-9 mb-3`}
                     />
@@ -1171,7 +1174,7 @@ const FormMemoPage: React.FC = () => {
                           return (
                             <li
                               onClick={() => {
-                                if (!id || data.status === "Draft") {
+                                if (!id || data.status === "0") {
                                   const genUg = userGroup.filter((i: any) => {
                                     return i._id !== item._id;
                                   });
