@@ -147,6 +147,20 @@ const ReportSalesAnalytic: React.FC<any> = () => {
   }, [type, baseOn, valueQty, range, fromDate, toDate]);
 
   const options: any = {
+    // animations: {
+    //   y: {
+    //     easing: "easeInOutElastic",
+    //     from: (ctx: any) => {
+    //       if (ctx.type === "data") {
+    //         if (ctx.mode === "default" && !ctx.dropped) {
+    //           ctx.dropped = true;
+    //           return 0;
+    //         }
+    //       }
+    //     },
+    //   },
+    // },
+    
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
