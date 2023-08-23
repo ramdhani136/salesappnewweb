@@ -13,8 +13,6 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { LoadingComponent } from "../moleculs";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { InputComponent, Select } from "../atoms";
 import { IValue } from "../atoms/InputComponent";
@@ -34,7 +32,7 @@ ChartJS.register(
 
 const ReportSalesAnalytic: React.FC<any> = () => {
   const [minChartIndex, setMinChartIndex] = useState<number>(0);
-  const [maxChartIndex, setMaxChartIndex] = useState<number>(6);
+  const [maxChartIndex, setMaxChartIndex] = useState<number>(12);
   const [data, setData] = useState<any>(null);
   const [dataChart, setDataChart] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -113,7 +111,15 @@ const ReportSalesAnalytic: React.FC<any> = () => {
       )}}`;
       const result: any = await FetchApi.get(uri);
       const isData: any[] = result?.data?.data?.result.map((item: any) => {
-        return { active: false, ...item };
+        return {
+          active:
+            item.entity === "Area 1" ||
+            item.entity === "Area 2" ||
+            item.entity === "All Customer Groups"
+              ? true
+              : false,
+          ...item,
+        };
       });
 
       setDataResult(isData);
@@ -302,8 +308,7 @@ const ReportSalesAnalytic: React.FC<any> = () => {
         )}
         <div className="border w-full overflow-auto h-[260px]">
           <table
-            width={100}
-            className={`text-[0.95em] min-w-full  table-auto border text-gray-800 border-separate border-spacing-0`}
+            className={`text-[0.95em]   table-auto border text-gray-800 border-separate border-spacing-0`}
           >
             <thead>
               <tr className="text-sm ">
