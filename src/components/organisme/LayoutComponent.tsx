@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocalStorage, LocalStorageType, SocketIO } from "../../utils";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -15,9 +15,10 @@ import ChatsComponent from "./ChatsComponent";
 
 interface IProps {
   Child: React.FC;
+  sideBarWidth?: boolean;
 }
 
-const LayoutComponent: React.FC<IProps> = ({ Child }) => {
+const LayoutComponent: React.FC<IProps> = ({ Child, sideBarWidth = false }) => {
   const [user, setUser] = useState<any>({});
   const dataModal: ISliceModal = useSelector(selectModal);
 
@@ -39,7 +40,7 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
 
   const ChildModal: React.FC<any> | null = dataModal.Children ?? null;
   const dispatch = useDispatch();
-
+  const [isSideBarStatus, setSideBarStatus] = useState<boolean>(false);
   const onCLose = () => {
     dispatch(
       modalSet({
@@ -52,9 +53,13 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
     );
   };
 
+  const GetStatusSB = (status: boolean) => {
+    setSideBarStatus(status);
+  };
+
   return (
     <>
-      <div className="flex h-screen relative overflow-y-hidden">
+      <div className="flex h-screen relative overflow-hidden">
         <ModalComponent
           isVisible={dataModal.active}
           onClose={onCLose}
@@ -62,10 +67,16 @@ const LayoutComponent: React.FC<IProps> = ({ Child }) => {
           props={dataModal.props}
           className={dataModal.className ?? ""}
         />
-        {<SidebarComponent user={user} />}
-        <div className="bg-gray-100 flex-1">
+        {<SidebarComponent user={user} getStatusOpen={GetStatusSB} />}
+        <div className={`bg-gray-100 flex-1 flex flex-col  ${
+              sideBarWidth
+                ? isSideBarStatus
+                  ? `w-[calc(100%-210px)]`
+                  : "w-[calc(100%-65px)]"
+                : "w-full"
+            }`}>
           <HeaderComponent />
-          <section className=" w-full h-[86vh]">
+          <section className={`w-full flex-1 h-[90vh]`}>
             <Child />
           </section>
         </div>

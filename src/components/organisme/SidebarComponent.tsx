@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SegmentIcon from "@mui/icons-material/Segment";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -14,7 +14,7 @@ import {
   useKey,
 } from "../../utils";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
@@ -22,9 +22,10 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 interface IProps {
   user: any;
+  getStatusOpen?: Function;
 }
 
-const SidebarComponent: React.FC<IProps> = ({ user }) => {
+const SidebarComponent: React.FC<IProps> = ({ user, getStatusOpen }) => {
   const menus = [
     { name: "Dashboard", link: "/", icon: HomeIcon },
     { name: "Schedules", link: "/schedule", icon: EventNoteIcon },
@@ -51,14 +52,20 @@ const SidebarComponent: React.FC<IProps> = ({ user }) => {
 
   const onLogout = () => {
     AlertModal.confirmation({
-      text:"You want to log out of your account?",
+      text: "You want to log out of your account?",
       onConfirm: () => {
         LocalStorage.removeData(LocalStorageType.TOKEN);
         navigate("/login");
       },
-      confirmButtonText:"Yes, Logout!"
+      confirmButtonText: "Yes, Logout!",
     });
   };
+
+  useEffect(() => {
+    if (getStatusOpen) {
+      getStatusOpen(open);
+    }
+  }, [open]);
 
   return (
     <section className="flex">

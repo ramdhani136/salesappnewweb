@@ -50,7 +50,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<LayoutComponent Child={HomePage} />} />
+          <Route path="/" element={<LayoutComponent Child={HomePage} sideBarWidth />} />
           <Route
             path="/setting"
             element={<LayoutComponent Child={SettingPage} />}
