@@ -85,6 +85,9 @@ const ReportSalesAnalytic: React.FC<any> = () => {
   const [range, setRange] = useState<String>("Monthly");
   const [labels, setLabel] = useState<string[]>([]);
   const [column, setColumn] = useState<string[]>([]);
+  const [selectedAll, setSelectedAll] = useState<boolean>(false);
+  const [dataResult, setDataResult] = useState<any[]>([]);
+
   function getRandomColor() {
     const r = Math.floor(Math.random() * 256); // Nilai merah antara 0 dan 255
     const g = Math.floor(Math.random() * 256); // Nilai hijau antara 0 dan 255
@@ -109,41 +112,28 @@ const ReportSalesAnalytic: React.FC<any> = () => {
         range
       )}}`;
       const result: any = await FetchApi.get(uri);
-      const isData: any[] = result?.data?.data?.result;
+      const isData: any[] = result?.data?.data?.result.map((item: any) => {
+        return { active: false, ...item };
+      });
+
+      setDataResult(isData);
       setColumn(result?.data?.data?.columns ?? []);
       setData(result?.data?.data ?? null);
-      const isFilter = isData.filter(
-        (item: any) => item.entity == "Area 1" || item.entity == "Area 2"
-      );
-
-      const getReport = isFilter.map((item: any) => {
-        const params = Object.keys(item).filter(
-          (i: any) => i !== "entity" && i !== "indent" && i !== "total"
-        );
-
-        let isGenData: number[] = [];
-
-        for (const value of params) {
-          isGenData = [...isGenData, item[value]];
-        }
-
-        return {
-          label: item.entity,
-          data: isGenData,
-          borderColor: getRandomColor(),
-          backgroundColor: getRandomColor(),
-        };
-      });
 
       setLabel(result?.data?.data?.chart?.data?.labels ?? []);
       setDataChart({
         labels: result?.data?.data?.chart?.data?.labels ?? [],
-        datasets: getReport,
+        datasets: getReport(isData),
       });
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
+  };
+
+  const getResultActive = (data: any[]) => {
+    const isFilter = data.filter((item: any) => item.active);
+    return isFilter;
   };
 
   useEffect(() => {
@@ -185,6 +175,30 @@ const ReportSalesAnalytic: React.FC<any> = () => {
     },
   };
 
+  const getReport = (data: any[]) => {
+    const result = getResultActive(data).map((item: any) => {
+      const params = Object.keys(item).filter(
+        (i: any) => i !== "entity" && i !== "indent" && i !== "total"
+      );
+
+      let isGenData: number[] = [];
+
+      for (const value of params) {
+        isGenData = [...isGenData, item[value]];
+      }
+
+      return {
+        label: item.entity,
+        data: isGenData,
+        borderColor: getRandomColor(),
+        backgroundColor: getRandomColor(),
+        active: item.active,
+      };
+    });
+
+    return result;
+  };
+
   const FormatNumber = (number: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "decimal",
@@ -194,12 +208,33 @@ const ReportSalesAnalytic: React.FC<any> = () => {
     }).format(number);
   };
 
+  const handleAllChecked = (event: any) => {
+    const result = dataResult.map((item: any) => {
+      return { ...item, active: event.target.checked };
+    });
+
+    setDataResult(result);
+    setDataChart({ ...dataChart, datasets: getReport(result) });
+    setSelectedAll(event.target.checked);
+  };
+
+  const handleChange = (entity: string) => {
+    const index = dataResult.findIndex((item) => item.entity === entity);
+
+    const newData = [...dataResult];
+    newData[index].active = !newData[index].active;
+    setDataChart({ ...dataChart, datasets: getReport(newData) });
+
+    if (getReport(newData).length === dataResult.length) {
+      setSelectedAll(true);
+    } else {
+      setSelectedAll(false);
+    }
+  };
+
   if (data) {
     return (
-      <div
-     
-        className=" rounded-sm w-[calc(100%-30px)] ml-[15px] h-auto border overflow-hidden border-gray-200  bg-white pt-4   my-2 float-left "
-      >
+      <div className=" rounded-sm w-[calc(100%-30px)] ml-[15px] h-auto border overflow-hidden border-gray-200  bg-white pt-4   my-2 float-left ">
         {loading && <LoadingComponent />}
 
         {!loading && (
@@ -276,9 +311,8 @@ const ReportSalesAnalytic: React.FC<any> = () => {
                   <input
                     className="w-[14px] accent-slate-600 mt-1"
                     type="checkbox"
-                    // onChange={(e) => handleAllChecked(e)}
-                    // checked={selectAll}
-                    // disabled={disabled ? true : false}
+                    onChange={(e) => handleAllChecked(e)}
+                    checked={selectedAll}
                   />
                 </th>
                 {column.map((item: any, index: any) => (
@@ -293,15 +327,14 @@ const ReportSalesAnalytic: React.FC<any> = () => {
             </thead>
 
             <tbody>
-              {data?.result.map((d: any, index: any) => (
+              {dataResult.map((d: any, index: any) => (
                 <tr key={index} className="bg-gray-50">
                   <td className="p-3">
                     <input
                       className="w-[14px] accent-slate-600 mt-1"
                       type="checkbox"
-                      // onChange={(e) => handleAllChecked(e)}
-                      // checked={selectAll}
-                      // disabled={disabled ? true : false}
+                      checked={d.active}
+                      onChange={() => handleChange(d.entity)}
                     />
                   </td>
                   {column.map((item: any, index: any) => {
