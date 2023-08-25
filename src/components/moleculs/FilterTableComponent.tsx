@@ -34,7 +34,7 @@ export interface IFilter {
     valueInput: String;
   };
   infiniteScroll?: IInfiniteScroll;
-  listFilter: IListInput[];
+  listValue: IListInput[];
 }
 
 interface IProps {
@@ -140,6 +140,7 @@ const FilterTableComponent: React.FC<IProps> = ({
             item.value.valueData,
           ];
         });
+
         if (refresh) {
           setFilter(isFilter);
         }
@@ -208,6 +209,7 @@ const FilterTableComponent: React.FC<IProps> = ({
         item.name.valueData == "" ||
         item.operator.valueData == "" ||
         item.value.valueData == ""
+        
       );
     });
 
@@ -218,7 +220,7 @@ const FilterTableComponent: React.FC<IProps> = ({
           name: { valueData: "", valueInput: "" },
           operator: { valueData: "", valueInput: "" },
           value: { valueData: "", valueInput: "" },
-          listFilter: [],
+          listValue: [],
         },
       ]);
     }
