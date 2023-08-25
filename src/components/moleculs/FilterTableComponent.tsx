@@ -235,99 +235,109 @@ const FilterTableComponent: React.FC<IProps> = ({
               tableFilter.length > 4 && "overflow-y-auto my-4"
             }`}
           >
-            {tableFilter.map((item, index) => (
-              <li
-                key={index}
-                className="flex mb-3 relative text-[0.95em] items-center"
-              >
-                <InputComponent
-                  value={{
-                    valueData: item.name.valueData,
-                    valueInput: item.name.valueInput,
-                  }}
-                  onChange={(e) => {
-                    item.name.valueInput = e;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  className="mr-3"
-                  list={listDoc()}
-                  onSelected={(e) => {
-                    item.name.valueData = e.value;
-                    item.name.valueInput = e.name;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  onReset={() => {
-                    item.name.valueData = "";
-                    item.name.valueInput = "";
-                    item.operator.valueData = "";
-                    item.operator.valueInput = "";
-                    item.value.valueData = "";
-                    item.value.valueInput = "";
-                    setTableFilter([...tableFilter]);
-                  }}
-                  mandatoy
-                  placeholder="Select Doc"
-                  inputStyle="text-[0.95em]"
-                />
-                <InputComponent
-                  value={{
-                    valueData: item.operator.valueData,
-                    valueInput: item.operator.valueInput,
-                  }}
-                  className="mr-3 w-[250px]"
-                  list={getOperator(`${item.name.valueData}`)}
-                  disabled={!item.name.valueData}
-                  onSelected={(e) => {
-                    item.operator.valueData = e.value;
-                    item.operator.valueInput = e.value;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  onChange={(e) => {
-                    item.operator.valueInput = e;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  onReset={() => {
-                    item.operator.valueData = "";
-                    item.operator.valueInput = "";
-                    setTableFilter([...tableFilter]);
-                  }}
-                  inputStyle="text-center text-[0.96em] w-[100px]"
-                  mandatoy
-                />
+            {tableFilter.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  className="flex mb-3 relative text-[0.95em] items-center"
+                >
+                  <InputComponent
+                    value={{
+                      valueData: item.name.valueData,
+                      valueInput: item.name.valueInput,
+                    }}
+                    onChange={(e) => {
+                      item.name.valueInput = e;
+                      setTableFilter([...tableFilter]);
+                    }}
+                    className="mr-3"
+                    list={listDoc()}
+                    onSelected={(e) => {
+                      item.name.valueData = e.value;
+                      item.name.valueInput = e.name;
+                      setTableFilter([...tableFilter]);
+                    }}
+                    onReset={() => {
+                      item.name.valueData = "";
+                      item.name.valueInput = "";
+                      item.operator.valueData = "";
+                      item.operator.valueInput = "";
+                      item.value.valueData = "";
+                      item.value.valueInput = "";
+                      setTableFilter([...tableFilter]);
+                    }}
+                    mandatoy
+                    placeholder="Select Doc"
+                    inputStyle="text-[0.95em]"
+                  />
+                  <InputComponent
+                    value={{
+                      valueData: item.operator.valueData,
+                      valueInput: item.operator.valueInput,
+                    }}
+                    className="mr-3 w-[250px]"
+                    list={getOperator(`${item.name.valueData}`)}
+                    disabled={!item.name.valueData}
+                    onSelected={(e) => {
+                      item.operator.valueData = e.value;
+                      item.operator.valueInput = e.value;
+                      setTableFilter([...tableFilter]);
+                    }}
+                    onChange={(e) => {
+                      item.operator.valueInput = e;
+                      setTableFilter([...tableFilter]);
+                    }}
+                    onReset={() => {
+                      item.operator.valueData = "";
+                      item.operator.valueInput = "";
+                      item.value.valueData = "";
+                      item.value.valueInput = "";
+                      setTableFilter([...tableFilter]);
+                    }}
+                    inputStyle="text-center text-[0.96em] w-[100px]"
+                    mandatoy
+                  />
 
-                <InputComponent
-                  value={item.value}
-                  className="mr-3"
-                  list={getListValue(`${item.name.valueData}`)}
-                  onSelected={(e) => {
-                    item.value.valueData = e.value;
-                    item.value.valueInput = e.name;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  onChange={(e) => {
-                    item.value.valueInput = e;
-                    item.value.valueData = e;
-                    setTableFilter([...tableFilter]);
-                  }}
-                  onReset={() => {
-                    item.value.valueData = "";
-                    item.value.valueInput = "";
-                    setTableFilter([...tableFilter]);
-                  }}
-                  inputStyle="text-[0.96em]"
-                  disabled={!item.operator.valueData}
-                  mandatoy
-                />
-                <CloseIcon
-                  onClick={() => {
-                    tableFilter.splice(index, 1);
-                    setTableFilter([...tableFilter]);
-                  }}
-                  style={{ fontSize: 18 }}
-                  className="text-gray-300"
-                />
-              </li>
-            ))}
+                  <InputComponent
+                    value={item.value}
+                    className="mr-3"
+                    list={getListValue(`${item.name.valueData}`)}
+                    onSelected={(e) => {
+                      item.value.valueData = e.value;
+                      item.value.valueInput = e.name;
+                      setTableFilter([...tableFilter]);
+                    }}
+                    onChange={(e) => {
+                      item.value.valueInput = e;
+
+                      if (
+                        item.operator.valueData === "like" ||
+                        item.operator.valueData === "notlike"
+                      ) {
+                        item.value.valueData = e;
+                      }
+                      setTableFilter([...tableFilter]);
+                    }}
+                    onReset={() => {
+                      item.value.valueData = "";
+                      item.value.valueInput = "";
+                      setTableFilter([...tableFilter]);
+                    }}
+                    inputStyle="text-[0.96em]"
+                    disabled={!item.operator.valueData}
+                    mandatoy
+                  />
+                  <CloseIcon
+                    onClick={() => {
+                      tableFilter.splice(index, 1);
+                      setTableFilter([...tableFilter]);
+                    }}
+                    style={{ fontSize: 18 }}
+                    className="text-gray-300"
+                  />
+                </li>
+              );
+            })}
           </ul>
           <div
             className={` w-[90%] ml-[5%]  flex py-5 text-sm  sticky bottom-0 ${
