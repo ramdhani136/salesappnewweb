@@ -206,7 +206,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       {open && (
         <div
           ref={modalRef}
-          className="bg-white  border-[1.5px] border-gray-200 w-[550px] h-auto max-h-[300px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
+          className="bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[300px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
         >
           {tableFilter.length === 0 && (
             <h4 className="w-full border-b-[1.5px] border-[#f1eeee] flex-1 text-center py-6 text-gray-300 font-normal">
@@ -219,7 +219,7 @@ const FilterTableComponent: React.FC<IProps> = ({
             }`}
           >
             {tableFilter.map((item, index) => (
-              <li key={index} className="flex mb-3 relative items-center">
+              <li key={index} className="flex mb-3 relative text-[0.95em] items-center">
                 <InputComponent
                   value={{
                     valueData: item.name.valueData,
