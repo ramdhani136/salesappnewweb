@@ -33,7 +33,8 @@ export interface IFilter {
     valueData: any;
     valueInput: String;
   };
-  infiniteScroll?: IInfiniteScroll | undefined;
+  infiniteScroll?: IInfiniteScroll;
+  listFilter: IListInput[];
 }
 
 interface IProps {
@@ -70,7 +71,7 @@ const FilterTableComponent: React.FC<IProps> = ({
     endpoint: DataAPI;
     search?: string | String;
     refresh?: boolean;
-  }): Promise<void> => {
+  }): Promise<any> => {
     try {
       if (data.refresh === undefined) {
         data.refresh = true;
@@ -81,7 +82,6 @@ const FilterTableComponent: React.FC<IProps> = ({
         page: `${data.refresh ? 1 : valuePage}`,
         filters: [["status", "=", "1"]],
       });
-      console.log(result);
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
           return {
@@ -90,13 +90,13 @@ const FilterTableComponent: React.FC<IProps> = ({
             data: item,
           };
         });
-        if (!data.refresh) {
-          setListValue([...listValue, ...listInput]);
-        } else {
-          setListValue([...listInput]);
-        }
         setValueHasMore(result.hasMore);
         setValuePage(result.nextPage);
+        if (!data.refresh) {
+          return [...listValue, ...listInput];
+        } else {
+          return [...listInput];
+        }
       }
 
       setValueLoading(false);
@@ -131,9 +131,9 @@ const FilterTableComponent: React.FC<IProps> = ({
       const storageFilter: string | null | undefined =
         LocalStorage.loadData(localStorage);
       if (storageFilter) {
-        const prevFilter: any = JSON.parse(storageFilter);
+        const prevFilter: IFilter[] = JSON.parse(storageFilter);
         let isFilter: any = [];
-        prevFilter.map((item: any, index: any) => {
+        prevFilter.map((item: IFilter, index: any) => {
           isFilter[index] = [
             item.name.valueData,
             item.operator.valueData,
@@ -218,6 +218,7 @@ const FilterTableComponent: React.FC<IProps> = ({
           name: { valueData: "", valueInput: "" },
           operator: { valueData: "", valueInput: "" },
           value: { valueData: "", valueInput: "" },
+          listFilter: [],
         },
       ]);
     }
@@ -256,21 +257,22 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  const cekInfiniteScroll = (doc: String): void => {
+  const cekInfiniteScroll = async (doc: String): Promise<any> => {
     const docByFilter: any = listFilter.filter((item) => item.name === doc);
     if (docByFilter.length > 0) {
       if (docByFilter[0].infiniteData) {
         ResetValue();
-        getValue({
+        const value = await getValue({
           endpoint: docByFilter[0].infiniteData,
           refresh: true,
           // search: contact.valueInput,
         });
+        // console.log(value);
       }
     }
   };
 
-  console.log(tableFilter);
+ 
 
   useEffect(() => {
     let handler = (e: any) => {
