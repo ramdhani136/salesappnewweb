@@ -4,7 +4,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { InputComponent } from "../atoms";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalStorage, LocalStorageType } from "../../utils";
-import { IInfiniteScroll, IListInput } from "../atoms/InputComponent";
+import { IInfiniteScroll, IListInput, IValue } from "../atoms/InputComponent";
+import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 
 export interface IDataFilter {
   name: String;
@@ -16,7 +17,7 @@ export interface IDataFilter {
     valueData: any;
     valueInput: String;
   };
-  InfiniteScroll?: IInfiniteScroll | undefined;
+  infiniteData?: DataAPI;
 }
 
 export interface IFilter {
@@ -32,6 +33,7 @@ export interface IFilter {
     valueData: any;
     valueInput: String;
   };
+  infiniteScroll?: IInfiniteScroll | undefined;
 }
 
 interface IProps {
@@ -48,7 +50,70 @@ const FilterTableComponent: React.FC<IProps> = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [tableFilter, setTableFilter] = useState<IFilter[]>([]);
-  const [InfiniteScroll, setInfiniScroll] = useState(undefined);
+  const [InfiniteScroll, setInfiniScroll] = useState<
+    IInfiniteScroll | undefined
+  >(undefined);
+
+  // customer
+  const [listValue, setListValue] = useState<IListInput[]>([]);
+  const [valuePage, setValuePage] = useState<Number>(1);
+  const [valueLoading, setValueLoading] = useState<boolean>(true);
+  const [valueMoreLoading, setValueMoreLoading] = useState<boolean>(false);
+  const [valueHasMore, setValueHasMore] = useState<boolean>(false);
+  const [value, setValue] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  // End
+
+  const getValue = async (data: {
+    endpoint: DataAPI;
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+      const result: any = await GetDataServer(data.endpoint).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : valuePage}`,
+        filters: [["status", "=", "1"]],
+      });
+      console.log(result);
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+            data: item,
+          };
+        });
+        if (!data.refresh) {
+          setListValue([...listValue, ...listInput]);
+        } else {
+          setListValue([...listInput]);
+        }
+        setValueHasMore(result.hasMore);
+        setValuePage(result.nextPage);
+      }
+
+      setValueLoading(false);
+      setValueMoreLoading(false);
+    } catch (error: any) {
+      setValueLoading(false);
+      setValueMoreLoading(false);
+      setValueHasMore(false);
+    }
+  };
+
+  const ResetValue = () => {
+    setListValue([]);
+    setValueHasMore(false);
+    setValuePage(1);
+    setValueLoading(true);
+  };
 
   const listDoc = () => {
     const data = listFilter.map((item) => {
@@ -101,6 +166,9 @@ const FilterTableComponent: React.FC<IProps> = ({
         return [];
       });
 
+      // if (docByFilter[0].infiniteData) {
+      //   cekInfiniteScroll(doc);
+      // }
       return data[0];
     } else {
       return [];
@@ -187,6 +255,22 @@ const FilterTableComponent: React.FC<IProps> = ({
       }
     }
   };
+
+  const cekInfiniteScroll = (doc: String): void => {
+    const docByFilter: any = listFilter.filter((item) => item.name === doc);
+    if (docByFilter.length > 0) {
+      if (docByFilter[0].infiniteData) {
+        ResetValue();
+        getValue({
+          endpoint: docByFilter[0].infiniteData,
+          refresh: true,
+          // search: contact.valueInput,
+        });
+      }
+    }
+  };
+
+  console.log(tableFilter);
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -299,6 +383,8 @@ const FilterTableComponent: React.FC<IProps> = ({
                   />
 
                   <InputComponent
+                    // loading={valueLoading}
+                    onCLick={() => cekInfiniteScroll(`${item.name.valueData}`)}
                     value={item.value}
                     type={getType(`${item.name.valueData}`).toString()}
                     className="mr-3"

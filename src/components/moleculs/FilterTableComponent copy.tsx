@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { InputComponent } from "../atoms";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalStorage, LocalStorageType } from "../../utils";
-import { IInfiniteScroll, IListInput } from "../atoms/InputComponent";
+import { IInfiniteScroll, IListInput, IValue } from "../atoms/InputComponent";
 
 export interface IDataFilter {
   name: String;
@@ -48,7 +48,20 @@ const FilterTableComponent: React.FC<IProps> = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [tableFilter, setTableFilter] = useState<IFilter[]>([]);
-  const [listValue, setListValue] = useState<IListInput[]>([]);
+
+
+    // customer
+    const [listValue, setListValue] = useState<IListInput[]>([]);
+    const [valuePage, setValuePage] = useState<Number>(1);
+    const [valueLoading, setValueLoading] = useState<boolean>(true);
+    const [valueMoreLoading, setValueMoreLoading] =
+      useState<boolean>(false);
+    const [valueHasMore, setValueHasMore] = useState<boolean>(false);
+    const [value, setValue] = useState<IValue>({
+      valueData: "",
+      valueInput: "",
+    });
+    // End
 
   const listDoc = () => {
     const data = listFilter.map((item) => {
