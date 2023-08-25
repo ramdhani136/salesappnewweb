@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { InputComponent } from "../atoms";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalStorage, LocalStorageType } from "../../utils";
-import { IListInput, IValue } from "../atoms/InputComponent";
+import { IListInput } from "../atoms/InputComponent";
 
 export interface IDataFilter {
   name: String;
@@ -42,7 +42,6 @@ interface IProps {
 
 const FilterTableComponent: React.FC<IProps> = ({
   listFilter,
-  filter,
   setFilter,
   localStorage,
 }) => {
@@ -59,19 +58,6 @@ const FilterTableComponent: React.FC<IProps> = ({
 
     return data;
   };
-
-  // const getFilter = () => {
-  //   console.log(tableFilter)
-  //   let filternya = filter.map((a): IFilter => {
-  //     return {
-  //       name: { valueData: a[0], valueInput: a[0] },
-  //       operator: { valueData: a[1], valueInput: a[1] },
-  //       value: { valueData: a[2], valueInput: a[2] },
-  //     };
-  //   });
-
-  //   setTableFilter(filternya);
-  // };
 
   const getStorage = (refresh: boolean) => {
     if (localStorage) {
@@ -129,6 +115,18 @@ const FilterTableComponent: React.FC<IProps> = ({
       return [];
     } else {
       return [];
+    }
+  };
+
+  const getType = (doc: String): String => {
+    const docByFilter: any = listFilter.filter((item) => item.name === doc);
+    if (docByFilter.length > 0) {
+      if (docByFilter[0].typeOf == "date") {
+        return "date";
+      }
+      return "text";
+    } else {
+      return "Text";
     }
   };
 
@@ -300,6 +298,7 @@ const FilterTableComponent: React.FC<IProps> = ({
 
                   <InputComponent
                     value={item.value}
+                    type={getType(`${item.name.valueData}`).toString()}
                     className="mr-3"
                     list={getListValue(`${item.name.valueData}`)}
                     onSelected={(e) => {
@@ -312,7 +311,8 @@ const FilterTableComponent: React.FC<IProps> = ({
 
                       if (
                         item.operator.valueData === "like" ||
-                        item.operator.valueData === "notlike"
+                        item.operator.valueData === "notlike" ||
+                        getType(`${item.name.valueData}`).toString() == "date"
                       ) {
                         item.value.valueData = e;
                       }

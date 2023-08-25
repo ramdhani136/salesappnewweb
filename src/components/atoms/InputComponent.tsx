@@ -228,7 +228,7 @@ infoRemark,
             }  text-md text-gray-900  font-normal border z-10 rounded-md bg-gray-50  py-2 px-3 ${inputStyle}`}
           />
         )}
-        {(value.valueInput || type == "number") && onReset && !disabled && (
+        {(value.valueInput || type == "number") && onReset && !disabled && type!=="date" && (
           <CloseIcon
             onClick={() => {
               if (onReset) {
@@ -242,7 +242,7 @@ infoRemark,
             style={{ fontSize: 14 }}
           />
         )}
-        {open && list && (
+        {open && list && type!=="date"&& (
           <InfiniteScroll
             dataLength={list.length}
             next={infiniteScroll ? infiniteScroll.next : () => {}}
