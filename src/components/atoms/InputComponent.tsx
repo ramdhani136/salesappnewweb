@@ -30,7 +30,7 @@ export interface IValue {
   other?: any;
 }
 
-interface IInfiniteScroll {
+export interface IInfiniteScroll {
   active?: boolean;
   next: (e?: any) => Promise<any> | void;
   hasMore: boolean;
@@ -63,7 +63,7 @@ interface IProps {
   loading?: boolean;
   remark?: String;
   infoRemark?: String;
-  infiniteScroll?: IInfiniteScroll;
+  infiniteScroll?: IInfiniteScroll|undefined;
 }
 
 const InputComponent: React.FC<IProps> = ({
