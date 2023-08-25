@@ -96,8 +96,8 @@ export const SchedulePage: React.FC = (): any => {
               </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
-            startDate: moment(item.startDate).format("LL"),
-            dueDate: moment(item.dueDate).format("LL"),
+            startDate: moment(item.activeDate).format("LL"),
+            dueDate: moment(item.closingDate).format("LL"),
             workflowState: (
               <ButtonStatusComponent
                 status={item.status}
