@@ -59,18 +59,17 @@ const FilterTableComponent: React.FC<IProps> = ({
     return data;
   };
 
-  // const getFilter = () => {
-  //   let isFilter: any = [];
-  //   filter.map((item, index) => {
-  //     isFilter[index] = [
-  //       item.name.valueData,
-  //       item.operator.valueData,
-  //       item.value.valueData,
-  //     ];
-  //   });
-  //   console.log(isFilter)
-  //   // setFilter(isFilter);
-  // };
+  const getFilter = () => {
+    let filternya = filter.map((a): IFilter => {
+      return {
+        name: { valueData: a[0], valueInput: a[0] },
+        operator: { valueData: a[1], valueInput: a[1] },
+        value: { valueData: a[2], valueInput: a[2] },
+      };
+    });
+
+    setTableFilter(filternya);
+  };
 
   const getStorage = () => {
     if (localStorage) {
@@ -172,21 +171,21 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  // useEffect(() => {
-  //   let handler = (e: any) => {
-  //     if (!modalRef.current?.contains(e.target)) {
-  //       if (open) {
-  //         // getFilter();
-  //       }
-  //       setOpen(false);
-  //     }
-  //   };
+  useEffect(() => {
+    let handler = (e: any) => {
+      if (!modalRef.current?.contains(e.target)) {
+        if (open) {
+          getFilter();
+        }
+        setOpen(false);
+      }
+    };
 
-  //   document.addEventListener("mousedown", handler);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handler);
-  //   };
-  // }, [open]);
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, [open]);
 
   return (
     <div className="relative  border-[1.5px] rounded-md ml-2 cursor-pointer hover:bg-gray-50 duration-200">
