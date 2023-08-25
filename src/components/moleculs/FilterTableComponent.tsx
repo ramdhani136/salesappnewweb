@@ -4,13 +4,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { InputComponent } from "../atoms";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalStorage, LocalStorageType } from "../../utils";
+import { IListInput, IValue } from "../atoms/InputComponent";
 
 export interface IDataFilter {
   name: String;
   alias: String;
   oprator: String;
   typeof: String;
-  listData?: any[];
+  listData?: IListInput[];
   value: {
     valueData: any;
     valueInput: String;
@@ -59,19 +60,20 @@ const FilterTableComponent: React.FC<IProps> = ({
     return data;
   };
 
-  const getFilter = () => {
-    let filternya = filter.map((a): IFilter => {
-      return {
-        name: { valueData: a[0], valueInput: a[0] },
-        operator: { valueData: a[1], valueInput: a[1] },
-        value: { valueData: a[2], valueInput: a[2] },
-      };
-    });
+  // const getFilter = () => {
+  //   console.log(tableFilter)
+  //   let filternya = filter.map((a): IFilter => {
+  //     return {
+  //       name: { valueData: a[0], valueInput: a[0] },
+  //       operator: { valueData: a[1], valueInput: a[1] },
+  //       value: { valueData: a[2], valueInput: a[2] },
+  //     };
+  //   });
 
-    setTableFilter(filternya);
-  };
+  //   setTableFilter(filternya);
+  // };
 
-  const getStorage = () => {
+  const getStorage = (refresh: boolean) => {
     if (localStorage) {
       const storageFilter: string | null | undefined =
         LocalStorage.loadData(localStorage);
@@ -85,14 +87,16 @@ const FilterTableComponent: React.FC<IProps> = ({
             item.value.valueData,
           ];
         });
-        setFilter(isFilter);
+        if (refresh) {
+          setFilter(isFilter);
+        }
         setTableFilter(prevFilter);
       }
     }
   };
 
   useEffect(() => {
-    getStorage();
+    getStorage(true);
   }, []);
 
   const getOperator = (doc: string) => {
@@ -110,6 +114,19 @@ const FilterTableComponent: React.FC<IProps> = ({
       });
 
       return data[0];
+    } else {
+      return [];
+    }
+  };
+
+  const getListValue = (doc: string) => {
+    const docByFilter = listFilter.filter((item) => item.name === doc);
+    if (docByFilter.length > 0) {
+      if (docByFilter[0].listData) {
+        return docByFilter[0].listData;
+      }
+
+      return [];
     } else {
       return [];
     }
@@ -175,7 +192,7 @@ const FilterTableComponent: React.FC<IProps> = ({
     let handler = (e: any) => {
       if (!modalRef.current?.contains(e.target)) {
         if (open) {
-          getFilter();
+          getStorage(false);
         }
         setOpen(false);
       }
@@ -206,7 +223,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       {open && (
         <div
           ref={modalRef}
-          className="bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[300px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
+          className=" bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[300px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
         >
           {tableFilter.length === 0 && (
             <h4 className="w-full border-b-[1.5px] border-[#f1eeee] flex-1 text-center py-6 text-gray-300 font-normal">
@@ -219,7 +236,10 @@ const FilterTableComponent: React.FC<IProps> = ({
             }`}
           >
             {tableFilter.map((item, index) => (
-              <li key={index} className="flex mb-3 relative text-[0.95em] items-center">
+              <li
+                key={index}
+                className="flex mb-3 relative text-[0.95em] items-center"
+              >
                 <InputComponent
                   value={{
                     valueData: item.name.valueData,
@@ -278,10 +298,10 @@ const FilterTableComponent: React.FC<IProps> = ({
                 <InputComponent
                   value={item.value}
                   className="mr-3"
-                  list={[]}
+                  list={getListValue(`${item.name.valueData}`)}
                   onSelected={(e) => {
                     item.value.valueData = e.value;
-                    item.value.valueInput = e.value;
+                    item.value.valueInput = e.name;
                     setTableFilter([...tableFilter]);
                   }}
                   onChange={(e) => {

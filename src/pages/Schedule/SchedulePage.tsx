@@ -81,7 +81,7 @@ export const SchedulePage: React.FC = (): any => {
             checked: false,
             doc: <h4 className="mx-2">{item.name}</h4>,
             progress: (
-              <div className="w-[180px] mx-2 mt-5">
+              <div className="w-[180px] mx-2 mt-5  ">
                 {+item.progress > 0 ? (
                   <ProgressBarComponent percentage={width} />
                 ) : (
