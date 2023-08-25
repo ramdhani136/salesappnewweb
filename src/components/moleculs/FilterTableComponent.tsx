@@ -4,10 +4,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { InputComponent } from "../atoms";
 import CloseIcon from "@mui/icons-material/Close";
 import { LocalStorage, LocalStorageType } from "../../utils";
-import { filter } from "lodash";
 
 export interface IDataFilter {
   name: String;
+  alias: String;
   oprator: String;
   typeof: String;
   listData?: any[];
@@ -51,7 +51,7 @@ const FilterTableComponent: React.FC<IProps> = ({
   const listDoc = () => {
     const data = listFilter.map((item) => {
       return {
-        name: item.name,
+        name: item.alias,
         value: item.name,
       };
     });
@@ -59,17 +59,18 @@ const FilterTableComponent: React.FC<IProps> = ({
     return data;
   };
 
-  const getFilter = () => {
-    let filternya = filter.map((a): IFilter => {
-      return {
-        name: { valueData: a[0], valueInput: a[0] },
-        operator: { valueData: a[1], valueInput: a[1] },
-        value: { valueData: a[2], valueInput: a[2] },
-      };
-    });
-
-    setTableFilter(filternya);
-  };
+  // const getFilter = () => {
+  //   let isFilter: any = [];
+  //   filter.map((item, index) => {
+  //     isFilter[index] = [
+  //       item.name.valueData,
+  //       item.operator.valueData,
+  //       item.value.valueData,
+  //     ];
+  //   });
+  //   console.log(isFilter)
+  //   // setFilter(isFilter);
+  // };
 
   const getStorage = () => {
     if (localStorage) {
@@ -77,7 +78,16 @@ const FilterTableComponent: React.FC<IProps> = ({
         LocalStorage.loadData(localStorage);
       if (storageFilter) {
         const prevFilter: any = JSON.parse(storageFilter);
-        setFilter(prevFilter);
+        let isFilter: any = [];
+        prevFilter.map((item: any, index: any) => {
+          isFilter[index] = [
+            item.name.valueData,
+            item.operator.valueData,
+            item.value.valueData,
+          ];
+        });
+        setFilter(isFilter);
+        setTableFilter(prevFilter);
       }
     }
   };
@@ -85,10 +95,6 @@ const FilterTableComponent: React.FC<IProps> = ({
   useEffect(() => {
     getStorage();
   }, []);
-
-  useEffect(() => {
-    getFilter();
-  }, [filter]);
 
   const getOperator = (doc: string) => {
     const docByFilter = listFilter.filter((item) => item.name === doc);
@@ -156,7 +162,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       });
       setFilter(isFilter);
       if (localStorage) {
-        LocalStorage.saveData(localStorage, JSON.stringify(isFilter));
+        LocalStorage.saveData(localStorage, JSON.stringify(tableFilter));
       }
     } else {
       setFilter([]);
@@ -166,21 +172,21 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  useEffect(() => {
-    let handler = (e: any) => {
-      if (!modalRef.current?.contains(e.target)) {
-        if (open) {
-          getFilter();
-        }
-        setOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   let handler = (e: any) => {
+  //     if (!modalRef.current?.contains(e.target)) {
+  //       if (open) {
+  //         // getFilter();
+  //       }
+  //       setOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handler);
-    return () => {
-      document.removeEventListener("mousedown", handler);
-    };
-  }, [open]);
+  //   document.addEventListener("mousedown", handler);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handler);
+  //   };
+  // }, [open]);
 
   return (
     <div className="relative  border-[1.5px] rounded-md ml-2 cursor-pointer hover:bg-gray-50 duration-200">
@@ -228,12 +234,16 @@ const FilterTableComponent: React.FC<IProps> = ({
                   list={listDoc()}
                   onSelected={(e) => {
                     item.name.valueData = e.value;
-                    item.name.valueInput = e.value;
+                    item.name.valueInput = e.name;
                     setTableFilter([...tableFilter]);
                   }}
                   onReset={() => {
                     item.name.valueData = "";
                     item.name.valueInput = "";
+                    item.operator.valueData = "";
+                    item.operator.valueInput = "";
+                    item.value.valueData = "";
+                    item.value.valueInput = "";
                     setTableFilter([...tableFilter]);
                   }}
                   mandatoy

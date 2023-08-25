@@ -1,7 +1,7 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Avatar } from "@mui/material";
 // import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import { SeacrhHeaderComponent } from "../moleculs";
+import { IconMenuHeader, SeacrhHeaderComponent } from "../moleculs";
 import SettingsIcon from "@mui/icons-material/Settings";
 import React, { useEffect, useState } from "react";
 import { LocalStorage, LocalStorageType } from "../../utils";
@@ -42,7 +42,7 @@ const HeaderComponent: React.FC = () => {
       <div className="text-sm flex items-center ml-3">
         <SeacrhHeaderComponent />
 
-        {/* <IconMenuHeader Icon={NotificationsNoneIcon} title="notif" /> */}
+        <IconMenuHeader Icon={NotificationsNoneIcon} title="notif" />
       </div>
 
       <div className="flex items-center">
