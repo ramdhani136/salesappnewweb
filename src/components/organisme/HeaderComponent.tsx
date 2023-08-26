@@ -21,6 +21,10 @@ const HeaderComponent: React.FC = () => {
 
       setData(users.data);
     } catch (error: any) {
+      if (error?.response?.status === 403) {
+        LocalStorage.removeData(LocalStorageType.TOKEN);
+        navigate("/login");
+      }
       Swal.fire(
         "Error!",
         `${
