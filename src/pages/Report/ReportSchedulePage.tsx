@@ -59,7 +59,7 @@ export const ReportSchedulePage: React.FC = (): any => {
       { header: "Start Date", accessor: "startDate", className: "w-auto" },
       { header: "Due Date", accessor: "dueDate", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
-      { header: "Notes", accessor: "notes", className: "w-auto " },
+      { header: "Notes", accessor: "notes", className: "w-[400px] ", },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
