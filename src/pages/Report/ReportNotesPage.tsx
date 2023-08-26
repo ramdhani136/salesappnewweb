@@ -291,7 +291,10 @@ export const ReportNotesPage: React.FC = (): any => {
         {!loading ? (
           <>
             <div className=" w-full h-16 flex items-center justify-between">
-              <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
+              <h1
+                className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 cursor-pointer"
+                onClick={() => navigate("/report")}
+              >
                 Report Notes
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
