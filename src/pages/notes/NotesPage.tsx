@@ -132,7 +132,42 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "CreatedBy":
+              endpoint = DataAPI.USERS;
+              break;
+            case "WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
+            case "Customer":
+              endpoint = DataAPI.CUSTOMER;
+              break;
+            case "Topic":
+              endpoint = DataAPI.TOPIC;
+              break;
+            case "Tag":
+              endpoint = DataAPI.TAGS;
+              break;
+            case "Branch":
+              endpoint = DataAPI.BRANCH;
+              break;
+            case "CustomerGroup":
+              endpoint = DataAPI.GROUP;
+              break;
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);
