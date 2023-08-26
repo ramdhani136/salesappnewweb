@@ -66,17 +66,25 @@ const FilterTableComponent: React.FC<IProps> = ({
       if (data.refresh === undefined) {
         data.refresh = true;
       }
+
+      let isFilter: [String, String, String][] = [];
+
+      if (data.endpoint !== DataAPI.WORKFLOWSTATE) {
+        isFilter.push(["status", "=", "1"]);
+      }
+
       const result: any = await GetDataServer(data.endpoint).FIND({
         search: data.search ?? "",
         limit: 10,
         page: `${data.refresh ? 1 : 1}`,
-        // filters: [["status", "=", "1"]],
+        filters: isFilter,
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
           return {
             name: item.name,
-            value: item._id,
+            value:
+              data.endpoint === DataAPI.WORKFLOWSTATE ? item.name : item._id,
             data: item,
           };
         });
