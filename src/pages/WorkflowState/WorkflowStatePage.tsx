@@ -64,18 +64,15 @@ export const WorkflowStatePage: React.FC = (): any => {
         search: search,
       });
 
-     
-
       if (result.data.length > 0) {
-        console.log(result)
+        console.log(result);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
             checked: false,
             name: item.name,
-           
-            user: <div>{item.user.name}</div>,
 
+            user: <div>{item.user.name}</div>,
 
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
@@ -97,7 +94,25 @@ export const WorkflowStatePage: React.FC = (): any => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "User":
+              endpoint = DataAPI.USERS;
+              break;
+
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);
