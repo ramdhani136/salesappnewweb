@@ -47,15 +47,17 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[12.5%]" },
-      { header: "Topic", accessor: "topic", className: "w-[12,5%]" },
-      { header: "Activity", accessor: "activity", className: "w-[15%]" },
+      { header: "Customer", accessor: "customer", className: "w-[10%]" },
+      { header: "Type", accessor: "type", className: "w-[5%]" },
+      { header: "Doc", accessor: "doc", className: "w-[7.5%]" },
+      { header: "Topic", accessor: "topic", className: "w-[10%]" },
+      { header: "Activity", accessor: "activity", className: "w-[12.5%]" },
       { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
       { header: "Tags", accessor: "tag", className: "w-[10%]" },
-      { header: "Group", accessor: "group", className: "w-[7.5%]" },
+      { header: "Group", accessor: "group", className: "w-[5%]" },
       { header: "Branch", accessor: "branch", className: "w-[10%]" },
       { header: "User", accessor: "user", className: "w-[7.5%]" },
-      { header: "", accessor: "updatedAt", className: "w-7.55%]" },
+      { header: "", accessor: "updatedAt", className: "w-[5%]" },
     ],
     []
   );
@@ -82,6 +84,8 @@ export const ReportNotesPage: React.FC = (): any => {
               // </Link>
             ),
             topic: <h4 className="mx-2">{item.topic.name}</h4>,
+            doc: <h4 className="mx-2">{item.doc.name}</h4>,
+            type: <h4 className="mx-2">{item.doc.type}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
             branch: item.branch.name,
             activity: <h4 className="mx-2">{item.task}</h4>,
@@ -257,6 +261,8 @@ export const ReportNotesPage: React.FC = (): any => {
           No: index + 1,
           date: moment(item.createdAt).format("LLL"),
           customer: item.customer.name,
+          doc: item.doc.name,
+          type: item.doc.type,
           topic: item.topic.name,
           activity: item.task,
           feedback: item.result,
@@ -302,7 +308,7 @@ export const ReportNotesPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[180%]"
+              width="w-[210%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
