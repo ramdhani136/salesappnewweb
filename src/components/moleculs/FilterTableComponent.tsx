@@ -33,8 +33,8 @@ export interface IFilter {
     valueData: any;
     valueInput: String;
   };
-  infiniteScroll?: IInfiniteScroll;
-  listValue: IListInput[];
+  listData?: IListInput[];
+  loading?: boolean;
 }
 
 interface IProps {
@@ -55,22 +55,11 @@ const FilterTableComponent: React.FC<IProps> = ({
     IInfiniteScroll | undefined
   >(undefined);
 
-  // customer
-  const [listValue, setListValue] = useState<IListInput[]>([]);
-  const [valuePage, setValuePage] = useState<Number>(1);
-  const [valueLoading, setValueLoading] = useState<boolean>(true);
-  const [valueMoreLoading, setValueMoreLoading] = useState<boolean>(false);
-  const [valueHasMore, setValueHasMore] = useState<boolean>(false);
-  const [value, setValue] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-  // End
-
   const getValue = async (data: {
     endpoint: DataAPI;
     search?: string | String;
     refresh?: boolean;
+    currentData: IListInput[];
   }): Promise<any> => {
     try {
       if (data.refresh === undefined) {
@@ -79,8 +68,8 @@ const FilterTableComponent: React.FC<IProps> = ({
       const result: any = await GetDataServer(data.endpoint).FIND({
         search: data.search ?? "",
         limit: 10,
-        page: `${data.refresh ? 1 : valuePage}`,
-        filters: [["status", "=", "1"]],
+        page: `${data.refresh ? 1 : 1}`,
+        // filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -90,30 +79,31 @@ const FilterTableComponent: React.FC<IProps> = ({
             data: item,
           };
         });
-        setValueHasMore(result.hasMore);
-        setValuePage(result.nextPage);
+        // setValueHasMore(result.hasMore);
+        // setValuePage(result.nextPage);
         if (!data.refresh) {
-          return [...listValue, ...listInput];
+          return [...data.currentData, ...listInput];
         } else {
           return [...listInput];
         }
       }
 
-      setValueLoading(false);
-      setValueMoreLoading(false);
+      // setValueLoading(false);
+      // setValueMoreLoading(false);
     } catch (error: any) {
-      setValueLoading(false);
-      setValueMoreLoading(false);
-      setValueHasMore(false);
+      return [];
+      // setValueLoading(false);
+      // setValueMoreLoading(false);
+      // setValueHasMore(false);
     }
   };
 
-  const ResetValue = () => {
-    setListValue([]);
-    setValueHasMore(false);
-    setValuePage(1);
-    setValueLoading(true);
-  };
+  // const ResetValue = () => {
+  //   setListValue([]);
+  //   setValueHasMore(false);
+  //   setValuePage(1);
+  //   setValueLoading(true);
+  // };
 
   const listDoc = () => {
     const data = listFilter.map((item) => {
@@ -176,14 +166,26 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  const getListValue = (doc: string) => {
+  const getListValue = async (doc: string): Promise<any> => {
     const docByFilter = listFilter.filter((item) => item.name === doc);
     if (docByFilter.length > 0) {
-      if (docByFilter[0].listData) {
+      if (docByFilter[0].infiniteData) {
+        try {
+          const getData = await getValue({
+            currentData: [],
+            endpoint: docByFilter[0].infiniteData,
+            refresh: true,
+            search: "",
+          });
+          return getData;
+        } catch (error) {
+          return [];
+        }
+      } else if (docByFilter[0].listData) {
         return docByFilter[0].listData;
+      } else {
+        return [];
       }
-
-      return [];
     } else {
       return [];
     }
@@ -209,7 +211,6 @@ const FilterTableComponent: React.FC<IProps> = ({
         item.name.valueData == "" ||
         item.operator.valueData == "" ||
         item.value.valueData == ""
-        
       );
     });
 
@@ -220,7 +221,6 @@ const FilterTableComponent: React.FC<IProps> = ({
           name: { valueData: "", valueInput: "" },
           operator: { valueData: "", valueInput: "" },
           value: { valueData: "", valueInput: "" },
-          listValue: [],
         },
       ]);
     }
@@ -263,18 +263,16 @@ const FilterTableComponent: React.FC<IProps> = ({
     const docByFilter: any = listFilter.filter((item) => item.name === doc);
     if (docByFilter.length > 0) {
       if (docByFilter[0].infiniteData) {
-        ResetValue();
-        const value = await getValue({
-          endpoint: docByFilter[0].infiniteData,
-          refresh: true,
-          // search: contact.valueInput,
-        });
+        // ResetValue();
+        // const value = await getValue({
+        //   endpoint: docByFilter[0].infiniteData,
+        //   refresh: true,
+        //   // search: contact.valueInput,
+        // });
         // console.log(value);
       }
     }
   };
-
- 
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -355,10 +353,12 @@ const FilterTableComponent: React.FC<IProps> = ({
                       setTableFilter([...tableFilter]);
                     }}
                     mandatoy
+                    modalStyle="mt-2"
                     placeholder="Select Doc"
                     inputStyle="text-[0.95em]"
                   />
                   <InputComponent
+                    modalStyle="mt-2"
                     value={{
                       valueData: item.operator.valueData,
                       valueInput: item.operator.valueInput,
@@ -387,12 +387,24 @@ const FilterTableComponent: React.FC<IProps> = ({
                   />
 
                   <InputComponent
-                    // loading={valueLoading}
-                    onCLick={() => cekInfiniteScroll(`${item.name.valueData}`)}
+                    loading={item.loading ?? false}
+                    modalStyle="mt-2"
+                    onCLick={async () => {
+                      item.loading = true;
+                      item.listData = [];
+                      setTableFilter([...tableFilter]);
+                      const data = await getListValue(`${item.name.valueData}`);
+
+                      console.log(data);
+
+                      item.loading = false;
+                      item.listData = data;
+                      setTableFilter([...tableFilter]);
+                    }}
                     value={item.value}
                     type={getType(`${item.name.valueData}`).toString()}
                     className="mr-3"
-                    list={getListValue(`${item.name.valueData}`)}
+                    list={item.listData}
                     onSelected={(e) => {
                       item.value.valueData = e.value;
                       item.value.valueInput = e.name;

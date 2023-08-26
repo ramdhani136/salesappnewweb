@@ -107,7 +107,30 @@ export const ContactPage: React.FC = (): any => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "CreatedBy":
+              endpoint = DataAPI.USERS;
+              break;
+            case "WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
+            case "Customer":
+              endpoint = DataAPI.CUSTOMER;
+              break;
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);
