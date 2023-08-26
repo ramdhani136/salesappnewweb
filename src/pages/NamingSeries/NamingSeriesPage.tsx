@@ -103,7 +103,31 @@ export const NamingSeriesPage: React.FC = (): any => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "Created By":
+              endpoint = DataAPI.USERS;
+              break;
+            case "Workflow State":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
+
+            case "Branch":
+              endpoint = DataAPI.BRANCH;
+              break;
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);

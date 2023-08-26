@@ -126,7 +126,36 @@ export const MemoPage: React.FC = (): any => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "CreatedBy":
+              endpoint = DataAPI.USERS;
+              break;
+            case "WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
+            case "CustomerGroup":
+              endpoint = DataAPI.GROUP;
+              break;
+            case "UserGroup":
+              endpoint = DataAPI.USERGROUP;
+              break;
+            case "Branch":
+              endpoint = DataAPI.BRANCH;
+              break;
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);
