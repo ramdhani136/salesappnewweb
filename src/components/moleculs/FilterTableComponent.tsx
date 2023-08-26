@@ -35,6 +35,7 @@ export interface IFilter {
   };
   listData?: IListInput[];
   loading?: boolean;
+  infiniteScroll?: IInfiniteScroll | undefined;
 }
 
 interface IProps {
@@ -156,10 +157,6 @@ const FilterTableComponent: React.FC<IProps> = ({
 
         return [];
       });
-
-      // if (docByFilter[0].infiniteData) {
-      //   cekInfiniteScroll(doc);
-      // }
       return data[0];
     } else {
       return [];
