@@ -59,7 +59,7 @@ export const ReportSchedulePage: React.FC = (): any => {
       { header: "Start Date", accessor: "startDate", className: "w-auto" },
       { header: "Due Date", accessor: "dueDate", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
-      { header: "Notes", accessor: "notes", className: "w-[400px] ", },
+      { header: "Notes", accessor: "notes", className: "w-[400px] " },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
@@ -75,7 +75,7 @@ export const ReportSchedulePage: React.FC = (): any => {
       const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
         limit: limit,
         page: page,
-        filters: filter,
+        filters: [...filter, ["schedule.status", "!=", "0"]],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
@@ -182,7 +182,39 @@ export const ReportSchedulePage: React.FC = (): any => {
             },
           };
         });
-        setListFilter(result.filters);
+        const genListFilter = result.filters.map((i: any) => {
+          let endpoint: DataAPI | undefined;
+          switch (i.alias) {
+            case "Schedule":
+              endpoint = DataAPI.SCHEDULE;
+              break;
+            case "WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
+            case "Customer":
+              endpoint = DataAPI.CUSTOMER;
+              break;
+            case "CustomerGroup":
+              endpoint = DataAPI.GROUP;
+              break;
+            case "Branch":
+              endpoint = DataAPI.BRANCH;
+              break;
+            case "CreatedBy":
+              endpoint = DataAPI.USERS;
+              break;
+            default:
+              endpoint = undefined;
+              break;
+          }
+
+          if (endpoint) {
+            i["infiniteData"] = endpoint;
+          }
+
+          return i;
+        });
+        setListFilter(genListFilter);
         setSort(genSort);
         setTotalData(result.total);
         setHasMore(result.hasMore);
@@ -268,7 +300,7 @@ export const ReportSchedulePage: React.FC = (): any => {
     try {
       const getExport: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
         limit: 0,
-        filters: filter,
+        filters: [...filter, ["schedule.status", "!=", "0"]],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });

@@ -70,7 +70,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       let isFilter: [String, String, String][] = [];
 
       if (data.endpoint !== DataAPI.WORKFLOWSTATE) {
-        isFilter.push(["status", "=", "1"]);
+        isFilter.push(["status", "!=", "0"]);
       }
 
       const result: any = await GetDataServer(data.endpoint).FIND({
