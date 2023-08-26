@@ -52,9 +52,6 @@ const FilterTableComponent: React.FC<IProps> = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [tableFilter, setTableFilter] = useState<IFilter[]>([]);
-  const [InfiniteScroll, setInfiniScroll] = useState<
-    IInfiniteScroll | undefined
-  >(undefined);
 
   const getValue = async (data: {
     endpoint: DataAPI;
@@ -409,7 +406,7 @@ const FilterTableComponent: React.FC<IProps> = ({
                     value={item.value}
                     type={getType(`${item.name.valueData}`).toString()}
                     className="mr-3"
-                    list={item.listData}
+                    list={item.listData ?? []}
                     onSelected={(e) => {
                       item.value.valueData = e.value;
                       item.value.valueInput = e.name;
