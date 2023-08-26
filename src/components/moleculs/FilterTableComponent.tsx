@@ -36,6 +36,9 @@ export interface IFilter {
   listData?: IListInput[];
   loading?: boolean;
   infiniteScroll?: IInfiniteScroll | undefined;
+  loadingMore?: boolean;
+  hasMore?: boolean;
+  page?: Number;
 }
 
 interface IProps {
@@ -72,7 +75,7 @@ const FilterTableComponent: React.FC<IProps> = ({
 
       const result: any = await GetDataServer(data.endpoint).FIND({
         search: data.search ?? "",
-        limit: 20,
+        limit: 30,
         page: `${data.refresh ? 1 : 1}`,
         filters: isFilter,
       });
@@ -168,7 +171,7 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  const getListValue = async (doc: string): Promise<any> => {
+  const getListValue = async (doc: string, search?: String): Promise<any> => {
     const docByFilter = listFilter.filter((item) => item.name === doc);
     if (docByFilter.length > 0) {
       if (docByFilter[0].infiniteData) {
@@ -177,7 +180,7 @@ const FilterTableComponent: React.FC<IProps> = ({
             currentData: [],
             endpoint: docByFilter[0].infiniteData,
             refresh: true,
-            search: "",
+            search: search ?? "",
           });
           return getData;
         } catch (error) {
@@ -391,11 +394,33 @@ const FilterTableComponent: React.FC<IProps> = ({
                   <InputComponent
                     loading={item.loading ?? false}
                     modalStyle="mt-2"
+                    infiniteScroll={{
+                      loading: false,
+                      hasMore: false,
+                      next: () => {},
+                      onSearch: async (e) => {
+                        try {
+                          const data = await getListValue(
+                            `${item.name.valueData}`,
+                            e
+                          );
+                          item.listData = data;
+                        } catch (error) {
+                          item.listData = [];
+                          console.error(error);
+                        }
+                        item.loading = false;
+                        setTableFilter([...tableFilter]);
+                      },
+                    }}
                     onCLick={async () => {
                       item.loading = true;
                       item.listData = [];
                       setTableFilter([...tableFilter]);
-                      const data = await getListValue(`${item.name.valueData}`);
+                      const data = await getListValue(
+                        `${item.name.valueData}`,
+                        item.value.valueInput
+                      );
                       item.loading = false;
                       item.listData = data;
                       setTableFilter([...tableFilter]);
@@ -407,11 +432,19 @@ const FilterTableComponent: React.FC<IProps> = ({
                     onSelected={(e) => {
                       item.value.valueData = e.value;
                       item.value.valueInput = e.name;
+                      item.hasMore = false;
+                      item.listData = [];
+                      item.loading = true;
+                      item.page = 1;
                       setTableFilter([...tableFilter]);
                     }}
                     onChange={(e) => {
-                      item.value.valueInput = e;
+                      item.hasMore = false;
+                      item.listData = [];
+                      item.loading = true;
+                      item.page = 1;
 
+                      item.value.valueInput = e;
                       if (
                         item.operator.valueData === "like" ||
                         item.operator.valueData === "notlike" ||
@@ -422,6 +455,10 @@ const FilterTableComponent: React.FC<IProps> = ({
                       setTableFilter([...tableFilter]);
                     }}
                     onReset={() => {
+                      item.hasMore = false;
+                      item.listData = [];
+                      item.loading = true;
+                      item.page = 1;
                       item.value.valueData = "";
                       item.value.valueInput = "";
                       setTableFilter([...tableFilter]);
