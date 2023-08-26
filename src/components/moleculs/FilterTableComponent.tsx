@@ -264,19 +264,15 @@ const FilterTableComponent: React.FC<IProps> = ({
     }
   };
 
-  const cekInfiniteScroll = async (doc: String): Promise<any> => {
+  const IsInfiniteData = (doc: String): boolean => {
     const docByFilter: any = listFilter.filter((item) => item.name === doc);
     if (docByFilter.length > 0) {
       if (docByFilter[0].infiniteData) {
-        // ResetValue();
-        // const value = await getValue({
-        //   endpoint: docByFilter[0].infiniteData,
-        //   refresh: true,
-        //   // search: contact.valueInput,
-        // });
-        // console.log(value);
+        return true;
       }
     }
+
+    return false;
   };
 
   useEffect(() => {
@@ -395,6 +391,7 @@ const FilterTableComponent: React.FC<IProps> = ({
                     loading={item.loading ?? false}
                     modalStyle="mt-2"
                     infiniteScroll={{
+                      active: IsInfiniteData(`${item.name.valueData}`) ?? false,
                       loading: false,
                       hasMore: false,
                       next: () => {},
@@ -432,17 +429,22 @@ const FilterTableComponent: React.FC<IProps> = ({
                     onSelected={(e) => {
                       item.value.valueData = e.value;
                       item.value.valueInput = e.name;
-                      item.hasMore = false;
-                      item.listData = [];
-                      item.loading = true;
-                      item.page = 1;
+                      if (IsInfiniteData(`${item.name.valueData}`)) {
+                        item.hasMore = false;
+                        item.listData = [];
+                        item.loading = true;
+                        item.page = 1;
+                      }
+
                       setTableFilter([...tableFilter]);
                     }}
                     onChange={(e) => {
-                      item.hasMore = false;
-                      item.listData = [];
-                      item.loading = true;
-                      item.page = 1;
+                      if (IsInfiniteData(`${item.name.valueData}`)) {
+                        item.hasMore = false;
+                        item.listData = [];
+                        item.loading = true;
+                        item.page = 1;
+                      }
 
                       item.value.valueInput = e;
                       if (
@@ -455,10 +457,12 @@ const FilterTableComponent: React.FC<IProps> = ({
                       setTableFilter([...tableFilter]);
                     }}
                     onReset={() => {
-                      item.hasMore = false;
-                      item.listData = [];
-                      item.loading = true;
-                      item.page = 1;
+                      if (IsInfiniteData(`${item.name.valueData}`)) {
+                        item.hasMore = false;
+                        item.listData = [];
+                        item.loading = true;
+                        item.page = 1;
+                      }
                       item.value.valueData = "";
                       item.value.valueInput = "";
                       setTableFilter([...tableFilter]);

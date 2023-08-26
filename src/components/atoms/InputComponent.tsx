@@ -280,7 +280,7 @@ infoRemark,
                     {item.name}
                   </h4>
                 ))}
-              {infiniteScroll && infiniteScroll.loading && (
+              {infiniteScroll && infiniteScroll.loading &&  (
                 <h4 className="w-full text-center py-2">
                   <SyncLoader
                     color="#36d7b6"
