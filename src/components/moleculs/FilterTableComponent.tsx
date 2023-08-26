@@ -396,7 +396,6 @@ const FilterTableComponent: React.FC<IProps> = ({
                       item.listData = [];
                       setTableFilter([...tableFilter]);
                       const data = await getListValue(`${item.name.valueData}`);
-
                       item.loading = false;
                       item.listData = data;
                       setTableFilter([...tableFilter]);
