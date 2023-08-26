@@ -203,7 +203,7 @@ const TaskPage: React.FC<IProps> = ({ props }) => {
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}
-            listFilter={listFilter}
+            // listFilter={listFilter}
             hasMore={hasMore}
             fetchMore={getData}
             columns={columns}

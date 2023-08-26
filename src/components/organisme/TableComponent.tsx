@@ -53,7 +53,7 @@ interface Iprops {
   getAllData?(): void | Promise<void>;
   onRefresh(): void | Promise<void>;
   buttonInsert?: IButtonInsert;
-  listFilter: IDataFilter[];
+  listFilter?: IDataFilter[];
   filter: any[];
   setFilter: any;
   localStorage?: LocalStorageType;
@@ -166,12 +166,14 @@ const TableComponent: React.FC<Iprops> = ({
               onClick={() => setValue("")}
             />
           </div>
-          <FilterTableComponent
-            filter={filter}
-            setFilter={setFilter}
-            listFilter={listFilter}
-            localStorage={localStorage}
-          />
+          {listFilter && (
+            <FilterTableComponent
+              filter={filter}
+              setFilter={setFilter}
+              listFilter={listFilter}
+              localStorage={localStorage}
+            />
+          )}
           {getSelected().length > 0 && (
             <h4 className="ml-3 text-[#6f7477] text-md font-normal">
               {getSelected().length} Items Selected
