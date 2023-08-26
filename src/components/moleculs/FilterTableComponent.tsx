@@ -75,7 +75,7 @@ const FilterTableComponent: React.FC<IProps> = ({
 
       const result: any = await GetDataServer(data.endpoint).FIND({
         search: data.search ?? "",
-        limit: 10,
+        limit: 20,
         page: `${data.refresh ? 1 : 1}`,
         filters: isFilter,
       });
