@@ -93,16 +93,15 @@ const FormPermissionPage: React.FC = () => {
     valueData: "",
     valueInput: "",
   });
-  const [name, setName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
 
   const [status, setStatus] = useState<String>("Draft");
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
-    name: name.valueData,
-    desc: desc ?? "",
+    user: user.valueData,
+    allow: allow.valueData,
+    value: value.valueData,
+    allDoc: allDoc,
+    doc: doc.valueData,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -113,6 +112,38 @@ const FormPermissionPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+
+  const getAllowName = (name: String): String => {
+    switch (name) {
+      case "branch":
+        return "Branch";
+      case "visit":
+        return "Visit";
+      case "callsheet":
+        return "Callsheet";
+      case "user":
+        return "User";
+      case "customergroup":
+        return "Customer Group";
+      case "customer":
+        return "Customer";
+      case "roleprofile":
+        return "Role Profile";
+      case "schedule":
+        return "Schedule";
+      case "memo":
+        return "Memo";
+      case "contact":
+        return "Contact";
+      case "usergroup":
+        return "User Group";
+      case "notes":
+        return "Notes";
+
+      default:
+        return "";
+    }
+  };
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -141,11 +172,24 @@ const FormPermissionPage: React.FC = () => {
 
       setHistory(result.history);
 
-      setName({
-        valueData: result.data.name,
-        valueInput: result.data.name,
-      });
       setUser({
+        valueData: result.data.user._id,
+        valueInput: result.data.user.name,
+      });
+      setAllow({
+        valueData: result.data.allow,
+        valueInput: getAllowName(result.data.allow),
+      });
+      setValue({
+        valueData: result.data.value._id,
+        valueInput: result.data.value.name,
+      });
+      setAlldoc(result.data.allDoc);
+      setDoc({
+        valueData: result.data.doc,
+        valueInput: getAllowName(result.data.doc),
+      });
+      setCreatedBy({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
       });
@@ -157,12 +201,13 @@ const FormPermissionPage: React.FC = () => {
       setData(result.data);
 
       setPrevData({
-        name: result.data.name,
-        desc: result.data.desc ?? "",
+        user: result.data.user._id,
+        allow: result.data.allow,
+        value: result.data.value._id,
+        allDoc: result.data.allDoc,
+        doc: result.data.doc,
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
-      }
+
       setStatus(
         result.data.status == "0"
           ? "Draft"
@@ -174,6 +219,7 @@ const FormPermissionPage: React.FC = () => {
       );
       setLoading(false);
     } catch (error: any) {
+      console.log(error);
       setLoading(false);
       AlertModal.Default({
         icon: "error",
@@ -181,7 +227,7 @@ const FormPermissionPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/permission");
+      // navigate("/permission");
     }
   };
 
@@ -329,12 +375,24 @@ const FormPermissionPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!name.valueData) {
-        throw new Error("Name wajib diisi!");
+      if (!user.valueData) {
+        throw new Error("User wajib diisi!");
+      }
+      if (!allow.valueData) {
+        throw new Error("Allow wajib diisi!");
+      }
+      if (!value.valueData) {
+        throw new Error("Value wajib diisi!");
+      }
+      if (!allDoc && !doc.valueData) {
+        throw new Error("Documen Type wajib diisi!");
       }
       let data: any = {
-        name: name.valueData,
-        desc: desc,
+        user: user.valueData,
+        allow: allow.valueData,
+        value: value.valueData,
+        allDoc: allDoc,
+        doc: doc.valueData,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -384,15 +442,18 @@ const FormPermissionPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      name: name.valueData,
-      desc: desc ?? "",
+      user: user.valueData,
+      allow: allow.valueData,
+      value: value.valueData,
+      allDoc: allDoc,
+      doc: doc.valueData,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [user, allow, value, allDoc, doc]);
   // End
 
   return (
@@ -416,7 +477,7 @@ const FormPermissionPage: React.FC = () => {
                   onClick={() => navigate("/permission")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Permission" : data.name}
+                  {!id ? "New Permission" : data.user.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -496,7 +557,7 @@ const FormPermissionPage: React.FC = () => {
                       onReset={() => {
                         ResetUser();
                         setUser({
-                          valueData: null,
+                          valueData: "",
                           valueInput: "",
                         });
                       }}
@@ -640,36 +701,54 @@ const FormPermissionPage: React.FC = () => {
                   <div className="w-1/2">
                     <div className="flex item-center text-sm mb-4 text-gray-800">
                       <input
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
                         checked={allDoc}
-                        onChange={() => setAlldoc(!allDoc)}
+                        onChange={() => {
+                          if (!allDoc) {
+                            setDoc({ valueData: "", valueInput: "" });
+                          }
+                          setAlldoc(!allDoc);
+                        }}
                         type="checkbox"
                         className=" mt-[2px] mr-2"
                       />
                       <h4>Apply To All Document Types</h4>
                     </div>
-                    <InputComponent
-                      mandatoy
-                      label="Applicable For"
-                      value={doc}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setDoc({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      onReset={() => {
-                        setDoc({ valueData: "", valueInput: "" });
-                      }}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                      onSelected={(e) => {
-                        setDoc({ valueData: e.value, valueInput: e.name });
-                      }}
-                      list={docList}
-                    />
+                    {!allDoc && (
+                      <InputComponent
+                        mandatoy
+                        label="Applicable For"
+                        value={doc}
+                        className="h-[38px] mb-3"
+                        type="text"
+                        onChange={(e) =>
+                          setDoc({
+                            valueData: e,
+                            valueInput: e,
+                          })
+                        }
+                        onReset={() => {
+                          setDoc({ valueData: "", valueInput: "" });
+                        }}
+                        disabled={
+                          id != null
+                            ? status !== "Draft"
+                              ? true
+                              : false
+                            : false
+                        }
+                        onSelected={(e) => {
+                          setDoc({ valueData: e.value, valueInput: e.name });
+                        }}
+                        list={docList}
+                      />
+                    )}
                   </div>
                 }
               />

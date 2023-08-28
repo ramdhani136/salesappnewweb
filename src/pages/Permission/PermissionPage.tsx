@@ -106,7 +106,7 @@ export const PermissionPage: React.FC = (): any => {
             checked: false,
 
             user: (
-              <Link to={`/permission/${item.user._id}`}>
+              <Link to={`/permission/${item._id}`}>
                 <b className="font-medium">{item.user.name}</b>
               </Link>
             ),
