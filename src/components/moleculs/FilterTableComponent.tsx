@@ -310,7 +310,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       {open && (
         <div
           ref={modalRef}
-          className=" bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[300px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
+          className=" bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[320px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
         >
           {tableFilter.length === 0 && (
             <h4 className="w-full border-b-[1.5px] border-[#f1eeee] flex-1 text-center py-6 text-gray-300 font-normal">
