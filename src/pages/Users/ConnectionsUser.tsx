@@ -38,7 +38,7 @@ const ConnectionComponent: React.FC<IConnectionComponent> = ({
         <div key={index} className="mt-1 flex text-md cursor-pointer mb-1">
           <ul className="items-center flex px-[8px] py-[5px] rounded-md bg-gray-100">
             {i.count !== undefined && (
-              <li className="flex items-center justify-center text-sm border mr-2 rounded-md px-[5px] py-[1px] bg-red-400 text-white">
+              <li className="flex items-center justify-center text-[0.85em] border mr-2 rounded-md px-[5px] py-[1px] bg-red-400 text-white">
                 <h4> {i.count > 100 ? "99+" : i.count}</h4>
               </li>
             )}
