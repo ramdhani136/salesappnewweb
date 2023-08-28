@@ -9,7 +9,7 @@ interface IData {
   // data: string;
   FIND: (options: IFindOption) => Promise<object>;
   FINDONE: (id: String) => Promise<any>;
-  CREATE: (data: object) => Promise<any>;
+  CREATE: (data: object, params?: String) => Promise<any>;
   UPDATE: (data: IPut) => Promise<any>;
   DELETE: (id: string | number) => Promise<boolean>;
 }
@@ -108,9 +108,11 @@ class RequestData implements IData {
     }
   };
 
-  CREATE = async (data: object): Promise<any> => {
+  CREATE = async (data: object, params?: String): Promise<any> => {
     try {
-      const uri = `${import.meta.env.VITE_PUBLIC_URI}/${this.data}`;
+      const uri = `${import.meta.env.VITE_PUBLIC_URI}/${this.data}${
+        params ? params : ""
+      }`;
       const result = await FetchApi.post(uri, data);
       return result;
     } catch (error) {

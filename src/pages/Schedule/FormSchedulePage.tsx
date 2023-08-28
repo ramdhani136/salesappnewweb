@@ -22,7 +22,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 
 const FormSchedulePage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
-  console.log(props);
+
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -207,13 +207,19 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
         };
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.SCHEDULE).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.SCHEDULE).CREATE(data);
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.SCHEDULE).UPDATE({ id: id, data: data })
+          : modal
+          ? GetDataServer(DataAPI.SCHEDULE).CREATE(
+              data,
+              `/duplicate/${props.scheduleId}`
+            )
+          : GetDataServer(DataAPI.SCHEDULE).CREATE(data);
 
       const result = await Action;
 
-      if (id) {
+      if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
@@ -309,6 +315,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
         className: "w-[63%] h-[98%]",
         props: {
           modal: true,
+          scheduleId: id,
         },
         title: "Form Schedule",
       })
@@ -362,7 +369,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
 
                 {isChangeData && (
                   <IconButton
-                    name={id ? "Update" : "Save"}
+                    name={id && !modal ? "Update" : "Save"}
                     callback={() => {
                       AlertModal.confirmation({
                         onConfirm: () => {
@@ -494,7 +501,9 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
                     />
                     {startDate.valueData && (
                       <InputComponent
-                        disabled={id !== undefined && data.status != 0 && !modal}
+                        disabled={
+                          id !== undefined && data.status != 0 && !modal
+                        }
                         label="Closing Date"
                         value={dueDate}
                         className="h-[38px]  mb-4"
