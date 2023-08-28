@@ -17,15 +17,19 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import ListItemSchedule from "./ListItemSchedule";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { modalSet } from "../../redux/slices/ModalSlice";
 
-const FormSchedulePage: React.FC = () => {
+const FormSchedulePage: React.FC<any> = ({ props }) => {
+  const modal = props ? props.modal ?? false : false;
+  console.log(props);
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${id ? data.name : "New Schedule"} - Sales App Ekatunggal`,
     description: "Halaman form schedule  Sales  web system",
   };
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser: any = LocalStorage.getUser();
   const [scroll, setScroll] = useState<number>(0);
@@ -44,6 +48,7 @@ const FormSchedulePage: React.FC = () => {
     valueData: null,
     valueInput: "",
   });
+
   const [naming, setNaming] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -266,9 +271,12 @@ const FormSchedulePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      setListMoreAction([
+        { name: "Delete", onClick: onDelete },
+        { name: "Duplicate", onClick: getFormDuplicate },
+      ]);
     } else {
       getNaming();
       setLoading(false);
@@ -292,6 +300,20 @@ const FormSchedulePage: React.FC = () => {
     }
   }, [startDate, dueDate, type, notes]);
   // End
+
+  const getFormDuplicate = (): void => {
+    dispatch(
+      modalSet({
+        active: true,
+        Children: FormSchedulePage,
+        className: "w-[63%] h-[98%]",
+        props: {
+          modal: true,
+        },
+        title: "Form Schedule",
+      })
+    );
+  };
 
   return (
     <>
@@ -366,7 +388,7 @@ const FormSchedulePage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    {!id && (
+                    {(!id || modal) && (
                       <InputComponent
                         loading={loadingNaming}
                         label="Naming Series"
@@ -390,7 +412,7 @@ const FormSchedulePage: React.FC = () => {
                         }
                         disabled={
                           id != null
-                            ? data.status !== "0"
+                            ? data.status !== "0" && !modal
                               ? true
                               : false
                             : false
@@ -398,7 +420,7 @@ const FormSchedulePage: React.FC = () => {
                         closeIconClass="top-[13.5px]"
                       />
                     )}
-                    {id && (
+                    {id && !modal && (
                       <InputComponent
                         label="Name"
                         value={name}
@@ -418,7 +440,7 @@ const FormSchedulePage: React.FC = () => {
                       data={dataType}
                       value={type}
                       setValue={setType}
-                      disabled={id !== undefined && data.status != 0}
+                      disabled={id !== undefined && data.status != 0 && !modal}
                     />
 
                     <InputComponent
@@ -440,12 +462,12 @@ const FormSchedulePage: React.FC = () => {
                       name="Site Uri"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      disabled={id !== undefined && data.status != 0}
+                      disabled={id !== undefined && data.status != 0 && !modal}
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
-                      disabled={id !== undefined && data.status != 0}
+                      disabled={id !== undefined && data.status != 0 && !modal}
                       label="Start Date"
                       value={startDate}
                       className="h-[38px] mb-4"
@@ -472,7 +494,7 @@ const FormSchedulePage: React.FC = () => {
                     />
                     {startDate.valueData && (
                       <InputComponent
-                        disabled={id !== undefined && data.status != 0}
+                        disabled={id !== undefined && data.status != 0 && !modal}
                         label="Closing Date"
                         value={dueDate}
                         className="h-[38px]  mb-4"
@@ -493,7 +515,7 @@ const FormSchedulePage: React.FC = () => {
                       className="h-[38px]   mb-4"
                       disabled
                     />
-                    {id && (
+                    {id && !modal && (
                       <InputComponent
                         label="Progress"
                         value={progress}
@@ -505,7 +527,7 @@ const FormSchedulePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {id && (
+              {id && !modal && (
                 <ToggleBodyComponent
                   name="Customer List"
                   className="mt-5"
