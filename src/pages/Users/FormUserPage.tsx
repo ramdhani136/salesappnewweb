@@ -112,11 +112,6 @@ const FormUserPage: React.FC = () => {
 
   const [file, setFile] = useState<File>();
 
-  const [createdAt, setCreatedAt] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
-
   const [loading, setLoading] = useState<boolean>(true);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
@@ -170,6 +165,44 @@ const FormUserPage: React.FC = () => {
       }
 
       setHistory(result.history);
+
+      console.log(result.data.visit);
+      console.log(result.data.callsheet);
+      console.log(result.data.permission);
+
+      setConnectionData([
+        {
+          title: "Activity",
+          data: [
+            {
+              title: "Visits",
+              count: result.data.visit,
+              onTitle: () => navigate("/visit"),
+              onAdd: () =>
+                alert("This feature only supports the mobile version"),
+            },
+            {
+              title: "Callsheets",
+              count: result.data.callsheet,
+              onTitle: () => navigate("/callsheet"),
+              onAdd: () => navigate("/callsheet/create"),
+            },
+          ],
+        },
+        {
+          title: "Settings",
+          data: [
+            {
+              title: "User Permissions",
+              count: result.data.permission,
+              onTitle: () => {
+                navigate("/permission-user");
+              },
+              onAdd: () => navigate("/permission-user/create"),
+            },
+          ],
+        },
+      ]);
 
       setData(result.data);
 
