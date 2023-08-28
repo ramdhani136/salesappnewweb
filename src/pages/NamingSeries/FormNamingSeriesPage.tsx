@@ -22,7 +22,7 @@ const FormNamingSeriesPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Naming Series"} - Sales App Ekatunggal`,
+    title: `${id ? data.name??"Loading .." : "New Naming Series"} - Sales App Ekatunggal`,
     description: "Halaman form naming series - Sales web system",
   };
 

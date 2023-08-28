@@ -22,7 +22,7 @@ const FormMemoPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Memo"} - Sales App Ekatunggal`,
+    title: `${id ? data.name??"Loading .." : "New Memo"} - Sales App Ekatunggal`,
     description: "Halaman form memo - Sales web system",
   };
 

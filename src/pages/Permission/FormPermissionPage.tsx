@@ -21,7 +21,7 @@ const FormPermissionPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Permission"} - Sales App Ekatunggal`,
+    title: `${id ? data?.user?.name??"Loading .. " : "New Permission"} - Sales App Ekatunggal`,
     description: "Halaman form Permission - Sales web system",
   };
 

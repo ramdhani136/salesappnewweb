@@ -27,7 +27,9 @@ const FormUserPage: React.FC = () => {
     valueInput: "",
   });
   const metaData = {
-    title: `${id ? name.valueData : "New User"} - Sales App Ekatunggal`,
+    title: `${
+      id ? (name.valueData != "" ? name.valueData : "Loading ..") : "New User"
+    } - Sales App Ekatunggal`,
     description: "Halaman form User sales web system",
   };
 

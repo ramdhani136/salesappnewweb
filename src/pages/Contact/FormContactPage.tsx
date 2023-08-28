@@ -24,7 +24,7 @@ const FormContactPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Contact"} - Sales App Ekatunggal`,
+    title: `${id ? data.name??"Loading .." : "New Contact"} - Sales App Ekatunggal`,
     description: "Halaman form Contact Sales web system",
   };
 

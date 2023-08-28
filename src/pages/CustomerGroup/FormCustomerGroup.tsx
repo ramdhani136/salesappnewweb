@@ -20,7 +20,7 @@ const FormCustomerGroupPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Group"} - Sales App Ekatunggal`,
+    title: `${id ? data.name??"Loading .." : "New Group"} - Sales App Ekatunggal`,
     description: "Halaman form Group Sales web system",
   };
 

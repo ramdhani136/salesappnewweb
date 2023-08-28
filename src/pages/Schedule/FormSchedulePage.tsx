@@ -26,7 +26,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Schedule"} - Sales App Ekatunggal`,
+    title: `${id ? data.name??"Loading .." : "New Schedule"} - Sales App Ekatunggal`,
     description: "Halaman form schedule  Sales  web system",
   };
   const dispatch = useDispatch();
