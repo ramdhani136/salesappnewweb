@@ -110,6 +110,7 @@ const ReportSalesAnalytic: React.FC<any> = () => {
         range
       )}}`;
       const result: any = await FetchApi.get(uri);
+
       const isData: any[] = result?.data?.data?.result.map((item: any) => {
         return {
           active:
@@ -123,6 +124,7 @@ const ReportSalesAnalytic: React.FC<any> = () => {
       });
 
       setDataResult(isData);
+      console.log(getReport(isData));
       setColumn(result?.data?.data?.columns ?? []);
       setData(result?.data?.data ?? null);
 
@@ -160,7 +162,7 @@ const ReportSalesAnalytic: React.FC<any> = () => {
     //     },
     //   },
     // },
-    
+
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
@@ -198,7 +200,8 @@ const ReportSalesAnalytic: React.FC<any> = () => {
   const getReport = (data: any[]) => {
     const result = getResultActive(data).map((item: any) => {
       const params = Object.keys(item).filter(
-        (i: any) => i !== "entity" && i !== "indent" && i !== "total"
+        (i: any) =>
+          i !== "entity" && i !== "indent" && i !== "total" && i !== "active"
       );
 
       let isGenData: number[] = [];
