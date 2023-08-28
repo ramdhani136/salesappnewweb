@@ -127,6 +127,7 @@ const FilterTableComponent: React.FC<IProps> = ({
 
   const getStorage = (refresh: boolean) => {
     if (localStorage) {
+        
       const storageFilter: string | null | undefined =
         LocalStorage.loadData(localStorage);
       if (storageFilter) {
@@ -254,7 +255,16 @@ const FilterTableComponent: React.FC<IProps> = ({
       });
       setFilter(isFilter);
       if (localStorage) {
-        LocalStorage.saveData(localStorage, JSON.stringify(tableFilter));
+        const getDefault = tableFilter.map((item: any) => {
+          return {
+            ...item,
+            hasMore: false,
+            listData: [],
+            loading: false,
+            page: 1,
+          };
+        });
+        LocalStorage.saveData(localStorage, JSON.stringify(getDefault));
       }
     } else {
       setFilter([]);

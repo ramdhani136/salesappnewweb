@@ -12,13 +12,13 @@ import {
 } from "../../components/atoms";
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
 import { AlertModal, FetchApi, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import ConnectionsUser, { IConnectionComponent } from "./ConnectionsUser";
 import ProfileImg from "../../assets/images/iconuser.jpg";
 import Swal from "sweetalert2";
 import { Alert, Snackbar } from "@mui/material";
+import { LocalStorage, LocalStorageType } from "../../utils";
 
 const FormUserPage: React.FC = () => {
   let { id } = useParams();
@@ -166,10 +166,6 @@ const FormUserPage: React.FC = () => {
 
       setHistory(result.history);
 
-      console.log(result.data.visit);
-      console.log(result.data.callsheet);
-      console.log(result.data.permission);
-
       setConnectionData([
         {
           title: "Activity",
@@ -177,14 +173,52 @@ const FormUserPage: React.FC = () => {
             {
               title: "Visits",
               count: result.data.visit,
-              onTitle: () => navigate("/visit"),
+              onTitle: () => {
+                LocalStorage.saveData(
+                  LocalStorageType.FILTERVISIT,
+                  JSON.stringify([
+                    {
+                      name: { valueData: "createdBy", valueInput: "CreatedBy" },
+                      operator: { valueData: "=", valueInput: "=" },
+                      value: {
+                        valueData: id,
+                        valueInput: result.data.name,
+                      },
+                      loading: false,
+                      listData: [],
+                      hasMore: false,
+                      page: 1,
+                    },
+                  ])
+                );
+                navigate("/visit");
+              },
               onAdd: () =>
                 alert("This feature only supports the mobile version"),
             },
             {
               title: "Callsheets",
               count: result.data.callsheet,
-              onTitle: () => navigate("/callsheet"),
+              onTitle: () => {
+                LocalStorage.saveData(
+                  LocalStorageType.FILTERCALLSHEET,
+                  JSON.stringify([
+                    {
+                      name: { valueData: "createdBy", valueInput: "CreatedBy" },
+                      operator: { valueData: "=", valueInput: "=" },
+                      value: {
+                        valueData: id,
+                        valueInput: result.data.name,
+                      },
+                      loading: false,
+                      listData: [],
+                      hasMore: false,
+                      page: 1,
+                    },
+                  ])
+                );
+                navigate("/callsheet");
+              },
               onAdd: () => navigate("/callsheet/new"),
             },
           ],
@@ -196,6 +230,23 @@ const FormUserPage: React.FC = () => {
               title: "User Permissions",
               count: result.data.permission,
               onTitle: () => {
+                LocalStorage.saveData(
+                  LocalStorageType.FILTERPERMISSION,
+                  JSON.stringify([
+                    {
+                      name: { valueData: "user", valueInput: "User" },
+                      operator: { valueData: "=", valueInput: "=" },
+                      value: {
+                        valueData: id,
+                        valueInput: result.data.name,
+                      },
+                      loading: false,
+                      listData: [],
+                      hasMore: false,
+                      page: 1,
+                    },
+                  ])
+                );
                 navigate("/permission");
               },
               onAdd: () => navigate("/permission/new"),
