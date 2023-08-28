@@ -58,7 +58,7 @@ const FormUserPage: React.FC = () => {
           title: "Callsheets",
           count: 0,
           onTitle: () => navigate("/callsheet"),
-          onAdd: () => navigate("/callsheet/create"),
+          onAdd: () => navigate("/callsheet/new"),
         },
       ],
     },
@@ -69,9 +69,9 @@ const FormUserPage: React.FC = () => {
           title: "User Permissions",
           count: 0,
           onTitle: () => {
-            navigate("/permission-user");
+            navigate("/permission");
           },
-          onAdd: () => navigate("/permission-user/create"),
+          onAdd: () => navigate("/permission/new"),
         },
       ],
     },
@@ -185,7 +185,7 @@ const FormUserPage: React.FC = () => {
               title: "Callsheets",
               count: result.data.callsheet,
               onTitle: () => navigate("/callsheet"),
-              onAdd: () => navigate("/callsheet/create"),
+              onAdd: () => navigate("/callsheet/new"),
             },
           ],
         },
@@ -196,9 +196,9 @@ const FormUserPage: React.FC = () => {
               title: "User Permissions",
               count: result.data.permission,
               onTitle: () => {
-                navigate("/permission-user");
+                navigate("/permission");
               },
-              onAdd: () => navigate("/permission-user/create"),
+              onAdd: () => navigate("/permission/new"),
             },
           ],
         },
