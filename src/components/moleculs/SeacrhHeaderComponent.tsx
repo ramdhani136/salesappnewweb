@@ -42,6 +42,8 @@ const SeacrhHeaderComponent: React.FC = () => {
     { name: "New Memo", link: "/memo/new" },
     { name: "Naming Series List", link: "/namingseries" },
     { name: "New Naming Series", link: "/namingseries/new" },
+    { name: "Permission List", link: "/permission" },
+    { name: "New Permission", link: "/permission/new" },
     { name: "Schedule List", link: "/schedule" },
     { name: "Tag List", link: "/tag" },
     { name: "New Tag", link: "/tag/new" },

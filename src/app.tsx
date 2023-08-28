@@ -41,6 +41,8 @@ import {
   FormMemoPage,
   WorkflowStatePage,
   FromWorkflowState,
+  PermissionPage,
+  FormPermissionPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -233,6 +235,18 @@ const App: React.FC = () => {
           <Route
             path="/report/schedule"
             element={<LayoutComponent Child={ReportSchedulePage} />}
+          />
+            <Route
+            path="/permission"
+            element={<LayoutComponent Child={PermissionPage} />}
+          />
+          <Route
+            path="/permission/:id"
+            element={<LayoutComponent Child={FormPermissionPage} />}
+          />
+          <Route
+            path="/permission/new"
+            element={<LayoutComponent Child={FormPermissionPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
