@@ -641,7 +641,7 @@ const FormCallsheetPage: React.FC = () => {
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
+              <div className="border w-full flex-1  bg-white rounded-md">
                 <div className="w-full h-auto  rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     {id && (

@@ -40,6 +40,8 @@ const FormPermissionPage: React.FC = () => {
     { name: "User Group", value: "usergroup" },
   ];
 
+  const [allDoc, setAlldoc] = useState<boolean>(false);
+
   const docList: IListInput[] = [
     { name: "Branch", value: "branch" },
     { name: "Visit", value: "visit" },
@@ -638,8 +640,8 @@ const FormPermissionPage: React.FC = () => {
                   <div className="w-1/2">
                     <div className="flex item-center text-sm mb-4 text-gray-800">
                       <input
-                        // checked={allDoc}
-                        // onChange={() => setAlldoc(!allDoc)}
+                        checked={allDoc}
+                        onChange={() => setAlldoc(!allDoc)}
                         type="checkbox"
                         className=" mt-[2px] mr-2"
                       />

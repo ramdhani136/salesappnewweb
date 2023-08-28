@@ -615,7 +615,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             </div>
             <div className=" px-5 flex flex-col mt-3  ">
               <div
-                className={`border w-full flex-1  pb-4 bg-white rounded-md overflow-y-scroll scrollbar-none ${
+                className={`border w-full flex-1  pb-4 bg-white rounded-md  ${
                   !topicData && "pb-28"
                 }`}
               >

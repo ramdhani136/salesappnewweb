@@ -404,9 +404,9 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
       } else {
         throw new Error("Branch wajib diisi!");
       }
-      if(group.valueData){
+      if (group.valueData) {
         inData.append("customerGroup", group.valueData);
-      }else{
+      } else {
         throw new Error("Group wajib diisi!");
       }
       inData.append("erpId", erpId.valueData);
@@ -572,7 +572,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
+              <div className="border w-full flex-1  bg-white rounded-md">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
