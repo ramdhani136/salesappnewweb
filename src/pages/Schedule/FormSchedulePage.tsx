@@ -524,7 +524,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
                       className="h-[38px]   mb-4"
                       disabled
                     />
-                    {id && !modal && (
+                    {id && !modal &&  progress.valueData!=="NaN" && (
                       <InputComponent
                         label="Progress"
                         value={progress}
