@@ -47,13 +47,13 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[10%]" },
-      { header: "Type", accessor: "type", className: "w-[5%]" },
-      { header: "Doc", accessor: "doc", className: "w-[7.5%]" },
+      { header: "Customer", accessor: "customer", className: "w-[13%]" },
+      { header: "Type", accessor: "type", className: "w-[4%]" },
+      { header: "Doc", accessor: "doc", className: "w-6%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
-      { header: "Activity", accessor: "activity", className: "w-[12.5%]" },
+      { header: "Activity", accessor: "activity", className: "w-[15%]" },
       { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
-      { header: "Tags", accessor: "tag", className: "w-[10%]" },
+      { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
       { header: "Group", accessor: "group", className: "w-[5%]" },
       { header: "Branch", accessor: "branch", className: "w-[10%]" },
       { header: "User", accessor: "user", className: "w-[7.5%]" },
@@ -80,10 +80,10 @@ export const ReportNotesPage: React.FC = (): any => {
 
             customer: (
               // <Link to={`/report/notes/${item._id}`}>
-              <b className="font-medium mx-2">{item.customer.name}</b>
+              <b className="font-medium mx-2 ">{item.customer.name}</b>
               // </Link>
             ),
-            topic: <h4 className="mx-2">{item.topic.name}</h4>,
+            topic: <h4 className="mx-2 min">{item.topic.name}</h4>,
             doc: <h4 className="mx-2">{item.doc.name}</h4>,
             type: <h4 className="mx-2">{item.doc.type}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
@@ -311,7 +311,7 @@ export const ReportNotesPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[210%]"
+              width="w-[220%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
