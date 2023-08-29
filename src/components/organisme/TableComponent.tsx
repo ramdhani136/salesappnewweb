@@ -340,8 +340,9 @@ const TableComponent: React.FC<Iprops> = ({
                 return (
                   <tr
                     key={index}
-                    className={`text-md border-b border-[#ebeceb] hover:bg-gray-100 cursor-pointer ${
-                      cekIsSelected(item.id) && "bg-gray-200 border-gray-300 border"
+                    className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
+                      cekIsSelected(item.id) &&
+                      "bg-gray-100 border-gray-300 border"
                     }`}
                   >
                     <td className="py-[15px] px-4">
