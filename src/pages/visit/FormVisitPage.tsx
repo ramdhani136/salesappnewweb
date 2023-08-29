@@ -268,7 +268,10 @@ const FormVisitPage: React.FC = () => {
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "visit"]],
+        filters: [
+          ["doc", "=", "visit"],
+          ["status", "=", "1"],
+        ],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -535,9 +538,8 @@ const FormVisitPage: React.FC = () => {
       if (nextState) {
         updata = { nextState: nextState };
       } else {
-
-        if(!customer.valueData){
-          throw new Error("Customer wajib diisi!")
+        if (!customer.valueData) {
+          throw new Error("Customer wajib diisi!");
         }
 
         updata = {

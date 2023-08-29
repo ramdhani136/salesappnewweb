@@ -237,9 +237,9 @@ const FormNamingSeriesPage: React.FC = () => {
   }, []);
 
   const onSave = async (nextState?: String): Promise<any> => {
-    if (!name.valueData) {
-      throw new Error("Nama wajib diisi!");
-    }
+    // if (!name.valueData) {
+    //   throw new Error("Nama wajib diisi!");
+    // }
     setLoading(true);
     try {
       let updata = {};

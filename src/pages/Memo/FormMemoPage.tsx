@@ -250,7 +250,10 @@ const FormMemoPage: React.FC = () => {
         dueDate: moment(result.data.closingDate).format("YYYY-MM-DD"),
         display: result.data.display
           ? result.data.display.map((item: any) => {
-              return { _id: item, name: capitalizeFirstLetter(item === "alert" ? "modal" : item) };
+              return {
+                _id: item,
+                name: capitalizeFirstLetter(item === "alert" ? "modal" : item),
+              };
             })
           : [],
         group: result?.data?.customerGroup
@@ -436,7 +439,10 @@ const FormMemoPage: React.FC = () => {
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "memo"]],
+        filters: [
+          ["doc", "=", "memo"],
+          ["status", "=", "1"],
+        ],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {

@@ -229,7 +229,10 @@ const FormCallsheetPage: React.FC = () => {
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "callsheet"]],
+        filters: [
+          ["doc", "=", "callsheet"],
+          ["status", "=", "1"],
+        ],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {

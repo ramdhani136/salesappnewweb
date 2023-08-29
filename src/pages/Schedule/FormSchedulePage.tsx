@@ -26,7 +26,9 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Schedule"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Schedule"
+    } - Sales App Ekatunggal`,
     description: "Halaman form schedule  Sales  web system",
   };
   const dispatch = useDispatch();
@@ -251,7 +253,10 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
-        filters: [["doc", "=", "schedule"]],
+        filters: [
+          ["doc", "=", "schedule"],
+          ["status", "=", "1"],
+        ],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -524,7 +529,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
                       className="h-[38px]   mb-4"
                       disabled
                     />
-                    {id && !modal &&  progress.valueData!=="NaN" && (
+                    {id && !modal && progress.valueData !== "NaN" && (
                       <InputComponent
                         label="Progress"
                         value={progress}
