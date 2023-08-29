@@ -1,6 +1,5 @@
 import { IconButton } from "../atoms";
 import { useState, useRef, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import SyncLoader from "react-spinners/SyncLoader";
 import { IListIconButton } from "../atoms/IconButton";
 import SouthIcon from "@mui/icons-material/South";
@@ -83,7 +82,6 @@ const TableComponent: React.FC<Iprops> = ({
   filter,
   setFilter,
   localStorage,
-  setData,
   setSearch,
   className,
   buttonInsert,
@@ -97,6 +95,7 @@ const TableComponent: React.FC<Iprops> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
+  const [scrollValue, setScrollValue] = useState<number>(0);
 
   const handleAllChecked = (event: any) => {
     if (selectedData) {
@@ -114,10 +113,6 @@ const TableComponent: React.FC<Iprops> = ({
         );
         setSelectedData(gentSelectedData);
       }
-      // const isData = data.map((item) => {
-      //   return { ...item, checked: event.target.checked };
-      // });
-      // setData(isData);
       setSelectAll(event.target.checked);
     }
   };
@@ -134,16 +129,7 @@ const TableComponent: React.FC<Iprops> = ({
         setSelectedData(genSelected);
       }
     }
-    // const index = data.findIndex((item) => item.id === id);
-    // const newData = [...data];
-    // newData[index].checked = !newData[index].checked;
-    // setData(newData);
   };
-
-  // const getSelected = () => {
-  //   const isSelect = data.filter((item) => item.checked === true);
-  //   return isSelect;
-  // };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -171,15 +157,18 @@ const TableComponent: React.FC<Iprops> = ({
   };
 
   const handleScroll = async () => {
-    if (!loading && hasMore && scrollableDivRef.current) {
-      if (
-        scrollableDivRef.current.scrollTop +
-          scrollableDivRef.current.clientHeight >=
-        scrollableDivRef.current.scrollHeight - 1
-      ) {
-        setLoading(true);
-        await fetchMore();
-        setLoading(false);
+    if (scrollableDivRef.current) {
+      setScrollValue(scrollableDivRef.current.scrollTop);
+      if (!loading && hasMore) {
+        if (
+          scrollableDivRef.current.scrollTop +
+            scrollableDivRef.current.clientHeight >=
+          scrollableDivRef.current.scrollHeight - 1
+        ) {
+          setLoading(true);
+          await fetchMore();
+          setLoading(false);
+        }
       }
     }
   };
@@ -207,7 +196,6 @@ const TableComponent: React.FC<Iprops> = ({
           </div>
           {listFilter && (
             <FilterTableComponent
-        
               filter={filter}
               setFilter={setFilter}
               listFilter={listFilter}
@@ -319,7 +307,9 @@ const TableComponent: React.FC<Iprops> = ({
               <tr>
                 <th
                   style={{ zIndex: 1 }}
-                  className="font-normal  text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4 "
+                  className={`font-normal  text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4   ${
+                    scrollValue > 0 && "border-b py-4 duration-150"
+                  }`}
                 >
                   {!disabledRadio && selectedData && (
                     <input
@@ -336,7 +326,9 @@ const TableComponent: React.FC<Iprops> = ({
                   <th
                     style={{ zIndex: 1 }}
                     key={index}
-                    className="font-normal sticky top-0 bg-white text-gray-800 text-md py-3 text-left  "
+                    className={`font-normal sticky top-0 bg-white text-gray-800 text-md py-3 text-left ${
+                      scrollValue > 0 && "border-b py-4 duration-150"
+                    }`}
                   >
                     {col.header}
                   </th>
