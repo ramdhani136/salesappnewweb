@@ -306,9 +306,8 @@ const TableComponent: React.FC<Iprops> = ({
             <thead>
               <tr>
                 <th
-                  style={{ zIndex: 1 }}
                   className={`font-normal  text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4   ${
-                    scrollValue > 0 && "border-b py-4 duration-300"
+                    scrollValue > 0 && "border-b py-4 duration-300 "
                   }`}
                 >
                   {!disabledRadio && selectedData && (
@@ -324,7 +323,6 @@ const TableComponent: React.FC<Iprops> = ({
 
                 {columns.map((col, index) => (
                   <th
-                    style={{ zIndex: 1 }}
                     key={index}
                     className={`font-normal sticky top-0 bg-white text-gray-800 text-md py-3 text-left ${
                       scrollValue > 0 && "border-b py-4 duration-300"
