@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -84,7 +84,13 @@ export const ReportNotesPage: React.FC = (): any => {
               // </Link>
             ),
             topic: <h4 className="mx-2 min">{item.topic.name}</h4>,
-            doc: <h4 className="mx-2">{item.doc.name}</h4>,
+            doc: item.doc ? (
+              <Link to={`/${item.doc.type}/${item.doc._id}`}>
+                <h4 className="mx-2">{item.doc.name}</h4>
+              </Link>
+            ) : (
+              ""
+            ),
             type: <h4 className="mx-2">{item.doc.type}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
             branch: item.branch.name,

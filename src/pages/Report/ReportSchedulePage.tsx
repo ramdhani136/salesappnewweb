@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -89,9 +89,13 @@ export const ReportSchedulePage: React.FC = (): any => {
           return {
             id: item._id,
             checked: false,
-            schedule: item.schedule.name,
+            schedule: (
+              <Link to={`/schedule/${item.schedule._id}`}>
+                {item.schedule.name}
+              </Link>
+            ),
             scheduleStatus: (
-              <h4 className="text-center">{item.schedule.status}</h4>
+              <div className="text-center">{item.schedule.status}</div>
             ),
             customer: (
               <b className="font-medium  py-3 float-left">
