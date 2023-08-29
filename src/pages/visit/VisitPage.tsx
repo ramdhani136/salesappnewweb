@@ -7,7 +7,6 @@ import {
 } from "../../components/atoms";
 import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import AddIcon from "@mui/icons-material/Add";
 import { TableComponent } from "../../components/organisme";
 import {
   IColumns,
@@ -35,6 +34,7 @@ export const VisitPage: React.FC = (): any => {
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
     title: "Visit -   Sales App Ekatunggal",
@@ -71,7 +71,6 @@ export const VisitPage: React.FC = (): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             doc: item.name,
             createdBy: item.createdBy.name,
             name: (
@@ -81,11 +80,7 @@ export const VisitPage: React.FC = (): any => {
             ),
             customer: <div>{item.customer.name}</div>,
             group: <div>{item.customerGroup.name}</div>,
-            type: (
-              <div>
-                {item.type === "insite" ? "In Site" : "Out Site"}
-              </div>
-            ),
+            type: <div>{item.type === "insite" ? "In Site" : "Out Site"}</div>,
 
             workflowState: (
               <ButtonStatusComponent
@@ -195,15 +190,10 @@ export const VisitPage: React.FC = (): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -216,7 +206,8 @@ export const VisitPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
-          navigate(0);
+          setSelectedData([]);
+          getAllData();
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
@@ -253,13 +244,15 @@ export const VisitPage: React.FC = (): any => {
                 <IconButton
                   name="Action"
                   className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
+                    selectedData.length === 0 && "hidden"
                   }`}
                   list={[{ name: "Delete", onClick: onDelete }]}
                 />
               </div>
             </div>
             <TableComponent
+              selectedData={selectedData}
+              setSelectedData={setSelectedData}
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}

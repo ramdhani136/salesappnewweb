@@ -28,6 +28,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   const docId = props.docId;
   const docData = props.data;
   const [data, setData] = useState<IDataTables[]>([]);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>(0);
@@ -167,7 +168,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           AddCustomer: AddCustomer,
           curentData: await getAllList(),
         },
-        className: "w-[950px] h-[98%]",
+        className: "w-[1080px] h-[98%]",
       })
     );
   };
@@ -182,11 +183,9 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
-       
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             customerId: item.customer._id,
             customer: <b className="font-medium">{item.customer.name}</b>,
             doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
@@ -316,15 +315,10 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const isSelect = data.filter((item) => item.checked === true);
-    return isSelect;
-  };
-
   const onDelete = async (e: any[]): Promise<void> =>
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -339,6 +333,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           }
           setActiveProgress(false);
           onRefresh();
+          setSelectedData([]);
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
@@ -383,6 +378,8 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
+            selectedData={selectedData}
+            setSelectedData={setSelectedData}
             width="w-[150%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}

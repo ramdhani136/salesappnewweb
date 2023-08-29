@@ -19,10 +19,10 @@ import {
 } from "../../components/moleculs";
 import moment from "moment";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
-import ProgressBar from "@ramonak/react-progress-bar";
 export const SchedulePage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>(0);
   const [page, setPage] = useState<String>("1");
@@ -78,7 +78,6 @@ export const SchedulePage: React.FC = (): any => {
           return {
             id: item._id,
             createdBy: item.createdBy.name,
-            checked: false,
             doc: <h4 className="mx-2">{item.name}</h4>,
             progress: (
               <div className="w-[180px] mx-2 mt-5  ">
@@ -195,15 +194,10 @@ export const SchedulePage: React.FC = (): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -216,7 +210,8 @@ export const SchedulePage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
-          navigate(0);
+          setSelectedData([]);
+          getAllData();
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
@@ -245,7 +240,7 @@ export const SchedulePage: React.FC = (): any => {
                   Icon={AddIcon}
                   name="Add Schedule"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
-                    getSelected().length > 0 && "hidden"
+                    selectedData.length > 0 && "hidden"
                   } `}
                   callback={() => navigate("/schedule/new")}
                 />
@@ -253,13 +248,15 @@ export const SchedulePage: React.FC = (): any => {
                 <IconButton
                   name="Action"
                   className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
+                    selectedData.length === 0 && "hidden"
                   }`}
                   list={[{ name: "Delete", onClick: onDelete }]}
                 />
               </div>
             </div>
             <TableComponent
+              selectedData={selectedData}
+              setSelectedData={setSelectedData}
               width="w-[105%]"
               loadingMore={loadingMore}
               setSearch={setSeacrh}

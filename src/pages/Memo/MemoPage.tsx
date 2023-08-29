@@ -37,6 +37,7 @@ export const MemoPage: React.FC = (): any => {
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
     title: "Memo -  Sales App Ekatunggal",
@@ -73,7 +74,6 @@ export const MemoPage: React.FC = (): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             doc: item.name,
             title: <h4>{item.title}</h4>,
             activeDate: <h4>{moment(`${item.activeDate}`).format("LL")}</h4>,
@@ -205,15 +205,10 @@ export const MemoPage: React.FC = (): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -226,6 +221,7 @@ export const MemoPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
+          setSelectedData([]);
           getAllData();
         } catch (error: any) {
           AlertModal.Default({
@@ -256,7 +252,7 @@ export const MemoPage: React.FC = (): any => {
                   Icon={AddIcon}
                   name="Add Memo"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
-                    getSelected().length > 0 && "hidden"
+                    selectedData.length > 0 && "hidden"
                   } `}
                   callback={() => navigate("/memo/new")}
                 />
@@ -264,14 +260,16 @@ export const MemoPage: React.FC = (): any => {
                 <IconButton
                   name="Action"
                   className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
+                    selectedData.length === 0 && "hidden"
                   }`}
                   list={[{ name: "Delete", onClick: onDelete }]}
                 />
               </div>
             </div>
             <TableComponent
-            width="w-[120%]"
+              selectedData={selectedData}
+              setSelectedData={setSelectedData}
+              width="w-[120%]"
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}

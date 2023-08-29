@@ -19,6 +19,7 @@ import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 export const CustomerPage: React.FC<any> = ({ props }): any => {
   const modal = props ? props.modal ?? false : false;
   const [data, setData] = useState<IDataTables[]>([]);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>(0);
@@ -96,7 +97,6 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             doc: item.name,
             name: (
               <Link to={`/customer/${item._id}`}>
@@ -212,15 +212,10 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -233,6 +228,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
+          setSelectedData([]);
           getAllData();
         } catch (error: any) {
           getAllData();
@@ -264,7 +260,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
                     Icon={AddIcon}
                     name="Add New"
                     className={`opacity-80 hover:opacity-100 duration-100 ${
-                      getSelected().length > 0 && "hidden"
+                      selectedData.length > 0 && "hidden"
                     } `}
                     callback={() => navigate("/customer/new")}
                   />
@@ -275,9 +271,9 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
                     Icon={AddIcon}
                     name="Add Customer"
                     className={`opacity-80 hover:opacity-100 duration-100 ${
-                      getSelected().length === 0 && "hidden"
+                      selectedData.length === 0 && "hidden"
                     } `}
-                    callback={() => props.AddCustomer(getSelected())}
+                    callback={() => props.AddCustomer(selectedData)}
                   />
                 )}
 
@@ -285,7 +281,7 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
                   <IconButton
                     name="Action"
                     className={`duration-100 ${
-                      getSelected().length === 0 && "hidden"
+                      selectedData.length === 0 && "hidden"
                     }`}
                     list={[{ name: "Delete", onClick: onDelete }]}
                   />
@@ -293,6 +289,8 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
               </div>
             </div>
             <TableComponent
+              selectedData={selectedData}
+              setSelectedData={setSelectedData}
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}

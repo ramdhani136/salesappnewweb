@@ -43,6 +43,7 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
   const [totalIndex, setTotalIndex] = useState<number>(0);
   const [onDeleteProgress, setOnDeleteProgress] = useState<String>("");
   const [currentPercent, setCurrentPercent] = useState<number>(0);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
@@ -61,7 +62,12 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
         active: true,
         Children: FormNotePage,
         title: "",
-        props: { id: id ?? undefined, doc: docData, onRefresh: getData, type:type },
+        props: {
+          id: id ?? undefined,
+          doc: docData,
+          onRefresh: getData,
+          type: type,
+        },
         className: "w-[63%] h-[98%]",
       })
     );
@@ -80,7 +86,6 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             topic: (
               <b
                 className="font-medium"
@@ -207,15 +212,10 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const isSelect = data.filter((item) => item.checked === true);
-    return isSelect;
-  };
-
   const onDelete = async (e: any[]): Promise<void> =>
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -228,6 +228,7 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
+          setSelectedData([]);
           setActiveProgress(false);
           onRefresh();
         } catch (error: any) {
@@ -274,6 +275,8 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
           </div>
         ) : (
           <TableComponent
+            selectedData={selectedData}
+            setSelectedData={setSelectedData}
             width="w-[120%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}

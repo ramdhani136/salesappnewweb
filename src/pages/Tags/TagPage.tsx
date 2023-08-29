@@ -36,6 +36,7 @@ export const TagPage: React.FC = (): any => {
   const [currentPercent, setCurrentPercent] = useState<number>(0);
   const [activeProgress, setActiveProgress] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
     title: "Tag -  Sales App Ekatunggal",
@@ -68,7 +69,6 @@ export const TagPage: React.FC = (): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            checked: false,
             doc: item.name,
             name: (
               <Link to={`/tag/${item._id}`}>
@@ -174,15 +174,10 @@ export const TagPage: React.FC = (): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
+        const data: any[] = selectedData;
         setLoading(true);
         try {
           setActiveProgress(true);
@@ -195,6 +190,7 @@ export const TagPage: React.FC = (): any => {
             setCurrentPercent(percent);
             setTotalIndex(data.length);
           }
+          setSelectedData([]);
           getAllData();
         } catch (error: any) {
           AlertModal.Default({
@@ -225,7 +221,7 @@ export const TagPage: React.FC = (): any => {
                   Icon={AddIcon}
                   name="Add Tag"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
-                    getSelected().length > 0 && "hidden"
+                    selectedData.length > 0 && "hidden"
                   } `}
                   callback={() => navigate("/tag/new")}
                 />
@@ -233,13 +229,15 @@ export const TagPage: React.FC = (): any => {
                 <IconButton
                   name="Action"
                   className={`duration-100 ${
-                    getSelected().length === 0 && "hidden"
+                    selectedData.length === 0 && "hidden"
                   }`}
                   list={[{ name: "Delete", onClick: onDelete }]}
                 />
               </div>
             </div>
             <TableComponent
+              selectedData={selectedData}
+              setSelectedData={setSelectedData}
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}

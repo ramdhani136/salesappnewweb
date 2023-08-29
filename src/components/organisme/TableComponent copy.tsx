@@ -42,8 +42,6 @@ interface Iprops {
   columns: IColumns[];
   data: IDataTables[];
   setData: any;
-  selectedData?: IDataTables[];
-  setSelectedData?: any;
   fetchMore(): Promise<any>;
   loadingMore?: boolean;
   hasMore: boolean;
@@ -68,8 +66,6 @@ interface Iprops {
 const TableComponent: React.FC<Iprops> = ({
   columns,
   data,
-  selectedData,
-  setSelectedData,
   fetchMore,
   hasMore,
   loadingMore,
@@ -99,51 +95,24 @@ const TableComponent: React.FC<Iprops> = ({
   const scrollableDivRef = useRef<HTMLDivElement>(null);
 
   const handleAllChecked = (event: any) => {
-    if (selectedData) {
-      if (event.target.checked) {
-        var mergedData = [...data, ...selectedData];
-        var uniqueEntries = new Map();
-        mergedData.forEach((item) => {
-          uniqueEntries.set(item.id, item);
-        });
-        var finalData = [...uniqueEntries.values()];
-        setSelectedData(finalData);
-      } else {
-        const gentSelectedData = selectedData.filter(
-          (item1) => !data.find((item2) => item2.id === item1.id)
-        );
-        setSelectedData(gentSelectedData);
-      }
-      // const isData = data.map((item) => {
-      //   return { ...item, checked: event.target.checked };
-      // });
-      // setData(isData);
-      setSelectAll(event.target.checked);
-    }
+    const isData = data.map((item) => {
+      return { ...item, checked: event.target.checked };
+    });
+    setData(isData);
+    setSelectAll(event.target.checked);
   };
 
-  const handleChange = (data: IDataTables, event: any) => {
-    if (selectedData) {
-      if (event.target.checked) {
-        setSelectedData([...selectedData, data]);
-      } else {
-        const genSelected = selectedData.filter(
-          (item: any) => item.id !== data.id
-        );
-        setSelectAll(false);
-        setSelectedData(genSelected);
-      }
-    }
-    // const index = data.findIndex((item) => item.id === id);
-    // const newData = [...data];
-    // newData[index].checked = !newData[index].checked;
-    // setData(newData);
+  const handleChange = (id: any) => {
+    const index = data.findIndex((item) => item.id === id);
+    const newData = [...data];
+    newData[index].checked = !newData[index].checked;
+    setData(newData);
   };
 
-  // const getSelected = () => {
-  //   const isSelect = data.filter((item) => item.checked === true);
-  //   return isSelect;
-  // };
+  const getSelected = () => {
+    const isSelect = data.filter((item) => item.checked === true);
+    return isSelect;
+  };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -161,14 +130,6 @@ const TableComponent: React.FC<Iprops> = ({
       setSelectAll(false);
     }
   }, [data]);
-
-  const cekIsSelected = (id: String): boolean => {
-    if (selectedData) {
-      const result = selectedData.some((item) => item.id === id);
-      return result;
-    }
-    return false;
-  };
 
   const handleScroll = async () => {
     if (!loading && hasMore && scrollableDivRef.current) {
@@ -213,9 +174,9 @@ const TableComponent: React.FC<Iprops> = ({
               localStorage={localStorage}
             />
           )}
-          {selectedData && selectedData.length > 0 && (
+          {getSelected().length > 0 && (
             <h4 className="ml-3 text-[#6f7477] text-md font-normal">
-              {selectedData.length} Items Selected
+              {getSelected().length} Items Selected
             </h4>
           )}
         </div>
@@ -240,7 +201,7 @@ const TableComponent: React.FC<Iprops> = ({
             />
           )}
 
-          {selectedData && selectedData.length > 0 && moreSelected && (
+          {getSelected().length > 0 && moreSelected && (
             <IconButton
               classModal="top-[29px]"
               primary
@@ -317,7 +278,7 @@ const TableComponent: React.FC<Iprops> = ({
             <thead>
               <tr>
                 <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
-                  {!disabledRadio && selectedData && (
+                  {!disabledRadio && (
                     <input
                       className="w-[14px] accent-slate-600"
                       type="checkbox"
@@ -339,33 +300,31 @@ const TableComponent: React.FC<Iprops> = ({
               </tr>
             </thead>
             <tbody>
-              {data.map((item: any, index) => {
-                return (
-                  <tr
-                    key={index}
-                    className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
-                      item.checked && "bg-gray-200 border-gray-300 border"
-                    }`}
-                  >
-                    <td className="py-[15px] px-4">
-                      {!disabledRadio && selectedData && (
-                        <input
-                          className="w-[14px] accent-slate-600"
-                          type="checkbox"
-                          checked={cekIsSelected(item.id)}
-                          onChange={(e) => handleChange(item, e)}
-                          disabled={disabled ? true : false}
-                        />
-                      )}
+              {data.map((item: any, index) => (
+                <tr
+                  key={index}
+                  className={`text-md border-b border-[#ebeceb] hover:bg-gray-50 cursor-pointer ${
+                    item.checked && "bg-gray-200 border-gray-300 border"
+                  }`}
+                >
+                  <td className="py-[15px] px-4">
+                    {!disabledRadio && (
+                      <input
+                        className="w-[14px] accent-slate-600"
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={() => handleChange(item.id)}
+                        disabled={disabled ? true : false}
+                      />
+                    )}
+                  </td>
+                  {columns.map((col: IColumns, id) => (
+                    <td className={`${col.className}`} key={id}>
+                      {item[`${col.accessor}`]}
                     </td>
-                    {columns.map((col: IColumns, id) => (
-                      <td className={`${col.className}`} key={id}>
-                        {item[`${col.accessor}`]}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (
