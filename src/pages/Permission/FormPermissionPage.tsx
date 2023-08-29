@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -19,9 +19,13 @@ import Swal from "sweetalert2";
 
 const FormPermissionPage: React.FC = () => {
   let { id } = useParams();
+  const location = useLocation();
+  const state = location.state;
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data?.user?.name??"Loading .. " : "New Permission"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data?.user?.name ?? "Loading .. " : "New Permission"
+    } - Sales App Ekatunggal`,
     description: "Halaman form Permission - Sales web system",
   };
 
@@ -436,8 +440,20 @@ const FormPermissionPage: React.FC = () => {
     } else {
       setLoading(false);
       setListMoreAction([]);
+      state?.user && setUser(state.user);
+      state?.allow && setAllow(state.allow);
+      state?.allDoc && setAlldoc(state.allDoc);
+      state?.doc && setDoc(state.doc);
+      state?.value && setValue(state.value);
     }
   }, []);
+
+  const onDuplicate = async () => {
+    navigate("/permission/new", {
+      state: { user, allow, allDoc, doc, value },
+    });
+    navigate(0);
+  };
 
   // Cek perubahan
   useEffect(() => {
@@ -495,7 +511,10 @@ const FormPermissionPage: React.FC = () => {
                     Icon={MoreHorizIcon}
                     iconSize={15}
                     classIcon="mt-1"
-                    list={listMoreAction}
+                    list={[
+                      ...listMoreAction,
+                      { name: "Duplicate", onClick: onDuplicate },
+                    ]}
                     iconListDisabled
                     className={` duration-100 mr-2 px-2 `}
                   />

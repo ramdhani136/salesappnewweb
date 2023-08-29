@@ -251,7 +251,15 @@ const FormUserPage: React.FC = () => {
                 );
                 navigate("/permission");
               },
-              onAdd: () => navigate("/permission/new"),
+              onAdd: () =>
+                navigate("/permission/new", {
+                  state: {
+                    user: {
+                      valueData: `${id}`,
+                      valueInput: result.data.name,
+                    },
+                  },
+                }),
             },
           ],
         },

@@ -110,10 +110,10 @@ export const PermissionPage: React.FC = (): any => {
                 <b className="font-medium">{item.user.name}</b>
               </Link>
             ),
-            value: <h4>{item.value.name}</h4>,
-            allow: <h4>{getAllowName(item.allow)}</h4>,
-            doc: <h4>{item.doc !== "" ? getAllowName(item.doc) : "All"}</h4>,
-            createdBy: <h4>{item.createdBy.name}</h4>,
+            value: <div>{item.value.name}</div>,
+            allow: <div>{getAllowName(item.allow)}</div>,
+            doc: <div>{item.doc !== "" ? getAllowName(item.doc) : "All"}</div>,
+            createdBy: <div>{item.createdBy.name}</div>,
 
             workflowState: (
               <ButtonStatusComponent
