@@ -22,7 +22,9 @@ const FormNamingSeriesPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Naming Series"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Naming Series"
+    } - Sales App Ekatunggal`,
     description: "Halaman form naming series - Sales web system",
   };
 
@@ -237,12 +239,13 @@ const FormNamingSeriesPage: React.FC = () => {
   }, []);
 
   const onSave = async (nextState?: String): Promise<any> => {
-    // if (!name.valueData) {
-    //   throw new Error("Nama wajib diisi!");
-    // }
+   
     setLoading(true);
     try {
       let updata = {};
+      if (!name.valueData) {
+        throw new Error("Nama wajib diisi!");
+      }
       if (nextState) {
         updata = { nextState: nextState };
       } else {
