@@ -282,7 +282,7 @@ const TableComponent: React.FC<Iprops> = ({
         </div>
       </div>
       <div
-        className="flex-1 overflow-auto pt-4 "
+        className="flex-1 overflow-auto  "
         ref={scrollableDivRef}
         onScroll={handleScroll}
       >
@@ -312,11 +312,11 @@ const TableComponent: React.FC<Iprops> = ({
           <table
             className={`${
               data.length > 0 ? (width ? width : "w-full") : "w-full"
-            }`}
+            } border-separate border-spacing-0`}
           >
             <thead>
               <tr>
-                <th className="font-normal text-gray-600 text-md text-left pb-3 px-4">
+                <th className="font-normal shadow-sm text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4 ">
                   {!disabledRadio && selectedData && (
                     <input
                       className="w-[14px] accent-slate-600"
@@ -331,7 +331,7 @@ const TableComponent: React.FC<Iprops> = ({
                 {columns.map((col, index) => (
                   <th
                     key={index}
-                    className="font-normal text-gray-800 text-md text-left pb-3  "
+                    className="font-normal sticky shadow-sm top-0 bg-white text-gray-800 text-md py-3 text-left  "
                   >
                     {col.header}
                   </th>

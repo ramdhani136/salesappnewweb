@@ -22,7 +22,9 @@ const FormMemoPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Memo"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Memo"
+    } - Sales App Ekatunggal`,
     description: "Halaman form memo - Sales web system",
   };
 
@@ -208,7 +210,7 @@ const FormMemoPage: React.FC = () => {
         const getDisplay = result.data.display.map((item: any) => {
           return {
             _id: item,
-            name: capitalizeFirstLetter(item),
+            name: capitalizeFirstLetter(item === "alert" ? "modal" : item),
           };
         });
         setDisplay(getDisplay);
@@ -248,7 +250,7 @@ const FormMemoPage: React.FC = () => {
         dueDate: moment(result.data.closingDate).format("YYYY-MM-DD"),
         display: result.data.display
           ? result.data.display.map((item: any) => {
-              return { _id: item, name: capitalizeFirstLetter(item) };
+              return { _id: item, name: capitalizeFirstLetter(item === "alert" ? "modal" : item) };
             })
           : [],
         group: result?.data?.customerGroup
@@ -759,7 +761,11 @@ const FormMemoPage: React.FC = () => {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       disabled={
-                        id != null ? (data.status !== "0" ? true : false) : false
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
                       }
                     />
                     <label className="text-sm">Notes</label>
@@ -769,7 +775,11 @@ const FormMemoPage: React.FC = () => {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       disabled={
-                        id != null ? (data.status !== "0" ? true : false) : false
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
                       }
                     />
                     <InputComponent
@@ -833,7 +843,11 @@ const FormMemoPage: React.FC = () => {
                       list={branchList}
                       type="text"
                       disabled={
-                        id != null ? (data.status !== "0" ? true : false) : false
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
                       }
                       className={`h-9 mb-3`}
                     />
@@ -1076,7 +1090,11 @@ const FormMemoPage: React.FC = () => {
                       list={groupList}
                       type="text"
                       disabled={
-                        id != null ? (data.status !== "0" ? true : false) : false
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
                       }
                       className={`h-9 mb-3`}
                     />
@@ -1164,7 +1182,11 @@ const FormMemoPage: React.FC = () => {
                       list={userGroupList}
                       type="text"
                       disabled={
-                        id != null ? (data.status !== "0" ? true : false) : false
+                        id != null
+                          ? data.status !== "0"
+                            ? true
+                            : false
+                          : false
                       }
                       className={`h-9 mb-3`}
                     />
