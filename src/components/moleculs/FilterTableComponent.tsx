@@ -302,9 +302,9 @@ const FilterTableComponent: React.FC<IProps> = ({
   }, [open]);
 
   return (
-    <div className="relative  border-[1.5px] rounded-md ml-2 cursor-pointer hover:bg-gray-50 duration-200">
+    <div className="z-10 relative bg-white   border-[1.5px] rounded-md ml-2 cursor-pointer hover:bg-gray-50 duration-200">
       <div
-        className="flex z-30 items-center  px-2 py-[7.1px] "
+        className="flex items-center  px-2 py-[7.1px] "
         onClick={() => {
           setOpen(!open);
         }}
@@ -320,7 +320,7 @@ const FilterTableComponent: React.FC<IProps> = ({
       {open && (
         <div
           ref={modalRef}
-          className=" bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[320px] absolute top-[38px]  left-0 rounded-md drop-shadow-md"
+          className=" bg-white  border-[1.5px] border-gray-200 w-[600px] h-auto max-h-[320px] absolute  top-[38px]  left-0 rounded-md drop-shadow-md"
         >
           {tableFilter.length === 0 && (
             <h4 className="w-full border-b-[1.5px] border-[#f1eeee] flex-1 text-center py-6 text-gray-300 font-normal">

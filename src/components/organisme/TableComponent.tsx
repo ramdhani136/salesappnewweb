@@ -189,7 +189,7 @@ const TableComponent: React.FC<Iprops> = ({
       className={`w-[97.5%] flex flex-col border border-[#e6e7e9] flex-1 bg-white ml-[1.25%]  mb-3 rounded-md drop-shadow-md overflow-hidden  ${className}`}
       id="scrollableDiv"
     >
-      <div className="w-full  p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
+      <div className="w-full z-30  p-3 sticky top-0 flex items-center justify-between py-5 border-b bg-white">
         <div className="text-md ml-4 text-gray-600 font-semibold flex items-center">
           ({data.length} {total ? `Of ${total}` : "Items"})
           <div className="w-60 border h-10 rounded-md  ml-4 bg-gray-50 flex items-center relative">
@@ -207,6 +207,7 @@ const TableComponent: React.FC<Iprops> = ({
           </div>
           {listFilter && (
             <FilterTableComponent
+        
               filter={filter}
               setFilter={setFilter}
               listFilter={listFilter}
@@ -316,7 +317,10 @@ const TableComponent: React.FC<Iprops> = ({
           >
             <thead>
               <tr>
-                <th className="font-normal  text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4 ">
+                <th
+                  style={{ zIndex: 1 }}
+                  className="font-normal  text-gray-600 text-md top-0 sticky bg-white text-left py-3 px-4 "
+                >
                   {!disabledRadio && selectedData && (
                     <input
                       className="w-[14px] accent-slate-600"
@@ -330,6 +334,7 @@ const TableComponent: React.FC<Iprops> = ({
 
                 {columns.map((col, index) => (
                   <th
+                    style={{ zIndex: 1 }}
                     key={index}
                     className="font-normal sticky top-0 bg-white text-gray-800 text-md py-3 text-left  "
                   >
