@@ -16,7 +16,7 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
-export const WorkflowStatePage: React.FC = (): any => {
+export const WorkflowActionPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -39,8 +39,8 @@ export const WorkflowStatePage: React.FC = (): any => {
   const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
-    title: "Workflow State -  Sales App Ekatunggal",
-    description: "Halaman workflow State - sales web system",
+    title: "Workflow Action -  Sales App Ekatunggal",
+    description: "Halaman Workflow Action - sales web system",
   };
 
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const WorkflowStatePage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.WORKFLOWSTATE).FIND({
+      const result: any = await GetDataServer(DataAPI.WORKFLOWACTION).FIND({
         limit: limit,
         page: page,
         filters: filter,
@@ -67,13 +67,14 @@ export const WorkflowStatePage: React.FC = (): any => {
 
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
+          console.log(item)
           return {
             id: item._id,
-            name: <Link to={`/workflowstate/${item._id}`}>{item.name}</Link>,
+            name: <Link to={`/workflowaction/${item._id}`}>{item.name}</Link>,
             status: (
               <ButtonStatusComponent
-                status={item.status}
-                name={item.status==="0"?"Disabled":"Enabled"}
+                status={`${item.status}`}
+                name={item.status === "0" ? "Disabled" : "Enabled"}
               />
             ),
             user: <div>{item.user.name}</div>,
@@ -152,7 +153,7 @@ export const WorkflowStatePage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Workflow State"), {
+  useKey("n", () => alert("Create New Action"), {
     ctrl: true,
     alt: true,
   });
@@ -173,7 +174,7 @@ export const WorkflowStatePage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.WORKFLOWSTATE).DELETE(item.id);
+            await GetDataServer(DataAPI.WORKFLOWACTION).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -205,7 +206,7 @@ export const WorkflowStatePage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Workflow State List
+                Workflow Action List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
@@ -214,7 +215,7 @@ export const WorkflowStatePage: React.FC = (): any => {
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     selectedData.length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/workflowstate/new")}
+                  callback={() => navigate("/workflowaction/new")}
                 />
 
                 <IconButton
@@ -252,7 +253,7 @@ export const WorkflowStatePage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERWORKFLOWSTATE}
+              localStorage={LocalStorageType.FILTERWORKFLOWACTION}
               onRefresh={onRefresh}
             />
           </>

@@ -39,6 +39,9 @@ import { WorkflowStatePage } from "./WorkflowState/WorkflowStatePage";
 import FromWorkflowState from "./WorkflowState/FormWorkflowStatePage";
 import { PermissionPage } from "./Permission/PermissionPage";
 import FormPermissionPage from "./Permission/FormPermissionPage";
+import { WorkflowActionPage } from "./WorkflowAction/WorkflowAction";
+import FormWorkflowAction from "./WorkflowAction/FormWorkflowAction";
+
 
 export {
   LoginPage,
@@ -82,4 +85,6 @@ export {
   FromWorkflowState,
   PermissionPage,
   FormPermissionPage,
+  WorkflowActionPage,
+  FormWorkflowAction
 };

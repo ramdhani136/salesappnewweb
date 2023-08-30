@@ -53,6 +53,8 @@ const SeacrhHeaderComponent: React.FC = () => {
     { name: "New Workflow", link: "/workflow/new" },
     { name: "Workflow State List", link: "/workflowstate" },
     { name: "New Workflow State", link: "/workflowstate/new" },
+    { name: "Workflow Action List", link: "/workflowaction" },
+    { name: "New Workflow Action", link: "/workflowaction/new" },
   ];
 
   const click = (): void => {
