@@ -67,7 +67,6 @@ export const WorkflowActionPage: React.FC = (): any => {
 
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
-          console.log(item)
           return {
             id: item._id,
             name: <Link to={`/workflowaction/${item._id}`}>{item.name}</Link>,
