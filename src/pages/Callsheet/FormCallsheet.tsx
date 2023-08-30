@@ -472,6 +472,7 @@ const FormCallsheetPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.CALLSHEET).DELETE(`${id}`);
           navigate("/callsheet");
+          navigate(0);
         } catch (error: any) {
           setLoading(false);
           Swal.fire(

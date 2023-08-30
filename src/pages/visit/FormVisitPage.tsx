@@ -511,6 +511,7 @@ const FormVisitPage: React.FC = () => {
         try {
           await GetDataServer(DataAPI.VISIT).DELETE(`${id}`);
           navigate("/visit");
+          navigate(0);
         } catch (error: any) {
           setLoading(false);
           Swal.fire(

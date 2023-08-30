@@ -3,6 +3,7 @@ import { Avatar } from "@mui/material";
 import { useKey } from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import { InfoDateComponent } from "../atoms";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   Icon: any;
@@ -20,6 +21,7 @@ const IconMenuHeader: React.FC<IProps> = ({
   const [active, setActive] = useState<boolean>(false);
   const componentRef = useRef<any>();
   const [data, setData] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   const getData = async (): Promise<any> => {
     try {
@@ -31,11 +33,26 @@ const IconMenuHeader: React.FC<IProps> = ({
         ],
         limit: 5,
       });
-      setData(result.data);
+      if (result.data) {
+        setData(result.data);
+      }
     } catch (error: any) {
+      console.log(error);
       console.log(error);
     }
   };
+
+  function capitalizeFirstLetter(text:any) {
+    const words = text.split(' ');
+  
+    for (let i = 0; i < words.length; i++) {
+      if (i === 0 || isNaN(words[i])) {
+        words[i] = words[i][0].toLowerCase() + words[i].substring(1).toLowerCase();
+      }
+    }
+  
+    return words.join(' ');
+  }
 
   useEffect(() => {
     getData();
@@ -66,9 +83,14 @@ const IconMenuHeader: React.FC<IProps> = ({
         style={{ fontSize: iconSize ? iconSize : 20 }}
         className=" text-gray-500 ml-2 cursor-pointer"
       />
-      <div className="w-[5px] h-[5px]  rounded-full bg-red-400 absolute top-1 right-0 border border-red-500 "></div>
+      <div
+        className={`w-[5px] h-[5px]  rounded-full absolute top-1 right-0 border ${
+          data.length > 0 && " border-red-500   bg-red-400"
+        } `}
+      ></div>
       <ul
-        className={  ` max-h-[450px] ${
+        ref={componentRef}
+        className={` max-h-[450px] ${
           !active && `hidden`
         } border w-80 absolute right-0 top-6 h-auto overflow-y-auto scrollbar-none  bg-white drop-shadow-sm overflow-hidden p-2 duration-500 rounded-md rounded-tr-none`}
       >
@@ -77,29 +99,35 @@ const IconMenuHeader: React.FC<IProps> = ({
           return (
             <li
               key={index}
-              ref={componentRef}
               className="w-full  h-auto rounded-md flex items-center px-2 py-2 cursor-pointer bg-blue-50 hover:bg-gray-100 mb-2"
               onClick={() => {
-                alert("dd");
+                navigate(`/${item.document.type}/${item.document._id}`);
                 setActive(false);
               }}
             >
               <Avatar
                 alt={item.user.name}
-                src="https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg"
-                sx={{ width: 50, height: 50 }}
+                src={`${import.meta.env.VITE_PUBLIC_URI}/images/users/${
+                  item.user.img
+                }`}
+                sx={{ width: 45, height: 45 }}
               />
               <ul className="flex-1 ml-2 h-[90%] flex flex-col ">
-                <li className="text-[0.9em] mt-[1px]">
-                  <b className="font-bold">{item.user.name}</b> {item.message}
+                <li className="text-[0.95em] mt-[1px]">
+                  <b className="font-bold">{item.user.name}</b> {capitalizeFirstLetter(item.message)}
                 </li>
                 <li className="text-[0.7em] -mt-1 text-gray-500">
-                <InfoDateComponent date={item.createdAt} className="-ml-14" />
+                  <InfoDateComponent date={item.createdAt} className="-ml-14" />
                 </li>
               </ul>
             </li>
           );
         })}
+        {data.length === 0 && (
+          <div className="w-full h-[100px] flex items-center justify-center text-gray-400 text-sm">
+            No Data
+          </div>
+        )}
       </ul>
     </div>
   );

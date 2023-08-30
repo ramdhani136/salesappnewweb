@@ -15,7 +15,8 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
-export const CallsheetPage: React.FC = (): any => {
+
+export const WorkflowStatePage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -38,8 +39,8 @@ export const CallsheetPage: React.FC = (): any => {
   const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
-    title: "Callsheet -   Sales App Ekatunggal",
-    description: "Halaman callsheet sales web system",
+    title: "Workflow State -  Sales App Ekatunggal",
+    description: "Halaman workflow statet - sales web system",
   };
 
   const navigate = useNavigate();
@@ -47,11 +48,8 @@ export const CallsheetPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
-      { header: "Customer", accessor: "customer" },
-      { header: "Status", accessor: "workflowState" },
-      { header: "Type", accessor: "type" },
-      { header: "Group", accessor: "group" },
-      { header: "Created By", accessor: "createdBy" },
+
+      { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
     []
@@ -59,10 +57,9 @@ export const CallsheetPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.CALLSHEET).FIND({
+      const result: any = await GetDataServer(DataAPI.WORKFLOWSTATE).FIND({
         limit: limit,
         page: page,
-        // fields: ["name", "user.name"],
         filters: filter,
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
@@ -72,28 +69,10 @@ export const CallsheetPage: React.FC = (): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            doc: item.name,
-            createdBy: item.createdBy.name,
-            name: (
-              <Link to={`/callsheet/${item._id}`}>
-                <b className="font-medium">{item.name}</b>
-              </Link>
-            ),
-            customer: <div>{item.customer.name}</div>,
-            group: <div>{item.customerGroup.name}</div>,
-            type: (
-              <div>
-                {item.type === "in" ? "Incoming Call" : "Outgoing Call"}
-              </div>
-            ),
+            name: <Link to={`/workflowstate/${item._id}`}>{item.name}</Link>,
 
-            workflowState: (
-              <ButtonStatusComponent
-                status={item.status}
-                name={item.workflowState}
-              />
-            ),
-            // warehouse: item.warehouse,
+            user: <div>{item.user.name}</div>,
+
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
@@ -117,24 +96,10 @@ export const CallsheetPage: React.FC = (): any => {
         const genListFilter = result.filters.map((i: any) => {
           let endpoint: DataAPI | undefined;
           switch (i.alias) {
-            case "CreatedBy":
+            case "User":
               endpoint = DataAPI.USERS;
               break;
-            case "WorkflowState":
-              endpoint = DataAPI.WORKFLOWSTATE;
-              break;
-            case "Customer":
-              endpoint = DataAPI.CUSTOMER;
-              break;
-            case "Contact":
-              endpoint = DataAPI.CONTACT;
-              break;
-            case "CustomerGroup":
-              endpoint = DataAPI.GROUP;
-              break;
-            case "Branch":
-              endpoint = DataAPI.BRANCH;
-              break;
+
             default:
               endpoint = undefined;
               break;
@@ -183,7 +148,7 @@ export const CallsheetPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Callsheet"), {
+  useKey("n", () => alert("Create new Workflow State"), {
     ctrl: true,
     alt: true,
   });
@@ -204,7 +169,7 @@ export const CallsheetPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.CALLSHEET).DELETE(item.id);
+            await GetDataServer(DataAPI.WORKFLOWSTATE).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -213,14 +178,14 @@ export const CallsheetPage: React.FC = (): any => {
             setTotalIndex(data.length);
           }
           setSelectedData([]);
-          navigate(0);
-          // getAllData();
+          getAllData();
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
             title: "Error",
             text: error.response.data.msg ?? "Error Network",
           });
+          getAllData();
           setLoading(false);
           setActiveProgress(false);
         }
@@ -236,16 +201,16 @@ export const CallsheetPage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Callsheet List
+                Workflow State List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add callsheet"
+                  name="Add State"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     selectedData.length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/callsheet/new")}
+                  callback={() => navigate("/workflowstate/new")}
                 />
 
                 <IconButton
@@ -283,7 +248,7 @@ export const CallsheetPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERCALLSHEET}
+              localStorage={LocalStorageType.FILTERWORKFLOWSTATE}
               onRefresh={onRefresh}
             />
           </>

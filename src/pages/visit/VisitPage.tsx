@@ -207,7 +207,8 @@ export const VisitPage: React.FC = (): any => {
             setTotalIndex(data.length);
           }
           setSelectedData([]);
-          getAllData();
+          // getAllData();
+          navigate(0)
         } catch (error: any) {
           AlertModal.Default({
             icon: "error",
