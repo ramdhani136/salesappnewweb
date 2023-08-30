@@ -90,19 +90,18 @@ const IconMenuHeader: React.FC<IProps> = ({
       ></div>
       <ul
         ref={componentRef}
-        className={` max-h-[450px] ${
+        className={` max-h-[380px] ${
           !active && `hidden`
         } border w-80 absolute right-0 top-6 h-auto overflow-y-auto scrollbar-none  bg-white drop-shadow-sm overflow-hidden p-2 duration-500 rounded-md rounded-tr-none`}
       >
         {data.map((item: any, index: any) => {
-          console.log(item)
           return (
             <li
               key={index}
               className="w-full  h-auto rounded-md flex items-center px-2 py-2 cursor-pointer bg-blue-50 hover:bg-gray-100 mb-2"
               onClick={() => {
                 navigate(`/${item.document.type}/${item.document._id}`);
-                setActive(false);
+                navigate(0)
               }}
             >
               <Avatar
@@ -114,7 +113,7 @@ const IconMenuHeader: React.FC<IProps> = ({
               />
               <ul className="flex-1 ml-2 h-[90%] flex flex-col ">
                 <li className="text-[0.95em] mt-[1px]">
-                  <b className="font-bold">{item.user.name}</b> {capitalizeFirstLetter(item.message)}
+                  <b className="font-bold">{item.user.name}</b> <h4 className="inline text-[1em]">{capitalizeFirstLetter(item.message)}</h4>
                 </li>
                 <li className="text-[0.7em] -mt-1 text-gray-500">
                   <InfoDateComponent date={item.createdAt} className="-ml-14" />
@@ -124,7 +123,7 @@ const IconMenuHeader: React.FC<IProps> = ({
           );
         })}
         {data.length === 0 && (
-          <div className="w-full h-[100px] flex items-center justify-center text-gray-400 text-sm">
+          <div className="w-full h-[100px] flex items-center justify-center text-gray-300 text-[0.9em]">
             No Data
           </div>
         )}
