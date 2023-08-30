@@ -66,11 +66,10 @@ export const WorkflowStatePage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
-        console.log(result);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            name: item.name,
+            name: <Link to={`/workflowstate/${item._id}`}>{item.name}</Link>,
 
             user: <div>{item.user.name}</div>,
 

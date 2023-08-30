@@ -6,7 +6,6 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
-  TimeLineVertical,
 } from "../../components/atoms";
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
@@ -16,21 +15,18 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
-
-
 const FromWorkflowState: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Branch"} - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    title: `${id ? data.name : "New Workflow"} - Sales App Ekatunggal`,
+    description: "Halaman form Workflow - Sales web system",
   };
 
   const navigate = useNavigate();
 
   const [scroll, setScroll] = useState<number>(0);
-  const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
-  const [history, setHistory] = useState<any[]>([]);
+
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
   const [user, setUser] = useState<IValue>({
@@ -42,11 +38,8 @@ const FromWorkflowState: React.FC = () => {
     valueInput: "",
   });
 
-  const [status, setStatus] = useState<String>("Draft");
-  const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
-    desc: desc ?? "",
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -59,39 +52,18 @@ const FromWorkflowState: React.FC = () => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
   const getData = async (): Promise<void> => {
-    setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
-
-      // set workflow
-      if (result.workflow.length > 0) {
-        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-          return {
-            name: item.action,
-            onClick: () => {
-              AlertModal.confirmation({
-                onConfirm: () => {
-                  onSave(item.nextState.id);
-                },
-                confirmButtonText: "Yes, Save it!",
-              });
-            },
-          };
-        });
-
-        setWorkflow(isWorkflow);
-      }
-      // end
-
-      setHistory(result.history);
+      const result = await GetDataServer(DataAPI.WORKFLOWSTATE).FINDONE(
+        `${id}`
+      );
 
       setName({
         valueData: result.data.name,
         valueInput: result.data.name,
       });
       setUser({
-        valueData: result.data.createdBy._id,
-        valueInput: result.data.createdBy.name,
+        valueData: result.data.user._id,
+        valueInput: result.data.user.name,
       });
       setCreatedAt({
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
@@ -102,20 +74,8 @@ const FromWorkflowState: React.FC = () => {
 
       setPrevData({
         name: result.data.name,
-        desc: result.data.desc ?? "",
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
-      }
-      setStatus(
-        result.data.status == "0"
-          ? "Draft"
-          : result.data.status == "1"
-          ? "Submitted"
-          : result.data.status == "2"
-          ? "Canceled"
-          : "Closed"
-      );
+
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -125,7 +85,7 @@ const FromWorkflowState: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/workflowstate");
     }
   };
 
@@ -134,8 +94,8 @@ const FromWorkflowState: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
+          await GetDataServer(DataAPI.WORKFLOWSTATE).DELETE(`${id}`);
+          navigate("/workflowstate");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -161,15 +121,14 @@ const FromWorkflowState: React.FC = () => {
     try {
       let data: any = {
         name: name.valueData,
-        desc: desc,
       };
       if (nextState) {
         data.nextState = nextState;
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+        ? GetDataServer(DataAPI.WORKFLOWSTATE).UPDATE({ id: id, data: data })
+        : GetDataServer(DataAPI.WORKFLOWSTATE).CREATE(data);
 
       const result = await Action;
 
@@ -177,7 +136,7 @@ const FromWorkflowState: React.FC = () => {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/branch/${result.data.data._id}`);
+        navigate(`/workflowstate/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -210,14 +169,13 @@ const FromWorkflowState: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
-      desc: desc ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [name]);
   // End
 
   return (
@@ -238,10 +196,10 @@ const FromWorkflowState: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/workflowstate")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New branch" : data.name}
+                  {!id ? "New State" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -279,14 +237,6 @@ const FromWorkflowState: React.FC = () => {
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
-                {!isChangeData && id && workflow.length > 0 && (
-                  <IconButton
-                    name="Actions"
-                    list={workflow}
-                    callback={onSave}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -305,9 +255,9 @@ const FromWorkflowState: React.FC = () => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
                     />
 
                     <InputComponent
@@ -321,16 +271,6 @@ const FromWorkflowState: React.FC = () => {
                         })
                       }
                       disabled
-                    />
-                    <label className="text-sm">Desc</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
@@ -347,24 +287,9 @@ const FromWorkflowState: React.FC = () => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      label="Status"
-                      value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
                   </div>
                 </div>
               </div>
-
-              <TimeLineVertical data={history} />
             </div>
           </>
         ) : (
