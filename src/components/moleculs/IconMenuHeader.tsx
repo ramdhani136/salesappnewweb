@@ -90,7 +90,7 @@ const IconMenuHeader: React.FC<IProps> = ({
       ></div>
       <ul
         ref={componentRef}
-        className={` max-h-[380px] ${
+        className={` max-h-[420px] ${
           !active && `hidden`
         } border w-80 absolute right-0 top-6 h-auto overflow-y-auto scrollbar-none  bg-white drop-shadow-sm overflow-hidden p-2 duration-500 rounded-md rounded-tr-none`}
       >
