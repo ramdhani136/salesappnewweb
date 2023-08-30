@@ -6,6 +6,7 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
+  Select,
 } from "../../components/atoms";
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
@@ -38,8 +39,16 @@ const FromWorkflowState: React.FC = () => {
     valueInput: "",
   });
 
+  const [status, setStatus] = useState<string>("0");
+
+  const statusType: any[] = [
+    { title: "Disabled", value: "0" },
+    { title: "Enabled", value: "1" },
+  ];
+
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
+    status: status,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -56,6 +65,9 @@ const FromWorkflowState: React.FC = () => {
       const result = await GetDataServer(DataAPI.WORKFLOWSTATE).FINDONE(
         `${id}`
       );
+
+
+      setStatus(result.data.status);
 
       setName({
         valueData: result.data.name,
@@ -74,6 +86,7 @@ const FromWorkflowState: React.FC = () => {
 
       setPrevData({
         name: result.data.name,
+        status: result.data.status,
       });
 
       setLoading(false);
@@ -121,6 +134,7 @@ const FromWorkflowState: React.FC = () => {
     try {
       let data: any = {
         name: name.valueData,
+        status: status,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -169,13 +183,14 @@ const FromWorkflowState: React.FC = () => {
   useEffect(() => {
     const actualData = {
       name: name.valueData,
+      status: status,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name]);
+  }, [name,status]);
   // End
 
   return (
@@ -205,7 +220,7 @@ const FromWorkflowState: React.FC = () => {
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
-                    name={data.workflowState ?? "Not Save"}
+                    name={data.status==="0" ?"Disabled": "Enabled"}
                   />
                 </div>
               </div>
@@ -286,6 +301,12 @@ const FromWorkflowState: React.FC = () => {
                         })
                       }
                       disabled
+                    />
+                    <Select
+                      title="Status"
+                      data={statusType}
+                      value={status}
+                      setValue={setStatus}
                     />
                   </div>
                 </div>
