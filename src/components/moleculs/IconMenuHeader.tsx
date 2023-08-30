@@ -98,7 +98,7 @@ const IconMenuHeader: React.FC<IProps> = ({
           return (
             <li
               key={index}
-              className="w-full  h-auto rounded-md flex items-center px-2 py-2 cursor-pointer bg-blue-50 hover:bg-gray-100 mb-2"
+              className="w-full  h-auto rounded-md flex items-center px-2 py-1 cursor-pointer bg-blue-50 hover:bg-gray-100 mb-2"
               onClick={() => {
                 navigate(`/${item.document.type}/${item.document._id}`);
                 navigate(0)
@@ -109,7 +109,7 @@ const IconMenuHeader: React.FC<IProps> = ({
                 src={`${import.meta.env.VITE_PUBLIC_URI}/images/users/${
                   item.user.img
                 }`}
-                sx={{ width: 50, height: 50 }}
+                sx={{ width: 47, height: 47 }}
               />
               <ul className="flex-1 ml-2 h-[90%] flex flex-col ">
                 <li className="text-[0.95em] mt-[1px]">
