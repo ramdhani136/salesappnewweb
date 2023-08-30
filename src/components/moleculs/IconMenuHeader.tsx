@@ -109,7 +109,7 @@ const IconMenuHeader: React.FC<IProps> = ({
                 src={`${import.meta.env.VITE_PUBLIC_URI}/images/users/${
                   item.user.img
                 }`}
-                sx={{ width: 45, height: 45 }}
+                sx={{ width: 50, height: 50 }}
               />
               <ul className="flex-1 ml-2 h-[90%] flex flex-col ">
                 <li className="text-[0.95em] mt-[1px]">
