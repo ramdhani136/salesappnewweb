@@ -113,7 +113,7 @@ const IconMenuHeader: React.FC<IProps> = ({
               />
               <ul className="flex-1 ml-2 h-[90%] flex flex-col ">
                 <li className="text-[0.95em] mt-[1px]">
-                  <b className="font-bold">{item.user.name}</b> <h4 className="inline text-[1em]">{capitalizeFirstLetter(item.message)}</h4>
+                  <b className="font-bold">{item.user.name}</b> <h4 className="inline text-[1em]">{item.message}</h4>
                 </li>
                 <li className="text-[0.7em] -mt-1 text-gray-500">
                   <InfoDateComponent date={item.createdAt} className="-ml-14" />
