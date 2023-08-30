@@ -55,6 +55,7 @@ export enum DataAPI {
   WORKFLOWTRANSITION = "workflowtransition",
   WORKFLOWCHANGER = "workflowchanger",
   PERMISSION = "permission",
+  HISTORY = "history",
 }
 
 class RequestData implements IData {
