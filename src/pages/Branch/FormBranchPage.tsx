@@ -25,7 +25,9 @@ const FormBranchPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name?? "Loading ..  " : "New Branch"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading ..  " : "New Branch"
+    } - Sales App Ekatunggal`,
     description: "Halaman form Branch Sales web system",
   };
 
@@ -162,9 +164,6 @@ const FormBranchPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!name.valueData) {
-        throw new Error("Name wajib diisi!");
-      }
       let data: any = {
         name: name.valueData,
         desc: desc,
