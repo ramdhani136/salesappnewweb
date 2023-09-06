@@ -220,6 +220,9 @@ const FormVisitPage: React.FC = () => {
         valueData: result.data.customerGroup._id,
         valueInput: result.data.customerGroup.name,
       });
+
+      settype(result.data.type);
+
       setCustomer({
         valueData: result.data.customer._id,
         valueInput: result.data.customer.name,
