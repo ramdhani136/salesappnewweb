@@ -869,7 +869,7 @@ const FormVisitPage: React.FC = () => {
                         <textarea
                           disabled
                           value={data?.checkIn?.address ?? ""}
-                          className="w-full border rounded-md h-20 bg-gray-50 px-3 py-2 text-md text-gray-900"
+                          className="w-full border rounded-md h-20 bg-gray-50 px-3 py-2 mb-12 text-md text-gray-900"
                         />
                       </>
                     )}
