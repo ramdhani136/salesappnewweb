@@ -45,6 +45,7 @@ import {
   FormPermissionPage,
   WorkflowActionPage,
   FormWorkflowAction,
+  WhatsappAccountPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -261,6 +262,10 @@ const App: React.FC = () => {
           <Route
             path="/permission/new"
             element={<LayoutComponent Child={FormPermissionPage} />}
+          />
+           <Route
+            path="/whatsapp/account"
+            element={<LayoutComponent Child={WhatsappAccountPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
