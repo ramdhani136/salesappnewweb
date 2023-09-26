@@ -1,0 +1,62 @@
+import { useEffect, useState } from "react";
+import { SocketIO } from "../../utils";
+
+const WhatsappQrViewPage = () => {
+  const [qr, setQr] = useState("");
+  const [status, setStatus] = useState<string>("");
+
+  useEffect(() => {
+    SocketIO.emit("get qr", "client1");
+    SocketIO.on("qr", (data) => {
+      setQr(data);
+    });
+    SocketIO.on("message", (data) => {
+      console.log(data);
+      setStatus(data);
+    });
+  }, []);
+
+  return (
+    <div className="w-[800px] h-[400px] m-5 rounded-md bg-white flex flex-col">
+      <div className="flex-1 flex flex-row mb-3">
+        <div className="flex-1 p-4 mt-2">
+          <h3 className="text-md">
+            Untuk mengirim dan menerima pesan,
+            <br />
+            Anda harus scan Scan Qrcode untuk menghubungkan Server kami ke
+            Whatsapp
+          </h3>
+          <br />
+          <ul className="text-md">
+            <li>
+              1. Buka aplikasi <b>WhatsApp</b> di ponsel Anda
+            </li>
+            <li>
+              2. Pilih <b>menu</b> atau <b>Setelan</b> dan pilih{" "}
+              <b>Perangkat Tertaut</b>
+            </li>
+            <li>3. Scan Qrcode dan tunggu hingga terhubung</li>
+            <li>4. Tetap hidupkan ponsel Anda dan sambungkan ke internet</li>
+          </ul>
+        </div>
+        <div className="w-[270px] border border-grey-200 rounded-md my-6 mx-3 flex flex-col ">
+          <img className="flex-1" src={qr} alt="qrcode" />
+          <h3 className="text-center text-md -mt-2 mb-2 text-gray-700">{status}</h3>
+        </div>
+      </div>
+      <ul className="flex items-center justify-center w-full  py-2 ">
+        <li className="border rounded-md py-1 px-2 mr-2 bg-green-500 font-semibold text-white text-sm">
+          Check
+        </li>
+        <li className="border rounded-md py-1 px-2 mr-2 bg-gray-800 font-semibold text-white text-sm">
+          Reset
+        </li>
+        <li className="border rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm">
+          Logout
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+export default WhatsappQrViewPage;

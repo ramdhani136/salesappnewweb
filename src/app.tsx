@@ -46,6 +46,7 @@ import {
   WorkflowActionPage,
   FormWorkflowAction,
   WhatsappAccountPage,
+  WhatsappQrViewPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -266,6 +267,10 @@ const App: React.FC = () => {
            <Route
             path="/whatsapp/account"
             element={<LayoutComponent Child={WhatsappAccountPage} />}
+          />
+           <Route
+            path="/coba"
+            element={<LayoutComponent Child={WhatsappQrViewPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
