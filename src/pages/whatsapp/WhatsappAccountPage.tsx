@@ -112,8 +112,8 @@ export const WhatsappAccountPage: React.FC = (): any => {
             case "CreatedBy":
               endpoint = DataAPI.USERS;
               break;
-            case "WorkflowState":
-              endpoint = DataAPI.WORKFLOWSTATE;
+            case "Name":
+              endpoint = DataAPI.WAACCOUNT;
               break;
             default:
               endpoint = undefined;
