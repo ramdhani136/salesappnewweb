@@ -48,7 +48,9 @@ export const WhatsappAccountPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
-      { header: "Status", accessor: "workflowState" },
+      { header: "Status", accessor: "status" },
+      { header: "Account", accessor: "account" },
+      { header: "Phone", accessor: "phone" },
       { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
@@ -76,13 +78,14 @@ export const WhatsappAccountPage: React.FC = (): any => {
               </Link>
             ),
             user: <div>{item.createdBy.name}</div>,
-
-            workflowState: (
+            status: (
               <ButtonStatusComponent
                 status={item.status == "Connected" ? "1" : "0"}
                 name={item.status}
               />
             ),
+            account: <div>{item.account}</div>,
+            phone: <div>{item.phone}</div>,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
