@@ -56,6 +56,7 @@ export enum DataAPI {
   WORKFLOWCHANGER = "workflowchanger",
   PERMISSION = "permission",
   HISTORY = "history",
+  WAACCOUNT = "whatsapp/account",
 }
 
 class RequestData implements IData {

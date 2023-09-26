@@ -41,7 +41,7 @@ import { PermissionPage } from "./Permission/PermissionPage";
 import FormPermissionPage from "./Permission/FormPermissionPage";
 import { WorkflowActionPage } from "./WorkflowAction/WorkflowAction";
 import FormWorkflowAction from "./WorkflowAction/FormWorkflowAction";
-import WhatsappAccountPage from "./whatsapp/WhatsappAccountPage";
+import {WhatsappAccountPage} from "./whatsapp/WhatsappAccountPage";
 
 
 export {
