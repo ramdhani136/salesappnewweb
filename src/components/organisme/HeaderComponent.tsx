@@ -46,7 +46,7 @@ const HeaderComponent: React.FC = () => {
       <div className="text-sm flex items-center ml-3">
         <SeacrhHeaderComponent />
 
-        <IconMenuHeader Icon={NotificationsNoneIcon} title="notif" />
+        {/* <IconMenuHeader Icon={NotificationsNoneIcon} title="notif" /> */}
       </div>
 
       <div className="flex items-center">
