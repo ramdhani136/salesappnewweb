@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SocketIO } from "../../utils";
+import { PuffLoader, RotateLoader } from "react-spinners";
 
 const WhatsappQrViewPage = () => {
   const [qr, setQr] = useState("");
@@ -24,7 +25,7 @@ const WhatsappQrViewPage = () => {
   return (
     <div className="w-[800px] h-[400px] m-5 rounded-md bg-white flex flex-col">
       <div className="flex-1 flex flex-row mb-3">
-        <div className="flex-1 p-4 mt-2">
+        <div className="flex-1 p-6 mt-2">
           <h3 className="text-md">
             Untuk mengirim dan menerima pesan,
             <br />
@@ -44,9 +45,36 @@ const WhatsappQrViewPage = () => {
             <li>4. Tetap hidupkan ponsel Anda dan sambungkan ke internet</li>
           </ul>
         </div>
-        <div className="w-[270px] border border-grey-200 rounded-md my-6 mx-3 flex flex-col ">
-          <img className="flex-1" src={qr} alt="qrcode" />
-          <h3 className="text-center text-md -mt-2 mb-2 text-gray-700">
+        <div className="w-[270px] border border-grey-200 rounded-md my-6 mr-5 flex flex-col ">
+          { !loading  && qr&& <img className="flex-1" src={qr} alt="qrcode" />}
+          {(status === "Client is connected!" ||
+            status === "Session Saved!") && (
+            <div className="w-full h-full flex justify-center items-center">
+              <PuffLoader
+                color="#ccc"
+                loading={true}
+                // cssOverride={override}
+                size={70}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>
+          )}
+
+          {loading && (
+            <div className="w-full h-full flex justify-center items-center">
+              <RotateLoader
+                color="#ccc"
+                loading={true}
+                // cssOverride={override}
+                size={10}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>
+          )}
+
+          <h3 className="text-center text-md  mb-3 text-gray-500 italic font-semibold text-[0.9em]">
             {status}
           </h3>
         </div>
