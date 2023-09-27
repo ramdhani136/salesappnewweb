@@ -9,6 +9,7 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
   const [reset, setReset] = useState<boolean>(false);
   const [destroy, setDestroy] = useState<boolean>(false);
   const [resetTime, setResetTime] = useState<number>(1);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     SocketIO.emit("open", props.id);
@@ -28,6 +29,10 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
     });
     SocketIO.on("loading", (data) => {
       setLoading(data);
+    });
+    SocketIO.on("getuserdata", (data) => {
+      console.log(data);
+      setUserData(data);
     });
 
     return () => {
@@ -61,25 +66,62 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
   return (
     <div className="w-[800px] h-[400px] m-5 rounded-md bg-white flex flex-col">
       <div className="flex-1 flex flex-row ">
-        <div className="flex-1 p-6 mt-2">
-          <h3 className="text-md">
-            Untuk mengirim dan menerima pesan,
-            <br />
-            Anda harus scan Scan Qrcode untuk menghubungkan Server kami ke
-            Whatsapp
-          </h3>
-          <br />
-          <ul className="text-md">
-            <li>
-              1. Buka aplikasi <b>WhatsApp</b> di ponsel Anda
-            </li>
-            <li>
-              2. Pilih <b>menu</b> atau <b>Setelan</b> dan pilih{" "}
-              <b>Perangkat Tertaut</b>
-            </li>
-            <li>3. Scan Qrcode dan tunggu hingga terhubung</li>
-            <li>4. Tetap hidupkan ponsel Anda dan sambungkan ke internet</li>
-          </ul>
+        <div className="flex-1 p-6 ">
+          {status === "Client is connected!" || status === "Session Saved!" ? (
+            <div className="flex -ml-5">
+              {userData != null && (
+                <>
+      
+                  <img
+                    className="w-[50px] rounded-full"
+                    src={userData.img ?? ""}
+                    alt="pp"
+                  />
+                  <div className="ml-2">
+                    <b>{userData.name}</b>
+                    <h4 className="text-sm font-semibold text-gray-700 italic">
+                      +{userData.phone}
+                    </h4>
+                  </div>
+                  {(status == "Client is connected!" ||
+                    status === "Session Saved!") &&
+                    !loading && (
+                      <h4
+                        onClick={() => {
+                          SocketIO.emit("logout", props.id);
+                        }}
+                        className="border h-7 ml-2 mt-3 cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-400  hover:bg-red-500 font-semibold duration-100 text-white text-[0.8em]"
+                      >
+                        Disconnect
+                      </h4>
+                    )}
+                </>
+              )}
+            </div>
+          ) : (
+            <>
+              <h3 className="text-md">
+                Untuk mengirim dan menerima pesan,
+                <br />
+                Anda harus scan Scan Qrcode untuk menghubungkan Server kami ke
+                Whatsapp
+              </h3>
+              <br />
+              <ul className="text-md">
+                <li>
+                  1. Buka aplikasi <b>WhatsApp</b> di ponsel Anda
+                </li>
+                <li>
+                  2. Pilih <b>menu</b> atau <b>Setelan</b> dan pilih{" "}
+                  <b>Perangkat Tertaut</b>
+                </li>
+                <li>3. Scan Qrcode dan tunggu hingga terhubung</li>
+                <li>
+                  4. Tetap hidupkan ponsel Anda dan sambungkan ke internet
+                </li>
+              </ul>
+            </>
+          )}
         </div>
         <div className="w-[270px] border border-grey-200 rounded-md my-6 mr-5 flex flex-col ">
           {!loading && qr && <img className="flex-1" src={qr} alt="qrcode" />}
@@ -142,18 +184,6 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
                   ({resetTime})
                 </h5>
               )}
-            </li>
-          )}
-
-        {(status == "Client is connected!" || status === "Session Saved!") &&
-          !loading && (
-            <li
-              onClick={() => {
-                SocketIO.emit("logout", props.id);
-              }}
-              className="border cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm"
-            >
-              Disconnect
             </li>
           )}
       </ul>
