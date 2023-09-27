@@ -45,7 +45,7 @@ const WhatsappQrViewPage = () => {
       }, 10000);
       setResetTime(1);
     }
-  }, [reset]);
+  }, []);
 
   useEffect(() => {
     if (resetTime < 10) {
@@ -114,30 +114,40 @@ const WhatsappQrViewPage = () => {
         </div>
       </div>
       <ul className="flex items-center justify-center w-full  py-2  h-[70px] ">
-        {status !== "Client is connected!" && status !== "Session Saved!" && (
-          <li
-            onClick={() => {
-              if (reset) {
-                SocketIO.emit("qrrefresh", "client1");
-                setReset(false);
-              }
-            }}
-            className={`border cursor-pointer ${
-              !reset && "opacity-50 cursor-progress"
-            } rounded-md py-1 px-2 mr-2 flex items-center justify-center bg-gray-800 font-semibold text-white text-sm`}
-          >
-            <h4>Refresh Qr</h4>
-            {!reset && (
-              <h5 className="text-[0.9em] ml-[1px] mt-[2px]">({resetTime})</h5>
-            )}
-          </li>
-        )}
+        {status !== "Client is connected!" &&
+          status !== "Session Saved!" &&
+          (!loading || resetTime > 0) && (
+            <li
+              onClick={() => {
+                if (reset) {
+                  SocketIO.emit("qrrefresh", "client1");
+                  setReset(false);
+                  const id = setInterval(() => {
+                    setReset(true);
+                    clearInterval(id);
+                  }, 10000);
+                  setResetTime(1);
+                }
+              }}
+              className={`border cursor-pointer ${
+                !reset && "opacity-50 cursor-progress"
+              } rounded-md py-1 px-2 mr-2 flex items-center justify-center bg-gray-800 font-semibold text-white text-sm`}
+            >
+              <h4>Refresh Qr</h4>
+              {!reset && (
+                <h5 className="text-[0.9em] ml-[1px] mt-[2px]">
+                  ({resetTime})
+                </h5>
+              )}
+            </li>
+          )}
 
-        {(status == "Client is connected!" || status === "Session Saved!") && (
-          <li className="border cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm">
-            Logout
-          </li>
-        )}
+        {(status == "Client is connected!" || status === "Session Saved!") &&
+          !loading && (
+            <li className="border cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm">
+              Logout
+            </li>
+          )}
       </ul>
     </div>
   );
