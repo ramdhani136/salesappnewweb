@@ -50,6 +50,7 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
     }
 
     return () => {
+      SocketIO.emit("close", props.id);
       props.onClose();
     };
   }, []);
@@ -71,7 +72,6 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
             <div className="flex -ml-5">
               {userData != null && (
                 <>
-      
                   <img
                     className="w-[50px] rounded-full"
                     src={userData.img ?? ""}
