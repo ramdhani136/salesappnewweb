@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SocketIO } from "../../utils";
 import { PuffLoader, RotateLoader } from "react-spinners";
 
-const WhatsappQrViewPage = () => {
+const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
   const [qr, setQr] = useState("");
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -11,24 +11,22 @@ const WhatsappQrViewPage = () => {
   const [resetTime, setResetTime] = useState<number>(1);
 
   useEffect(() => {
-    SocketIO.emit("open", "client1");
+    SocketIO.emit("open", props.id);
     SocketIO.on("qr", (data) => {
       setQr(data);
     });
     SocketIO.on("reset", (data) => {
+      setResetTime(0);
       setReset(false);
       const id = setInterval(() => {
         setReset(true);
         clearInterval(id);
       }, data);
-      setResetTime(1);
     });
     SocketIO.on("message", (data) => {
-      console.log(data);
       setStatus(data);
     });
     SocketIO.on("loading", (data) => {
-      console.log(data);
       setLoading(data);
     });
 
@@ -45,6 +43,10 @@ const WhatsappQrViewPage = () => {
       }, 10000);
       setResetTime(1);
     }
+
+    return () => {
+      props.onClose();
+    };
   }, []);
 
   useEffect(() => {
@@ -116,11 +118,12 @@ const WhatsappQrViewPage = () => {
       <ul className="flex items-center justify-center w-full  py-2  h-[70px] ">
         {status !== "Client is connected!" &&
           status !== "Session Saved!" &&
-          (!loading || resetTime > 0) && (
+          (!loading || resetTime > 0) &&
+          status !== "Connecting .." && (
             <li
               onClick={() => {
                 if (reset) {
-                  SocketIO.emit("qrrefresh", "client1");
+                  SocketIO.emit("qrrefresh", props.id);
                   setReset(false);
                   const id = setInterval(() => {
                     setReset(true);
@@ -144,8 +147,13 @@ const WhatsappQrViewPage = () => {
 
         {(status == "Client is connected!" || status === "Session Saved!") &&
           !loading && (
-            <li className="border cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm">
-              Logout
+            <li
+              onClick={() => {
+                SocketIO.emit("logout", props.id);
+              }}
+              className="border cursor-pointer rounded-md py-1 px-2 mr-2 bg-red-500 font-semibold text-white text-sm"
+            >
+              Disconnect
             </li>
           )}
       </ul>

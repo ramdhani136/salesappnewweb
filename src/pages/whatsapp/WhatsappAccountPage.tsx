@@ -15,6 +15,9 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import { useDispatch } from "react-redux";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import WhatsappQrViewPage from "./WhatsappQrViewPage";
 
 export const WhatsappAccountPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -57,6 +60,8 @@ export const WhatsappAccountPage: React.FC = (): any => {
     []
   );
 
+  const dispatch = useDispatch();
+
   const getData = async (): Promise<any> => {
     try {
       const result: any = await GetDataServer(DataAPI.WAACCOUNT).FIND({
@@ -73,9 +78,26 @@ export const WhatsappAccountPage: React.FC = (): any => {
             id: item._id,
             doc: item.name,
             name: (
-              <Link to={`/waaccount/${item._id}`}>
-                <b className="font-medium">{item.name}</b>
-              </Link>
+              <b
+                onClick={() => {
+                  dispatch(
+                    modalSet({
+                      active: true,
+                      Children: WhatsappQrViewPage,
+                      title: "",
+                      props: {
+                        id: item._id,
+                        name: item.name,
+                        onClose: getData,
+                      },
+                      className: "",
+                    })
+                  );
+                }}
+                className="font-medium"
+              >
+                {item.name}
+              </b>
             ),
             user: <div>{item.createdBy.name}</div>,
             status: (
