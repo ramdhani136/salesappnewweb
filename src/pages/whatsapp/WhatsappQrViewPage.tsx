@@ -10,12 +10,18 @@ const WhatsappQrViewPage = () => {
   const [destroy, setDestroy] = useState<boolean>(false);
   const [resetTime, setResetTime] = useState<number>(1);
 
-  const intervalIds = [];
-
   useEffect(() => {
     SocketIO.emit("open", "client1");
     SocketIO.on("qr", (data) => {
       setQr(data);
+    });
+    SocketIO.on("reset", (data) => {
+      setReset(false);
+      const id = setInterval(() => {
+        setReset(true);
+        clearInterval(id);
+      }, data);
+      setResetTime(1);
     });
     SocketIO.on("message", (data) => {
       console.log(data);
