@@ -4,6 +4,7 @@ import { SocketIO } from "../../utils";
 const WhatsappQrViewPage = () => {
   const [qr, setQr] = useState("");
   const [status, setStatus] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     SocketIO.emit("get qr", "client1");
@@ -13,6 +14,10 @@ const WhatsappQrViewPage = () => {
     SocketIO.on("message", (data) => {
       console.log(data);
       setStatus(data);
+    });
+    SocketIO.on("loading", (data) => {
+      console.log(data);
+      setLoading(data);
     });
   }, []);
 
@@ -41,7 +46,9 @@ const WhatsappQrViewPage = () => {
         </div>
         <div className="w-[270px] border border-grey-200 rounded-md my-6 mx-3 flex flex-col ">
           <img className="flex-1" src={qr} alt="qrcode" />
-          <h3 className="text-center text-md -mt-2 mb-2 text-gray-700">{status}</h3>
+          <h3 className="text-center text-md -mt-2 mb-2 text-gray-700">
+            {status}
+          </h3>
         </div>
       </div>
       <ul className="flex items-center justify-center w-full  py-2 ">
