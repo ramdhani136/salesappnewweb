@@ -35,12 +35,6 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
       setUserData(data);
     });
 
-    return () => {
-      // SocketIO.emit("close", "client1");
-    };
-  }, []);
-
-  useEffect(() => {
     if (!reset) {
       const id = setInterval(() => {
         setReset(true);
@@ -123,7 +117,7 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
             </>
           )}
         </div>
-        <div className="w-[270px] border border-grey-200 rounded-md my-6 mr-5 flex flex-col ">
+        <div className="w-[270px] border border-grey-300 rounded-md my-6 mr-5 flex flex-col ">
           {!loading && qr && <img className="flex-1" src={qr} alt="qrcode" />}
           {(status === "Client is connected!" ||
             status === "Session Saved!") && (
