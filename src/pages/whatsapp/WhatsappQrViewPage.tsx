@@ -97,7 +97,7 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
               <h3 className="text-md">
                 Untuk mengirim dan menerima pesan,
                 <br />
-                Anda harus scan Scan Qrcode untuk menghubungkan Server kami ke
+                Anda harus scan Qrcode untuk menghubungkan Server kami ke
                 Whatsapp
               </h3>
               <br />
@@ -170,7 +170,7 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
               }}
               className={`border cursor-pointer ${
                 !reset && "opacity-50 cursor-progress"
-              } rounded-md py-1 px-2 mr-2 flex items-center justify-center bg-gray-800 font-semibold text-white text-sm`}
+              } rounded-md py-1 px-2 mr-2 flex items-center justify-center bg-green-700 border-green-800 font-semibold text-white text-sm`}
             >
               <h4>Refresh Qr</h4>
               {!reset && (
