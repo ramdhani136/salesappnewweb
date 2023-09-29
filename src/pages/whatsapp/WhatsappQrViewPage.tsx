@@ -31,8 +31,10 @@ const WhatsappQrViewPage: React.FC<any> = ({ props }) => {
       setLoading(data);
     });
     SocketIO.on("getuserdata", (data) => {
-      console.log(data);
       setUserData(data);
+    });
+    SocketIO.on("coba", (data) => {
+      console.log(data);
     });
 
     if (!reset) {
