@@ -17,10 +17,10 @@ const WhatsappFlowChart = () => {
     { id: "Depok", position: { x: 400, y: 200 }, data: { label: "Depok" } },
   ];
   const initialEdges = [
-    { id: "e1-2", source: "welcome", target: "Product" },
-    { id: "e1-2", source: "welcome", target: "Branch" },
-    { id: "e1-2", source: "Branch", target: "Bogor" },
-    { id: "e1-2", source: "Branch", target: "Depok" },
+    { id: "e1-2", source: "welcome", target: "Product", animated: false },
+    { id: "e1-3", source: "welcome", target: "Branch", animated: false },
+    { id: "e1-4", source: "Branch", target: "Bogor", animated: false },
+    { id: "e1-5", source: "Branch", target: "Depok", animated: false },
   ];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -35,9 +35,18 @@ const WhatsappFlowChart = () => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onClickCapture={(e) => console.log(e)}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        elementsSelectable={false} // Prevent nodes from being selected
+        style={{ background: "#f0f0f0" }} // Set background color
+        nodeTypes={{
+          custom: () => null, // Disable default nodes
+        }}
+        edgeTypes={{
+          straight: () => null, // Use straight edges
+        }}
       >
         <Background />
         {/* <Controls /> */}
