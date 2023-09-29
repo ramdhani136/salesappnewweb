@@ -108,6 +108,9 @@
   "react-top-loading-bar": "^2.3.1",
   
     
+  "reactflow": "^11.9.2",
+  
+    
   "redux-logger": "^3.0.6",
   
     

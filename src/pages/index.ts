@@ -43,6 +43,7 @@ import { WorkflowActionPage } from "./WorkflowAction/WorkflowAction";
 import FormWorkflowAction from "./WorkflowAction/FormWorkflowAction";
 import { WhatsappAccountPage } from "./whatsapp/WhatsappAccountPage";
 import WhatsappQrViewPage from "./whatsapp/WhatsappQrViewPage";
+import { WhatsappFlowChart } from "./whatsapp";
 
 
 export {
@@ -90,5 +91,6 @@ export {
   WorkflowActionPage,
   FormWorkflowAction,
   WhatsappAccountPage,
-  WhatsappQrViewPage
+  WhatsappQrViewPage,
+  WhatsappFlowChart
 };
