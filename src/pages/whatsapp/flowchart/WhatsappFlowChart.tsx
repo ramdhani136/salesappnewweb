@@ -7,6 +7,7 @@ import ChartWelcomeInput from "./chartcomponents/ChartWelcomeInput";
 import ChartUserInput from "./chartcomponents/ChartUserInput";
 import ChartResponseInput from "./chartcomponents/ChartResponseInput";
 import ChartDefaultFallback from "./chartcomponents/ChartDefaultFallback";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const WhatsappFlowChart = () => {
   const nodeTypes = {
@@ -210,7 +211,31 @@ const WhatsappFlowChart = () => {
 
   return (
     <div className="flex flex-col h-[90vh]">
-      <div className="border bg-white shadow-sm h-14 -mt-1"></div>
+      <div className="border bg-white shadow-sm h-14 -mt-1 flex items-center justify-between px-4">
+        <div className="flex items-center">
+          <h4 className="font-bold">Sales Bot</h4>
+          <CircleIcon
+            style={{ fontSize: 8 }}
+            className={`mr-2 text-green-600 ml-[2px] -mt-1`}
+          />
+          <h5 className="text-[0.75em]  text-gray-600">
+            Last edit was a few seconds
+          </h5>
+        </div>
+        <div>
+          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2 opacity-80 hover:opacity-100 duration-300">
+            Discard
+          </button>
+          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]   text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
+            Preview
+          </button>
+          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
+            Publish
+          </button>
+          {/* <button>Preview</button>
+          <button>Publish</button> */}
+        </div>
+      </div>
       <div style={{ width: "100%" }} className="flex-1">
         <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
           <Controls />
