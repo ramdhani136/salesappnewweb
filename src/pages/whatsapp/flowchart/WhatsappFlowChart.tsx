@@ -9,8 +9,17 @@ import ChartResponseInput from "./chartcomponents/ChartResponseInput";
 import ChartDefaultFallback from "./chartcomponents/ChartDefaultFallback";
 import CircleIcon from "@mui/icons-material/Circle";
 import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
+import { Meta } from "../../../utils";
+import { LoadingComponent } from "../../../components/moleculs";
 
 const WhatsappFlowChart = () => {
+  const metaData = {
+    title: `WhatsApp Bot- Sales App Ekatunggal`,
+    description: "Halaman `WhatsApp Bot - Sales web system",
+  };
+
+  const [loading, setLoading] = useState<boolean>(true);
+
   const nodeTypes = {
     welcomeInput: ChartWelcomeInput,
     userInput: ChartUserInput,
@@ -110,6 +119,7 @@ const WhatsappFlowChart = () => {
       target: "welcome",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
     {
       id: "2",
@@ -117,6 +127,7 @@ const WhatsappFlowChart = () => {
       target: "userinput",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
     {
       id: "3",
@@ -124,6 +135,7 @@ const WhatsappFlowChart = () => {
       target: "fallback",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
     {
       id: "4",
@@ -131,6 +143,7 @@ const WhatsappFlowChart = () => {
       target: "branch",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
     {
       id: "5",
@@ -138,6 +151,7 @@ const WhatsappFlowChart = () => {
       target: "product",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
     {
       id: "6",
@@ -145,6 +159,7 @@ const WhatsappFlowChart = () => {
       target: "response",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
+      animated: true,
     },
   ];
 
@@ -205,49 +220,57 @@ const WhatsappFlowChart = () => {
     window.addEventListener("resize", handleResize);
 
     // Membersihkan event listener setelah komponen di-unmount
+    setLoading(false);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   return (
-    <div className="flex flex-col h-[90vh]">
-      <div className="border bg-white shadow-sm h-14 -mt-1 flex items-center justify-between px-4">
-        <div className="flex items-center">
-          <h4 className="font-bold">Sales Bot</h4>
-          <CircleIcon
-            style={{ fontSize: 8 }}
-            className={`mr-2 text-green-600 ml-[2px] -mt-1`}
-          />
-          <h5 className="text-[0.75em]  text-gray-600">
-            Last edit was a few seconds
-          </h5>
-        </div>
-        <div className="flex ">
-          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2 opacity-80 hover:opacity-100 duration-300">
-            Discard
-          </button>
-          <button className="flex items-center justify-between py-1 px-1 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]   text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
-            <h4 className="mr-[2px] ">Preview</h4>
-            <PlayCircleOutlinedIcon
-              className="mt-[2px]"
-              style={{ fontSize: 15 }}
-            />
-          </button>
-          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
-            Publish
-          </button>
-          {/* <button>Preview</button>
+    <>
+      {Meta(metaData)}
+      {loading ? (
+        <LoadingComponent />
+      ) : (
+        <div className="flex flex-col h-[90vh]">
+          <div className="border bg-white shadow-sm h-14 -mt-1 flex items-center justify-between px-4">
+            <div className="flex items-center">
+              <h4 className="font-bold">Sales Bot</h4>
+              <CircleIcon
+                style={{ fontSize: 8 }}
+                className={`mr-2 text-green-600 ml-[2px] -mt-1`}
+              />
+              <h5 className="text-[0.75em]  text-gray-600">
+                Last edit was a few seconds
+              </h5>
+            </div>
+            <div className="flex ">
+              <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2 opacity-80 hover:opacity-100 duration-300">
+                Discard
+              </button>
+              <button className="flex items-center justify-between py-1 px-1 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]   text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
+                <h4 className="mr-[2px] ">Preview</h4>
+                <PlayCircleOutlinedIcon
+                  className="mt-[2px]"
+                  style={{ fontSize: 15 }}
+                />
+              </button>
+              <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
+                Publish
+              </button>
+              {/* <button>Preview</button>
           <button>Publish</button> */}
+            </div>
+          </div>
+          <div style={{ width: "100%" }} className="flex-1">
+            <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
+              <Controls />
+              <Background />
+            </ReactFlow>
+          </div>
         </div>
-      </div>
-      <div style={{ width: "100%" }} className="flex-1">
-        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
-          <Controls />
-          <Background />
-        </ReactFlow>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
