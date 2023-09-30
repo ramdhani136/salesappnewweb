@@ -4,7 +4,7 @@ import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar } from "@mui/material";
+import MarkUnreadChatAltOutlinedIcon from '@mui/icons-material/MarkUnreadChatAltOutlined';
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
 import {
@@ -33,6 +33,7 @@ const SidebarComponent: React.FC<IProps> = ({ user, getStatusOpen }) => {
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
     { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
+    { name: "Whatsapp", link: "/whatsapp", icon: MarkUnreadChatAltOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
     { name: "Settings", link: "/setting", icon: SettingsIcon },
   ];
