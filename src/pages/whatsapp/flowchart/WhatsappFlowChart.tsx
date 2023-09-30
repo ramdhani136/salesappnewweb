@@ -11,30 +11,33 @@ const WhatsappFlowChart = () => {
       position: { x: 0, y: 0 },
       data: { label: "Start Point" },
       style: {
-        backgroundColor: "#2196f3",
+        backgroundColor: "#0274f6",
         color: "white",
-        width: "auto",
-        height: "auto",
+        width: 80,
+        height: 26,
         padding: "4px 8px 4px 8px",
         borderRadius: 20,
+        fontWeight: 600,
       },
     },
     {
       id: "welcome",
       position: { x: 0, y: 0 },
       data: { label: "Welcome Message" },
+      style: { fontWeight: 600, width: 180, height: 80 },
     },
     {
       id: "userinput",
       position: { x: 0, y: 0 },
       data: { label: "Add User Input" },
       style: {
-        backgroundColor: "#2196f3",
+        backgroundColor: "#0274f6",
         color: "white",
-        width: "auto",
-        height: "auto",
+        width: 100,
+        height: 26,
         padding: "4px 7px 4px 7px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
     {
@@ -44,10 +47,11 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: "auto",
-        height: "auto",
+        width: 120,
+        height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
     {
@@ -57,10 +61,11 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: "auto",
-        height: "auto",
+        width: 120,
+        height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
     {
@@ -70,10 +75,11 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: "auto",
-        height: "auto",
+        width: 120,
+        height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
     {
@@ -83,10 +89,11 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: "auto",
-        height: "auto",
+        width: 120,
+        height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
     {
@@ -96,10 +103,11 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: "auto",
-        height: "auto",
+        width: 120,
+        height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
+        fontWeight: 600,
       },
     },
   ];
@@ -201,13 +209,10 @@ const WhatsappFlowChart = () => {
     <div style={{ width: "100%", height: "90vh" }}>
       <ReactFlow
         nodes={nodes}
-        // onNodesChange={onNodesChange}
         edges={edges}
-        // onEdgesChange={onEdgesChange}
       >
-        {/* <MiniMap /> */}
         <Controls />
-        <Background color="#eaeaea" />
+        <Background />
       </ReactFlow>
     </div>
   );

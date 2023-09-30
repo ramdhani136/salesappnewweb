@@ -26,3 +26,8 @@ em-emoji-picker {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-flow__handle {
+  opacity: 0;
+  top:0
+}
