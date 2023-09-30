@@ -1,55 +1,213 @@
-import React, { useCallback } from "react";
-import ReactFlow, {
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Background,
-  Controls,
-} from "reactflow";
+import { useEffect, useState } from "react";
+import ReactFlow, { Background, MiniMap, Controls } from "reactflow";
 
 import "reactflow/dist/style.css";
+import dagre from "dagre";
+
 const WhatsappFlowChart = () => {
-  const initialNodes = [
-    { id: "welcome", position: { x: 120, y: 20 }, data: { label: "Start" } },
-    { id: "Product", position: { x: 20, y: 100 }, data: { label: "Product" } },
-    { id: "Branch", position: { x: 220, y: 100 }, data: { label: "Branch" } },
-    { id: "Bogor", position: { x: 220, y: 200 }, data: { label: "Bogor" } },
-    { id: "Depok", position: { x: 400, y: 200 }, data: { label: "Depok" } },
+  const initialNodes: any = [
+    {
+      id: "start",
+      position: { x: 0, y: 0 },
+      data: { label: "Start Point" },
+      style: {
+        backgroundColor: "#2196f3",
+        color: "white",
+        width: "auto",
+        height: "auto",
+        padding: "4px 8px 4px 8px",
+        borderRadius: 20,
+      },
+    },
+    {
+      id: "welcome",
+      position: { x: 0, y: 0 },
+      data: { label: "Welcome Message" },
+    },
+    {
+      id: "userinput",
+      position: { x: 0, y: 0 },
+      data: { label: "Add User Input" },
+      style: {
+        backgroundColor: "#2196f3",
+        color: "white",
+        width: "auto",
+        height: "auto",
+        padding: "4px 7px 4px 7px",
+        borderRadius: 5,
+      },
+    },
+    {
+      id: "fallback",
+      position: { x: 0, y: 0 },
+      data: { label: "Default Fallback" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: "auto",
+        height: "auto",
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+      },
+    },
+    {
+      id: "1",
+      position: { x: 0, y: 0 },
+      data: { label: "Product" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: "auto",
+        height: "auto",
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+      },
+    },
+    {
+      id: "2",
+      position: { x: 0, y: 0 },
+      data: { label: "Branch" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: "auto",
+        height: "auto",
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+      },
+    },
+    {
+      id: "3",
+      position: { x: 0, y: 0 },
+      data: { label: "Sales" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: "auto",
+        height: "auto",
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+      },
+    },
+    {
+      id: "4",
+      position: { x: 0, y: 0 },
+      data: { label: "Info" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: "auto",
+        height: "auto",
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+      },
+    },
   ];
   const initialEdges = [
-    { id: "e1-2", source: "welcome", target: "Product", animated: false },
-    { id: "e1-3", source: "welcome", target: "Branch", animated: false },
-    { id: "e1-4", source: "Branch", target: "Bogor", animated: false },
-    { id: "e1-5", source: "Branch", target: "Depok", animated: false },
+    {
+      id: "1",
+      source: "start",
+      target: "welcome",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "2",
+      source: "welcome",
+      target: "userinput",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "3",
+      source: "userinput",
+      target: "fallback",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "4",
+      source: "userinput",
+      target: "1",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "5",
+      source: "userinput",
+      target: "2",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "6",
+      source: "userinput",
+      target: "3",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "7",
+      source: "userinput",
+      target: "4",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
   ];
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
 
-  const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const applyDagreLayout = () => {
+    const graph = new dagre.graphlib.Graph();
+    graph.setGraph({ rankdir: "TB", nodesep: 50, edgesep: 10, ranksep: 50 });
+    graph.setDefaultEdgeLabel(() => ({}));
+
+    nodes.forEach((node: any) => {
+      const nodeWidth = 150;
+      const nodeHeight = 40;
+      graph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    });
+
+    edges.forEach((edge) => {
+      graph.setEdge(edge.source, edge.target, { label: edge.type }); // Adjusted for edge type
+    });
+
+    try {
+      dagre.layout(graph);
+    } catch (error) {
+      console.error("Error during dagre layout:", error);
+      return;
+    }
+
+    const layoutedElements = nodes.map((node: any) => ({
+      ...node,
+      position: {
+        x: graph.node(node.id).x,
+        y: graph.node(node.id).y,
+      },
+    }));
+
+    console.log(layoutedElements);
+
+    setNodes(layoutedElements);
+  };
+
+  useEffect(() => {
+    applyDagreLayout();
+  }, []);
+
   return (
     <div style={{ width: "100%", height: "90vh" }}>
       <ReactFlow
         nodes={nodes}
+        // onNodesChange={onNodesChange}
         edges={edges}
-        onClickCapture={(e) => console.log(e)}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        elementsSelectable={false} // Prevent nodes from being selected
-        style={{ background: "#f0f0f0" }} // Set background color
-        nodeTypes={{
-          custom: () => null, // Disable default nodes
-        }}
-        edgeTypes={{
-          straight: () => null, // Use straight edges
-        }}
+        // onEdgesChange={onEdgesChange}
       >
-        <Background />
-        {/* <Controls /> */}
+        {/* <MiniMap /> */}
+        <Controls />
+        <Background color="#eaeaea" />
       </ReactFlow>
     </div>
   );
