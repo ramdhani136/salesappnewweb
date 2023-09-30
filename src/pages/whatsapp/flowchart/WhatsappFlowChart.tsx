@@ -3,8 +3,12 @@ import ReactFlow, { Background, MiniMap, Controls } from "reactflow";
 
 import "reactflow/dist/style.css";
 import dagre from "dagre";
+import TextUpdaterNode from "./chartcomponents/TextUpdaterNode";
+import ChartFormInput from "./chartcomponents/ChartFormInput";
 
 const WhatsappFlowChart = () => {
+  const nodeTypes = { textUpdater: TextUpdaterNode, inputUser: ChartFormInput };
+
   const initialNodes: any = [
     {
       id: "start",
@@ -25,6 +29,7 @@ const WhatsappFlowChart = () => {
       position: { x: 0, y: 0 },
       data: { label: "Welcome Message" },
       style: { fontWeight: 600, width: 180, height: 80 },
+      type: "textUpdater",
     },
     {
       id: "userinput",
@@ -55,88 +60,18 @@ const WhatsappFlowChart = () => {
       },
     },
     {
-      id: "1",
+      id: "branch",
       position: { x: 0, y: 0 },
-      data: { label: "Product" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 120,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
+      data: { label: "User Input" },
+      style: { fontWeight: 600, width: 180, height: 80 },
+      type: "inputUser",
     },
     {
-      id: "2",
+      id: "product",
       position: { x: 0, y: 0 },
-      data: { label: "Branch" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 120,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
-    },
-    {
-      id: "3",
-      position: { x: 0, y: 0 },
-      data: { label: "Sales" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 120,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
-    },
-    {
-      id: "4",
-      position: { x: 0, y: 0 },
-      data: { label: "Info" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 120,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
-    },
-    {
-      id: "ff",
-      position: { x: 0, y: 0 },
-      data: { label: "Info" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 120,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
-    },
-    {
-      id: "gg",
-      position: { x: 0, y: 0 },
-      data: { label: "Info" },
-      style: {
-        backgroundColor: "#eff0f4",
-        color: "black",
-        width: 150,
-        height: 28,
-        padding: "5px 8px 5px 8px",
-        borderRadius: 5,
-        fontWeight: 600,
-      },
+      data: { label: "User Input" },
+      style: { fontWeight: 600, width: 180, height: 80 },
+      type: "inputUser",
     },
   ];
   const initialEdges = [
@@ -164,42 +99,14 @@ const WhatsappFlowChart = () => {
     {
       id: "4",
       source: "userinput",
-      target: "1",
+      target: "branch",
       type: "step",
       style: { stroke: "#8fba94", strokeWidth: 2 },
     },
     {
       id: "5",
       source: "userinput",
-      target: "2",
-      type: "step",
-      style: { stroke: "#8fba94", strokeWidth: 2 },
-    },
-    {
-      id: "6",
-      source: "userinput",
-      target: "3",
-      type: "step",
-      style: { stroke: "#8fba94", strokeWidth: 2 },
-    },
-    {
-      id: "7",
-      source: "userinput",
-      target: "4",
-      type: "step",
-      style: { stroke: "#8fba94", strokeWidth: 2 },
-    },
-    {
-      id: "8",
-      source: "1",
-      target: "ff",
-      type: "step",
-      style: { stroke: "#8fba94", strokeWidth: 2 },
-    },
-    {
-      id: "9",
-      source: "1",
-      target: "gg",
+      target: "product",
       type: "step",
       style: { stroke: "#8fba94", strokeWidth: 2 },
     },
@@ -246,7 +153,7 @@ const WhatsappFlowChart = () => {
 
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
-    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 50, edgesep: 10 });
+    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 200, edgesep: 10 });
     graph.setDefaultEdgeLabel(() => ({}));
 
     nodes.forEach((node: any) => {
@@ -297,7 +204,7 @@ const WhatsappFlowChart = () => {
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
-      <ReactFlow nodes={nodes} edges={edges}>
+      <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
         <Controls />
         <Background />
       </ReactFlow>
