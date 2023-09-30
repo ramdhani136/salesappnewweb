@@ -4,7 +4,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 const handleStyle = { left: 10 };
 
-const ChartFormInput = (isConnectable: any) => {
+const ChartUserInput = (isConnectable: any) => {
   const onChange = useCallback((evt: any) => {
     console.log(evt.target.value);
   }, []);
@@ -25,7 +25,10 @@ const ChartFormInput = (isConnectable: any) => {
             />
             <h4 className="text-[0.8em] mb-1">User Input</h4>
           </div>
-          <MoreVertIcon style={{ fontSize: "18px" }} />
+          <MoreVertIcon
+            style={{ fontSize: "18px" }}
+            className="opacity-60 hover:opacity-90 duration-300"
+          />
         </div>
         <div className="flex items-center">
           <input type="checkbox" id="myCheckbox" className="mr-1"></input>
@@ -53,4 +56,4 @@ const ChartFormInput = (isConnectable: any) => {
   );
 };
 
-export default ChartFormInput;
+export default ChartUserInput;

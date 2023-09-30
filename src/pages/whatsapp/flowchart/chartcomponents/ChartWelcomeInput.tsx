@@ -3,7 +3,7 @@ import { Handle, Position } from "reactflow";
 
 const handleStyle = { left: 10 };
 
-const TextUpdaterNode = (isConnectable: any) => {
+const ChartWelcomeInput = (isConnectable: any) => {
   const onChange = useCallback((evt: any) => {
     console.log(evt.target.value);
   }, []);
@@ -16,7 +16,7 @@ const TextUpdaterNode = (isConnectable: any) => {
         isConnectable={isConnectable}
       />
       <div className="w-full flex flex-col">
-        <h4 className="text-[0.8em] mb-1">Welcome Message:</h4>
+        <h4 className="text-[0.8em] mb-1">Welcome Message</h4>
         <textarea
           name=""
           id=""
@@ -42,4 +42,4 @@ const TextUpdaterNode = (isConnectable: any) => {
   );
 };
 
-export default TextUpdaterNode;
+export default ChartWelcomeInput;

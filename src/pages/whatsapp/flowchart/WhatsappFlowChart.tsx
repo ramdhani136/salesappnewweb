@@ -3,11 +3,16 @@ import ReactFlow, { Background, MiniMap, Controls } from "reactflow";
 
 import "reactflow/dist/style.css";
 import dagre from "dagre";
-import TextUpdaterNode from "./chartcomponents/TextUpdaterNode";
-import ChartFormInput from "./chartcomponents/ChartFormInput";
+import ChartWelcomeInput from "./chartcomponents/ChartWelcomeInput";
+import ChartUserInput from "./chartcomponents/ChartUserInput";
+import ChartResponseInput from "./chartcomponents/ChartResponseInput";
 
 const WhatsappFlowChart = () => {
-  const nodeTypes = { textUpdater: TextUpdaterNode, inputUser: ChartFormInput };
+  const nodeTypes = {
+    welcomeInput: ChartWelcomeInput,
+    userInput: ChartUserInput,
+    responseInput: ChartResponseInput,
+  };
 
   const initialNodes: any = [
     {
@@ -29,7 +34,7 @@ const WhatsappFlowChart = () => {
       position: { x: 0, y: 0 },
       data: { label: "Welcome Message" },
       style: { fontWeight: 600, width: 220, height: 80 },
-      type: "textUpdater",
+      type: "welcomeInput",
     },
     {
       id: "userinput",
@@ -64,14 +69,21 @@ const WhatsappFlowChart = () => {
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
       style: { fontWeight: 600, width: 220, height: 80 },
-      type: "inputUser",
+      type: "userInput",
     },
     {
       id: "product",
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
       style: { fontWeight: 600, width: 220, height: 80 },
-      type: "inputUser",
+      type: "userInput",
+    },
+    {
+      id: "response",
+      position: { x: 0, y: 0 },
+      data: { label: "Response" },
+      style: { fontWeight: 600, width: 220, height: 80 },
+      type: "responseInput",
     },
   ];
   const initialEdges = [
@@ -107,6 +119,13 @@ const WhatsappFlowChart = () => {
       id: "5",
       source: "userinput",
       target: "product",
+      type: "smoothstep",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "6",
+      source: "branch",
+      target: "response",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
     },
