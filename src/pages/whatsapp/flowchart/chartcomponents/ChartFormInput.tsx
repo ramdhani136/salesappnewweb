@@ -31,7 +31,10 @@ const ChartFormInput = (isConnectable: any) => {
           <input type="checkbox" id="myCheckbox" className="mr-1"></input>
           <h5 className="text-[0.8em] font-normal">Variable Input</h5>
         </div>
-        <input type="text" className="py-1 px-2  text-gray-700d border text-[0.8em]  border-gray-400 rounded-md mt-2"/>
+        <input
+          type="text"
+          className="py-1 px-2 font-normal border text-[0.8em]  border-gray-400 rounded-md mt-2"
+        />
       </div>
       <Handle
         type="source"

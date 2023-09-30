@@ -153,7 +153,7 @@ const WhatsappFlowChart = () => {
 
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
-    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 200, edgesep: 10 });
+    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 100, edgesep: 10 });
     graph.setDefaultEdgeLabel(() => ({}));
 
     nodes.forEach((node: any) => {
