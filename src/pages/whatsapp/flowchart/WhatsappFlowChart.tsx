@@ -28,7 +28,7 @@ const WhatsappFlowChart = () => {
       id: "welcome",
       position: { x: 0, y: 0 },
       data: { label: "Welcome Message" },
-      style: { fontWeight: 600, width: 180, height: 80 },
+      style: { fontWeight: 600, width: 220, height: 80 },
       type: "textUpdater",
     },
     {
@@ -63,14 +63,14 @@ const WhatsappFlowChart = () => {
       id: "branch",
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
-      style: { fontWeight: 600, width: 180, height: 80 },
+      style: { fontWeight: 600, width: 220, height: 80 },
       type: "inputUser",
     },
     {
       id: "product",
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
-      style: { fontWeight: 600, width: 180, height: 80 },
+      style: { fontWeight: 600, width: 220, height: 80 },
       type: "inputUser",
     },
   ];
