@@ -8,6 +8,7 @@ import ChartUserInput from "./chartcomponents/ChartUserInput";
 import ChartResponseInput from "./chartcomponents/ChartResponseInput";
 import ChartDefaultFallback from "./chartcomponents/ChartDefaultFallback";
 import CircleIcon from "@mui/icons-material/Circle";
+import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
 
 const WhatsappFlowChart = () => {
   const nodeTypes = {
@@ -222,12 +223,16 @@ const WhatsappFlowChart = () => {
             Last edit was a few seconds
           </h5>
         </div>
-        <div>
+        <div className="flex ">
           <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2 opacity-80 hover:opacity-100 duration-300">
             Discard
           </button>
-          <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]   text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
-            Preview
+          <button className="flex items-center justify-between py-1 px-1 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]   text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
+            <h4 className="mr-[2px] ">Preview</h4>
+            <PlayCircleOutlinedIcon
+              className="mt-[2px]"
+              style={{ fontSize: 15 }}
+            />
           </button>
           <button className="py-1 px-2 border rounded-md text-[0.85em] font-semibold border-[#4f60a1]  text-[#4f60a1] mr-2  opacity-80 hover:opacity-100 duration-300">
             Publish
