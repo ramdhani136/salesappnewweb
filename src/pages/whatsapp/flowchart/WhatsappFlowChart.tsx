@@ -6,12 +6,14 @@ import dagre from "dagre";
 import ChartWelcomeInput from "./chartcomponents/ChartWelcomeInput";
 import ChartUserInput from "./chartcomponents/ChartUserInput";
 import ChartResponseInput from "./chartcomponents/ChartResponseInput";
+import ChartDefaultFallback from "./chartcomponents/ChartDefaultFallback";
 
 const WhatsappFlowChart = () => {
   const nodeTypes = {
     welcomeInput: ChartWelcomeInput,
     userInput: ChartUserInput,
     responseInput: ChartResponseInput,
+    fallback: ChartDefaultFallback,
   };
 
   const initialNodes: any = [
@@ -54,10 +56,11 @@ const WhatsappFlowChart = () => {
       id: "fallback",
       position: { x: 0, y: 0 },
       data: { label: "Default Fallback" },
+      type: "fallback",
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: 120,
+        width: 180,
         height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
