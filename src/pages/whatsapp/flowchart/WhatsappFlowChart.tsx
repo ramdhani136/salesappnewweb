@@ -209,11 +209,14 @@ const WhatsappFlowChart = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%", height: "90vh" }}>
-      <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
-        <Controls />
-        <Background />
-      </ReactFlow>
+    <div className="flex flex-col h-[90vh]">
+      <div className="border bg-white shadow-sm h-14 -mt-1"></div>
+      <div style={{ width: "100%" }} className="flex-1">
+        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
+          <Controls />
+          <Background />
+        </ReactFlow>
+      </div>
     </div>
   );
 };
