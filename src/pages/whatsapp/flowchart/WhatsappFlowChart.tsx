@@ -16,6 +16,18 @@ const WhatsappFlowChart = () => {
     fallback: ChartDefaultFallback,
   };
 
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+
   const initialNodes: any = [
     {
       id: "start",
@@ -137,42 +149,6 @@ const WhatsappFlowChart = () => {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
-  // const applyDagreLayout = () => {
-  //   const graph = new dagre.graphlib.Graph();
-  //   graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 50, edgesep: 10 });
-  //   graph.setDefaultEdgeLabel(() => ({}));
-
-  //   nodes.forEach((node: any) => {
-  //     const nodeWidth = 150;
-  //     const nodeHeight = node.style.height || 40;
-  //     graph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-  //   });
-
-  //   edges.forEach((edge) => {
-  //     graph.setEdge(edge.source, edge.target, { label: edge.type });
-  //   });
-
-  //   try {
-  //     dagre.layout(graph);
-  //   } catch (error) {
-  //     console.error("Error during dagre layout:", error);
-  //     return;
-  //   }
-
-  //   const layoutedElements = nodes.map((node: any) => {
-  //     return {
-  //       ...node,
-  //       position: {
-  //         x: graph.node(node.id).x - node.style.width / 2,
-  //         y: graph.node(node.id).y,
-  //       },
-  //     };
-  //   });
-
-  //   console.log(layoutedElements);
-  //   setNodes(layoutedElements);
-  // };
-
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
     graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 100, edgesep: 10 });
@@ -211,7 +187,8 @@ const WhatsappFlowChart = () => {
       return {
         ...node,
         position: {
-          x: graph.node(node.id).x - node.style.width / 2,
+          x:
+            graph.node(node.id).x - node.style.width / 2 + windowSize.width / 6,
           y: graph.node(node.id).y - node.style.height / 2 + offsetY,
         },
       };
@@ -222,6 +199,13 @@ const WhatsappFlowChart = () => {
 
   useEffect(() => {
     applyDagreLayout();
+    // Menambahkan event listener untuk menangani perubahan ukuran layar
+    window.addEventListener("resize", handleResize);
+
+    // Membersihkan event listener setelah komponen di-unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
