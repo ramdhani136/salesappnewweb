@@ -25,13 +25,13 @@ const ChartFormInput = (isConnectable: any) => {
             />
             <h4 className="text-[0.8em] mb-1">User Input</h4>
           </div>
-          <MoreVertIcon style={{ fontSize: "20px" }} />
+          <MoreVertIcon style={{ fontSize: "18px" }} />
         </div>
         <div className="flex items-center">
           <input type="checkbox" id="myCheckbox" className="mr-1"></input>
           <h5 className="text-[0.8em] font-normal">Variable Input</h5>
         </div>
-        <input type="text" className="py-1 px-2 border border-gray-400 rounded-md mt-2"/>
+        <input type="text" className="py-1 px-2  text-gray-700d border text-[0.8em]  border-gray-400 rounded-md mt-2"/>
       </div>
       <Handle
         type="source"
