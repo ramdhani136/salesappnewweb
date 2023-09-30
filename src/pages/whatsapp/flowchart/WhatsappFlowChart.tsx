@@ -110,6 +110,34 @@ const WhatsappFlowChart = () => {
         fontWeight: 600,
       },
     },
+    {
+      id: "ff",
+      position: { x: 0, y: 0 },
+      data: { label: "Info" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: 120,
+        height: 28,
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+        fontWeight: 600,
+      },
+    },
+    {
+      id: "gg",
+      position: { x: 0, y: 0 },
+      data: { label: "Info" },
+      style: {
+        backgroundColor: "#eff0f4",
+        color: "black",
+        width: 150,
+        height: 28,
+        padding: "5px 8px 5px 8px",
+        borderRadius: 5,
+        fontWeight: 600,
+      },
+    },
   ];
   const initialEdges = [
     {
@@ -161,24 +189,79 @@ const WhatsappFlowChart = () => {
       type: "step",
       style: { stroke: "#8fba94", strokeWidth: 2 },
     },
+    {
+      id: "8",
+      source: "1",
+      target: "ff",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
+    {
+      id: "9",
+      source: "1",
+      target: "gg",
+      type: "step",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+    },
   ];
 
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
+  // const applyDagreLayout = () => {
+  //   const graph = new dagre.graphlib.Graph();
+  //   graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 50, edgesep: 10 });
+  //   graph.setDefaultEdgeLabel(() => ({}));
+
+  //   nodes.forEach((node: any) => {
+  //     const nodeWidth = 150;
+  //     const nodeHeight = node.style.height || 40;
+  //     graph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+  //   });
+
+  //   edges.forEach((edge) => {
+  //     graph.setEdge(edge.source, edge.target, { label: edge.type });
+  //   });
+
+  //   try {
+  //     dagre.layout(graph);
+  //   } catch (error) {
+  //     console.error("Error during dagre layout:", error);
+  //     return;
+  //   }
+
+  //   const layoutedElements = nodes.map((node: any) => {
+  //     return {
+  //       ...node,
+  //       position: {
+  //         x: graph.node(node.id).x - node.style.width / 2,
+  //         y: graph.node(node.id).y,
+  //       },
+  //     };
+  //   });
+
+  //   console.log(layoutedElements);
+  //   setNodes(layoutedElements);
+  // };
+
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
-    graph.setGraph({ rankdir: "TB", nodesep: 50, edgesep: 10, ranksep: 50 });
+    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 50, edgesep: 10 });
     graph.setDefaultEdgeLabel(() => ({}));
 
     nodes.forEach((node: any) => {
       const nodeWidth = 150;
-      const nodeHeight = 40;
+      const nodeHeight = node.style.height || 40;
       graph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
     });
 
     edges.forEach((edge) => {
-      graph.setEdge(edge.source, edge.target, { label: edge.type }); // Adjusted for edge type
+      // Menentukan weight berdasarkan tinggi node target
+      const targetNode = nodes.find((node: any) => node.id === edge.target);
+      const targetNodeHeight = targetNode ? targetNode.style.height || 40 : 40;
+      const weight = targetNodeHeight / 40; // Sesuaikan sesuai kebutuhan
+
+      graph.setEdge(edge.source, edge.target, { label: edge.type, weight });
     });
 
     try {
@@ -188,15 +271,22 @@ const WhatsappFlowChart = () => {
       return;
     }
 
-    const layoutedElements = nodes.map((node: any) => ({
-      ...node,
-      position: {
-        x: graph.node(node.id).x,
-        y: graph.node(node.id).y,
-      },
-    }));
+    const layoutedElements = nodes.map((node: any) => {
+      let offsetY = 0;
 
-    console.log(layoutedElements);
+      // Tambahkan margin untuk start node
+      if (node.id === "start") {
+        offsetY = 20; // Sesuaikan angka sesuai kebutuhan
+      }
+
+      return {
+        ...node,
+        position: {
+          x: graph.node(node.id).x - node.style.width / 2,
+          y: graph.node(node.id).y - node.style.height / 2 + offsetY,
+        },
+      };
+    });
 
     setNodes(layoutedElements);
   };
@@ -207,10 +297,7 @@ const WhatsappFlowChart = () => {
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-      >
+      <ReactFlow nodes={nodes} edges={edges}>
         <Controls />
         <Background />
       </ReactFlow>
