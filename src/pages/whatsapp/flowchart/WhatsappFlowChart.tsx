@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactFlow, { Background, MiniMap, Controls } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -31,13 +31,6 @@ const WhatsappFlowChart = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-
-  const handleResize = () => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
 
   const initialNodes: any = [
     {
@@ -173,7 +166,7 @@ const WhatsappFlowChart = () => {
 
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
-
+  const ref = useRef<any>(null);
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
     graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 100, edgesep: 10 });
@@ -206,7 +199,7 @@ const WhatsappFlowChart = () => {
     let maxX = 0;
     nodes.forEach((node: any) => {
       const nodeWidth = node.style.width || 150; // Lebar default jika tidak ada style.width
-      const nodeX = graph.node(node.id).x + nodeWidth / 2;
+      const nodeX = graph.node(node.id).x + nodeWidth;
       maxX = Math.max(maxX, nodeX);
     });
 
@@ -237,16 +230,34 @@ const WhatsappFlowChart = () => {
   };
 
   useEffect(() => {
-    applyDagreLayout();
-    // Menambahkan event listener untuk menangani perubahan ukuran layar
-    window.addEventListener("resize", handleResize);
+    // const handleResize = () => {
+    //   if (ref.current) {
+    //     const { offsetWidth, offsetHeight } = ref.current;
+    //     setWindowSize({ width: offsetWidth, height: offsetHeight });
+    //   }
+    // };
 
-    // Membersihkan event listener setelah komponen di-unmount
+    // // Panggil handleResize saat komponen dimount dan ukuran elemen berubah
+    // handleResize();
+    applyDagreLayout();
     setLoading(false);
-    return () => {
-      window.removeEventListener("resize", handleResize);
+
+
+    const handleResize = (entries:any) => {
+      const { width } = entries[0].contentRect;
+      console.log('Lebar elemen berubah menjadi:', width);
     };
-  }, []);
+    const resizeObserver = new ResizeObserver(handleResize);
+    // Tambahkan event listener untuk menangani perubahan ukuran window
+    if (ref.current) {
+      resizeObserver.observe(ref.current);
+    }
+
+    // Membersihkan observer saat komponen di-unmount
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [ref]);
 
   return (
     <>
@@ -284,7 +295,7 @@ const WhatsappFlowChart = () => {
           <button>Publish</button> */}
             </div>
           </div>
-          <div style={{ width: "100%" }} className="flex-1">
+          <div ref={ref} style={{ width: "100%" }} className="flex-1">
             <ReactFlow
               nodes={nodes}
               edges={edges}
