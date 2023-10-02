@@ -119,7 +119,7 @@ const WhatsappFlowChart = () => {
       target: "welcome",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
     {
       id: "2",
@@ -127,7 +127,7 @@ const WhatsappFlowChart = () => {
       target: "userinput",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
     {
       id: "3",
@@ -135,7 +135,7 @@ const WhatsappFlowChart = () => {
       target: "fallback",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
     {
       id: "4",
@@ -143,7 +143,7 @@ const WhatsappFlowChart = () => {
       target: "branch",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
     {
       id: "5",
@@ -151,7 +151,7 @@ const WhatsappFlowChart = () => {
       target: "product",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
     {
       id: "6",
@@ -159,7 +159,7 @@ const WhatsappFlowChart = () => {
       target: "response",
       type: "smoothstep",
       style: { stroke: "#8fba94", strokeWidth: 2 },
-      animated: true,
+      // animated: true,
     },
   ];
 
