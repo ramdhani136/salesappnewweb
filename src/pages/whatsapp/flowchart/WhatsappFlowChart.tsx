@@ -146,14 +146,7 @@ const WhatsappFlowChart = () => {
       style: { stroke: "#8fba94", strokeWidth: 2 },
       // animated: true,
     },
-    {
-      id: "5",
-      source: "userinput",
-      target: "product",
-      type: "smoothstep",
-      style: { stroke: "#8fba94", strokeWidth: 2 },
-      // animated: true,
-    },
+
     {
       id: "6",
       source: "branch",
@@ -230,34 +223,20 @@ const WhatsappFlowChart = () => {
   };
 
   useEffect(() => {
-    // const handleResize = () => {
-    //   if (ref.current) {
-    //     const { offsetWidth, offsetHeight } = ref.current;
-    //     setWindowSize({ width: offsetWidth, height: offsetHeight });
-    //   }
-    // };
-
-    // // Panggil handleResize saat komponen dimount dan ukuran elemen berubah
-    // handleResize();
+    const handleResize = () => {
+      if (ref.current) {
+        const { offsetWidth, offsetHeight } = ref.current;
+        setWindowSize({ width: offsetWidth, height: offsetHeight });
+      }
+    };
+    handleResize();
     applyDagreLayout();
     setLoading(false);
-
-
-    const handleResize = (entries:any) => {
-      const { width } = entries[0].contentRect;
-      console.log('Lebar elemen berubah menjadi:', width);
-    };
-    const resizeObserver = new ResizeObserver(handleResize);
-    // Tambahkan event listener untuk menangani perubahan ukuran window
-    if (ref.current) {
-      resizeObserver.observe(ref.current);
-    }
-
-    // Membersihkan observer saat komponen di-unmount
+    window.addEventListener("resize", handleResize);
     return () => {
-      resizeObserver.disconnect();
+      window.removeEventListener("resize", handleResize);
     };
-  }, [ref]);
+  }, []);
 
   return (
     <>
