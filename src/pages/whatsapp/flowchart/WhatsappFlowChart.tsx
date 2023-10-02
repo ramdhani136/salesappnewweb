@@ -51,7 +51,7 @@ const WhatsappFlowChart = () => {
       id: "welcome",
       position: { x: 0, y: 0 },
       data: { label: "Welcome Message" },
-      style: { fontWeight: 600, width: 220, height: 80 },
+      style: { fontWeight: 600, width: 250, height: 120 },
       type: "welcomeInput",
     },
     {
@@ -76,7 +76,7 @@ const WhatsappFlowChart = () => {
       style: {
         backgroundColor: "#eff0f4",
         color: "black",
-        width: 180,
+        width: 220,
         height: 28,
         padding: "5px 8px 5px 8px",
         borderRadius: 5,
@@ -87,21 +87,21 @@ const WhatsappFlowChart = () => {
       id: "branch",
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
-      style: { fontWeight: 600, width: 220, height: 80 },
+      style: { fontWeight: 600, width: 250, height: 120 },
       type: "userInput",
     },
     {
       id: "product",
       position: { x: 0, y: 0 },
       data: { label: "User Input" },
-      style: { fontWeight: 600, width: 220, height: 80 },
+      style: { fontWeight: 600, width: 250, height: 120 },
       type: "userInput",
     },
     {
       id: "response",
       position: { x: 0, y: 0 },
       data: { label: "Response" },
-      style: { fontWeight: 600, width: 220, height: 80 },
+      style: { fontWeight: 600, width: 250, height: 120 },
       type: "responseInput",
     },
   ];
@@ -162,7 +162,7 @@ const WhatsappFlowChart = () => {
   const ref = useRef<any>(null);
   const applyDagreLayout = () => {
     const graph = new dagre.graphlib.Graph();
-    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 100, edgesep: 10 });
+    graph.setGraph({ rankdir: "TB", ranksep: 50, nodesep: 150, edgesep: 10 });
     graph.setDefaultEdgeLabel(() => ({}));
 
     nodes.forEach((node: any) => {
@@ -205,7 +205,7 @@ const WhatsappFlowChart = () => {
 
       // Tambahkan margin untuk start node
       if (node.id === "start") {
-        offsetY = 20; // Sesuaikan angka sesuai kebutuhan
+        offsetY = 15; // Sesuaikan angka sesuai kebutuhan
       }
 
       return {
