@@ -154,6 +154,14 @@ const WhatsappFlowChart = () => {
       // animated: true,
     },
     {
+      id: "5",
+      source: "userinput",
+      target: "product",
+      type: "smoothstep",
+      style: { stroke: "#8fba94", strokeWidth: 2 },
+      // animated: true,
+    },
+    {
       id: "6",
       source: "branch",
       target: "response",
