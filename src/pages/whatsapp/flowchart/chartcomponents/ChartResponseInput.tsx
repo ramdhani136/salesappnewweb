@@ -28,7 +28,7 @@ const ChartResponseInput = (isConnectable: any) => {
           name=""
           id=""
           rows={4}
-          onChange={(e) => ChartResponseInput(e)}
+          onChange={(e) => onChange(e)}
           className=" rounded-md border font-normal text-[0.8em] p-2 border-gray-500"
           value={value}
           placeholder=""
