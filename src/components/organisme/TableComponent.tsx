@@ -324,7 +324,7 @@ const TableComponent: React.FC<Iprops> = ({
                 {columns.map((col, index) => (
                   <th
                     key={index}
-                    className={`font-normal sticky top-0 bg-white text-gray-800 text-md py-3 text-left ${
+                    className={`font-normal sticky top-0 bg-white text-gray-800 text-md py-3  z-50 text-left ${
                       scrollValue > 0 && "border-b py-4 duration-300"
                     }`}
                   >
