@@ -205,7 +205,7 @@ const WhatsappFlowChart = () => {
         ...node,
         position: {
           x:
-            graph.node(node.id).x - node.style.width / 2 + windowSize.width / 6,
+            graph.node(node.id).x - node.style.width / 2 + windowSize.width / 5.6,
           y: graph.node(node.id).y - node.style.height / 2 + offsetY,
         },
       };
