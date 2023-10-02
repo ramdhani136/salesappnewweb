@@ -31,3 +31,7 @@ em-emoji-picker {
   opacity: 0;
   top:0
 }
+
+.react-flow__attribution {
+  display:none;
+}
