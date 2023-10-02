@@ -10,7 +10,7 @@ const ChartResponseInput = (isConnectable: any) => {
   }, []);
 
   return (
-    <div className="h-[100px] w-auto flex bg-white border border-gray-600 p-2 rounded-md ">
+    <div className="h-auto w-auto flex bg-white border border-gray-600 p-2 rounded-md ">
       <Handle
         type="target"
         position={Position.Top}

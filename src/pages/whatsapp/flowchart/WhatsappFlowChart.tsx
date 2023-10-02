@@ -193,6 +193,19 @@ const WhatsappFlowChart = () => {
       return;
     }
 
+    const totalWidth = windowSize.width;
+
+    let maxX = 0;
+    nodes.forEach((node: any) => {
+      const nodeWidth = node.style.width || 150; // Lebar default jika tidak ada style.width
+      const nodeX = graph.node(node.id).x + nodeWidth / 2;
+      maxX = Math.max(maxX, nodeX);
+    });
+
+    const flowchartWidth = maxX;
+
+    const centerX = (totalWidth - flowchartWidth) / 2;
+
     const layoutedElements = nodes.map((node: any) => {
       let offsetY = 0;
 
@@ -205,7 +218,8 @@ const WhatsappFlowChart = () => {
         ...node,
         position: {
           x:
-            graph.node(node.id).x - node.style.width / 2 + windowSize.width / 6,
+            // graph.node(node.id).x - node.style.width / 2 + windowSize.width / 6,
+            graph.node(node.id).x - node.style.width / 2 + centerX,
           y: graph.node(node.id).y - node.style.height / 2 + offsetY,
         },
       };
@@ -263,7 +277,13 @@ const WhatsappFlowChart = () => {
             </div>
           </div>
           <div style={{ width: "100%" }} className="flex-1">
-            <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              // fitView={true}
+              // minZoom={1.2}
+            >
               <Controls />
               <Background />
             </ReactFlow>
