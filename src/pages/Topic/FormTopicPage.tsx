@@ -22,7 +22,9 @@ const FormTopicPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Topic"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Topic"
+    } - Sales App Ekatunggal`,
     description: "Halaman form Topic - Sales web system",
   };
 
@@ -310,9 +312,6 @@ const FormTopicPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!name.valueData) {
-        throw new Error("Nama wajib diisi!");
-      }
       let updata = {};
       if (nextState) {
         updata = { nextState: nextState };

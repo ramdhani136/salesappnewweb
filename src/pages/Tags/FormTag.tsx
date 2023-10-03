@@ -23,7 +23,9 @@ const FormTagPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Tag"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Tag"
+    } - Sales App Ekatunggal`,
     description: "Halaman form tag -  Sales web system",
   };
 
@@ -156,9 +158,6 @@ const FormTagPage: React.FC<any> = ({ props }) => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!name.valueData) {
-        throw new Error("Nama wajib diisi!");
-      }
       let data: any = {
         name: name.valueData,
       };
