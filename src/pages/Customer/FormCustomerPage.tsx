@@ -587,9 +587,9 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                    //  disabled={
+                      //  id != null ? (status !== "Draft" ? true : false) : false
+                      //}
                       onReset={() => {
                         setName({ valueData: "", valueInput: "" });
                       }}
