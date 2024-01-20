@@ -57,6 +57,7 @@ export enum DataAPI {
   PERMISSION = "permission",
   HISTORY = "history",
   WAACCOUNT = "whatsapp/account",
+  ASSESMENTSCHEDULE = "assesmentschedule",
 }
 
 class RequestData implements IData {

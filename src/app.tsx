@@ -48,6 +48,8 @@ import {
   WhatsappQrViewPage,
   WhatsappAccountPage,
   WhatsappFlowChart,
+  AssesmentSchedulePage,
+  FormAssesmentSchedulePage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -265,17 +267,29 @@ const App: React.FC = () => {
             path="/permission/new"
             element={<LayoutComponent Child={FormPermissionPage} />}
           />
-           <Route
+           {/* <Route
             path="/whatsapp/account"
             element={<LayoutComponent Child={WhatsappAccountPage} />}
           />
            <Route
             path="/coba"
             element={<LayoutComponent Child={WhatsappQrViewPage} />}
-          />
-           <Route
+          /> */}
+           {/* <Route
             path="/whatsapp/flowchart"
             element={<LayoutComponent Child={WhatsappFlowChart} />}
+          /> */}
+           <Route
+            path="/assesment/schedule"
+            element={<LayoutComponent Child={AssesmentSchedulePage} />}
+          />
+           <Route
+            path="/assesment/schedule/new"
+            element={<LayoutComponent Child={FormAssesmentSchedulePage} />}
+          />
+           <Route
+            path="/assesment/schedule/:id"
+            element={<LayoutComponent Child={FormAssesmentSchedulePage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

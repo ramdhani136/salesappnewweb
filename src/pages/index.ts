@@ -44,6 +44,8 @@ import FormWorkflowAction from "./WorkflowAction/FormWorkflowAction";
 import { WhatsappAccountPage } from "./whatsapp/WhatsappAccountPage";
 import WhatsappQrViewPage from "./whatsapp/WhatsappQrViewPage";
 import { WhatsappFlowChart } from "./whatsapp";
+import { AssesmentSchedulePage } from "./AssesmengtSchedule/AssesmentSchedulePage";
+import FormAssesmentSchedulePage from "./AssesmengtSchedule/FormAssesmentSchedulePage";
 
 
 export {
@@ -92,5 +94,7 @@ export {
   FormWorkflowAction,
   WhatsappAccountPage,
   WhatsappQrViewPage,
-  WhatsappFlowChart
+  WhatsappFlowChart,
+  AssesmentSchedulePage,
+  FormAssesmentSchedulePage
 };
