@@ -33,7 +33,7 @@ const SidebarComponent: React.FC<IProps> = ({ user, getStatusOpen }) => {
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
     { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
-    { name: "Whatsapp", link: "/whatsapp", icon: MarkUnreadChatAltOutlinedIcon },
+    // { name: "Whatsapp", link: "/whatsapp", icon: MarkUnreadChatAltOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
     { name: "Settings", link: "/setting", icon: SettingsIcon },
   ];
