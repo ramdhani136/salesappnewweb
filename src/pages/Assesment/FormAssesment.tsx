@@ -275,8 +275,12 @@ const FormAssesmentPage: React.FC = () => {
             <div className=" px-5 flex flex-col ">
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <ul className="w-full h-auto border-b px-4 float-left text-[0.97em]">
-                  <li className="float-left mx-3 cursor-pointer duration-300 py-3">Details</li>
-                  <li className="float-left mx-3 cursor-pointer duration-300 border-b border-blue-400 py-3 font-semibold">Question</li>
+                  <li className="float-left mx-3 cursor-pointer duration-300 py-3 opacity-80 hover:opacity-100 ">
+                    Details
+                  </li>
+                  <li className="float-left mx-3 cursor-pointer duration-300 border-b border-blue-400 py-3 font-semibold  opacity-80 hover:opacity-100">
+                    Question
+                  </li>
                 </ul>
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
