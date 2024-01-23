@@ -43,13 +43,24 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     valueData: currentUser._id,
     valueInput: currentUser.name,
   });
-  const [type, setType] = useState<string>("all");
   const [desc, setDesc] = useState<string>("");
-  const [startDate, setStartDate] = useState<IValue>({
+  const [activeDate, setActiveDate] = useState<IValue>({
     valueData: null,
     valueInput: "",
   });
+  // Template
+  const [template, setTemplate] = useState<IValue>({
+    valueData: "",
+    valueInput: "",
+  });
+  const [templateList, setTemplateList] = useState<IListInput[]>([]);
+  const [templatePage, setTemplatePage] = useState<Number>(1);
+  const [templateLoading, setTemplateLoading] = useState<boolean>(true);
+  const [templateMoreLoading, setTemplateMoreLoading] =
+    useState<boolean>(false);
+  const [templateHasMore, setTemplateHasMore] = useState<boolean>(false);
 
+  // End Template
   const [naming, setNaming] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -59,10 +70,11 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     valueInput: "",
   });
 
-  const [dueDate, setDueDate] = useState<IValue>({
+  const [deactiveDate, setDeactiveDate] = useState<IValue>({
     valueData: null,
     valueInput: "",
   });
+
   const [name, setName] = useState<IValue>({
     valueData: "",
     valueInput: "",
@@ -76,15 +88,17 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [prevData, setPrevData] = useState<any>({
-    type: type,
     desc: desc,
-    startDate: startDate.valueData,
-    dueDate: dueDate.valueData,
+    activeDate: activeDate.valueData,
+    deactiveDate: deactiveDate.valueData,
+    template: template.valueData,
   });
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULE).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULE).FINDONE(
+        `${id}`
+      );
 
       if (result?.progress) {
         setProgress({
@@ -119,7 +133,11 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
 
       setData(result.data);
 
-      setType(result.data.type);
+      setTemplate({
+        valueData: result.data.assesmentTemplate._id,
+        valueInput: result.data.assesmentTemplate.name,
+      });
+
       setDesc(result.data.desc);
       setUser({
         valueData: result.data.createdBy._id,
@@ -133,19 +151,19 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
-      setStartDate({
+      setActiveDate({
         valueData: moment(result.data.activeDate).format("YYYY-MM-DD"),
         valueInput: moment(result.data.activeDate).format("YYYY-MM-DD"),
       });
-      setDueDate({
+      setDeactiveDate({
         valueData: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
         valueInput: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
       });
       setPrevData({
-        type: result.data.type,
         desc: result.data.desc,
-        startDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
-        dueDate: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
+        activeDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        deactiveDate: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
+        template: result.data.assesmentTemplate._id,
       });
       setLoading(false);
     } catch (error: any) {
@@ -200,17 +218,19 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           throw new Error("Desc wajib diisi!");
         }
         data = {
-          type: type,
           desc: desc,
-          activeDate: startDate.valueData,
-          closingDate: dueDate.valueData,
+          activeDate: activeDate.valueData,
+          deactiveDate: deactiveDate.valueData,
           namingSeries: naming.valueData,
         };
       }
 
       let Action =
         id && !modal
-          ? GetDataServer(DataAPI.ASSESMENTSCHEDULE).UPDATE({ id: id, data: data })
+          ? GetDataServer(DataAPI.ASSESMENTSCHEDULE).UPDATE({
+              id: id,
+              data: data,
+            })
           : modal
           ? GetDataServer(DataAPI.ASSESMENTSCHEDULE).CREATE(
               data,
@@ -291,10 +311,10 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      type: type,
       desc: desc,
-      startDate: startDate.valueData,
-      dueDate: dueDate.valueData,
+      activeDate: activeDate.valueData,
+      deactiveDate: deactiveDate.valueData,
+      template: template.valueData,
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -302,8 +322,57 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     } else {
       setChangeData(false);
     }
-  }, [startDate, dueDate, type, desc]);
+  }, [activeDate, deactiveDate, template, desc]);
   // End
+
+  const getTemplate = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+
+      let filters: any = [["status", "=", "1"]];
+
+      const result: any = await GetDataServer(DataAPI.ASSESMENTTEMPLATE).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : templatePage}`,
+        filters: filters,
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setTemplateList([...templateList, ...listInput]);
+        } else {
+          setTemplateList([...listInput]);
+        }
+        setTemplateHasMore(result.hasMore);
+        setTemplatePage(result.nextPage);
+      }
+
+      setTemplateLoading(false);
+      setTemplateMoreLoading(false);
+    } catch (error: any) {
+      setTemplateLoading(false);
+      setTemplateMoreLoading(false);
+      setTemplateHasMore(false);
+    }
+  };
+
+  const ResetTemplate = () => {
+    setTemplateList([]);
+    setTemplateHasMore(false);
+    setTemplatePage(1);
+    setTemplateLoading(true);
+  };
 
   const getFormDuplicate = (): void => {
     dispatch(
@@ -365,20 +434,26 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id && !modal ? "Update" : "Save"}
-                    callback={() => {
-                      AlertModal.confirmation({
-                        onConfirm: () => {
-                          onSave();
-                        },
-                        confirmButtonText: "Yes, Save it!",
-                      });
-                    }}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                {isChangeData &&
+                  template.valueData !== null &&
+                  template.valueData !== "" &&
+                  activeDate.valueData !== null &&
+                  activeDate.valueData !== "" &&
+                  deactiveDate.valueData !== null &&
+                  deactiveDate.valueData !== "" && (
+                    <IconButton
+                      name={id && !modal ? "Update" : "Save"}
+                      callback={() => {
+                        AlertModal.confirmation({
+                          onConfirm: () => {
+                            onSave();
+                          },
+                          confirmButtonText: "Yes, Save it!",
+                        });
+                      }}
+                      className={`opacity-80 hover:opacity-100 duration-100  `}
+                    />
+                  )}
                 {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
@@ -454,6 +529,52 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                       }
                       disabled
                     />
+                    <InputComponent
+                      mandatoy
+                      label="Template"
+                      value={template}
+                      infiniteScroll={{
+                        loading: templateMoreLoading,
+                        hasMore: templateHasMore,
+                        next: () => {
+                          setTemplateMoreLoading(true);
+                          getTemplate({
+                            refresh: false,
+                            search: template.valueInput,
+                          });
+                        },
+                        onSearch(e) {
+                          ResetTemplate();
+                          getTemplate({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetTemplate();
+                        getTemplate({
+                          refresh: true,
+                          search: template.valueInput,
+                        });
+                      }}
+                      loading={templateLoading}
+                      list={templateList}
+                      className="h-[38px]   mb-4"
+                      onChange={(e) => {
+                        setTemplate({
+                          ...template,
+                          valueInput: e,
+                        });
+                      }}
+                      onSelected={(e) => {
+                        setTemplate({ valueData: e.value, valueInput: e.name });
+                      }}
+                      onReset={() => {
+                        setTemplate({
+                          valueData: null,
+                          valueInput: "",
+                        });
+                      }}
+                      modalStyle="mt-2"
+                    />
                     <label className="text-sm">Desc</label>
                     <textarea
                       className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md h-[150px] mb-10"
@@ -467,21 +588,21 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                     <InputComponent
                       disabled={id !== undefined && data.status != 0 && !modal}
                       label="Start Date"
-                      value={startDate}
+                      value={activeDate}
                       className="h-[38px] mb-4"
                       type="date"
                       onChange={(e) => {
-                        setStartDate({
+                        setActiveDate({
                           valueData: e,
                           valueInput: e,
                         });
                         if (
                           moment(Number(new Date(e))).format("YYYY-MM-DD") >
-                          moment(Number(new Date(dueDate.valueData))).format(
-                            "YYYY-MM-DD"
-                          )
+                          moment(
+                            Number(new Date(deactiveDate.valueData))
+                          ).format("YYYY-MM-DD")
                         ) {
-                          setDueDate({
+                          setDeactiveDate({
                             valueData: e,
                             valueInput: e,
                           });
@@ -490,23 +611,23 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                       min={moment(Number(new Date())).format("YYYY-MM-DD")}
                       mandatoy
                     />
-                    {startDate.valueData && (
+                    {activeDate.valueData && (
                       <InputComponent
                         disabled={
                           id !== undefined && data.status != 0 && !modal
                         }
                         label="Closing Date"
-                        value={dueDate}
+                        value={deactiveDate}
                         className="h-[38px]  mb-4"
                         type="date"
                         onChange={(e) =>
-                          setDueDate({
+                          setDeactiveDate({
                             valueData: e,
                             valueInput: e,
                           })
                         }
                         mandatoy
-                        min={startDate.valueData}
+                        min={activeDate.valueData}
                       />
                     )}
                     <InputComponent
@@ -531,7 +652,11 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                 <ToggleBodyComponent
                   name="Customer List"
                   className="mt-5"
-                  child={<ListItemAssesmentSchedule props={{ docId: id, data: data }} />}
+                  child={
+                    <ListItemAssesmentSchedule
+                      props={{ docId: id, data: data }}
+                    />
+                  }
                 />
               )}
               <TimeLineVertical data={history} />
