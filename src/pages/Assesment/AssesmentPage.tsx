@@ -257,7 +257,7 @@ export const AssesmentPage: React.FC = (): any => {
             <TableComponent
               selectedData={selectedData}
               setSelectedData={setSelectedData}
-              width="w-[105%]"
+              width="w-[130%]"
               loadingMore={loadingMore}
               setSearch={setSeacrh}
               setData={setData}
