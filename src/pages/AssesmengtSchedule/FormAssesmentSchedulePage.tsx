@@ -219,7 +219,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           activeDate: activeDate.valueData,
           deactiveDate: deactiveDate.valueData,
           namingSeries: naming.valueData,
-          assesmentTemplate :template.valueData,
+          assesmentTemplate: template.valueData,
         };
       }
 
@@ -634,6 +634,26 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                       className="h-[38px]   mb-4"
                       disabled
                     />
+                    <div className="mt-2 mb-2">
+                      <label className="text-sm">Insert new customer</label>
+                      <div className="flex items-center">
+                        <input
+                          type="radio"
+                          name="ic"
+                          value="1"
+                          className="mr-1"
+                        />
+                        <label className="text-sm">Yes</label>
+                        <input
+                          type="radio"
+                          name="ic"
+                          value="0"
+                          onClick={(e)=>alert("Dd")}
+                          className="ml-10 mr-1"
+                        />
+                        <label className="text-sm">No</label>
+                      </div>
+                    </div>
                     {id && !modal && progress.valueData !== "NaN" && (
                       <InputComponent
                         label="Progress"
