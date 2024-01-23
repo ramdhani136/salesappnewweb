@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
-  ButtonStatusComponent,
   IconButton,
   InputComponent,
   TimeLineVertical,
@@ -20,9 +19,7 @@ const FormAssesmentPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${
-      id ? data.name ?? "Loading ..  " : "New Assesment"
-    } - Sales App Ekatunggal`,
+    title: `${data.customer?.name ?? "Loading ..  "} - Sales App Ekatunggal`,
     description: "Halaman form Assesment Sales web system",
   };
 
@@ -281,7 +278,7 @@ const FormAssesmentPage: React.FC = () => {
                   <div className=" w-1/2 px-4 float-left ">
                     <InputComponent
                       mandatoy
-                      label="Name"
+                      label="Schedule"
                       value={schedule}
                       className="h-[38px] mb-3"
                       type="text"
