@@ -214,9 +214,6 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           nextState: nextState,
         };
       } else {
-        if (!desc) {
-          throw new Error("Desc wajib diisi!");
-        }
         data = {
           desc: desc,
           activeDate: activeDate.valueData,
