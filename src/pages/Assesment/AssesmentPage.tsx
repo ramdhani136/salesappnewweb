@@ -77,8 +77,6 @@ export const AssesmentPage: React.FC = (): any => {
         search: search,
       });
 
-  
-
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
@@ -243,10 +241,10 @@ export const AssesmentPage: React.FC = (): any => {
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
                 Customer Assesment
               </h1>
-              <div className="flex-1  flex items-center justify-end mr-4">
-              </div>
+              <div className="flex-1  flex items-center justify-end mr-4"></div>
             </div>
             <TableComponent
+              disabled={true}
               selectedData={selectedData}
               setSelectedData={setSelectedData}
               width="w-[130%]"
