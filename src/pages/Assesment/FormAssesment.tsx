@@ -25,6 +25,7 @@ const FormAssesmentPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const [tab, setTab] = useState<string>("Details");
   const [scroll, setScroll] = useState<number>(0);
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
@@ -275,75 +276,96 @@ const FormAssesmentPage: React.FC = () => {
             <div className=" px-5 flex flex-col ">
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <ul className="w-full h-auto border-b px-4 float-left text-[0.97em]">
-                  <li className="float-left mx-3 cursor-pointer duration-300 py-3 opacity-80 hover:opacity-100 ">
+                  <li
+                    className={`float-left mx-4 cursor-pointer duration-300 py-3 opacity-90 hover:opacity-100 ${
+                      tab === "Details" &&
+                      "border-b border-blue-400 py-3 font-semibold "
+                    }`}
+                    onClick={() => setTab("Details")}
+                  >
                     Details
                   </li>
-                  <li className="float-left mx-3 cursor-pointer duration-300 border-b border-blue-400 py-3 font-semibold  opacity-80 hover:opacity-100">
-                    Question
+                  <li
+                    className={`float-left mx-4 cursor-pointer duration-300  opacity-90 hover:opacity-100 py-3 ${
+                      tab === "Question" &&
+                      "border-b border-blue-400  font-semibold "
+                    }`}
+                    onClick={() => setTab("Question")}
+                  >
+                    Questions
                   </li>
                 </ul>
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
-                  <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      mandatoy
-                      label="Schedule"
-                      value={schedule}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      disabled={true}
-                    />
+                  {tab === "Details" && (
+                    <>
+                      {" "}
+                      <div className=" w-1/2 px-4 float-left ">
+                        <InputComponent
+                          mandatoy
+                          label="Schedule"
+                          value={schedule}
+                          className="h-[38px] mb-3"
+                          type="text"
+                          disabled={true}
+                        />
 
-                    <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]  mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <label className="text-sm">Desc</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
-                    />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
-                    <InputComponent
-                      label="Active Date"
-                      value={createdAt}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <InputComponent
-                      label="Deactive Date"
-                      value={createdAt}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                  </div>
+                        <InputComponent
+                          label="Created By"
+                          value={user}
+                          className="h-[38px]  mb-3"
+                          onChange={(e) =>
+                            setUser({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          disabled
+                        />
+                        <label className="text-sm">Desc</label>
+                        <textarea
+                          className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
+                          name="Site Uri"
+                          value={desc}
+                          onChange={(e) => setDesc(e.target.value)}
+                          disabled={
+                            id != null
+                              ? status !== "Draft"
+                                ? true
+                                : false
+                              : false
+                          }
+                        />
+                      </div>
+                      <div className=" w-1/2 px-4 float-left  mb-3">
+                        <InputComponent
+                          label="Active Date"
+                          value={createdAt}
+                          className="h-[38px]  mb-3"
+                          type="date"
+                          onChange={(e) =>
+                            setCreatedAt({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          disabled
+                        />
+                        <InputComponent
+                          label="Deactive Date"
+                          value={createdAt}
+                          className="h-[38px]  mb-3"
+                          type="date"
+                          onChange={(e) =>
+                            setCreatedAt({
+                              valueData: e,
+                              valueInput: e,
+                            })
+                          }
+                          disabled
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
