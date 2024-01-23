@@ -50,6 +50,7 @@ import {
   WhatsappFlowChart,
   AssesmentSchedulePage,
   FormAssesmentSchedulePage,
+  AssesmentPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -290,6 +291,10 @@ const App: React.FC = () => {
            <Route
             path="/assesment/schedule/:id"
             element={<LayoutComponent Child={FormAssesmentSchedulePage} />}
+          />
+           <Route
+            path="/assesment"
+            element={<LayoutComponent Child={AssesmentPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

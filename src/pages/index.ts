@@ -46,6 +46,7 @@ import WhatsappQrViewPage from "./whatsapp/WhatsappQrViewPage";
 import { WhatsappFlowChart } from "./whatsapp";
 import { AssesmentSchedulePage } from "./AssesmengtSchedule/AssesmentSchedulePage";
 import FormAssesmentSchedulePage from "./AssesmengtSchedule/FormAssesmentSchedulePage";
+import { AssesmentPage } from "./Assesment/AssesmentPage";
 
 
 export {
@@ -96,5 +97,6 @@ export {
   WhatsappQrViewPage,
   WhatsappFlowChart,
   AssesmentSchedulePage,
-  FormAssesmentSchedulePage
+  FormAssesmentSchedulePage,
+  AssesmentPage
 };

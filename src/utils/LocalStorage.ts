@@ -22,6 +22,7 @@ export enum LocalStorageType {
   FILTERWORKFLOWACTION = "filterworkflowaction",
   FILTERWAACCOUNT = "filterwaacount",
   FILTERASSESMENTSCHEDULE = "filterassesmentschedule",
+  FILTERASSESMENT = "filterassesment",
   
 }
 
