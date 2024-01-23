@@ -54,7 +54,11 @@ export const AssesmentPage: React.FC = (): any => {
       { header: "Status", accessor: "workflowState", className: "w-auto" },
       { header: "Schedule", accessor: "schedule", className: "w-auto" },
       { header: "Active Date", accessor: "activeDate", className: "w-auto" },
-      { header: "Deactive Date", accessor: "deactiveDate", className: "w-auto" },
+      {
+        header: "Deactive Date",
+        accessor: "deactiveDate",
+        className: "w-auto",
+      },
       { header: "Created By", accessor: "createdBy", className: "w-auto" },
       { header: "", accessor: "updatedAt", className: "w-auto" },
     ],
@@ -63,10 +67,12 @@ export const AssesmentPage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FIND({
+      const result: any = await GetDataServer(
+        DataAPI.ASSESMENTSCHEDULEITEM
+      ).FIND({
         limit: limit,
         page: page,
-        filters: filter,
+        filters: [...filter, ["status", "=", "0"]],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
@@ -88,7 +94,7 @@ export const AssesmentPage: React.FC = (): any => {
             workflowState: (
               <ButtonStatusComponent
                 status={item.status}
-                name={item.status==0?"Open":"Closed"}
+                name={item.status == 0 ? "Open" : "Closed"}
               />
             ),
             updatedAt: (
