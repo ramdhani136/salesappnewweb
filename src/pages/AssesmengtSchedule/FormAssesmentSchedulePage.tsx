@@ -579,6 +579,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                         });
                       }}
                       modalStyle="mt-2"
+                      disabled={id !== undefined && data.status != 0 && !modal}
                     />
                     <label className="text-sm">Desc</label>
                     <textarea
@@ -592,7 +593,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                   <div className=" w-1/2 px-4 float-left  mb-4">
                     <InputComponent
                       disabled={id !== undefined && data.status != 0 && !modal}
-                      label="Start Date"
+                      label="Active Date"
                       value={activeDate}
                       className="h-[38px] mb-4"
                       type="date"
@@ -621,7 +622,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                         disabled={
                           id !== undefined && data.status != 0 && !modal
                         }
-                        label="Closing Date"
+                        label="Deactive Date"
                         value={deactiveDate}
                         className="h-[38px]  mb-4"
                         type="date"
@@ -651,6 +652,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                           className="mr-1"
                           onChange={() => setinsertNewCustomer(1)}
                           checked={insertNewCustomer === 1}
+                          
                         />
                         <label className="text-sm">Yes</label>
                         <input
