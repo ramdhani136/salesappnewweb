@@ -244,22 +244,6 @@ export const AssesmentPage: React.FC = (): any => {
                 Customer Assesment
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
-                <IconButton
-                  Icon={AddIcon}
-                  name="Add Schedule"
-                  className={`opacity-80 hover:opacity-100 duration-100 ${
-                    selectedData.length > 0 && "hidden"
-                  } `}
-                  callback={() => navigate("/assesment/result/new")}
-                />
-
-                <IconButton
-                  name="Action"
-                  className={`duration-100 ${
-                    selectedData.length === 0 && "hidden"
-                  }`}
-                  list={[{ name: "Delete", onClick: onDelete }]}
-                />
               </div>
             </div>
             <TableComponent
