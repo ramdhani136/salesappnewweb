@@ -6,7 +6,6 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
-  Select,
   TimeLineVertical,
   ToggleBodyComponent,
 } from "../../components/atoms";
@@ -14,11 +13,11 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-import ListItemSchedule from "./ListItemAssesmentSchedule";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
+import ListItemAssesmentSchedule from "./ListItemAssesmentSchedule";
 
 const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
@@ -45,7 +44,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     valueInput: currentUser.name,
   });
   const [type, setType] = useState<string>("all");
-  const [notes, setNotes] = useState<string>("");
+  const [desc, setDesc] = useState<string>("");
   const [startDate, setStartDate] = useState<IValue>({
     valueData: null,
     valueInput: "",
@@ -78,14 +77,14 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [prevData, setPrevData] = useState<any>({
     type: type,
-    notes: notes,
+    desc: desc,
     startDate: startDate.valueData,
     dueDate: dueDate.valueData,
   });
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.SCHEDULE).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULE).FINDONE(`${id}`);
 
       if (result?.progress) {
         setProgress({
@@ -121,7 +120,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
       setData(result.data);
 
       setType(result.data.type);
-      setNotes(result.data.notes);
+      setDesc(result.data.desc);
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -139,14 +138,14 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         valueInput: moment(result.data.activeDate).format("YYYY-MM-DD"),
       });
       setDueDate({
-        valueData: moment(result.data.closingDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.closingDate).format("YYYY-MM-DD"),
+        valueData: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
       });
       setPrevData({
         type: result.data.type,
-        notes: result.data.notes,
+        desc: result.data.desc,
         startDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
-        dueDate: moment(result.data.closingDate).format("YYYY-MM-DD"),
+        dueDate: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
       });
       setLoading(false);
     } catch (error: any) {
@@ -157,7 +156,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         text: "Data not found!",
       });
 
-      navigate("/schedule");
+      navigate("/assesment/schedule");
     }
   };
 
@@ -166,8 +165,8 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.SCHEDULE).DELETE(`${id}`);
-          navigate("/schedule");
+          await GetDataServer(DataAPI.ASSESMENTSCHEDULE).DELETE(`${id}`);
+          navigate("/assesment/schedule");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -197,12 +196,12 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           nextState: nextState,
         };
       } else {
-        if (!notes) {
-          throw new Error("Notes wajib diisi!");
+        if (!desc) {
+          throw new Error("Desc wajib diisi!");
         }
         data = {
           type: type,
-          notes: notes,
+          desc: desc,
           activeDate: startDate.valueData,
           closingDate: dueDate.valueData,
           namingSeries: naming.valueData,
@@ -211,13 +210,13 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
 
       let Action =
         id && !modal
-          ? GetDataServer(DataAPI.SCHEDULE).UPDATE({ id: id, data: data })
+          ? GetDataServer(DataAPI.ASSESMENTSCHEDULE).UPDATE({ id: id, data: data })
           : modal
-          ? GetDataServer(DataAPI.SCHEDULE).CREATE(
+          ? GetDataServer(DataAPI.ASSESMENTSCHEDULE).CREATE(
               data,
               `/duplicate/${props.scheduleId}`
             )
-          : GetDataServer(DataAPI.SCHEDULE).CREATE(data);
+          : GetDataServer(DataAPI.ASSESMENTSCHEDULE).CREATE(data);
 
       const result = await Action;
 
@@ -225,7 +224,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/schedule/${result.data.data._id}`);
+        navigate(`/assesment/schedule/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -244,17 +243,11 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     setLoading(false);
   };
 
-  const dataType: any[] = [
-    { title: "Visit", value: "visit" },
-    { title: "Callsheet", value: "callsheet" },
-    { title: "All", value: "all" },
-  ];
-
   const getNaming = async (): Promise<void> => {
     try {
       const result: any = await GetDataServer(DataAPI.NAMING).FIND({
         filters: [
-          ["doc", "=", "schedule"],
+          ["doc", "=", "assesmentschedule"],
           ["status", "=", "1"],
         ],
       });
@@ -299,7 +292,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const actualData = {
       type: type,
-      notes: notes,
+      desc: desc,
       startDate: startDate.valueData,
       dueDate: dueDate.valueData,
     };
@@ -309,7 +302,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     } else {
       setChangeData(false);
     }
-  }, [startDate, dueDate, type, notes]);
+  }, [startDate, dueDate, type, desc]);
   // End
 
   const getFormDuplicate = (): void => {
@@ -345,7 +338,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/schedule")}
+                  onClick={() => navigate("/assesment/schedule")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
                   {!id ? "New Schedule" : data.name}
@@ -447,13 +440,6 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                         disabled
                       />
                     )}
-                    <Select
-                      title="Doc"
-                      data={dataType}
-                      value={type}
-                      setValue={setType}
-                      disabled={id !== undefined && data.status != 0 && !modal}
-                    />
 
                     <InputComponent
                       label="Date"
@@ -468,12 +454,12 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                       }
                       disabled
                     />
-                    <label className="text-sm">Notes</label>
+                    <label className="text-sm">Desc</label>
                     <textarea
                       className="border mt-1 p-2 text-md bg-gray-50  w-full rounded-md h-[150px] mb-10"
-                      name="Site Uri"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
+                      name="Desc"
+                      value={desc}
+                      onChange={(e) => setDesc(e.target.value)}
                       disabled={id !== undefined && data.status != 0 && !modal}
                     />
                   </div>
@@ -545,7 +531,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                 <ToggleBodyComponent
                   name="Customer List"
                   className="mt-5"
-                  child={<ListItemSchedule props={{ docId: id, data: data }} />}
+                  child={<ListItemAssesmentSchedule props={{ docId: id, data: data }} />}
                 />
               )}
               <TimeLineVertical data={history} />

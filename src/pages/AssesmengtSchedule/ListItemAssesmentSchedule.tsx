@@ -54,8 +54,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
-      { header: "Doc", accessor: "doc", className: "w-auto" },
-      { header: "Type", accessor: "docType", className: "w-auto" },
+      { header: "Result", accessor: "result", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
       { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
@@ -81,7 +80,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           );
           setActiveProgress(true);
           for (let i = 0; i < selectedData.length; i++) {
-            await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
+            await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).CREATE({
               customer: selectedData[i].id,
               schedule: docId,
             });
@@ -111,42 +110,11 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         }
       },
     });
-    // try {
-    //   setLoading(true);
-    //   dispatch(
-    //     modalSet({
-    //       active: false,
-    //       Children: null,
-    //       title: "",
-    //       props: {},
-    //       className: "",
-    //     })
-    //   );
-    //   for (const item of data) {
-    //     await GetDataServer(DataAPI.SCHEDULELIST).CREATE({
-    //       customer: item.id,
-    //       schedule: docId,
-    //     });
-    //   }
-    //   getData();
-    // } catch (error: any) {
-    //   Swal.fire(
-    //     "Error!",
-    //     `${
-    //       error.response.data.msg
-    //         ? error.response.data.msg
-    //         : error.message
-    //         ? error.message
-    //         : "Error Insert"
-    //     }`,
-    //     "error"
-    //   );
-    // }
   };
 
   const getAllList = async () => {
     try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
+      const result: any = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FIND({
         filters: [...filter, ["schedule", "=", `${docId}`]],
         limit: 0,
         fields: ["customer"],
@@ -175,7 +143,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
 
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
+      const result: any = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FIND({
         filters: [...filter, ["schedule", "=", `${docId}`]],
         limit: limit,
         page: props?.refresh ? 1 : page,
@@ -188,16 +156,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
             id: item._id,
             customerId: item.customer._id,
             customer: <b className="font-medium">{item.customer.name}</b>,
-            doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
-            docType: (
-              <h4>
-                {item?.closing?.doc?.type
-                  ? item?.closing?.doc?.type === "callsheet"
-                    ? "Callsheet"
-                    : "Visit"
-                  : ""}
-              </h4>
-            ),
+            result: <h4>{item?.closing?.result?.name ?? ""}</h4>,
             closingBy: <h4>{item?.closing?.user?.name ?? ""}</h4>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: <h4>{item.branch.name}</h4>,
@@ -323,7 +282,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULELIST).DELETE(item.id);
+            await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
