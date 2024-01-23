@@ -43,6 +43,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     valueData: currentUser._id,
     valueInput: currentUser.name,
   });
+  const [insertNewCustomer, setinsertNewCustomer] = useState<number>(1);
   const [desc, setDesc] = useState<string>("");
   const [activeDate, setActiveDate] = useState<IValue>({
     valueData: null,
@@ -92,6 +93,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     activeDate: activeDate.valueData,
     deactiveDate: deactiveDate.valueData,
     template: template.valueData,
+    includeNewCustomer: insertNewCustomer,
   });
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -138,6 +140,8 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         valueInput: result.data.assesmentTemplate.name,
       });
 
+      setinsertNewCustomer(result.data.includeNewCustomer ? 1 : 0);
+
       setDesc(result.data.desc);
       setUser({
         valueData: result.data.createdBy._id,
@@ -164,6 +168,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
         activeDate: moment(result.data.activeDate).format("YYYY-MM-DD"),
         deactiveDate: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
         template: result.data.assesmentTemplate._id,
+        includeNewCustomer: result.data.includeNewCustomer ? 1 : 0,
       });
       setLoading(false);
     } catch (error: any) {
@@ -220,6 +225,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           deactiveDate: deactiveDate.valueData,
           namingSeries: naming.valueData,
           assesmentTemplate: template.valueData,
+          includeNewCustomer: insertNewCustomer === 1 ? true : false,
         };
       }
 
@@ -313,6 +319,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
       activeDate: activeDate.valueData,
       deactiveDate: deactiveDate.valueData,
       template: template.valueData,
+      includeNewCustomer: insertNewCustomer,
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -320,7 +327,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
     } else {
       setChangeData(false);
     }
-  }, [activeDate, deactiveDate, template, desc]);
+  }, [activeDate, deactiveDate, template, desc, insertNewCustomer]);
   // End
 
   const getTemplate = async (data: {
@@ -640,16 +647,19 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                         <input
                           type="radio"
                           name="ic"
-                          value="1"
+                          value={1}
                           className="mr-1"
+                          onChange={() => setinsertNewCustomer(1)}
+                          checked={insertNewCustomer === 1}
                         />
                         <label className="text-sm">Yes</label>
                         <input
                           type="radio"
                           name="ic"
                           value="0"
-                          onClick={(e)=>alert("Dd")}
+                          onChange={() => setinsertNewCustomer(0)}
                           className="ml-10 mr-1"
+                          checked={insertNewCustomer === 0}
                         />
                         <label className="text-sm">No</label>
                       </div>
