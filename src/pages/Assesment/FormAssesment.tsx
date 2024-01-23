@@ -21,9 +21,9 @@ const FormAssesmentPage: React.FC = () => {
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${
-      id ? data.name ?? "Loading ..  " : "New Branch"
+      id ? data.name ?? "Loading ..  " : "New Assesment"
     } - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    description: "Halaman form Assesment Sales web system",
   };
 
   const navigate = useNavigate();
@@ -118,36 +118,36 @@ const FormAssesmentPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/assesment");
     }
   };
 
-  const onDelete = (): void => {
-    if (id) {
-      const progress = async (): Promise<void> => {
-        setLoading(true);
-        try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
-        } catch (error: any) {
-          setLoading(false);
-          Swal.fire(
-            "Error!",
-            `${
-              error.response.data.msg
-                ? error.response.data.msg
-                : error.message
-                ? error.message
-                : "Error Delete"
-            }`,
-            "error"
-          );
-        }
-      };
+  // const onDelete = (): void => {
+  //   if (id) {
+  //     const progress = async (): Promise<void> => {
+  //       setLoading(true);
+  //       try {
+  //         await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
+  //         navigate("/assesment");
+  //       } catch (error: any) {
+  //         setLoading(false);
+  //         Swal.fire(
+  //           "Error!",
+  //           `${
+  //             error.response.data.msg
+  //               ? error.response.data.msg
+  //               : error.message
+  //               ? error.message
+  //               : "Error Delete"
+  //           }`,
+  //           "error"
+  //         );
+  //       }
+  //     };
 
-      AlertModal.confirmation({ onConfirm: progress });
-    }
-  };
+  //     AlertModal.confirmation({ onConfirm: progress });
+  //   }
+  // };
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
@@ -193,7 +193,7 @@ const FormAssesmentPage: React.FC = () => {
   useEffect(() => {
     if (id) {
       getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
@@ -231,7 +231,7 @@ const FormAssesmentPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/assesment")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
                   {data.customer.name}
