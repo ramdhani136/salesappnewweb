@@ -222,6 +222,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
           activeDate: activeDate.valueData,
           deactiveDate: deactiveDate.valueData,
           namingSeries: naming.valueData,
+          assesmentTemplate :template.valueData,
         };
       }
 
@@ -531,7 +532,7 @@ const FormAssesmentSchedulePage: React.FC<any> = ({ props }) => {
                     />
                     <InputComponent
                       mandatoy
-                      label="Template"
+                      label="Assesment Template"
                       value={template}
                       infiniteScroll={{
                         loading: templateMoreLoading,
