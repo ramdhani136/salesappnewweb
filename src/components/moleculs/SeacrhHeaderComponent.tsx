@@ -82,7 +82,7 @@ const SeacrhHeaderComponent: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className=" md:w-[23rem] lg:w-[20rem] relative">
+    <div className=" md:w-[23rem] lg:w-[21rem] relative">
       <div
         className="border w-full  h-10 rounded-md bg-gray-100 border-gray-200 flex items-center"
         onClick={click}
