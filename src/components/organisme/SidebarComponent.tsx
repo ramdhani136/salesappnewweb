@@ -19,6 +19,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 interface IProps {
   user: any;
@@ -33,6 +34,7 @@ const SidebarComponent: React.FC<IProps> = ({ user, getStatusOpen }) => {
     { name: "Callsheet", link: "/callsheet", icon: SupportAgentIcon },
     { name: "Visit", link: "/visit", icon: DirectionsRunIcon },
     { name: "Users", link: "/users", icon: PeopleAltOutlinedIcon },
+    { name: "Customer Assesment", link: "/assesment/", icon: DoneAllIcon },
     // { name: "Whatsapp", link: "/whatsapp", icon: MarkUnreadChatAltOutlinedIcon },
     { name: "Reports", link: "/report", icon: AssessmentOutlinedIcon },
     { name: "Settings", link: "/setting", icon: SettingsIcon },
