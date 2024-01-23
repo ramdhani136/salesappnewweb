@@ -47,6 +47,7 @@ import { WhatsappFlowChart } from "./whatsapp";
 import { AssesmentSchedulePage } from "./AssesmengtSchedule/AssesmentSchedulePage";
 import FormAssesmentSchedulePage from "./AssesmengtSchedule/FormAssesmentSchedulePage";
 import { AssesmentPage } from "./Assesment/AssesmentPage";
+import FormAssesmentPage from "./Assesment/FormAssesment";
 
 
 export {
@@ -98,5 +99,6 @@ export {
   WhatsappFlowChart,
   AssesmentSchedulePage,
   FormAssesmentSchedulePage,
-  AssesmentPage
+  AssesmentPage,
+  FormAssesmentPage
 };

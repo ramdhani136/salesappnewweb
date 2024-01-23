@@ -77,6 +77,8 @@ export const AssesmentPage: React.FC = (): any => {
         search: search,
       });
 
+  
+
       if (result.data.length > 0) {
         const generateData = result.data.map((item: any): IDataTables => {
           return {

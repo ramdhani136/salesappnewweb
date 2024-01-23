@@ -51,6 +51,7 @@ import {
   AssesmentSchedulePage,
   FormAssesmentSchedulePage,
   AssesmentPage,
+  FormAssesmentPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -295,6 +296,10 @@ const App: React.FC = () => {
            <Route
             path="/assesment"
             element={<LayoutComponent Child={AssesmentPage} />}
+          />
+           <Route
+            path="/assesment/:id"
+            element={<LayoutComponent Child={FormAssesmentPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
