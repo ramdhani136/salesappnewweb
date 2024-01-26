@@ -106,6 +106,7 @@ const FormAssesmentPage: React.FC = () => {
 
     try {
       const upData: any = {};
+      upData.id = id;
       upData.customer = { _id: data.customer._id, name: data.customer.name };
       upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
       upData.activeDate = data.schedule.activeDate;
