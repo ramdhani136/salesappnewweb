@@ -112,8 +112,6 @@ const FormAssesmentPage: React.FC = () => {
       upData.deactiveDate = data.schedule.deactiveDate;
       upData.assesmentTemplate = template;
       upData.details = details;
-
-      console.log(upData)
       await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
       Swal.fire("Success!", `Success`, "success");
 
