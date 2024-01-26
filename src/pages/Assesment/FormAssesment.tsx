@@ -114,10 +114,10 @@ const FormAssesmentPage: React.FC = () => {
       upData.details = details;
 
       console.log(upData)
-      await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
-      Swal.fire("Success!", `Success`, "success");
+      // await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
+      // Swal.fire("Success!", `Success`, "success");
 
-      navigate(`/assesment`);
+      // navigate(`/assesment`);
     } catch (error: any) {
       console.log(error);
       Swal.fire(
