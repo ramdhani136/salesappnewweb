@@ -49,7 +49,11 @@ const FormAssesmentPage: React.FC = () => {
   });
   const [desc, setDesc] = useState<string>("");
 
-  const [createdAt, setCreatedAt] = useState<IValue>({
+  const [activeDate, setActiveDate] = useState<IValue>({
+    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
+    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+  });
+  const [deactiveDate, setDeactiveDate] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
@@ -77,9 +81,14 @@ const FormAssesmentPage: React.FC = () => {
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
       });
-      setCreatedAt({
-        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
+      console.log(result.data)
+      setActiveDate({
+        valueData: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
+      });
+      setDeactiveDate({
+        valueData: moment(result.data.schedule.deactiveDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.schedule.deactiveDate).format("YYYY-MM-DD"),
       });
 
       setData(result.data);
@@ -252,28 +261,17 @@ const FormAssesmentPage: React.FC = () => {
                       <div className=" w-1/2 px-4 float-left  mb-3">
                         <InputComponent
                           label="Active Date"
-                          value={createdAt}
+                          value={activeDate}
                           className="h-[38px]  mb-3"
                           type="date"
-                          onChange={(e) =>
-                            setCreatedAt({
-                              valueData: e,
-                              valueInput: e,
-                            })
-                          }
+                        
                           disabled
                         />
                         <InputComponent
                           label="Deactive Date"
-                          value={createdAt}
+                          value={deactiveDate}
                           className="h-[38px]  mb-3"
                           type="date"
-                          onChange={(e) =>
-                            setCreatedAt({
-                              valueData: e,
-                              valueInput: e,
-                            })
-                          }
                           disabled
                         />
                       </div>

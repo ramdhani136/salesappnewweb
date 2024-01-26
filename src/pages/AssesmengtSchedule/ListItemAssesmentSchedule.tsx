@@ -54,6 +54,9 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
+      { header: "Score", accessor: "score", className: "w-auto text-center" },
+      { header: "Grade", accessor: "grade", className: "w-auto" },
+      { header: "Recomendation", accessor: "rec", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
       { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
@@ -155,6 +158,9 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           return {
             id: item._id,
             customerId: item.customer._id,
+            score: item.closing?.result?.score,
+            grade: item.closing?.result?.grade,
+            rec: item.closing?.result?.notes,
             customer: <b className="font-medium">{item.customer.name}</b>,
             result: <h4>{item?.closing?.result?.name ?? ""}</h4>,
             closingBy: <h4>{item?.closing?.user?.name ?? ""}</h4>,
@@ -339,7 +345,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           <TableComponent
             selectedData={selectedData}
             setSelectedData={setSelectedData}
-            width="w-[150%]"
+            width="w-[170%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}
