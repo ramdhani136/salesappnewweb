@@ -72,7 +72,11 @@ export const AssesmentPage: React.FC = (): any => {
       ).FIND({
         limit: limit,
         page: page,
-        filters: [...filter, ["status", "=", "0"]],
+        filters: [
+          ...filter,
+          ["status", "=", "0"],
+          ["schedule.status", "=", "1"],
+        ],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
       });
