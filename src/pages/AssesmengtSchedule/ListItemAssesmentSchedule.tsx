@@ -54,7 +54,6 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
-      { header: "Result", accessor: "result", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
       { header: "Group", accessor: "group", className: "w-auto" },
       { header: "Branch", accessor: "branch", className: "w-auto" },
@@ -151,6 +150,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
+        console.log(result);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
