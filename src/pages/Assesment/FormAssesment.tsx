@@ -14,6 +14,7 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { update } from "lodash";
 
 interface detailModel {
   question: {
@@ -35,9 +36,8 @@ const FormAssesmentPage: React.FC = () => {
 
   const [tab, setTab] = useState<string>("Details");
   const [scroll, setScroll] = useState<number>(0);
-  const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
-  const [isChangeData, setChangeData] = useState<boolean>(false);
+  const [template, setTemplate] = useState<any>({});
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -48,9 +48,6 @@ const FormAssesmentPage: React.FC = () => {
     valueInput: "",
   });
   const [desc, setDesc] = useState<string>("");
-  const [prevData, setPrevData] = useState<any>({
-    desc: desc ?? "",
-  });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -60,12 +57,9 @@ const FormAssesmentPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
-
-  const [body, setBody] = useState<{}>({});
   const [details, setDetails] = useState<detailModel[]>([]);
 
   const getData = async (): Promise<void> => {
-    setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
@@ -90,10 +84,6 @@ const FormAssesmentPage: React.FC = () => {
 
       setData(result.data);
 
-      setPrevData({
-        name: result.data.name,
-        desc: result.data.desc ?? "",
-      });
       if (result.data.desc) {
         setDesc(result.data.desc);
       }
@@ -111,30 +101,25 @@ const FormAssesmentPage: React.FC = () => {
     }
   };
 
-  const onSave = async (nextState?: String): Promise<any> => {
+  const onSave = async (): Promise<any> => {
     setLoading(true);
+
     try {
-      let data: any = {
-        desc: desc,
-      };
-      if (nextState) {
-        data.nextState = nextState;
-      }
+      const upData: any = {};
+      upData.customer = { _id: data.customer._id, name: data.customer.name };
+      upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
+      upData.activeDate = data.schedule.activeDate;
+      upData.deactiveDate = data.schedule.deactiveDate;
+      upData.assesmentTemplate = template;
+      upData.details = details;
 
-      let Action = id
-        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+      console.log(upData)
+      await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
+      Swal.fire("Success!", `Success`, "success");
 
-      const result = await Action;
-
-      if (id) {
-        getData();
-        Swal.fire({ icon: "success", text: "Saved" });
-      } else {
-        navigate(`/branch/${result.data.data._id}`);
-        navigate(0);
-      }
+      navigate(`/assesment`);
     } catch (error: any) {
+      console.log(error);
       Swal.fire(
         "Error!",
         `${
@@ -153,27 +138,8 @@ const FormAssesmentPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      getData();
-      // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
-    } else {
-      setLoading(false);
-      setListMoreAction([]);
-    }
+    getData();
   }, []);
-
-  // Cek perubahan
-  useEffect(() => {
-    const actualData = {
-      desc: desc ?? "",
-    };
-    if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
-      setChangeData(true);
-    } else {
-      setChangeData(false);
-    }
-  }, [desc]);
-  // End
 
   return (
     <>
@@ -213,28 +179,19 @@ const FormAssesmentPage: React.FC = () => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id ? "Update" : "Save"}
-                    callback={() => {
-                      AlertModal.confirmation({
-                        onConfirm: onSave,
-                        confirmButtonText: `Yes, ${
-                          !id ? "Save it!" : "Update It"
-                        }`,
-                      });
-                    }}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
-                {!isChangeData && id && workflow.length > 0 && (
-                  <IconButton
-                    name="Actions"
-                    list={workflow}
-                    callback={onSave}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                {template &&
+                  template?.indicators?.length === details.length && (
+                    <IconButton
+                      name="Submit"
+                      callback={() => {
+                        AlertModal.confirmation({
+                          onConfirm: onSave,
+                          confirmButtonText: `Yes, Submit!`,
+                        });
+                      }}
+                      className={`opacity-80 hover:opacity-100 duration-100  `}
+                    />
+                  )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -335,6 +292,8 @@ const FormAssesmentPage: React.FC = () => {
                       data={data}
                       details={details}
                       setDetails={setDetails}
+                      template={template}
+                      setTemplate={setTemplate}
                     />
                   )}
                 </div>
@@ -355,9 +314,11 @@ const GetQuestion: React.FC<{
   data: any;
   details: detailModel[];
   setDetails: React.Dispatch<React.SetStateAction<detailModel[]>>;
-}> = ({ data, details, setDetails }) => {
-  const [questions, setQuestion] = useState<{}>({});
+  template: any[];
+  setTemplate: React.Dispatch<React.SetStateAction<any[]>>;
+}> = ({ data, details, setDetails, setTemplate }) => {
   const [indicators, setIndicators] = useState<any[]>([]);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -367,7 +328,7 @@ const GetQuestion: React.FC<{
       const response = await GetDataServer(DataAPI.ASSESMENTTEMPLATE).FINDONE(
         data.schedule.assesmentTemplate
       );
-      setQuestion(response.data);
+      setTemplate(response.data);
       setIndicators(response.data.indicators);
       setLoading(false);
     } catch (error) {
@@ -504,7 +465,7 @@ const GetQuestion: React.FC<{
           </ul>
         </div>
       )}
-      {loading && <LoadingComponent/>}
+      {loading && <LoadingComponent />}
     </>
   );
 };
