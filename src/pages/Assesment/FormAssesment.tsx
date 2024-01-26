@@ -15,6 +15,14 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
+interface detailModel {
+  question: {
+    _id: String;
+    name: String;
+  };
+  answer: String;
+}
+
 const FormAssesmentPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
@@ -53,32 +61,15 @@ const FormAssesmentPage: React.FC = () => {
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
 
+  const [body, setBody] = useState<{}>({});
+  const [details, setDetails] = useState<detailModel[]>([]);
+
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
       );
-
-      // // set workflow
-      // if (result.workflow.length > 0) {
-      //   const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-      //     return {
-      //       name: item.action,
-      //       onClick: () => {
-      //         AlertModal.confirmation({
-      //           onConfirm: () => {
-      //             onSave(item.nextState.id);
-      //           },
-      //           confirmButtonText: "Yes, Save it!",
-      //         });
-      //       },
-      //     };
-      //   });
-
-      //   setWorkflow(isWorkflow);
-      // }
-      // // end
 
       setHistory(result.history);
 
@@ -119,33 +110,6 @@ const FormAssesmentPage: React.FC = () => {
       navigate("/assesment");
     }
   };
-
-  // const onDelete = (): void => {
-  //   if (id) {
-  //     const progress = async (): Promise<void> => {
-  //       setLoading(true);
-  //       try {
-  //         await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-  //         navigate("/assesment");
-  //       } catch (error: any) {
-  //         setLoading(false);
-  //         Swal.fire(
-  //           "Error!",
-  //           `${
-  //             error.response.data.msg
-  //               ? error.response.data.msg
-  //               : error.message
-  //               ? error.message
-  //               : "Error Delete"
-  //           }`,
-  //           "error"
-  //         );
-  //       }
-  //     };
-
-  //     AlertModal.confirmation({ onConfirm: progress });
-  //   }
-  // };
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
@@ -208,7 +172,7 @@ const FormAssesmentPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [desc]);
   // End
 
   return (
@@ -286,11 +250,11 @@ const FormAssesmentPage: React.FC = () => {
                     Details
                   </li>
                   <li
-                    className={`float-left mx-4 cursor-pointer duration-300  opacity-90 hover:opacity-100 py-3 ${
+                    className={`float-left mx-3 cursor-pointer duration-300  opacity-90 hover:opacity-100 py-3 ${
                       tab === "Question" &&
                       "border-b border-blue-400  font-semibold "
                     }`}
-                    onClick={() => setTab("Question")}
+                    onClick={() => setTab("Questions")}
                   >
                     Questions
                   </li>
@@ -298,7 +262,6 @@ const FormAssesmentPage: React.FC = () => {
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   {tab === "Details" && (
                     <>
-                      {" "}
                       <div className=" w-1/2 px-4 float-left ">
                         <InputComponent
                           mandatoy
@@ -366,6 +329,14 @@ const FormAssesmentPage: React.FC = () => {
                       </div>
                     </>
                   )}
+
+                  {tab === "Questions" && (
+                    <GetQuestion
+                      data={data}
+                      details={details}
+                      setDetails={setDetails}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -376,6 +347,164 @@ const FormAssesmentPage: React.FC = () => {
           <LoadingComponent />
         )}
       </div>
+    </>
+  );
+};
+
+const GetQuestion: React.FC<{
+  data: any;
+  details: detailModel[];
+  setDetails: React.Dispatch<React.SetStateAction<detailModel[]>>;
+}> = ({ data, details, setDetails }) => {
+  const [questions, setQuestion] = useState<{}>({});
+  const [indicators, setIndicators] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetDataServer(DataAPI.ASSESMENTTEMPLATE).FINDONE(
+        data.schedule.assesmentTemplate
+      );
+      setQuestion(response.data);
+      setIndicators(response.data.indicators);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      AlertModal.Default({
+        icon: "error",
+        title: "Error",
+        text: "Data not found!",
+      });
+
+      navigate("/assesment");
+    }
+  };
+
+  const getIndexById = (data: any[], targetId: string) => {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]._id === targetId) {
+        return i;
+      }
+    }
+    return -1; // Jika tidak ditemukan
+  };
+
+  const addOrUpdateAnswer = (newAnswer: any) => {
+    // Cari apakah ID jawaban sudah ada dalam array
+    const existingAnswerIndex = details.findIndex(
+      (item) => item.question._id === newAnswer.question._id
+    );
+
+    // Jika ID jawaban sudah ada dalam array, update data
+    if (existingAnswerIndex !== -1) {
+      const updatedAnswers = [...details];
+      updatedAnswers[existingAnswerIndex] = newAnswer;
+      setDetails(updatedAnswers);
+    } else {
+      // Jika ID jawaban tidak ada dalam array, tambahkan data baru
+      setDetails([...details, newAnswer]);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <>
+      {!loading && (
+        <div className="w-full float-left">
+          <ul className="w-1/2 float-left px-2">
+            {indicators
+              .filter((element, index) => index % 2 === 0)
+              .map((item: any, id) => {
+                return (
+                  <li key={id} className="mb-4">
+                    <h4>
+                      {`${getIndexById(indicators, item._id) + 1}.
+                ${item.questionId.name}`}
+                    </h4>
+                    {item.options.map((option: any, idOption: any) => {
+                      return (
+                        <div
+                          key={idOption}
+                          className="flex items-center text-md ml-3"
+                        >
+                          <input
+                            type="radio"
+                            value={option.name}
+                            name={item._id}
+                            onChange={(e) => {
+                              addOrUpdateAnswer({
+                                answer: e.target.value,
+                                question: {
+                                  _id: item._id,
+                                  name: item.questionId.name,
+                                },
+                              });
+                            }}
+                            checked={details.some(
+                              (i: any) =>
+                                i.question._id === item._id &&
+                                i.answer === option.name
+                            )}
+                          />
+                          <label className="ml-2"> {`${option.name}`}</label>
+                        </div>
+                      );
+                    })}
+                  </li>
+                );
+              })}
+          </ul>
+          <ul className="w-1/2  float-left px-2">
+            {indicators
+              .filter((element, index) => index % 2 === 1)
+              .map((item: any, id) => {
+                return (
+                  <li key={id} className="mb-4">
+                    <h4>
+                      {`${getIndexById(indicators, item._id) + 1}.
+                ${item.questionId.name}`}
+                    </h4>
+                    {item.options.map((option: any, idoption: any) => {
+                      return (
+                        <div
+                          key={idoption}
+                          className="flex items-center text-md ml-3"
+                        >
+                          <input
+                            type="radio"
+                            value={option.name}
+                            name={item._id}
+                            onChange={(e) => {
+                              addOrUpdateAnswer({
+                                answer: e.target.value,
+                                question: {
+                                  _id: item._id,
+                                  name: item.questionId.name,
+                                },
+                              });
+                            }}
+                            checked={details.some(
+                              (i: any) =>
+                                i.question._id === item._id &&
+                                i.answer === option.name
+                            )}
+                          />
+                          <label className="ml-2"> {`${option.name}`}</label>
+                        </div>
+                      );
+                    })}
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      )}
+      {loading && <LoadingComponent/>}
     </>
   );
 };
