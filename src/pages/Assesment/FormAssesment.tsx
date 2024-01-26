@@ -247,13 +247,7 @@ const FormAssesmentPage: React.FC = () => {
                           name="Site Uri"
                           value={desc}
                           onChange={(e) => setDesc(e.target.value)}
-                          disabled={
-                            id != null
-                              ? status !== "Draft"
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled
                         />
                       </div>
                       <div className=" w-1/2 px-4 float-left  mb-3">
@@ -401,14 +395,14 @@ const GetQuestion: React.FC<{
                               addOrUpdateAnswer({
                                 answer: e.target.value,
                                 question: {
-                                  _id: item._id,
+                                  _id: item.questionId._id,
                                   name: item.questionId.name,
                                 },
                               });
                             }}
                             checked={details.some(
                               (i: any) =>
-                                i.question._id === item._id &&
+                                i.question._id === item.questionId._id &&
                                 i.answer === option.name
                             )}
                           />
@@ -444,14 +438,14 @@ const GetQuestion: React.FC<{
                               addOrUpdateAnswer({
                                 answer: e.target.value,
                                 question: {
-                                  _id: item._id,
+                                  _id: item.questionId._id,
                                   name: item.questionId.name,
                                 },
                               });
                             }}
                             checked={details.some(
                               (i: any) =>
-                                i.question._id === item._id &&
+                                i.question._id === item.questionId._id &&
                                 i.answer === option.name
                             )}
                           />
