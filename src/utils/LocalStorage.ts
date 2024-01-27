@@ -24,6 +24,7 @@ export enum LocalStorageType {
   FILTERASSESMENTSCHEDULE = "filterassesmentschedule",
   FILTERASSESMENT = "filterassesment",
   FILTERREPORTASSESMENT = "filterreportassesment",
+  FILTERASSESMENTTEMPLATE = "filterassesmenttemplate",
   
 }
 

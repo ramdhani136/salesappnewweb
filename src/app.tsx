@@ -53,6 +53,8 @@ import {
   AssesmentPage,
   FormAssesmentPage,
   ReportAssesmentPage,
+  FormAssesmentTemplatePage,
+  AssesmentTemplatePage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -305,6 +307,18 @@ const App: React.FC = () => {
           <Route
             path="/report/assesment"
             element={<LayoutComponent Child={ReportAssesmentPage} />}
+          />
+          <Route
+            path="/assesment/template"
+            element={<LayoutComponent Child={AssesmentTemplatePage} />}
+          />
+          <Route
+            path="/assesment/template/:id"
+            element={<LayoutComponent Child={FormAssesmentTemplatePage} />}
+          />
+          <Route
+            path="/assesment/template/new"
+            element={<LayoutComponent Child={FormAssesmentTemplatePage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
