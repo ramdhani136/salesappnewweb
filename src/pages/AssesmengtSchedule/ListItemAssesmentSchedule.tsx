@@ -384,7 +384,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
             ]}
             selectedData={selectedData}
             setSelectedData={setSelectedData}
-            width="w-[170%]"
+            width="w-[150%]"
             moreSelected={[{ name: "Delete", onClick: onDelete }]}
             setSearch={setSeacrh}
             setData={setData}
