@@ -253,7 +253,7 @@ export const ReportAssesmentPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[110%]"
+              width="w-[120%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
