@@ -1,6 +1,7 @@
 import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 import HashLoader from "react-spinners/HashLoader";
 import {
   ButtonStatusComponent,
@@ -19,7 +20,6 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { CustomerPage } from "../Customer/CustomerPage";
 import Swal from "sweetalert2";
 import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
-import { title } from "process";
 
 interface IProps {
   props: any;
@@ -114,21 +114,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       },
     });
   };
-  
 
-  const getAllList = async () => {
-    try {
-      const result: any = await GetDataServer(
-        DataAPI.ASSESMENTSCHEDULEITEM
-      ).FIND({
-        filters: [...filter, ["schedule", "=", `${docId}`]],
-        limit: 0,
-        fields: ["customer"],
-      });
-      return result.data;
-    } catch (error) {}
-    return [];
-  };
 
   const ShowModalCustomer = async () => {
     dispatch(
@@ -140,7 +126,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           modal: true,
           onRefresh: getData,
           AddCustomer: AddCustomer,
-          curentData: await getAllList(),
+          params: `current={doc:assesment,id:${docId}}`,
         },
         className: "w-[1080px] h-[98%]",
       })
@@ -159,7 +145,6 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
-        console.log(result);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -317,6 +302,45 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       },
     });
 
+  const ExportToExcel = async () => {
+    setLoading(true);
+    try {
+      const getExport: any = await GetDataServer(
+        DataAPI.ASSESMENTSCHEDULEITEM
+      ).FIND({
+        limit: 0,
+        filters: [...filter, ["schedule", "=", `${docId}`]],
+        orderBy: { sort: isOrderBy, state: isSort },
+        search: search,
+      });
+
+      const getDataExport = getExport.data.map((item: any, index: any) => {
+        return {
+          no: index + 1,
+          schedule: item.schedule.name,
+          customer: item.customer.name,
+          group: item.customerGroup.name,
+          branch: item.branch.name,
+          status: item.status == "0" ? "Open" : "Closed",
+          closing_date: moment(item.closing.date).format("LLL"),
+          score: item.closing?.result?.score,
+          grade: item.closing?.result?.grade,
+          recomendation: item.closing?.result?.notes,
+          closing_by: item.closing?.user?.name,
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, `${docData.name}.xlsx`);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -351,12 +375,11 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           <TableComponent
             customButton={[
               {
-                title: "Export Excel",
-                onCLick: () => {
-                  alert("ddd");
-                },
-                status: docData.status !== "0" ? true   : false,
-                className:"bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900"
+                title: "Export",
+                onCLick: ExportToExcel,
+                status: docData.status !== "0" ? true : false,
+                className:
+                  "bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900",
               },
             ]}
             selectedData={selectedData}
@@ -392,11 +415,13 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
               setLoading(true);
               setRefresh(true);
             }}
-            disabled={docData.status !== "0" ? true : false}
+            disabled={
+              docData.status !== "0" && docData.status !== "1" ? true : false
+            }
           />
         )}
       </div>
-      {docData.status == "0" && (
+      {(docData.status == "0" || docData.status == "1") && (
         <a
           onClick={() => {
             ShowModalCustomer();

@@ -216,42 +216,6 @@ export const ReportNotesPage: React.FC = (): any => {
     setRefresh(true);
   };
 
-  const getSelected = () => {
-    const listDelete = data.filter((item) => item.checked);
-    return listDelete;
-  };
-
-  const onDelete = () => {
-    AlertModal.confirmation({
-      onConfirm: async (): Promise<void> => {
-        const data: any[] = getSelected();
-        setLoading(true);
-        try {
-          setActiveProgress(true);
-          for (const item of data) {
-            await GetDataServer(DataAPI.NOTE).DELETE(item.id);
-            const index = data.indexOf(item);
-            let percent = (100 / data.length) * (index + 1);
-            setCurrentIndex(index);
-            setOnDeleteProgress(item.doc);
-            setCurrentPercent(percent);
-            setTotalIndex(data.length);
-          }
-          getAllData();
-        } catch (error: any) {
-          AlertModal.Default({
-            icon: "error",
-            title: "Error",
-            text: error.response.data.msg ?? "Error Network",
-          });
-          getAllData();
-          setLoading(false);
-          setActiveProgress(false);
-        }
-      },
-    });
-  };
-
   const ExportToExcel = async () => {
     setLoading(true);
     try {

@@ -75,22 +75,20 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      let isFilterCustomer: [String, String, String][] = [];
+      let current: String = "";
       if (modal) {
-        const currentData = props.curentData;
-        if (currentData.length > 0) {
-          isFilterCustomer = currentData.map((item: any) => {
-            return ["_id", "!=", item.customer._id];
-          });
+        if (props.params) {
+          current = props.params;
         }
       }
 
       const result: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
         limit: limit,
         page: page,
-        filters: [...filter, ...isFilterCustomer],
+        filters: [...filter],
         orderBy: { sort: isOrderBy, state: isSort },
         search: search,
+        params: current !== "" ? current : "",
       });
 
       if (result.data.length > 0) {

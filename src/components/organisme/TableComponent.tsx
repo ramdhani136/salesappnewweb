@@ -223,10 +223,11 @@ const TableComponent: React.FC<Iprops> = ({
           )}
 
           {customButton !== undefined &&
-            customButton.map((item) => {
+            customButton.map((item,index) => {
               if (item.status) {
                 return (
                   <IconButton
+                  key={index}
                     callback={item.onCLick}
                     name={item.title}
                     className={`py-1 px-2 mr-[7px] duration-100 ${item.className}`}

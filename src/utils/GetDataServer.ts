@@ -94,7 +94,7 @@ class RequestData implements IData {
         orderBy = `&&order_by={"${options.orderBy.state}":${options.orderBy.sort}}`;
       }
       const uri = `${import.meta.env.VITE_PUBLIC_URI}/${this.data
-        }${params}?limit=${options.limit ?? "0"}&page=${options.page ?? "0"
+        }${params ? `?${params}` : ''}${params ? '&&' : '?'}limit=${options.limit ?? "0"}&&page=${options.page ?? "0"
         }${fields}${filters}${orderBy}${search}`;
       const result: any = await FetchApi.get(uri);
       return result.data;

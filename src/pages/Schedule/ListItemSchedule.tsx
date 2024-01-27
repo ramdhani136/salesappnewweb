@@ -144,18 +144,6 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     // }
   };
 
-  const getAllList = async () => {
-    try {
-      const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
-        filters: [...filter, ["schedule", "=", `${docId}`]],
-        limit: 0,
-        fields: ["customer"],
-      });
-      return result.data;
-    } catch (error) {}
-    return [];
-  };
-
   const ShowModalCustomer = async () => {
     dispatch(
       modalSet({
@@ -166,7 +154,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           modal: true,
           onRefresh: getData,
           AddCustomer: AddCustomer,
-          curentData: await getAllList(),
+          params: `current={doc:viscall,id:${docId}}`,
         },
         className: "w-[1080px] h-[98%]",
       })
