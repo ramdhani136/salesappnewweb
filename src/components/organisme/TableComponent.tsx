@@ -62,6 +62,7 @@ interface Iprops {
   className?: React.HTMLAttributes<HTMLDivElement> | string | undefined;
   moreSelected?: IListIconButton[];
   disabledRadio?: boolean;
+  customButton?: IButtonInsert[];
 }
 
 const TableComponent: React.FC<Iprops> = ({
@@ -90,6 +91,7 @@ const TableComponent: React.FC<Iprops> = ({
   disabled,
   width,
   disabledRadio = false,
+  customButton,
 }) => {
   const [value, setValue] = useState<any>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -219,6 +221,21 @@ const TableComponent: React.FC<Iprops> = ({
               classIcon={buttonInsert.icon?.className}
             />
           )}
+
+          {customButton !== undefined &&
+            customButton.map((item) => {
+              if (item.status) {
+                return (
+                  <IconButton
+                    callback={item.onCLick}
+                    name={item.title}
+                    className={`py-1 px-2 mr-[7px] duration-100 ${item.className}`}
+                    iconSize={item.icon?.size ?? 17}
+                  />
+                );
+              }
+            })}
+
           {getAllData != undefined && (
             <IconButton
               callback={getAllData}

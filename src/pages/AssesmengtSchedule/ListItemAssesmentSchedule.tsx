@@ -19,6 +19,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { CustomerPage } from "../Customer/CustomerPage";
 import Swal from "sweetalert2";
 import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
+import { title } from "process";
 
 interface IProps {
   props: any;
@@ -51,7 +52,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
 
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
-      { header: "Customer", accessor: "customer", className: "w-[350px]" },
+      { header: "Customer", accessor: "customer", className: "max-w-[250px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Score", accessor: "score", className: "w-auto text-center" },
@@ -113,10 +114,13 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       },
     });
   };
+  
 
   const getAllList = async () => {
     try {
-      const result: any = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FIND({
+      const result: any = await GetDataServer(
+        DataAPI.ASSESMENTSCHEDULEITEM
+      ).FIND({
         filters: [...filter, ["schedule", "=", `${docId}`]],
         limit: 0,
         fields: ["customer"],
@@ -145,7 +149,9 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
 
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FIND({
+      const result: any = await GetDataServer(
+        DataAPI.ASSESMENTSCHEDULEITEM
+      ).FIND({
         filters: [...filter, ["schedule", "=", `${docId}`]],
         limit: limit,
         page: props?.refresh ? 1 : page,
@@ -343,6 +349,15 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           </div>
         ) : (
           <TableComponent
+            customButton={[
+              {
+                title: "Export Excel",
+                onCLick: () => {
+                  alert("ddd");
+                },
+                status: docData.status !== "0" ? true   : false,
+              },
+            ]}
             selectedData={selectedData}
             setSelectedData={setSelectedData}
             width="w-[170%]"
