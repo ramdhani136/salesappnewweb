@@ -48,6 +48,7 @@ import { AssesmentSchedulePage } from "./AssesmengtSchedule/AssesmentSchedulePag
 import FormAssesmentSchedulePage from "./AssesmengtSchedule/FormAssesmentSchedulePage";
 import { AssesmentPage } from "./Assesment/AssesmentPage";
 import FormAssesmentPage from "./Assesment/FormAssesment";
+import { ReportAssesmentPage } from "./Report/ReportAssesmentPage";
 
 
 export {
@@ -100,5 +101,6 @@ export {
   AssesmentSchedulePage,
   FormAssesmentSchedulePage,
   AssesmentPage,
-  FormAssesmentPage
+  FormAssesmentPage,
+  ReportAssesmentPage
 };

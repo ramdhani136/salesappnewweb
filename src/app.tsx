@@ -52,6 +52,7 @@ import {
   FormAssesmentSchedulePage,
   AssesmentPage,
   FormAssesmentPage,
+  ReportAssesmentPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -61,7 +62,10 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<LayoutComponent Child={HomePage} sideBarWidth />} />
+          <Route
+            path="/"
+            element={<LayoutComponent Child={HomePage} sideBarWidth />}
+          />
           <Route
             path="/setting"
             element={<LayoutComponent Child={SettingPage} />}
@@ -164,10 +168,7 @@ const App: React.FC = () => {
             path="/workflowaction/new"
             element={<LayoutComponent Child={FormWorkflowAction} />}
           />
-          <Route
-            path="/memo"
-            element={<LayoutComponent Child={MemoPage} />}
-          />
+          <Route path="/memo" element={<LayoutComponent Child={MemoPage} />} />
           <Route
             path="/memo/:id"
             element={<LayoutComponent Child={FormMemoPage} />}
@@ -233,7 +234,7 @@ const App: React.FC = () => {
             path="/tag/new"
             element={<LayoutComponent Child={FormTagPage} />}
           />
-           <Route
+          <Route
             path="/namingseries"
             element={<LayoutComponent Child={NamingSeriesPage} />}
           />
@@ -257,7 +258,7 @@ const App: React.FC = () => {
             path="/report/schedule"
             element={<LayoutComponent Child={ReportSchedulePage} />}
           />
-            <Route
+          <Route
             path="/permission"
             element={<LayoutComponent Child={PermissionPage} />}
           />
@@ -269,7 +270,7 @@ const App: React.FC = () => {
             path="/permission/new"
             element={<LayoutComponent Child={FormPermissionPage} />}
           />
-           {/* <Route
+          {/* <Route
             path="/whatsapp/account"
             element={<LayoutComponent Child={WhatsappAccountPage} />}
           />
@@ -277,29 +278,33 @@ const App: React.FC = () => {
             path="/coba"
             element={<LayoutComponent Child={WhatsappQrViewPage} />}
           /> */}
-           {/* <Route
+          {/* <Route
             path="/whatsapp/flowchart"
             element={<LayoutComponent Child={WhatsappFlowChart} />}
           /> */}
-           <Route
+          <Route
             path="/assesment/schedule"
             element={<LayoutComponent Child={AssesmentSchedulePage} />}
           />
-           <Route
+          <Route
             path="/assesment/schedule/new"
             element={<LayoutComponent Child={FormAssesmentSchedulePage} />}
           />
-           <Route
+          <Route
             path="/assesment/schedule/:id"
             element={<LayoutComponent Child={FormAssesmentSchedulePage} />}
           />
-           <Route
+          <Route
             path="/assesment"
             element={<LayoutComponent Child={AssesmentPage} />}
           />
-           <Route
+          <Route
             path="/assesment/:id"
             element={<LayoutComponent Child={FormAssesmentPage} />}
+          />
+          <Route
+            path="/report/assesment"
+            element={<LayoutComponent Child={ReportAssesmentPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

@@ -127,7 +127,6 @@ const FilterTableComponent: React.FC<IProps> = ({
 
   const getStorage = (refresh: boolean) => {
     if (localStorage) {
-        
       const storageFilter: string | null | undefined =
         LocalStorage.loadData(localStorage);
       if (storageFilter) {
@@ -202,6 +201,9 @@ const FilterTableComponent: React.FC<IProps> = ({
     if (docByFilter.length > 0) {
       if (docByFilter[0].typeOf == "date") {
         return "date";
+      }
+      if (docByFilter[0].typeOf == "number") {
+        return "number";
       }
       return "text";
     } else {
@@ -460,6 +462,8 @@ const FilterTableComponent: React.FC<IProps> = ({
                       if (
                         item.operator.valueData === "like" ||
                         item.operator.valueData === "notlike" ||
+                        getType(`${item.name.valueData}`).toString() ==
+                          "number" ||
                         getType(`${item.name.valueData}`).toString() == "date"
                       ) {
                         item.value.valueData = e;
