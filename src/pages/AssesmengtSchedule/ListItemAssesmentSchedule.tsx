@@ -356,6 +356,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
                   alert("ddd");
                 },
                 status: docData.status !== "0" ? true   : false,
+                className:"bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900"
               },
             ]}
             selectedData={selectedData}
