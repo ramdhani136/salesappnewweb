@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
@@ -13,7 +13,8 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
@@ -167,7 +168,8 @@ const FormAssesmentTemplatePage: React.FC = () => {
     try {
       let data: any = {
         name: name.valueData,
-        desc: desc,
+        notes: desc,
+        indicators: indicators,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -400,13 +402,27 @@ interface IIndicators {
 }
 
 const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
-  const [loadingNaming, setLoadingName] = useState<boolean>(true);
-  const [listNaming, setListNaming] = useState<IListInput[]>([]);
-  const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+  // branch
+  const [questionList, setQuestionList] = useState<IListInput[]>([]);
+  const [questionPage, setQuestionPage] = useState<Number>(1);
+  const [questionLoading, setQuestionLoading] = useState<boolean>(true);
+  const [questionMoreLoading, setQuestionMoreLoading] =
+    useState<boolean>(false);
+  const [questionHasMore, setQuestionHasMore] = useState<boolean>(false);
+  // End
 
-  const getNaming = async (): Promise<void> => {
+  const getQuestion = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
     try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
       const result: any = await GetDataServer(DataAPI.ASSESMENTQUESTION).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : questionPage}`,
         filters: [["status", "=", "1"]],
       });
       if (result.data.length > 0) {
@@ -416,90 +432,239 @@ const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
             value: item._id,
           };
         });
-
-        setListNaming(listInput);
+        if (!data.refresh) {
+          setQuestionList([...questionList, ...listInput]);
+        } else {
+          setQuestionList([...listInput]);
+        }
+        setQuestionHasMore(result.hasMore);
+        setQuestionPage(result.nextPage);
       }
-      setLoadingName(false);
-    } catch (error) {
-      setLoadingName(false);
+
+      setQuestionLoading(false);
+      setQuestionMoreLoading(false);
+    } catch (error: any) {
+      setQuestionList([]);
+      setQuestionLoading(false);
+      setQuestionMoreLoading(false);
+      setQuestionHasMore(false);
     }
   };
 
-  return (
-    <table className="w-full text-left" border={1}>
-      <thead>
-        <tr>
-          <th className=" text-center">No</th>
-          <th>Question</th>
-          <th className="text-center">Weight</th>
-          <th className="text-center h-12"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td className="text-center h-7">1</td>
-          <td className="w-[90%]">
-            <InputComponent
-              loading={loadingNaming}
-              label="Naming Series"
-              value={{
-                valueData: "",
-                valueInput:
-                  "Stock Moving  (Barang Yang Tersedia Untuk Berapa Lama)",
-              }}
-              className="h-[38px]"
-              onChange={(e) => {}}
-              onSelected={(e) => {}}
-              onCLick={getNaming}
-              list={listNaming}
-              // mandatoy
-              modalStyle="top-9 max-h-[160px]"
-              // onReset={() => setNaming({ valueData: null, valueInput: "" })}
+  const ResetQuestion = () => {
+    setQuestionList([]);
+    setQuestionHasMore(false);
+    setQuestionPage(1);
+    setQuestionLoading(true);
+  };
 
-              closeIconClass="top-[13.5px]"
-            />
-          </td>
-          <td className="">
-            <input className="p-1 text-center" type="number" value={50} />
-          </td>
-          <td className="text-center">X</td>
-        </tr>
-        <tr>
-          <td className="text-center h-5  "></td>
-          <td className="flex">
-            <input className="ml-2" type="checkbox" disabled />
-            <input
-              className="p-1  ml-1 flex-1"
-              type="text"
-              value={`Sangat Baik`}
-            />
-          </td>
-          <td className="text-center">
-            <input className="p-1 text-center" type="number" value={50} />
-          </td>
-          <td className="text-center">X</td>
-        </tr>
-        <tr>
-          <td className="text-center h-5  "></td>
-          <td className="flex">
-            <input className="ml-2" type="checkbox" disabled />
-            <input className="p-1  ml-1 flex-1" type="text" value={`Baik`} />
-          </td>
-          <td className="text-center">
-            <input className="p-1 text-center" type="number" value={50} />
-          </td>
-          <td className="text-center">X</td>
-        </tr>
-        <tr>
-          <td className="text-center h-5"></td>
-          <td className="flex items-center ">
-            <input className="ml-2" type="checkbox" disabled />
-            <button className="ml-2 opacity-70">Add option</button>
-          </td>
-        </tr>
-        <br />
-      </tbody>
-    </table>
+  return (
+    <>
+      <table className="w-full text-left" border={1}>
+        <thead>
+          <tr>
+            <th className=" text-center">No</th>
+            <th>Question</th>
+            <th className="text-center">Weight</th>
+            <th className="text-center h-12"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item: any, index: number) => {
+            return (
+              <React.Fragment key={index}>
+                <tr key={index}>
+                  <td className="text-center h-7">
+                    <h4 className="mt-3">{index + 1}</h4>
+                  </td>
+                  <td className="w-[90%]">
+                    <InputComponent
+                      // modal={{
+                      //   Children: FormCustomerPage,
+                      //   className: "w-[63%] h-[98%]",
+                      //   props: {
+                      //     modal: true,
+                      //     group: group,
+                      //     branch: branch,
+                      //     name: customer.valueInput,
+                      //     Callback: setCustomer,
+                      //   },
+                      //   title: "Form Customer",
+                      // }}
+                      mandatoy
+                      infiniteScroll={{
+                        loading: questionMoreLoading,
+                        hasMore: questionHasMore,
+                        next: () => {
+                          setQuestionMoreLoading(true);
+                          getQuestion({
+                            refresh: false,
+                            search: item.questionId?.name ?? "",
+                          });
+                        },
+                        onSearch(e) {
+                          ResetQuestion();
+                          getQuestion({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetQuestion();
+                        getQuestion({
+                          refresh: true,
+                          search: item.questionId?.name ?? "",
+                        });
+                      }}
+                      loading={questionLoading}
+                      modalStyle="mt-2"
+                      value={{
+                        valueData: item.questionId?._id ?? "",
+                        valueInput: item.questionId?.name ?? "",
+                      }}
+                      onChange={(e) => {
+                        item.questionId.name = e;
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      onSelected={(e) => {
+                        item.questionId._id = e.value;
+                        item.questionId.name = e.name;
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      onReset={() => {
+                        item.questionId._id = "";
+                        item.questionId.name = "";
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      list={questionList}
+                      type="text"
+                      className={`h-9 mt-4 text-[0.95em]`}
+                    />
+                  </td>
+                  <td className="">
+                    <input
+                      className="p-1 text-center bg-gray-50 border border-[#ececec]  rounded-md ml-1 mt-4 h-10"
+                      type="number"
+                      value={item.weight ?? 0}
+                      onChange={(e) => {
+                        item.weight = e.target.value;
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                    />
+                  </td>
+                  <td className="text-center">
+                    <CloseIcon
+                      onClick={() => {
+                        data.splice(index, 1);
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      style={{
+                        fontSize: 20,
+                        color: "darkred",
+                        cursor: "pointer",
+                      }}
+                      className="opacity-60 hover:opacity-100 duration-300 mt-4"
+                    />
+                  </td>
+                </tr>
+                {item.options?.map((option: any, idOption: number) => {
+                  return (
+                    <React.Fragment key={idOption}>
+                      <tr>
+                        <td className="text-center h-5  "></td>
+                        <td className="flex">
+                          <input className="ml-2" type="checkbox" disabled />
+                          <input
+                            className="p-1  ml-1 flex-1 text-[0.95em]"
+                            type="text"
+                            value={option.name ?? ""}
+                            onChange={(e) => {
+                              option.name = e.target.value;
+                              const newData = [...data];
+                              setData(newData);
+                            }}
+                          />
+                        </td>
+                        <td className="text-center">
+                          <input
+                            className="p-1 text-center"
+                            type="number"
+                            value={option.weight ?? 0}
+                            onChange={(e) => {
+                              option.weight = e.target.value;
+                              const newData = [...data];
+                              setData(newData);
+                            }}
+                          />
+                        </td>
+                        <td className="text-center">
+                          <CloseIcon
+                            onClick={() => {
+                              item.options?.splice(idOption, 1);
+                              const newData = [...data];
+                              setData(newData);
+                            }}
+                            style={{
+                              fontSize: 20,
+                              color: "darkred",
+                              cursor: "pointer",
+                            }}
+                            className="opacity-60 hover:opacity-100 duration-300"
+                          />
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  );
+                })}
+                <tr>
+                  <td className="text-center h-5"></td>
+                  <td
+                    className={`flex items-center ${
+                      item.options
+                        ? item.options?.length === 0 && "mt-2"
+                        : "mt-2"
+                    } `}
+                  >
+                    <input className="ml-2" type="checkbox" disabled />
+                    <button
+                      onClick={() => {
+                        if (item.options) {
+                          item.options = [
+                            ...item.options,
+                            { name: "", weight: 0 },
+                          ];
+                        } else {
+                          item.options = [{ name: "", weight: 0 }];
+                        }
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      className=" ml-2 opacity-60 flex items-center hover:opacity-100 duration-300 text-[0.95em]"
+                    >
+                      <h4>Add option</h4>
+                      <AddIcon style={{ fontSize: 14 }} className="mt-1" />
+                    </button>
+                  </td>
+                </tr>
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+      <button
+        onClick={() => {
+          const newData = [...data, { questionId: { _id: "", name: "" } }];
+          setData(newData);
+        }}
+        className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
+      >
+        <h4>Add</h4>
+        <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
+      </button>
+    </>
   );
 };
 
