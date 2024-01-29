@@ -172,6 +172,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
         name: name.valueData,
         notes: desc,
         indicators: indicators,
+        grades: grades,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -434,7 +435,12 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                     type="number"
                     className=" w-[95%] text-center border  bg-gray-50 border-[#ececec] h-9"
                     placeholder="0"
-                    value={item.bottom ?? 0}
+                    value={item.bottom}
+                    onChange={(e) => {
+                      item.bottom = e.target.value;
+                      const newData = [...data];
+                      setData(newData);
+                    }}
                   />
                 </td>
                 <td>
@@ -442,7 +448,12 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                     type="number"
                     placeholder="20"
                     className="w-[95%] text-center  border bg-gray-50 border-[#ececec] h-9"
-                    value={item.top ?? 0}
+                    value={item.top}
+                    onChange={(e) => {
+                      item.top = e.target.value;
+                      const newData = [...data];
+                      setData(newData);
+                    }}
                   />
                 </td>
                 <td>
@@ -451,15 +462,25 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                     placeholder="A"
                     className="w-[95%] px-2 border bg-gray-50 border-[#ececec] h-9"
                     value={item.grade ?? ""}
+                    onChange={(e) => {
+                      item.grade = e.target.value;
+                      const newData = [...data];
+                      setData(newData);
+                    }}
                   />
                 </td>
                 <td>
                   <textarea
-                    className="w-full p-2 bg-gray-50 border  border-[#ececec] my-4"
+                    className="w-full p-2 bg-gray-50 border  border-[#ececec] my-3"
                     name="Notes"
                     rows={2}
                     placeholder="Rekomendasi perubahan TOP ke Cash"
                     value={item.notes ?? ""}
+                    onChange={(e) => {
+                      item.notes = e.target.value;
+                      const newData = [...data];
+                      setData(newData);
+                    }}
                   />
                 </td>
               </tr>
@@ -469,8 +490,8 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
       </table>
       <button
         onClick={() => {
-          // const newData = [...data, { questionId: { _id: "", name: "" } }];
-          // setData(newData);
+          const newData = [...data, { grade: "", notes: "" }];
+          setData(newData);
         }}
         className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
       >
