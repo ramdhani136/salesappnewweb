@@ -549,7 +549,7 @@ const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
                   </td>
                   <td className="">
                     <input
-                      className="p-1 text-center bg-gray-50 border border-[#ececec]  rounded-md ml-1 mt-4 h-10"
+                      className="p-1 text-[0.95em] text-center bg-gray-50 border border-[#ececec]  rounded-md ml-1 mt-4 h-10"
                       type="number"
                       value={item.weight ?? 0}
                       onChange={(e) => {
@@ -595,7 +595,7 @@ const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
                         </td>
                         <td className="text-center">
                           <input
-                            className="p-1 text-center"
+                            className="p-1 text-[0.95em] text-center"
                             type="number"
                             value={option.weight ?? 0}
                             onChange={(e) => {
