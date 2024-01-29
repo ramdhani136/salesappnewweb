@@ -468,8 +468,8 @@ const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
       <table className="w-full text-left" border={1}>
         <thead>
           <tr>
-            <th className=" text-center">No</th>
-            <th>Question</th>
+            <th className="text-center">No</th>
+            <th className="text-center">Question</th>
             <th className="text-center">Weight</th>
             <th className="text-center h-12"></th>
           </tr>
