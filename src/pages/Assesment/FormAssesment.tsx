@@ -81,7 +81,6 @@ const FormAssesmentPage: React.FC = () => {
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
       });
-      console.log(result.data)
       setActiveDate({
         valueData: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
         valueInput: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
@@ -367,7 +366,7 @@ const GetQuestion: React.FC<{
   return (
     <>
       {!loading && (
-        <div className="w-full float-left">
+        <div className="w-full float-left text-[0.95em]">
           <ul className="w-1/2 float-left px-2">
             {indicators
               .filter((element, index) => index % 2 === 0)
