@@ -7,8 +7,9 @@ import {
   IconButton,
   InputComponent,
   TimeLineVertical,
+  ToggleBodyComponent,
 } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
+import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
@@ -16,19 +17,14 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
-
 const FormAssesmentTemplatePage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${
-      id ? data.name ?? "Loading ..  " : "New Branch"
+      id ? data.name ?? "Loading ..  " : "New Template"
     } - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    description: "Halaman form Template Sales web system",
   };
 
   const navigate = useNavigate();
@@ -48,6 +44,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
   });
 
   const [status, setStatus] = useState<String>("Draft");
+  const [indicators, setIndicators] = useState<any[]>([]);
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
@@ -66,7 +63,9 @@ const FormAssesmentTemplatePage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
+      const result = await GetDataServer(DataAPI.ASSESMENTTEMPLATE).FINDONE(
+        `${id}`
+      );
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -105,12 +104,14 @@ const FormAssesmentTemplatePage: React.FC = () => {
 
       setData(result.data);
 
+      setIndicators(result.data.indicators);
+
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
+      if (result.data.notes) {
+        setDesc(result.data.notes);
       }
       setStatus(
         result.data.status == "0"
@@ -130,7 +131,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/assesment/template");
     }
   };
 
@@ -139,8 +140,8 @@ const FormAssesmentTemplatePage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
+          await GetDataServer(DataAPI.ASSESMENTTEMPLATE).DELETE(`${id}`);
+          navigate("/assesment/template");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -173,8 +174,11 @@ const FormAssesmentTemplatePage: React.FC = () => {
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+        ? GetDataServer(DataAPI.ASSESMENTTEMPLATE).UPDATE({
+            id: id,
+            data: data,
+          })
+        : GetDataServer(DataAPI.ASSESMENTTEMPLATE).CREATE(data);
 
       const result = await Action;
 
@@ -182,7 +186,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/branch/${result.data.data._id}`);
+        navigate(`/assesment/template/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -245,10 +249,10 @@ const FormAssesmentTemplatePage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/assesment/template")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New branch" : data.name}
+                  {!id ? "New template" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -371,6 +375,14 @@ const FormAssesmentTemplatePage: React.FC = () => {
                 </div>
               </div>
 
+              <ToggleBodyComponent
+                name="Indicators"
+                className="mt-5 mb-5"
+                child={
+                  <IndicatorPage data={indicators} setData={setIndicators} />
+                }
+              />
+
               <TimeLineVertical data={history} />
             </div>
           </>
@@ -379,6 +391,115 @@ const FormAssesmentTemplatePage: React.FC = () => {
         )}
       </div>
     </>
+  );
+};
+
+interface IIndicators {
+  data: any[];
+  setData: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
+  const [loadingNaming, setLoadingName] = useState<boolean>(true);
+  const [listNaming, setListNaming] = useState<IListInput[]>([]);
+  const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+
+  const getNaming = async (): Promise<void> => {
+    try {
+      const result: any = await GetDataServer(DataAPI.ASSESMENTQUESTION).FIND({
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+
+        setListNaming(listInput);
+      }
+      setLoadingName(false);
+    } catch (error) {
+      setLoadingName(false);
+    }
+  };
+
+  return (
+    <table className="w-full text-left" border={1}>
+      <thead>
+        <tr>
+          <th className=" text-center">No</th>
+          <th>Question</th>
+          <th className="text-center">Weight</th>
+          <th className="text-center h-12"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="text-center h-7">1</td>
+          <td className="w-[90%]">
+            <InputComponent
+              loading={loadingNaming}
+              label="Naming Series"
+              value={{
+                valueData: "",
+                valueInput:
+                  "Stock Moving  (Barang Yang Tersedia Untuk Berapa Lama)",
+              }}
+              className="h-[38px]"
+              onChange={(e) => {}}
+              onSelected={(e) => {}}
+              onCLick={getNaming}
+              list={listNaming}
+              // mandatoy
+              modalStyle="top-9 max-h-[160px]"
+              // onReset={() => setNaming({ valueData: null, valueInput: "" })}
+
+              closeIconClass="top-[13.5px]"
+            />
+          </td>
+          <td className="">
+            <input className="p-1 text-center" type="number" value={50} />
+          </td>
+          <td className="text-center">X</td>
+        </tr>
+        <tr>
+          <td className="text-center h-5  "></td>
+          <td className="flex">
+            <input className="ml-2" type="checkbox" disabled />
+            <input
+              className="p-1  ml-1 flex-1"
+              type="text"
+              value={`Sangat Baik`}
+            />
+          </td>
+          <td className="text-center">
+            <input className="p-1 text-center" type="number" value={50} />
+          </td>
+          <td className="text-center">X</td>
+        </tr>
+        <tr>
+          <td className="text-center h-5  "></td>
+          <td className="flex">
+            <input className="ml-2" type="checkbox" disabled />
+            <input className="p-1  ml-1 flex-1" type="text" value={`Baik`} />
+          </td>
+          <td className="text-center">
+            <input className="p-1 text-center" type="number" value={50} />
+          </td>
+          <td className="text-center">X</td>
+        </tr>
+        <tr>
+          <td className="text-center h-5"></td>
+          <td className="flex items-center ">
+            <input className="ml-2" type="checkbox" disabled />
+            <button className="ml-2 opacity-70">Add option</button>
+          </td>
+        </tr>
+        <br />
+      </tbody>
+    </table>
   );
 };
 

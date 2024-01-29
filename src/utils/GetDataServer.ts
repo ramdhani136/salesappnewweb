@@ -60,7 +60,8 @@ export enum DataAPI {
   ASSESMENTSCHEDULE = "assesmentschedule",
   ASSESMENTSCHEDULEITEM = "assesmentschedulelist",
   ASSESMENTTEMPLATE = "assesmenttemplate",
-  ASSESMENTRESULT = "assesmentresult"
+  ASSESMENTRESULT = "assesmentresult",
+  ASSESMENTQUESTION = "assesmentquestion"
 }
 
 class RequestData implements IData {
