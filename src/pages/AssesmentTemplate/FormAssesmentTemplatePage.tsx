@@ -421,8 +421,9 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
             <th className="text-center h-12">No</th>
             <th className="w-[150px]">Bottom</th>
             <th className="w-[150px]">Top</th>
-            <th className="w-[200px]">Grade</th>
+            <th className="w-[180px]">Grade</th>
             <th>Notes / Recomendation</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -481,6 +482,21 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       const newData = [...data];
                       setData(newData);
                     }}
+                  />
+                </td>
+                <td>
+                  <CloseIcon
+                    onClick={() => {
+                      data?.splice(index, 1);
+                      const newData = [...data];
+                      setData(newData);
+                    }}
+                    style={{
+                      fontSize: 20,
+                      color: "darkred",
+                      cursor: "pointer",
+                    }}
+                    className="opacity-60 ml-3 hover:opacity-100 duration-300"
                   />
                 </td>
               </tr>
