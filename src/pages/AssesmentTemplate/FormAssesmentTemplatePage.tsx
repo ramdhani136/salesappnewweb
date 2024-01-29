@@ -384,6 +384,11 @@ const FormAssesmentTemplatePage: React.FC = () => {
                   <IndicatorPage data={indicators} setData={setIndicators} />
                 }
               />
+              <ToggleBodyComponent
+                name="Grading"
+                className="mb-5"
+                child={<div>tes</div>}
+              />
 
               <TimeLineVertical data={history} />
             </div>
