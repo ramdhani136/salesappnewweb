@@ -472,7 +472,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                 </td>
                 <td>
                   <textarea
-                    className="w-full p-2 bg-gray-50 border  border-[#ececec] my-3"
+                    className="w-full p-2 bg-gray-50 border  border-[#ececec] my-2"
                     name="Notes"
                     rows={2}
                     placeholder="Rekomendasi perubahan TOP ke Cash"
