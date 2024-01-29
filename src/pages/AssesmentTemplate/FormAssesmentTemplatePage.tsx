@@ -46,6 +46,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
 
   const [status, setStatus] = useState<String>("Draft");
   const [indicators, setIndicators] = useState<any[]>([]);
+  const [grades, setGrades] = useState<any[]>([]);
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
@@ -105,7 +106,8 @@ const FormAssesmentTemplatePage: React.FC = () => {
 
       setData(result.data);
 
-      setIndicators(result.data.indicators);
+      setIndicators(result.data.indicators ?? []);
+      setGrades(result.data.grades ?? []);
 
       setPrevData({
         name: result.data.name,
@@ -381,15 +383,17 @@ const FormAssesmentTemplatePage: React.FC = () => {
                 name="Indicators"
                 className="mt-5 mb-5"
                 child={
-                  <IndicatorPage data={indicators} setData={setIndicators} />
+                  <IndicatorComponent
+                    data={indicators}
+                    setData={setIndicators}
+                  />
                 }
               />
               <ToggleBodyComponent
                 name="Grading"
                 className="mb-5"
-                child={<div>tes</div>}
+                child={<GradingComponent data={grades} setData={setGrades} />}
               />
-
               <TimeLineVertical data={history} />
             </div>
           </>
@@ -406,7 +410,78 @@ interface IIndicators {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const IndicatorPage: React.FC<IIndicators> = ({ data, setData }) => {
+const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
+  console.log(data);
+  return (
+    <>
+      <table className="text[0.95em] w-full">
+        <thead>
+          <tr>
+            <th className="text-center h-12">No</th>
+            <th className="w-[150px]">Bottom</th>
+            <th className="w-[150px]">Top</th>
+            <th className="w-[200px]">Grade</th>
+            <th>Notes / Recomendation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((item: any, index: number) => {
+            return (
+              <tr key={index} className="border-b ">
+                <td className="text-center">{index + 1}</td>
+                <td>
+                  <input
+                    type="number"
+                    className=" w-[95%] text-center border  bg-gray-50 border-[#ececec] h-9"
+                    placeholder="0"
+                    value={item.bottom ?? 0}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    placeholder="20"
+                    className="w-[95%] text-center  border bg-gray-50 border-[#ececec] h-9"
+                    value={item.top ?? 0}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="A"
+                    className="w-[95%] px-2 border bg-gray-50 border-[#ececec] h-9"
+                    value={item.grade ?? ""}
+                  />
+                </td>
+                <td>
+                  <textarea
+                    className="w-full p-2 bg-gray-50 border  border-[#ececec] my-4"
+                    name="Notes"
+                    rows={2}
+                    placeholder="Rekomendasi perubahan TOP ke Cash"
+                    value={item.notes ?? ""}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <button
+        onClick={() => {
+          // const newData = [...data, { questionId: { _id: "", name: "" } }];
+          // setData(newData);
+        }}
+        className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
+      >
+        <h4>Add</h4>
+        <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
+      </button>
+    </>
+  );
+};
+
+const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
   // branch
   const [questionList, setQuestionList] = useState<IListInput[]>([]);
   const [questionPage, setQuestionPage] = useState<Number>(1);
