@@ -6,6 +6,7 @@ import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
+  Select,
   TimeLineVertical,
 } from "../../components/atoms";
 import { IValue } from "../../components/atoms/InputComponent";
@@ -28,6 +29,10 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
     } - Sales App Ekatunggal`,
     description: "Halaman form question - Sales web system",
   };
+  const dataStatus: any[] = [
+    { title: "Enabled", value: "1" },
+    { title: "Disabled", value: "0" },
+  ];
 
   const navigate = useNavigate();
 
@@ -42,7 +47,7 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
     valueInput: LocalStorage.getUser().name,
   });
 
-  const [status, setStatus] = useState<String>("Active");
+  const [status, setStatus] = useState<String>("1");
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     desc: desc ?? "",
@@ -83,7 +88,7 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
       if (result.data.name) {
         setDesc(result.data.name);
       }
-      setStatus(result.data.status == "0" ? "Disabled" : "Active");
+      setStatus(result.data.status);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -129,7 +134,7 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
     try {
       let data: any = {
         name: desc,
-        status: status == "Disabled" ? "0" : "1",
+        status: status,
       };
       if (nextState) {
         data.nextState = nextState;
@@ -322,19 +327,13 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
                       }
                       disabled
                     />
-                    <InputComponent
-                      label="Status"
-                      value={{ valueData: status, valueInput: status }}
-                      className="h-[38px]  mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
+                      <Select
+                          title="Status"
+                          data={dataStatus}
+                          value={status}
+                          setValue={setStatus}
+                          ClassName={`h-9`}
+                        />
                   </div>
                 </div>
               </div>
