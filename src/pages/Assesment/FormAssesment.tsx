@@ -83,11 +83,17 @@ const FormAssesmentPage: React.FC = () => {
       });
       setActiveDate({
         valueData: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.schedule.activeDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.schedule.activeDate).format(
+          "YYYY-MM-DD"
+        ),
       });
       setDeactiveDate({
-        valueData: moment(result.data.schedule.deactiveDate).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.schedule.deactiveDate).format("YYYY-MM-DD"),
+        valueData: moment(result.data.schedule.deactiveDate).format(
+          "YYYY-MM-DD"
+        ),
+        valueInput: moment(result.data.schedule.deactiveDate).format(
+          "YYYY-MM-DD"
+        ),
       });
 
       setData(result.data);
@@ -263,7 +269,6 @@ const FormAssesmentPage: React.FC = () => {
                           value={activeDate}
                           className="h-[38px]  mb-3"
                           type="date"
-                        
                           disabled
                         />
                         <InputComponent
@@ -384,6 +389,7 @@ const GetQuestion: React.FC<{
                           className="flex items-center text-md ml-3"
                         >
                           <input
+                            id={`option_${option._id}`}
                             type="radio"
                             value={option.name}
                             name={item._id}
@@ -402,7 +408,12 @@ const GetQuestion: React.FC<{
                                 i.answer === option.name
                             )}
                           />
-                          <label className="ml-2"> {`${option.name}`}</label>
+                          <label
+                            htmlFor={`option_${option._id}`}
+                            className="ml-2"
+                          >
+                            {`${option.name}`}
+                          </label>
                         </div>
                       );
                     })}
@@ -427,6 +438,7 @@ const GetQuestion: React.FC<{
                           className="flex items-center text-md ml-3"
                         >
                           <input
+                            id={`option_${option._id}`}
                             type="radio"
                             value={option.name}
                             name={item._id}
@@ -445,7 +457,13 @@ const GetQuestion: React.FC<{
                                 i.answer === option.name
                             )}
                           />
-                          <label className="ml-2"> {`${option.name}`}</label>
+                          <label
+                            htmlFor={`option_${option._id}`}
+                            className="ml-2"
+                          >
+                            {" "}
+                            {`${option.name}`}
+                          </label>
                         </div>
                       );
                     })}
