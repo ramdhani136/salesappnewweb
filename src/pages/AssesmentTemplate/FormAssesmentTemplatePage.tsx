@@ -168,6 +168,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
+    console.log(grades);
     try {
       let data: any = {
         name: name.valueData,
@@ -282,20 +283,20 @@ const FormAssesmentTemplatePage: React.FC = () => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id ? "Update" : "Save"}
-                    callback={() => {
-                      AlertModal.confirmation({
-                        onConfirm: onSave,
-                        confirmButtonText: `Yes, ${
-                          !id ? "Save it!" : "Update It"
-                        }`,
-                      });
-                    }}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                {/* {isChangeData && ( */}
+                <IconButton
+                  name={id ? "Update" : "Save"}
+                  callback={() => {
+                    AlertModal.confirmation({
+                      onConfirm: onSave,
+                      confirmButtonText: `Yes, ${
+                        !id ? "Save it!" : "Update It"
+                      }`,
+                    });
+                  }}
+                  className={`opacity-80 hover:opacity-100 duration-100  `}
+                />
+                {/* )} */}
                 {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
@@ -446,7 +447,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData, status }) => {
                     placeholder="0"
                     value={item.bottom}
                     onChange={(e) => {
-                      item.bottom = e.target.value;
+                      item.bottom = parseFloat(e.target.value);
                       const newData = [...data];
                       setData(newData);
                     }}
@@ -460,7 +461,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData, status }) => {
                     className="w-[95%] text-center  border bg-gray-50 border-[#ececec] h-9"
                     value={item.top}
                     onChange={(e) => {
-                      item.top = e.target.value;
+                      item.top = parseFloat(e.target.value);
                       const newData = [...data];
                       setData(newData);
                     }}
