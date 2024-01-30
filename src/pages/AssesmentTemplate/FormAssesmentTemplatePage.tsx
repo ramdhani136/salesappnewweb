@@ -45,6 +45,25 @@ const FormAssesmentTemplatePage: React.FC = () => {
     valueInput: "",
   });
 
+  const cekIndicator = (data: any[]) => {
+    const result = data.map((item: any) => {
+      const getOptions = item.options?.map((a: any) => {
+        return {
+          name: a.name,
+          weight: parseFloat(a.weight),
+        };
+      });
+
+      return {
+        question: item.questionId._id,
+        weight: parseFloat(item.weight),
+        options: getOptions,
+      };
+    });
+
+    return result;
+  };
+
   const [status, setStatus] = useState<String>("Draft");
   const [indicators, setIndicators] = useState<any[]>([]);
   const [grades, setGrades] = useState<any[]>([]);
@@ -52,6 +71,8 @@ const FormAssesmentTemplatePage: React.FC = () => {
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
     desc: desc ?? "",
+    indicators: cekIndicator(indicators),
+    // grades: grades,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -113,7 +134,10 @@ const FormAssesmentTemplatePage: React.FC = () => {
       setPrevData({
         name: result.data.name,
         desc: result.data.desc ?? "",
+        indicators: cekIndicator(result.data.indicators),
+        // grades: result.data.grades,
       });
+
       if (result.data.notes) {
         setDesc(result.data.notes);
       }
@@ -168,7 +192,6 @@ const FormAssesmentTemplatePage: React.FC = () => {
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
-    console.log(grades);
     try {
       let data: any = {
         name: name.valueData,
@@ -229,13 +252,17 @@ const FormAssesmentTemplatePage: React.FC = () => {
     const actualData = {
       name: name.valueData,
       desc: desc ?? "",
+      indicators: cekIndicator(indicators),
+      // grades: grades,
     };
+    console.log(actualData);
+    console.log(prevData);
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [name, desc, indicators, grades]);
   // End
 
   return (
@@ -283,20 +310,20 @@ const FormAssesmentTemplatePage: React.FC = () => {
                   />
                 )}
 
-                {/* {isChangeData && ( */}
-                <IconButton
-                  name={id ? "Update" : "Save"}
-                  callback={() => {
-                    AlertModal.confirmation({
-                      onConfirm: onSave,
-                      confirmButtonText: `Yes, ${
-                        !id ? "Save it!" : "Update It"
-                      }`,
-                    });
-                  }}
-                  className={`opacity-80 hover:opacity-100 duration-100  `}
-                />
-                {/* )} */}
+                {isChangeData && (
+                  <IconButton
+                    name={id ? "Update" : "Save"}
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: onSave,
+                        confirmButtonText: `Yes, ${
+                          !id ? "Save it!" : "Update It"
+                        }`,
+                      });
+                    }}
+                    className={`opacity-80 hover:opacity-100 duration-100  `}
+                  />
+                )}
                 {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
