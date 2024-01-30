@@ -51,9 +51,13 @@ import FormAssesmentPage from "./Assesment/FormAssesment";
 import { ReportAssesmentPage } from "./Report/ReportAssesmentPage";
 import { AssesmentTemplatePage } from "./AssesmentTemplate/AssesmentTemplatePage";
 import FormAssesmentTemplatePage from "./AssesmentTemplate/FormAssesmentTemplatePage";
+import { AssesmentQuestionPage } from "./AssesmentQuestion/AssesmentQuestionPage";
+import FormAssesmentQuestionPage from "./AssesmentQuestion/FormAssesmentQuestionPage";
 
 
 export {
+  AssesmentQuestionPage,
+  FormAssesmentQuestionPage,
   LoginPage,
   SchedulePage,
   HomePage,
