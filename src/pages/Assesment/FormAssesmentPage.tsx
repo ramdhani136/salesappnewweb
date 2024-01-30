@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
-  ButtonStatusComponent,
   IconButton,
   InputComponent,
   TimeLineVertical,
@@ -77,7 +76,7 @@ const FormAssesmentPage: React.FC = () => {
     return result;
   };
 
-  const [status, setStatus] = useState<String>("Draft");
+  const [status, setStatus] = useState<String>("1");
   const [indicators, setIndicators] = useState<any[]>([]);
   const [grades, setGrades] = useState<any[]>([]);
   const [desc, setDesc] = useState<string>("");
@@ -93,6 +92,16 @@ const FormAssesmentPage: React.FC = () => {
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
+  const [activeAt, setActiveAt] = useState<IValue>({
+    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
+    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+  });
+
+  const [deactiveAt, setDeactiveAt] = useState<IValue>({
+    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
+    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
+  });
+
   const [loading, setLoading] = useState<boolean>(true);
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
@@ -103,32 +112,11 @@ const FormAssesmentPage: React.FC = () => {
       const result = await GetDataServer(DataAPI.ASSESMENTRESULT).FINDONE(
         `${id}`
       );
-
-      // set workflow
-      if (result.workflow.length > 0) {
-        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-          return {
-            name: item.action,
-            onClick: () => {
-              AlertModal.confirmation({
-                onConfirm: () => {
-                  onSave(item.nextState.id);
-                },
-                confirmButtonText: "Yes, Save it!",
-              });
-            },
-          };
-        });
-
-        setWorkflow(isWorkflow);
-      }
-      // end
-
-      setHistory(result.history);
+      console.log(result);
 
       setName({
-        valueData: result.data.name,
-        valueInput: result.data.name,
+        valueData: result.data.schedule.name,
+        valueInput: result.data.schedule.name,
       });
       setUser({
         valueData: result.data.createdBy._id,
@@ -138,31 +126,39 @@ const FormAssesmentPage: React.FC = () => {
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
+      setActiveAt({
+        valueData: moment(result.data.activeDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.activeDate).format("YYYY-MM-DD"),
+      });
+      setDeactiveAt({
+        valueData: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.deactiveDate).format("YYYY-MM-DD"),
+      });
 
       setData(result.data);
 
-      setIndicators(result.data.indicators ?? []);
-      setGrades(result.data.grades ?? []);
+      setIndicators(result.data.assesmentTemplate?.indicators ?? []);
+      setGrades(result.data.assesmentTemplate?.grades ?? []);
 
-      setPrevData({
-        name: result.data.name,
-        desc: result.data.desc ?? "",
-        indicators: cekIndicator(result.data.indicators),
-        grades: cekGrades(result.data.grades),
-      });
+      // setPrevData({
+      //   name: result.data.name,
+      //   desc: result.data.desc ?? "",
+      //   indicators: cekIndicator(result.data.indicators),
+      //   grades: cekGrades(result.data.grades),
+      // });
 
-      if (result.data.notes) {
-        setDesc(result.data.notes);
-      }
-      setStatus(
-        result.data.status == "0"
-          ? "Draft"
-          : result.data.status == "1"
-          ? "Submitted"
-          : result.data.status == "2"
-          ? "Canceled"
-          : "Closed"
-      );
+      // if (result.data.notes) {
+      //   setDesc(result.data.notes);
+      // }
+      // setStatus(
+      //   result.data.status == "0"
+      //     ? "Draft"
+      //     : result.data.status == "1"
+      //     ? "Submitted"
+      //     : result.data.status == "2"
+      //     ? "Canceled"
+      //     : "Closed"
+      // );
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -253,7 +249,7 @@ const FormAssesmentPage: React.FC = () => {
   useEffect(() => {
     if (id) {
       getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
@@ -293,19 +289,13 @@ const FormAssesmentPage: React.FC = () => {
               } py-5 sticky top-0 z-[51] duration-500`}
             >
               <div className="flex  items-center">
-                {/* <h4
+                <h4
                   onClick={() => navigate("/report/assesment")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New template" : data.name}
+                  Assesment Result{" "}
+                  {data.customer.name ? `- ${data.customer.name}` : ""}
                 </h4>
-                <div className="text-md">
-                  <ButtonStatusComponent
-                    // className="text-[0.7em]"
-                    status={data.status ?? "0"}
-                    name={data.workflowState ?? "Not Save"}
-                  />
-                </div> */}
               </div>
               <div className="flex">
                 {listMoreAction.length > 0 && (
@@ -321,7 +311,7 @@ const FormAssesmentPage: React.FC = () => {
                   />
                 )}
 
-                {isChangeData && (
+                {/* {isChangeData && (
                   <IconButton
                     name={id ? "Update" : "Save"}
                     callback={() => {
@@ -342,7 +332,7 @@ const FormAssesmentPage: React.FC = () => {
                     callback={onSave}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
-                )}
+                )} */}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -391,7 +381,7 @@ const FormAssesmentPage: React.FC = () => {
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
                     <InputComponent
-                      label="Date"
+                      label="Created At"
                       value={createdAt}
                       className="h-[38px]  mb-3"
                       type="date"
@@ -401,6 +391,20 @@ const FormAssesmentPage: React.FC = () => {
                           valueInput: e,
                         })
                       }
+                      disabled
+                    />
+                    <InputComponent
+                      label="Actived At"
+                      value={activeAt}
+                      className="h-[38px]  mb-3"
+                      type="date"
+                      disabled
+                    />
+                    <InputComponent
+                      label="Deactived At"
+                      value={deactiveAt}
+                      className="h-[38px]  mb-3"
+                      type="date"
                       disabled
                     />
                     <InputComponent
