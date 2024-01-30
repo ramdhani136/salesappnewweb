@@ -64,6 +64,19 @@ const FormAssesmentTemplatePage: React.FC = () => {
     return result;
   };
 
+  const cekGrades = (data: any[]) => {
+    const result = data.map((item: any) => {
+      return {
+        bottom: parseFloat(item.bottom),
+        top: parseFloat(item.top),
+        grade: item.grade,
+        notes: item.notes,
+      };
+    });
+
+    return result;
+  };
+
   const [status, setStatus] = useState<String>("Draft");
   const [indicators, setIndicators] = useState<any[]>([]);
   const [grades, setGrades] = useState<any[]>([]);
@@ -72,7 +85,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
     name: name.valueData,
     desc: desc ?? "",
     indicators: cekIndicator(indicators),
-    // grades: grades,
+    grades: cekGrades(grades),
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -135,7 +148,7 @@ const FormAssesmentTemplatePage: React.FC = () => {
         name: result.data.name,
         desc: result.data.desc ?? "",
         indicators: cekIndicator(result.data.indicators),
-        // grades: result.data.grades,
+        grades: cekGrades(result.data.grades),
       });
 
       if (result.data.notes) {
@@ -253,10 +266,8 @@ const FormAssesmentTemplatePage: React.FC = () => {
       name: name.valueData,
       desc: desc ?? "",
       indicators: cekIndicator(indicators),
-      // grades: grades,
+      grades: cekGrades(grades),
     };
-    console.log(actualData);
-    console.log(prevData);
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
