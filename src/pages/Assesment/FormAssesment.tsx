@@ -323,9 +323,21 @@ const GetQuestion: React.FC<{
       const response = await GetDataServer(DataAPI.ASSESMENTTEMPLATE).FINDONE(
         data.schedule.assesmentTemplate
       );
-      setTemplate(response.data);
-      setIndicators(response.data.indicators);
-      setLoading(false);
+
+      if (response.data.status == 0) {
+        setLoading(false);
+        AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: "Assesment template not active!!",
+        });
+  
+        navigate("/assesment");
+      } else {
+        setTemplate(response.data);
+        setIndicators(response.data.indicators);
+        setLoading(false);
+      }
     } catch (error) {
       setLoading(false);
       AlertModal.Default({
