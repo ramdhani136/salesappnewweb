@@ -303,7 +303,7 @@ const App: React.FC = () => {
             element={<LayoutComponent Child={AssesmentPage} />}
           />
           <Route
-            path="/assesment/:id"
+            path="/assesment/result/:id"
             element={<LayoutComponent Child={FormAssesmentPage} />}
           />
           <Route

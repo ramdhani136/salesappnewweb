@@ -47,7 +47,7 @@ import { WhatsappFlowChart } from "./whatsapp";
 import { AssesmentSchedulePage } from "./AssesmengtSchedule/AssesmentSchedulePage";
 import FormAssesmentSchedulePage from "./AssesmengtSchedule/FormAssesmentSchedulePage";
 import { AssesmentPage } from "./Assesment/AssesmentPage";
-import FormAssesmentPage from "./Assesment/FormAssesment";
+import FormAssesmentPage from "./Assesment/FormAssesmentPage";
 import { ReportAssesmentPage } from "./Report/ReportAssesmentPage";
 import { AssesmentTemplatePage } from "./AssesmentTemplate/AssesmentTemplatePage";
 import FormAssesmentTemplatePage from "./AssesmentTemplate/FormAssesmentTemplatePage";
