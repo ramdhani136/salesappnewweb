@@ -51,6 +51,7 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     desc: desc ?? "",
+    status: status,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -83,7 +84,8 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
       setData(result.data);
 
       setPrevData({
-        desc: result.data.desc ?? "",
+        desc: result.data.name ?? "",
+        status: result.data.status,
       });
       if (result.data.name) {
         setDesc(result.data.name);
@@ -204,13 +206,14 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const actualData = {
       desc: desc ?? "",
+      status: status,
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [name, desc]);
+  }, [status, desc]);
   // End
 
   return (
@@ -327,13 +330,13 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
                       }
                       disabled
                     />
-                      <Select
-                          title="Status"
-                          data={dataStatus}
-                          value={status}
-                          setValue={setStatus}
-                          ClassName={`h-9`}
-                        />
+                    <Select
+                      title="Status"
+                      data={dataStatus}
+                      value={status}
+                      setValue={setStatus}
+                      ClassName={`h-9`}
+                    />
                   </div>
                 </div>
               </div>
