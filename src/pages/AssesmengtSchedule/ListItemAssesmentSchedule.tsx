@@ -56,7 +56,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       { header: "Status", accessor: "status", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Score", accessor: "score", className: "w-auto text-center" },
-      { header: "Grade", accessor: "grade", className: "w-auto" },
+      { header: "Grade", accessor: "grade", className: "w-auto text-center" },
       { header: "Recomendation", accessor: "rec", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
       { header: "Group", accessor: "group", className: "w-auto" },
@@ -114,7 +114,6 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
       },
     });
   };
-
 
   const ShowModalCustomer = async () => {
     dispatch(
