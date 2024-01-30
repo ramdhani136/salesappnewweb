@@ -15,8 +15,11 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import { useDispatch } from "react-redux";
 
-const FormAssesmentQuestionPage: React.FC = () => {
+const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
+  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -32,6 +35,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -131,18 +135,33 @@ const FormAssesmentQuestionPage: React.FC = () => {
         data.nextState = nextState;
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.ASSESMENTQUESTION).UPDATE({
-            id: id,
-            data: data,
-          })
-        : GetDataServer(DataAPI.ASSESMENTQUESTION).CREATE(data);
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.ASSESMENTQUESTION).UPDATE({
+              id: id,
+              data: data,
+            })
+          : GetDataServer(DataAPI.ASSESMENTQUESTION).CREATE(data);
 
       const result = await Action;
 
-      if (id) {
+      if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
+      } else if (modal) {
+        // props.Callback({
+        //   valueData: result.data.data._id,
+        //   valueInput: result.data.data.name,
+        // });
+        dispatch(
+          modalSet({
+            active: false,
+            Children: null,
+            title: "",
+            props: {},
+            className: "",
+          })
+        );
       } else {
         navigate(`/assesment/question/${result.data.data._id}`);
         navigate(0);
@@ -166,7 +185,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
@@ -215,7 +234,13 @@ const FormAssesmentQuestionPage: React.FC = () => {
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
-                    name={data.status == "0" ? "Disabled" : "Active"}
+                    name={
+                      id && !modal
+                        ? data.status == "0"
+                          ? "Disabled"
+                          : "Active"
+                        : "Not Save"
+                    }
                   />
                 </div>
               </div>
@@ -235,7 +260,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
 
                 {isChangeData && (
                   <IconButton
-                    name={id ? "Update" : "Save"}
+                    name={id && !modal ? "Update" : "Save"}
                     callback={() => {
                       AlertModal.confirmation({
                         onConfirm: onSave,
