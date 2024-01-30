@@ -39,7 +39,7 @@ const InfoDateComponent: React.FC<IDateProps> = ({
       <h6
         className={`${
           !open && "hidden"
-        } duration-300 absolute -ml-3 -mt-12 text-white border text-center w-[160px] rounded-md py-1 px-2 bg-gray-900 ${className} `}
+        } z-40 duration-300 absolute -ml-3 -mt-12 text-white border text-center w-[160px] rounded-md py-1 px-2 bg-gray-900 ${className} `}
       >
         {moment(`${date}`).format("lll")}
       </h6>
