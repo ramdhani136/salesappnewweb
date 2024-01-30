@@ -80,7 +80,7 @@ export const AssesmentQuestionPage: React.FC = (): any => {
             status: (
               <ButtonStatusComponent
                 status={item.status}
-                name={item.status === "1" ? "Disabled" : "Active"}
+                name={item.status === "0" ? "Disabled" : "Active"}
               />
             ),
             updatedAt: (
@@ -108,9 +108,6 @@ export const AssesmentQuestionPage: React.FC = (): any => {
           switch (i.alias) {
             case "CreatedBy":
               endpoint = DataAPI.USERS;
-              break;
-            case "WorkflowState":
-              endpoint = DataAPI.WORKFLOWSTATE;
               break;
             default:
               endpoint = undefined;

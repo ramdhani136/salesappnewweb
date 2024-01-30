@@ -16,19 +16,14 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 
-interface IAllow {
-  barcode: boolean;
-  manual: boolean;
-}
-
 const FormAssesmentQuestionPage: React.FC = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
     title: `${
-      id ? data.name ?? "Loading ..  " : "New Branch"
+      id ? data.name ?? "Loading ..  " : "New Question"
     } - Sales App Ekatunggal`,
-    description: "Halaman form Branch Sales web system",
+    description: "Halaman form question - Sales web system",
   };
 
   const navigate = useNavigate();
@@ -42,15 +37,11 @@ const FormAssesmentQuestionPage: React.FC = () => {
     valueData: LocalStorage.getUser()._id,
     valueInput: LocalStorage.getUser().name,
   });
-  const [name, setName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
+
 
   const [status, setStatus] = useState<String>("Draft");
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
-    name: name.valueData,
     desc: desc ?? "",
   });
 
@@ -66,34 +57,12 @@ const FormAssesmentQuestionPage: React.FC = () => {
   const getData = async (): Promise<void> => {
     setWorkflow([]);
     try {
-      const result = await GetDataServer(DataAPI.BRANCH).FINDONE(`${id}`);
-
-      // set workflow
-      if (result.workflow.length > 0) {
-        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-          return {
-            name: item.action,
-            onClick: () => {
-              AlertModal.confirmation({
-                onConfirm: () => {
-                  onSave(item.nextState.id);
-                },
-                confirmButtonText: "Yes, Save it!",
-              });
-            },
-          };
-        });
-
-        setWorkflow(isWorkflow);
-      }
-      // end
+      const result = await GetDataServer(DataAPI.ASSESMENTQUESTION).FINDONE(
+        `${id}`
+      );
 
       setHistory(result.history);
 
-      setName({
-        valueData: result.data.name,
-        valueInput: result.data.name,
-      });
       setUser({
         valueData: result.data.createdBy._id,
         valueInput: result.data.createdBy.name,
@@ -106,11 +75,10 @@ const FormAssesmentQuestionPage: React.FC = () => {
       setData(result.data);
 
       setPrevData({
-        name: result.data.name,
         desc: result.data.desc ?? "",
       });
-      if (result.data.desc) {
-        setDesc(result.data.desc);
+      if (result.data.name) {
+        setDesc(result.data.name);
       }
       setStatus(
         result.data.status == "0"
@@ -130,7 +98,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
         text: "Data not found!",
       });
 
-      navigate("/branch");
+      navigate("/assesment/question");
     }
   };
 
@@ -139,8 +107,8 @@ const FormAssesmentQuestionPage: React.FC = () => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.BRANCH).DELETE(`${id}`);
-          navigate("/branch");
+          await GetDataServer(DataAPI.ASSESMENTQUESTION).DELETE(`${id}`);
+          navigate("/assesment/question");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -165,7 +133,6 @@ const FormAssesmentQuestionPage: React.FC = () => {
     setLoading(true);
     try {
       let data: any = {
-        name: name.valueData,
         desc: desc,
       };
       if (nextState) {
@@ -173,8 +140,11 @@ const FormAssesmentQuestionPage: React.FC = () => {
       }
 
       let Action = id
-        ? GetDataServer(DataAPI.BRANCH).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.BRANCH).CREATE(data);
+        ? GetDataServer(DataAPI.ASSESMENTQUESTION).UPDATE({
+            id: id,
+            data: data,
+          })
+        : GetDataServer(DataAPI.ASSESMENTQUESTION).CREATE(data);
 
       const result = await Action;
 
@@ -182,7 +152,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else {
-        navigate(`/branch/${result.data.data._id}`);
+        navigate(`/assesment/question/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -216,7 +186,6 @@ const FormAssesmentQuestionPage: React.FC = () => {
   // Cek perubahan
   useEffect(() => {
     const actualData = {
-      name: name.valueData,
       desc: desc ?? "",
     };
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -245,10 +214,10 @@ const FormAssesmentQuestionPage: React.FC = () => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/branch")}
+                  onClick={() => navigate("/assesment/question")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New branch" : data.name}
+                  {!id ? "New Question" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -300,18 +269,12 @@ const FormAssesmentQuestionPage: React.FC = () => {
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
                 <div className="w-full h-auto  float-left rounded-md p-3 py-5">
                   <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      mandatoy
-                      label="Name"
-                      value={name}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
+                    <label className="text-sm">Question</label>
+                    <textarea
+                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
+                      name="Site Uri"
+                      value={desc}
+                      onChange={(e) => setDesc(e.target.value)}
                       disabled={
                         id != null ? (status !== "Draft" ? true : false) : false
                       }
@@ -328,16 +291,6 @@ const FormAssesmentQuestionPage: React.FC = () => {
                         })
                       }
                       disabled
-                    />
-                    <label className="text-sm">Desc</label>
-                    <textarea
-                      className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
-                      name="Site Uri"
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
                     />
                   </div>
                   <div className=" w-1/2 px-4 float-left  mb-3">
