@@ -413,7 +413,6 @@ interface IIndicators {
 }
 
 const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
-  console.log(data);
   return (
     <>
       <table className="text[0.95em] w-full">
@@ -602,10 +601,13 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                         className: "w-[63%] h-[98%]",
                         props: {
                           modal: true,
-                          // group: group,
-                          // branch: branch,
-                          // name: customer.valueInput,
-                          // Callback: setCustomer,
+                          name: item.questionId?.name ?? "",
+                          Callback: (e: any) => {
+                            item.questionId._id = e._id;
+                            item.questionId.name = e.name;
+                            const newData = [...data];
+                            setData(newData);
+                          },
                         },
                         title: "Form Question",
                       }}

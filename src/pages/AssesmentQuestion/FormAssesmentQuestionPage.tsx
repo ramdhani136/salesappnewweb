@@ -149,10 +149,7 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
       } else if (modal) {
-        // props.Callback({
-        //   valueData: result.data.data._id,
-        //   valueInput: result.data.data.name,
-        // });
+        props.Callback(result.data?.data ?? {});
         dispatch(
           modalSet({
             active: false,
@@ -191,6 +188,10 @@ const FormAssesmentQuestionPage: React.FC<any> = ({ props }) => {
     } else {
       setLoading(false);
       setListMoreAction([]);
+    }
+
+    if (modal) {
+      setDesc(props.name);
     }
   }, []);
 
