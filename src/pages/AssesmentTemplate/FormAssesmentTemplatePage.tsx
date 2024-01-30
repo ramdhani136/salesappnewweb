@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import FormAssesmentQuestionPage from "../AssesmentQuestion/FormAssesmentQuestionPage";
 
 const FormAssesmentTemplatePage: React.FC = () => {
   let { id } = useParams();
@@ -596,18 +597,18 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                   </td>
                   <td className="w-[90%]">
                     <InputComponent
-                      // modal={{
-                      //   Children: FormCustomerPage,
-                      //   className: "w-[63%] h-[98%]",
-                      //   props: {
-                      //     modal: true,
-                      //     group: group,
-                      //     branch: branch,
-                      //     name: customer.valueInput,
-                      //     Callback: setCustomer,
-                      //   },
-                      //   title: "Form Customer",
-                      // }}
+                      modal={{
+                        Children: FormAssesmentQuestionPage,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          // group: group,
+                          // branch: branch,
+                          // name: customer.valueInput,
+                          // Callback: setCustomer,
+                        },
+                        title: "Form Question",
+                      }}
                       mandatoy
                       infiniteScroll={{
                         loading: questionMoreLoading,

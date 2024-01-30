@@ -38,8 +38,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
     valueInput: LocalStorage.getUser().name,
   });
 
-
-  const [status, setStatus] = useState<String>("Draft");
+  const [status, setStatus] = useState<String>("Active");
   const [desc, setDesc] = useState<string>("");
   const [prevData, setPrevData] = useState<any>({
     desc: desc ?? "",
@@ -80,15 +79,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
       if (result.data.name) {
         setDesc(result.data.name);
       }
-      setStatus(
-        result.data.status == "0"
-          ? "Draft"
-          : result.data.status == "1"
-          ? "Submitted"
-          : result.data.status == "2"
-          ? "Canceled"
-          : "Closed"
-      );
+      setStatus(result.data.status == "0" ? "Disabled" : "Active");
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -133,7 +124,8 @@ const FormAssesmentQuestionPage: React.FC = () => {
     setLoading(true);
     try {
       let data: any = {
-        desc: desc,
+        name: desc,
+        status: status == "Disabled" ? "0" : "1",
       };
       if (nextState) {
         data.nextState = nextState;
@@ -223,7 +215,7 @@ const FormAssesmentQuestionPage: React.FC = () => {
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
-                    name={data.workflowState ?? "Not Save"}
+                    name={data.status == "0" ? "Disabled" : "Active"}
                   />
                 </div>
               </div>
@@ -275,9 +267,6 @@ const FormAssesmentQuestionPage: React.FC = () => {
                       name="Site Uri"
                       value={desc}
                       onChange={(e) => setDesc(e.target.value)}
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
                     />
 
                     <InputComponent
