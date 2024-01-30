@@ -388,13 +388,20 @@ const FormAssesmentTemplatePage: React.FC = () => {
                   <IndicatorComponent
                     data={indicators}
                     setData={setIndicators}
+                    status={status}
                   />
                 }
               />
               <ToggleBodyComponent
                 name="Grading"
                 className="mb-5"
-                child={<GradingComponent data={grades} setData={setGrades} />}
+                child={
+                  <GradingComponent
+                    data={grades}
+                    setData={setGrades}
+                    status={status}
+                  />
+                }
               />
               <TimeLineVertical data={history} />
             </div>
@@ -410,9 +417,10 @@ const FormAssesmentTemplatePage: React.FC = () => {
 interface IIndicators {
   data: any[];
   setData: React.Dispatch<React.SetStateAction<any[]>>;
+  status: String;
 }
 
-const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
+const GradingComponent: React.FC<IIndicators> = ({ data, setData, status }) => {
   return (
     <>
       <table className="text[0.95em] w-full">
@@ -434,7 +442,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                 <td>
                   <input
                     type="number"
-                    className=" w-[95%] text-center border  bg-gray-50 border-[#ececec] h-9"
+                    className=" w-[95%] text-center border  bg-gray-50 border-[#ececec] h-9 "
                     placeholder="0"
                     value={item.bottom}
                     onChange={(e) => {
@@ -442,6 +450,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       const newData = [...data];
                       setData(newData);
                     }}
+                    disabled={status !== "Draft"}
                   />
                 </td>
                 <td>
@@ -455,6 +464,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       const newData = [...data];
                       setData(newData);
                     }}
+                    disabled={status !== "Draft"}
                   />
                 </td>
                 <td>
@@ -468,6 +478,7 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       const newData = [...data];
                       setData(newData);
                     }}
+                    disabled={status !== "Draft"}
                   />
                 </td>
                 <td>
@@ -482,43 +493,52 @@ const GradingComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       const newData = [...data];
                       setData(newData);
                     }}
+                    disabled={status !== "Draft"}
                   />
                 </td>
                 <td>
-                  <CloseIcon
-                    onClick={() => {
-                      data?.splice(index, 1);
-                      const newData = [...data];
-                      setData(newData);
-                    }}
-                    style={{
-                      fontSize: 20,
-                      color: "darkred",
-                      cursor: "pointer",
-                    }}
-                    className="opacity-60 ml-3 hover:opacity-100 duration-300"
-                  />
+                  {status === "Draft" && (
+                    <CloseIcon
+                      onClick={() => {
+                        data?.splice(index, 1);
+                        const newData = [...data];
+                        setData(newData);
+                      }}
+                      style={{
+                        fontSize: 20,
+                        color: "darkred",
+                        cursor: "pointer",
+                      }}
+                      className="opacity-60 ml-3 hover:opacity-100 duration-300"
+                    />
+                  )}
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <button
-        onClick={() => {
-          const newData = [...data, { grade: "", notes: "" }];
-          setData(newData);
-        }}
-        className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
-      >
-        <h4>Add</h4>
-        <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
-      </button>
+      {status === "Draft" && (
+        <button
+          onClick={() => {
+            const newData = [...data, { grade: "", notes: "" }];
+            setData(newData);
+          }}
+          className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
+        >
+          <h4>Add</h4>
+          <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
+        </button>
+      )}
     </>
   );
 };
 
-const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
+const IndicatorComponent: React.FC<IIndicators> = ({
+  data,
+  setData,
+  status,
+}) => {
   // branch
   const [questionList, setQuestionList] = useState<IListInput[]>([]);
   const [questionPage, setQuestionPage] = useState<Number>(1);
@@ -660,6 +680,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                       list={questionList}
                       type="text"
                       className={`h-9 mt-4 text-[0.95em]`}
+                      disabled={status !== "Draft"}
                     />
                   </td>
                   <td className="">
@@ -672,22 +693,25 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                         const newData = [...data];
                         setData(newData);
                       }}
+                      disabled={status !== "Draft"}
                     />
                   </td>
                   <td className="text-center">
-                    <CloseIcon
-                      onClick={() => {
-                        data.splice(index, 1);
-                        const newData = [...data];
-                        setData(newData);
-                      }}
-                      style={{
-                        fontSize: 20,
-                        color: "darkred",
-                        cursor: "pointer",
-                      }}
-                      className="opacity-60 hover:opacity-100 duration-300 mt-4"
-                    />
+                    {status === "Draft" && (
+                      <CloseIcon
+                        onClick={() => {
+                          data.splice(index, 1);
+                          const newData = [...data];
+                          setData(newData);
+                        }}
+                        style={{
+                          fontSize: 20,
+                          color: "darkred",
+                          cursor: "pointer",
+                        }}
+                        className="opacity-60 hover:opacity-100 duration-300 mt-4"
+                      />
+                    )}
                   </td>
                 </tr>
                 {item.options?.map((option: any, idOption: number) => {
@@ -698,7 +722,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                         <td className="flex">
                           <input className="ml-2" type="checkbox" disabled />
                           <input
-                            className="p-1  ml-1 flex-1 text-[0.95em]"
+                            className="p-1  ml-1 flex-1 text-[0.95em] disabled:bg-white"
                             type="text"
                             value={option.name ?? ""}
                             onChange={(e) => {
@@ -706,11 +730,12 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                               const newData = [...data];
                               setData(newData);
                             }}
+                            disabled={status !== "Draft"}
                           />
                         </td>
                         <td className="text-center">
                           <input
-                            className="p-1 text-[0.95em] text-center"
+                            className="p-1 text-[0.95em] text-center disabled:bg-white"
                             type="number"
                             value={option.weight ?? 0}
                             onChange={(e) => {
@@ -718,22 +743,25 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                               const newData = [...data];
                               setData(newData);
                             }}
+                            disabled={status !== "Draft"}
                           />
                         </td>
                         <td className="text-center">
-                          <CloseIcon
-                            onClick={() => {
-                              item.options?.splice(idOption, 1);
-                              const newData = [...data];
-                              setData(newData);
-                            }}
-                            style={{
-                              fontSize: 20,
-                              color: "darkred",
-                              cursor: "pointer",
-                            }}
-                            className="opacity-60 hover:opacity-100 duration-300"
-                          />
+                          {status === "Draft" && (
+                            <CloseIcon
+                              onClick={() => {
+                                item.options?.splice(idOption, 1);
+                                const newData = [...data];
+                                setData(newData);
+                              }}
+                              style={{
+                                fontSize: 20,
+                                color: "darkred",
+                                cursor: "pointer",
+                              }}
+                              className="opacity-60 hover:opacity-100 duration-300"
+                            />
+                          )}
                         </td>
                       </tr>
                     </React.Fragment>
@@ -748,25 +776,29 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
                         : "mt-2"
                     } `}
                   >
-                    <input className="ml-2" type="checkbox" disabled />
-                    <button
-                      onClick={() => {
-                        if (item.options) {
-                          item.options = [
-                            ...item.options,
-                            { name: "", weight: 0 },
-                          ];
-                        } else {
-                          item.options = [{ name: "", weight: 0 }];
-                        }
-                        const newData = [...data];
-                        setData(newData);
-                      }}
-                      className=" ml-2 opacity-60 flex items-center hover:opacity-100 duration-300 text-[0.95em]"
-                    >
-                      <h4>Add option</h4>
-                      <AddIcon style={{ fontSize: 14 }} className="mt-1" />
-                    </button>
+                    {status === "Draft" && (
+                      <>
+                        <input className="ml-2" type="checkbox" disabled />
+                        <button
+                          onClick={() => {
+                            if (item.options) {
+                              item.options = [
+                                ...item.options,
+                                { name: "", weight: 0 },
+                              ];
+                            } else {
+                              item.options = [{ name: "", weight: 0 }];
+                            }
+                            const newData = [...data];
+                            setData(newData);
+                          }}
+                          className=" ml-2 opacity-60 flex items-center hover:opacity-100 duration-300 text-[0.95em] "
+                        >
+                          <h4>Add option</h4>
+                          <AddIcon style={{ fontSize: 14 }} className="mt-1" />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               </React.Fragment>
@@ -774,16 +806,18 @@ const IndicatorComponent: React.FC<IIndicators> = ({ data, setData }) => {
           })}
         </tbody>
       </table>
-      <button
-        onClick={() => {
-          const newData = [...data, { questionId: { _id: "", name: "" } }];
-          setData(newData);
-        }}
-        className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
-      >
-        <h4>Add</h4>
-        <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
-      </button>
+      {status === "Draft" && (
+        <button
+          onClick={() => {
+            const newData = [...data, { questionId: { _id: "", name: "" } }];
+            setData(newData);
+          }}
+          className="text-[0.95em] mt-6 border rounded-md py-1 px-2 flex items-center bg-green-600 text-white text-sm border-green-700 opacity-70 hover:opacity-100 duration-300"
+        >
+          <h4>Add</h4>
+          <AddIcon style={{ fontSize: 14 }} className="mt-1 ml-1" />
+        </button>
+      )}
     </>
   );
 };
