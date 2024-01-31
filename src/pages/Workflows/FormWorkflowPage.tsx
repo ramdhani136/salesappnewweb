@@ -64,6 +64,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   });
 
   const [states, setState] = useState<any[]>([]);
+  const [transition, setTransition] = useState<any[]>([]);
 
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -397,18 +398,32 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                 </div>
               </div>
               {id && (
-                <ToggleBodyComponent
-                  toggle={false}
-                  name="States"
-                  className="mt-5 mb-5"
-                  child={
-                    <StateComponent
-                      workflow={id}
-                      setState={setState}
-                      states={states}
-                    />
-                  }
-                />
+                <>
+                  <ToggleBodyComponent
+                    toggle={false}
+                    name="States"
+                    className="mt-5 mb-5"
+                    child={
+                      <StateComponent
+                        workflow={id}
+                        setState={setState}
+                        states={states}
+                      />
+                    }
+                  />
+                  <ToggleBodyComponent
+                    toggle={false}
+                    name="Transitions"
+                    className="mt-5 mb-5"
+                    child={
+                      <TransitionComponent
+                        workflow={id}
+                        setTransition={setTransition}
+                        transitions={transition}
+                      />
+                    }
+                  />
+                </>
               )}
               <TimeLineVertical data={history} />
             </div>
@@ -762,11 +777,10 @@ const StateComponent: React.FC<{
                   <td className="border">
                     <input
                       type="checkbox"
-                      name="sa"
                       value={item.selfApproval}
                       checked={item.selfApproval}
                       onChange={(e) => {
-                        item.selfApproval = e.target.value;
+                        item.selfApproval = e.target.checked;
                         const newData = [...states];
                         setState(newData);
                       }}
@@ -809,6 +823,571 @@ const StateComponent: React.FC<{
 
           const newData = [...states];
           setState(newData);
+        }}
+        className="text-[0.9em] bg-[#f4f5f7]  opacity-80 hover:opacity-100 duration-100 rounded-md py-[2px] px-2"
+      >
+        Add Row
+      </button>
+    </>
+  );
+};
+
+const TransitionComponent: React.FC<{
+  workflow: String | undefined;
+  transitions: any[];
+  setTransition: React.Dispatch<React.SetStateAction<any[]>>;
+}> = ({ workflow, transitions, setTransition }) => {
+  const [loading, setLoading] = useState<Boolean>(true);
+
+  // state
+  const [stateList, setStateList] = useState<IListInput[]>([]);
+  const [statePage, setStatePage] = useState<Number>(1);
+  const [stateLoading, setStateLoading] = useState<boolean>(true);
+  const [stateMoreLoading, setStateMoreLoading] = useState<boolean>(false);
+  const [stateHasMore, setStateHasMore] = useState<boolean>(false);
+  // End
+
+  // Role
+  const [roleList, setRoleList] = useState<IListInput[]>([]);
+  const [rolePage, setRolePage] = useState<Number>(1);
+  const [roleLoading, setRoleLoading] = useState<boolean>(true);
+  const [roleMoreLoading, setRoleMoreLoading] = useState<boolean>(false);
+  const [roleHasMore, setRoleHasMore] = useState<boolean>(false);
+  // End
+
+  // Action
+  const [actionList, setActionList] = useState<IListInput[]>([]);
+  const [actionPage, setActionPage] = useState<Number>(1);
+  const [actionLoading, setActionLoading] = useState<boolean>(true);
+  const [actionMoreLoading, setActionMoreLoading] = useState<boolean>(false);
+  const [actionHasMore, setActionHasMore] = useState<boolean>(false);
+  // End
+
+  const getStateList = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+      const result: any = await GetDataServer(DataAPI.WORKFLOWSTATE).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : statePage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setStateList([...stateList, ...listInput]);
+        } else {
+          setStateList([...listInput]);
+        }
+        setStateHasMore(result.hasMore);
+        setStatePage(result.nextPage);
+      }
+
+      setStateLoading(false);
+      setStateMoreLoading(false);
+    } catch (error: any) {
+      setStateList([]);
+      setStateLoading(false);
+      setStateMoreLoading(false);
+      setStateHasMore(false);
+    }
+  };
+
+  const ResetState = () => {
+    setStateList([]);
+    setStateHasMore(false);
+    setStatePage(1);
+    setStateLoading(true);
+  };
+
+  const getRolelList = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+      const result: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : rolePage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setRoleList([...roleList, ...listInput]);
+        } else {
+          setRoleList([...listInput]);
+        }
+        setRoleHasMore(result.hasMore);
+        setRolePage(result.nextPage);
+      }
+
+      setRoleLoading(false);
+      setRoleMoreLoading(false);
+    } catch (error: any) {
+      setRoleList([]);
+      setRoleLoading(false);
+      setRoleMoreLoading(false);
+      setRoleHasMore(false);
+    }
+  };
+
+  const ResetRole = () => {
+    setRoleList([]);
+    setRoleHasMore(false);
+    setRolePage(1);
+    setRoleLoading(true);
+  };
+
+  const getActionList = async (data: {
+    search?: string | String;
+    refresh?: boolean;
+  }): Promise<void> => {
+    try {
+      if (data.refresh === undefined) {
+        data.refresh = true;
+      }
+      const result: any = await GetDataServer(DataAPI.WORKFLOWACTION).FIND({
+        search: data.search ?? "",
+        limit: 10,
+        page: `${data.refresh ? 1 : actionPage}`,
+        filters: [["status", "=", "1"]],
+      });
+      if (result.data.length > 0) {
+        let listInput: IListInput[] = result.data.map((item: any) => {
+          return {
+            name: item.name,
+            value: item._id,
+          };
+        });
+        if (!data.refresh) {
+          setActionList([...actionList, ...listInput]);
+        } else {
+          setActionList([...listInput]);
+        }
+        setActionHasMore(result.hasMore);
+        setActionPage(result.nextPage);
+      }
+
+      setActionLoading(false);
+      setActionMoreLoading(false);
+    } catch (error: any) {
+      setActionList([]);
+      setActionLoading(false);
+      setActionMoreLoading(false);
+      setActionHasMore(false);
+    }
+  };
+
+  const ResetAction = () => {
+    setActionList([]);
+    setActionHasMore(false);
+    setActionPage(1);
+    setActionLoading(true);
+  };
+
+  const getState = async () => {
+    try {
+      const result: any = await GetDataServer(DataAPI.WORKFLOWTRANSITION).FIND({
+        filters: [["workflow", "=", workflow!]],
+      });
+
+      setTransition(result.data);
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Delete"
+        }`,
+        "error"
+      );
+    }
+  };
+
+  useEffect(() => {
+    getState();
+  }, []);
+
+  return (
+    <>
+      {loading ? (
+        LoadingComponent
+      ) : (
+        <table className="w-full border mb-3">
+          <thead>
+            <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
+              <td className="border border-r-0 h-10 w-[40px] ">
+                <input type="checkbox" />
+              </td>
+              <td className="border h-10 w-[40px] border-l-0 ">No</td>
+              <td className="border w-[20%]">State</td>
+              <td className="border w-[20%">Action</td>
+              <td className="border w-[20%">Next State</td>
+              <td className="border w-[20%]">Allowed</td>
+              <td className="border w-[80px]">Self Approval</td>
+            </tr>
+          </thead>
+          <tbody>
+            {transitions.map((item: any, index: number) => {
+              return (
+                <tr key={index} className="text-center text-[0.95em]">
+                  <td className=" border border-r-0">
+                    <input type="checkbox" />
+                  </td>
+                  <td className="border border-l-0">{index + 1}</td>
+                  <td className="border">
+                    <InputComponent
+                      modal={{
+                        Children: FromWorkflowState,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.stateActive?.name ?? "",
+                          Callback: (e: any) => {
+                            item.stateActive._id = e._id;
+                            item.stateActive.name = e.name;
+                            const newData = [...transitions];
+                            setTransition(newData);
+                          },
+                        },
+                        title: "Form Workflow State",
+                      }}
+                      inputStyle="bg-white border-none"
+                      infiniteScroll={{
+                        loading: stateMoreLoading,
+                        hasMore: stateHasMore,
+                        next: () => {
+                          setStateMoreLoading(true);
+                          getStateList({
+                            refresh: false,
+                            search: item.stateActive?.name ?? "",
+                          });
+                        },
+                        onSearch(e) {
+                          ResetState();
+                          getStateList({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetState();
+                        getStateList({
+                          refresh: true,
+                          search: item.stateActive?.name ?? "",
+                        });
+                      }}
+                      loading={stateLoading}
+                      modalStyle="mt-2"
+                      value={{
+                        valueData: item.stateActive?._id ?? "",
+                        valueInput: item.stateActive?.name ?? "",
+                      }}
+                      onChange={(e) => {
+                        item.stateActive.name = e;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onSelected={(e) => {
+                        item.stateActive._id = e.value;
+                        item.stateActive.name = e.name;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onReset={() => {
+                        item.stateActive._id = "";
+                        item.stateActive.name = "";
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      list={stateList}
+                      type="text"
+                      className={`text-left text-[1em]`}
+                    />
+                  </td>
+                  <td className="border">
+                    <InputComponent
+                      // modal={{
+                      //   Children: FromWorkflowState,
+                      //   className: "w-[63%] h-[98%]",
+                      //   props: {
+                      //     modal: true,
+                      //     name: item.roleprofile?.name ?? "",
+                      //     Callback: (e: any) => {
+                      //       item.roleprofile._id = e._id;
+                      //       item.roleprofile.name = e.name;
+                      //       const newData = [...states];
+                      //       setState(newData);
+                      //     },
+                      //   },
+                      //   title: "Form Role",
+                      // }}
+                      inputStyle="bg-white border-none"
+                      infiniteScroll={{
+                        loading: actionMoreLoading,
+                        hasMore: actionHasMore,
+                        next: () => {
+                          setActionMoreLoading(true);
+                          getActionList({
+                            refresh: false,
+                            search: item.action?.name ?? "",
+                          });
+                        },
+                        onSearch(e) {
+                          ResetAction();
+                          getActionList({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetAction();
+                        getActionList({
+                          refresh: true,
+                          search: item.action?.name ?? "",
+                        });
+                      }}
+                      loading={actionLoading}
+                      modalStyle="mt-2"
+                      value={{
+                        valueData: item.action?._id ?? "",
+                        valueInput: item.action?.name ?? "",
+                      }}
+                      onChange={(e) => {
+                        item.action.name = e;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onSelected={(e) => {
+                        item.action._id = e.value;
+                        item.action.name = e.name;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onReset={() => {
+                        item.action._id = "";
+                        item.action.name = "";
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      list={actionList}
+                      type="text"
+                      className={`text-left text-[1em]`}
+                    />
+                  </td>
+                  <td className="border">
+                    <InputComponent
+                      modal={{
+                        Children: FromWorkflowState,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.nextState?.name ?? "",
+                          Callback: (e: any) => {
+                            item.nextState._id = e._id;
+                            item.nextState.name = e.name;
+                            const newData = [...transitions];
+                            setTransition(newData);
+                          },
+                        },
+                        title: "Form Workflow State",
+                      }}
+                      inputStyle="bg-white border-none"
+                      infiniteScroll={{
+                        loading: stateMoreLoading,
+                        hasMore: stateHasMore,
+                        next: () => {
+                          setStateMoreLoading(true);
+                          getStateList({
+                            refresh: false,
+                            search: item.nextState?.name ?? "",
+                          });
+                        },
+                        onSearch(e) {
+                          ResetState();
+                          getStateList({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetState();
+                        getStateList({
+                          refresh: true,
+                          search: item.nextState?.name ?? "",
+                        });
+                      }}
+                      loading={stateLoading}
+                      modalStyle="mt-2"
+                      value={{
+                        valueData: item.nextState?._id ?? "",
+                        valueInput: item.nextState?.name ?? "",
+                      }}
+                      onChange={(e) => {
+                        item.nextState.name = e;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onSelected={(e) => {
+                        item.nextState._id = e.value;
+                        item.nextState.name = e.name;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onReset={() => {
+                        item.nextState._id = "";
+                        item.nextState.name = "";
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      list={stateList}
+                      type="text"
+                      className={`text-left text-[1em]`}
+                    />
+                  </td>
+                  <td className="border">
+                    <InputComponent
+                      // modal={{
+                      //   Children: FromWorkflowState,
+                      //   className: "w-[63%] h-[98%]",
+                      //   props: {
+                      //     modal: true,
+                      //     name: item.roleprofile?.name ?? "",
+                      //     Callback: (e: any) => {
+                      //       item.roleprofile._id = e._id;
+                      //       item.roleprofile.name = e.name;
+                      //       const newData = [...states];
+                      //       setState(newData);
+                      //     },
+                      //   },
+                      //   title: "Form Role",
+                      // }}
+                      inputStyle="bg-white border-none"
+                      infiniteScroll={{
+                        loading: roleMoreLoading,
+                        hasMore: roleHasMore,
+                        next: () => {
+                          setRoleMoreLoading(true);
+                          getRolelList({
+                            refresh: false,
+                            search: item.roleprofile?.name ?? "",
+                          });
+                        },
+                        onSearch(e) {
+                          ResetRole();
+                          getRolelList({ refresh: true, search: e });
+                        },
+                      }}
+                      onCLick={() => {
+                        ResetRole();
+                        getRolelList({
+                          refresh: true,
+                          search: item.roleprofile?.name ?? "",
+                        });
+                      }}
+                      loading={roleLoading}
+                      modalStyle="mt-2"
+                      value={{
+                        valueData: item.roleprofile?._id ?? "",
+                        valueInput: item.roleprofile?.name ?? "",
+                      }}
+                      onChange={(e) => {
+                        item.roleprofile.name = e;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onSelected={(e) => {
+                        item.roleprofile._id = e.value;
+                        item.roleprofile.name = e.name;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      onReset={() => {
+                        item.roleprofile._id = "";
+                        item.roleprofile.name = "";
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                      list={roleList}
+                      type="text"
+                      className={`text-left text-[1em]`}
+                    />
+                  </td>
+                  <td className="border">
+                    <input
+                      type="checkbox"
+                      name="sa"
+                      value={item.selfApproval}
+                      checked={item.selfApproval}
+                      onChange={(e) => {
+                        item.selfApproval = e.target.checked;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+      <button
+        onClick={() => {
+          const newData = [...transitions];
+          setTransition(newData);
+        }}
+        className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+      >
+        Delete
+      </button>
+      <button
+        onClick={() => {
+          transitions.push({
+            _id: "",
+            workflow: {
+              _id: "",
+              name: "",
+            },
+            stateActive: {
+              _id: "",
+              name: "",
+            },
+            action: {
+              _id: "",
+              name: "",
+            },
+            nextState: {
+              _id: "",
+              name: "",
+            },
+            roleprofile: {
+              _id: "",
+              name: "",
+            },
+            selfApproval: false,
+          });
+
+          const newData = [...transitions];
+          setTransition(newData);
         }}
         className="text-[0.9em] bg-[#f4f5f7]  opacity-80 hover:opacity-100 duration-100 rounded-md py-[2px] px-2"
       >
