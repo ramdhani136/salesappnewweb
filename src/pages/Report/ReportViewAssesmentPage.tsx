@@ -322,7 +322,7 @@ const GradingComponent: React.FC<IIndicators> = ({
               <tr
                 key={index}
                 className={`border-b ${
-                  getResult(item.bottom, item.top) && "bg-green-100"
+                  getResult(item.bottom, item.top) && "bg-yellow-50"
                 }`}
               >
                 <td className="text-center">{index + 1}</td>
@@ -591,7 +591,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                     </React.Fragment>
                   );
                 })}
-                <tr className="bg-green-100">
+                <tr className="bg-yellow-50">
                   <td className="text-center "></td>
                   <td
                     className={`flex items-center ${
