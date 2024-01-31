@@ -25,7 +25,9 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Customer"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Customer"
+    } - Sales App Ekatunggal`,
     description: "Halaman form Customer Sales web system",
   };
 
@@ -217,6 +219,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
           ? "Canceled"
           : "Closed"
       );
+      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -358,7 +361,6 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     if (id && !modal) {
       getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
@@ -373,7 +375,6 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
 
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
-
     try {
       if (lat.valueData) {
         if (!lng.valueData) {
@@ -395,26 +396,22 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
 
       if (name.valueData) {
         inData.append("name", name.valueData);
-      } else {
-        throw new Error("Nama wajib diisi!");
-      }
+      } 
+
       inData.append("type", type);
       if (branch.valueData) {
         inData.append("branch", branch.valueData);
-      } else {
-        throw new Error("Branch wajib diisi!");
-      }
+      } 
+
       if (group.valueData) {
         inData.append("customerGroup", group.valueData);
-      } else {
-        throw new Error("Group wajib diisi!");
-      }
+      } 
+
       inData.append("erpId", erpId.valueData);
       inData.append("address", address);
+      
       if (lat.valueData) {
         inData.append("lat", lat.valueData);
-      } else {
-        inData.append("unsetLocation", "true");
       }
 
       if (lng.valueData) {
@@ -561,7 +558,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
-                {!isChangeData && id && workflow.length > 0 && (
+              {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
                     list={workflow}
@@ -587,7 +584,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                    //  disabled={
+                      //  disabled={
                       //  id != null ? (status !== "Draft" ? true : false) : false
                       //}
                       onReset={() => {
