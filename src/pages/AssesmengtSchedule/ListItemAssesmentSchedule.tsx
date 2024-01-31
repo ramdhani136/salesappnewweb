@@ -1,6 +1,6 @@
 import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import HashLoader from "react-spinners/HashLoader";
 import {
@@ -147,11 +147,18 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            customerId: item.customer._id,
+            customer:
+              item.closing?.result?._id && item.schedule.status ? (
+                <Link to={`/report/assesment/${item.closing?.result?._id}`}>
+                  <b className="font-medium">{item.customer.name}</b>
+                </Link>
+              ) : (
+                <b className="font-medium">{item.customer.name}</b>
+              ),
             score: item.closing?.result?.score,
             grade: item.closing?.result?.grade,
             rec: item.closing?.result?.notes,
-            customer: <b className="font-medium">{item.customer.name}</b>,
+            // customer: <b className="font-medium">{item.customer.name}</b>,
             result: <h4>{item?.closing?.result?.name ?? ""}</h4>,
             closingBy: <h4>{item?.closing?.user?.name ?? ""}</h4>,
             group: <h4>{item.customerGroup.name}</h4>,
