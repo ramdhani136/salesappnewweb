@@ -1,9 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  IconButton,
-  InfoDateComponent,
-} from "../../components/atoms";
+import { Link, useNavigate } from "react-router-dom";
+import { IconButton, InfoDateComponent } from "../../components/atoms";
 import { LocalStorageType, Meta } from "../../utils";
 import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
@@ -78,7 +75,11 @@ export const ReportAssesmentPage: React.FC = (): any => {
           return {
             id: item._id,
             checked: false,
-            customer: item.customer.name,
+            customer: (
+              <Link to={`/report/assesment/${item._id}`}>
+                <b className="font-medium">{item.customer.name}</b>
+              </Link>
+            ),
             schedule: item.schedule.name,
             score: item.score,
             grade: item.grade ?? "",

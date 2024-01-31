@@ -53,6 +53,7 @@ import { AssesmentTemplatePage } from "./AssesmentTemplate/AssesmentTemplatePage
 import FormAssesmentTemplatePage from "./AssesmentTemplate/FormAssesmentTemplatePage";
 import { AssesmentQuestionPage } from "./AssesmentQuestion/AssesmentQuestionPage";
 import FormAssesmentQuestionPage from "./AssesmentQuestion/FormAssesmentQuestionPage";
+import ReportViewAssesmentPage from "./Report/ReportViewAssesmentPage";
 
 
 export {
@@ -110,5 +111,6 @@ export {
   FormAssesmentPage,
   ReportAssesmentPage,
   AssesmentTemplatePage,
-  FormAssesmentTemplatePage
+  FormAssesmentTemplatePage,
+  ReportViewAssesmentPage
 };
