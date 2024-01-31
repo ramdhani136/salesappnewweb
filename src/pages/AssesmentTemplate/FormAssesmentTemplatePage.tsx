@@ -578,7 +578,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
   setData,
   status,
 }) => {
-  // branch
+  // question
   const [questionList, setQuestionList] = useState<IListInput[]>([]);
   const [questionPage, setQuestionPage] = useState<Number>(1);
   const [questionLoading, setQuestionLoading] = useState<boolean>(true);
