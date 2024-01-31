@@ -463,7 +463,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
             <th className="text-center">No</th>
             <th className="text-center">Question</th>
             <th className="text-center">Weight</th>
-            <th className="text-center h-12"></th>
+            <th className="text-center h-12 ">Point</th>
           </tr>
         </thead>
         <tbody>
@@ -474,7 +474,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                   <td className="text-center h-7">
                     <h4 className="mt-3">{index + 1}</h4>
                   </td>
-                  <td className="w-[90%]">
+                  <td className="w-[80%]">
                     <InputComponent
                       modal={{
                         Children: FormAssesmentQuestionPage,
@@ -545,7 +545,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                   </td>
                   <td className="">
                     <input
-                      className="p-1 text-[0.95em] text-center bg-gray-50 border border-[#ececec]  rounded-md ml-1 mt-4 h-10"
+                      className="w-[100px] p-1 text-[0.95em] text-center bg-gray-50 border border-[#ececec]  rounded-md ml-1 mt-4 h-10"
                       type="number"
                       value={item.weight ?? 0}
                       disabled
@@ -557,7 +557,7 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                   return (
                     <React.Fragment key={idOption}>
                       <tr>
-                        <td className="text-center h-5  "></td>
+                        <td className="text-center h-5   "></td>
                         <td className="flex">
                           <input
                             className="ml-2"
@@ -575,15 +575,18 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                             disabled
                           />
                         </td>
-                        <td className="text-center">
+                        <td className="text-center w-[100px]">
                           <input
-                            className="p-1 text-[0.95em] text-center disabled:bg-white"
+                            className="p-1 text-[0.95em] text-center disabled:bg-white w-[100px] "
                             type="number"
                             value={option.weight ?? 0}
                             disabled
                           />
                         </td>
-                        <td className="text-center"></td>
+                        <td className="text-center ">
+                          {getChecked(item.questionId._id, option.name) &&
+                            `${option.weight}%`}
+                        </td>
                       </tr>
                     </React.Fragment>
                   );
@@ -600,14 +603,16 @@ const IndicatorComponent: React.FC<IIndicators> = ({
                     <h4 className="font-semibold py-1">Score : </h4>
                   </td>
                   <td className="text-center font-semibold">
-                    <input
+                    {/* <input
                       className="p-1 text-[0.95em] text-center disabled:bg-green-100"
                       type="number"
                       value={getScore(item.questionId._id)}
                       disabled
-                    />
+                    /> */}
                   </td>
-                  <td className="text-center font-semibold"></td>
+                  <td className="text-center font-semibold">
+                    {getScore(item.questionId._id)}
+                  </td>
                 </tr>
               </React.Fragment>
             );
