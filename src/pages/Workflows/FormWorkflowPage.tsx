@@ -19,6 +19,7 @@ import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
+import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
 
 const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
@@ -586,21 +587,21 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
                     <InputComponent
-                      // modal={{
-                      //   Children: FromWorkflowState,
-                      //   className: "w-[63%] h-[98%]",
-                      //   props: {
-                      //     modal: true,
-                      //     name: item.questionId?.name ?? "",
-                      //     Callback: (e: any) => {
-                      //       // item.questionId._id = e._id;
-                      //       // item.questionId.name = e.name;
-                      //       // const newData = [...data];
-                      //       // setData(newData);
-                      //     },
-                      //   },
-                      //   title: "Form Question",
-                      // }}
+                      modal={{
+                        Children: FromWorkflowState,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.state?.name ?? "",
+                          Callback: (e: any) => {
+                            item.state._id = e._id;
+                            item.state.name = e.name;
+                            const newData = [...states];
+                            setState(newData);
+                          },
+                        },
+                        title: "Form Workflow State",
+                      }}
                       inputStyle="bg-white border-none"
                       infiniteScroll={{
                         loading: stateMoreLoading,
@@ -691,15 +692,15 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
                       //   className: "w-[63%] h-[98%]",
                       //   props: {
                       //     modal: true,
-                      //     name: item.questionId?.name ?? "",
+                      //     name: item.roleprofile?.name ?? "",
                       //     Callback: (e: any) => {
-                      //       // item.questionId._id = e._id;
-                      //       // item.questionId.name = e.name;
-                      //       // const newData = [...data];
-                      //       // setData(newData);
+                      //       item.roleprofile._id = e._id;
+                      //       item.roleprofile.name = e.name;
+                      //       const newData = [...states];
+                      //       setState(newData);
                       //     },
                       //   },
-                      //   title: "Form Question",
+                      //   title: "Form Role",
                       // }}
                       inputStyle="bg-white border-none"
                       infiniteScroll={{
