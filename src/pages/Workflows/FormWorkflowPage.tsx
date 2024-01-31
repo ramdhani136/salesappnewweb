@@ -346,9 +346,12 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                      modalStyle="mt-2"
+                      modalStyle="mt-3"
                       onSelected={(e) => {
                         setDoc({ valueData: e.value, valueInput: e.name });
+                      }}
+                      onReset={() => {
+                        setDoc({ valueData: "", valueInput: "" });
                       }}
                     />
 
