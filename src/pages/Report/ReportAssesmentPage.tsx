@@ -53,6 +53,7 @@ export const ReportAssesmentPage: React.FC = (): any => {
         className: "w-auto",
       },
       { header: "Score", accessor: "score", className: "w-auto text-center" },
+      { header: "Status", accessor: "status", className: "w-auto text-center" },
       { header: "Grade", accessor: "grade", className: "w-auto" },
       { header: "Recomendation", accessor: "rec", className: "w-auto" },
       { header: "Closing By", accessor: "closingBy", className: "w-auto" },
@@ -80,6 +81,7 @@ export const ReportAssesmentPage: React.FC = (): any => {
                 <b className="font-medium">{item.customer.name}</b>
               </Link>
             ),
+            status: item.status==="1" ? "Active" : "Expired",
             schedule: item.schedule.name,
             score: item.score,
             grade: item.grade ?? "",
@@ -254,7 +256,7 @@ export const ReportAssesmentPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[120%]"
+              width="w-[140%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}

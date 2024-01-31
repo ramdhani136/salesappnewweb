@@ -12,10 +12,8 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
-import Swal from "sweetalert2";
 import FormAssesmentQuestionPage from "../AssesmentQuestion/FormAssesmentQuestionPage";
 
 const ReportViewAssesmentPage: React.FC = () => {
@@ -41,7 +39,7 @@ const ReportViewAssesmentPage: React.FC = () => {
   });
 
   const [status, setStatus] = useState<String>("1");
-  const [isActive, setIsActive] = useState<Boolean>(false);
+  const [isActive, setIsActive] = useState<String>("1");
   const [indicators, setIndicators] = useState<any[]>([]);
   const [grades, setGrades] = useState<any[]>([]);
   const [result, setResult] = useState<any[]>([]);
@@ -150,8 +148,8 @@ const ReportViewAssesmentPage: React.FC = () => {
                 <div className="text-md">
                   <ButtonStatusComponent
                     // className="text-[0.7em]"
-                    status={isActive ? "1" : "0"}
-                    name={isActive ? "Active" : "Expired"}
+                    status={isActive === "1" ? "1" : "0"}
+                    name={isActive === "1" ? "Active" : "Expired"}
                   />
                 </div>
               </div>
@@ -186,9 +184,7 @@ const ReportViewAssesmentPage: React.FC = () => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                      disabled
                     />
 
                     <InputComponent
@@ -230,7 +226,7 @@ const ReportViewAssesmentPage: React.FC = () => {
                       label="Status"
                       value={{
                         valueData: isActive,
-                        valueInput: isActive ? "Active" : "Expired",
+                        valueInput: isActive === "1" ? "Active" : "Expired",
                       }}
                       className="h-[38px]  mb-3"
                       type="text"
