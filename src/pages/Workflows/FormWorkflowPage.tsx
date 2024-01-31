@@ -8,6 +8,7 @@ import {
   InputComponent,
   Select,
   TimeLineVertical,
+  ToggleBodyComponent,
 } from "../../components/atoms";
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
@@ -392,7 +393,11 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                   </div>
                 </div>
               </div>
-
+              <ToggleBodyComponent
+                  name="States"
+                  className="mt-5 mb-5"
+                  child={<></>}
+                />
               <TimeLineVertical data={history} />
             </div>
           </>
