@@ -63,6 +63,8 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     status: status,
   });
 
+  const [states, setState] = useState<any[]>([]);
+
   const [createdAt, setCreatedAt] = useState<IValue>({
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
@@ -398,7 +400,13 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                 <ToggleBodyComponent
                   name="States"
                   className="mt-5 mb-5"
-                  child={<StateComponent workflow={id} />}
+                  child={
+                    <StateComponent
+                      workflow={id}
+                      setState={setState}
+                      states={states}
+                    />
+                  }
                 />
               )}
               <TimeLineVertical data={history} />
@@ -412,10 +420,11 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   );
 };
 
-const StateComponent: React.FC<{ workflow: String | undefined }> = ({
-  workflow,
-}) => {
-  const [states, setState] = useState<any[]>([]);
+const StateComponent: React.FC<{
+  workflow: String | undefined;
+  states: any[];
+  setState: React.Dispatch<React.SetStateAction<any[]>>;
+}> = ({ workflow, states, setState }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -535,8 +544,6 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
       });
 
       setState(result.data);
-
-      console.log(result);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -557,8 +564,6 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
   useEffect(() => {
     getState();
   }, []);
-
-  console.log(states);
   return (
     <>
       {loading ? (
@@ -625,7 +630,7 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
                           search: item.state?.name ?? "",
                         });
                       }}
-                      loading={stateMoreLoading}
+                      loading={stateLoading}
                       modalStyle="mt-2"
                       value={{
                         valueData: item.state?._id ?? "",
@@ -656,8 +661,8 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
                   <td className="border">
                     <InputComponent
                       value={{
-                        valueData: item.status,
-                        valueInput: item.status.toString(),
+                        valueData: item.status ?? 0,
+                        valueInput: item.status?.toString() ?? 0,
                       }}
                       list={[
                         { name: "0", value: 0 },
@@ -725,7 +730,7 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
                           search: item.roleprofile?.name ?? "",
                         });
                       }}
-                      loading={roleMoreLoading}
+                      loading={roleLoading}
                       modalStyle="mt-2"
                       value={{
                         valueData: item.roleprofile?._id ?? "",
@@ -775,7 +780,31 @@ const StateComponent: React.FC<{ workflow: String | undefined }> = ({
       <button className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1">
         Delete
       </button>
-      <button className="text-[0.9em] bg-[#f4f5f7]  opacity-80 hover:opacity-100 duration-100 rounded-md py-[2px] px-2">
+      <button
+        onClick={() => {
+          states.push({
+            _id: "",
+            workflow: {
+              _id: "",
+              name: "",
+            },
+            state: {
+              _id: "",
+              name: "",
+            },
+            roleprofile: {
+              _id: "",
+              name: "",
+            },
+            status: "",
+            selfApproval: false,
+          });
+
+          const newData = [...states];
+          setState(newData);
+        }}
+        className="text-[0.9em] bg-[#f4f5f7]  opacity-80 hover:opacity-100 duration-100 rounded-md py-[2px] px-2"
+      >
         Add Row
       </button>
     </>
