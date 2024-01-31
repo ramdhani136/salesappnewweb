@@ -58,6 +58,7 @@ import {
   AssesmentQuestionPage,
   FormAssesmentQuestionPage,
   ReportViewAssesmentPage,
+  FormWorkflowPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -131,6 +132,14 @@ const App: React.FC = () => {
           <Route
             path="/workflow"
             element={<LayoutComponent Child={WorkflowPage} />}
+          />
+          <Route
+            path="/workflow/:id"
+            element={<LayoutComponent Child={FormWorkflowPage} />}
+          />
+          <Route
+            path="/workflow/new"
+            element={<LayoutComponent Child={FormWorkflowPage} />}
           />
           <Route
             path="/packingid"

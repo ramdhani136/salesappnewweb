@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonStatusComponent,
   IconButton,
@@ -74,12 +74,9 @@ export const WorkflowPage: React.FC = (): any => {
             id: item._id,
             doc: item.doc,
             name: (
-              <b
-                onClick={() => navigate(`/workflow/${item._id}`)}
-                className="font-medium"
-              >
-                <a href={`/workflow/${item._id}`}>{item.name}</a>
-              </b>
+              <Link to={`/workflow/${item._id}`}>
+                <b className="font-medium">{item.name}</b>
+              </Link>
             ),
             status: (
               <ButtonStatusComponent
@@ -165,7 +162,7 @@ export const WorkflowPage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Schedule"), {
+  useKey("n", () => alert("Create new Workflow"), {
     ctrl: true,
     alt: true,
   });
@@ -186,7 +183,7 @@ export const WorkflowPage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.SCHEDULE).DELETE(item.doc);
+            await GetDataServer(DataAPI.WORKFLOW).DELETE(item.doc);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -226,7 +223,7 @@ export const WorkflowPage: React.FC = (): any => {
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     selectedData.length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/schedule/new")}
+                  callback={() => navigate("/workflow/new")}
                 />
 
                 <IconButton
@@ -263,7 +260,7 @@ export const WorkflowPage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERSCHEDULE}
+              localStorage={LocalStorageType.FILTERWORKFLOW}
               onRefresh={onRefresh}
             />
           </>
