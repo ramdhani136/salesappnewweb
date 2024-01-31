@@ -398,6 +398,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
               </div>
               {id && (
                 <ToggleBodyComponent
+                  toggle={false}
                   name="States"
                   className="mt-5 mb-5"
                   child={
@@ -777,7 +778,13 @@ const StateComponent: React.FC<{
           </tbody>
         </table>
       )}
-      <button className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1">
+      <button
+        onClick={() => {
+          const newData = [...states];
+          setState(newData);
+        }}
+        className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+      >
         Delete
       </button>
       <button
