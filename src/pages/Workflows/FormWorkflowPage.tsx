@@ -278,7 +278,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                   onClick={() => navigate("/workflow")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Question" : data.name}
+                  {!id ? "New Workflow" : data.name}
                 </h4>
                 <div className="text-md">
                   <ButtonStatusComponent
@@ -1396,5 +1396,6 @@ const TransitionComponent: React.FC<{
     </>
   );
 };
+
 
 export default FormWorkflowPage;
