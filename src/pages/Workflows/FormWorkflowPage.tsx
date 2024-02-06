@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
+import FormWorkflowAction from "../WorkflowAction/FormWorkflowAction";
 
 const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
@@ -1129,21 +1130,21 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
-                      // modal={{
-                      //   Children: FromWorkflowState,
-                      //   className: "w-[63%] h-[98%]",
-                      //   props: {
-                      //     modal: true,
-                      //     name: item.roleprofile?.name ?? "",
-                      //     Callback: (e: any) => {
-                      //       item.roleprofile._id = e._id;
-                      //       item.roleprofile.name = e.name;
-                      //       const newData = [...states];
-                      //       setState(newData);
-                      //     },
-                      //   },
-                      //   title: "Form Role",
-                      // }}
+                      modal={{
+                        Children: FormWorkflowAction,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.action?.name ?? "",
+                          Callback: (e: any) => {
+                            // item.stateActive._id = e._id;
+                            // item.stateActive.name = e.name;
+                            // const newData = [...transitions];
+                            // setTransition(newData);
+                          },
+                        },
+                        title: "Form Action",
+                      }}
                       inputStyle="bg-white border-none"
                       infiniteScroll={{
                         loading: actionMoreLoading,

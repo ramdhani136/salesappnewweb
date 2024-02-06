@@ -39,7 +39,7 @@ const FormWorkflowAction: React.FC = () => {
     valueInput: "",
   });
 
-  const [status, setStatus] = useState<string>("0");
+  const [status, setStatus] = useState<string>("1");
 
   const statusType: any[] = [
     { title: "Disabled", value: "0" },
