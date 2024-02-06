@@ -39,8 +39,8 @@ export const RoleProfilePage: React.FC = (): any => {
   const [selectedData, setSelectedData] = useState<IDataTables[]>([]);
 
   const metaData = {
-    title: "Workflow State -  Sales App Ekatunggal",
-    description: "Halaman workflow State - sales web system",
+    title: "Role Profile -  Sales App Ekatunggal",
+    description: "Halaman Role Profile - sales web system",
   };
 
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const RoleProfilePage: React.FC = (): any => {
 
   const getData = async (): Promise<any> => {
     try {
-      const result: any = await GetDataServer(DataAPI.WORKFLOWSTATE).FIND({
+      const result: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
         limit: limit,
         page: page,
         filters: filter,
@@ -69,14 +69,14 @@ export const RoleProfilePage: React.FC = (): any => {
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
-            name: <Link to={`/workflowstate/${item._id}`}>{item.name}</Link>,
+            name: <Link to={`/roleprofile/${item._id}`}>{item.name}</Link>,
             status: (
               <ButtonStatusComponent
                 status={item.status}
                 name={item.status==="0"?"Disabled":"Enabled"}
               />
             ),
-            user: <div>{item.user.name}</div>,
+            user: <div>{item.createdBy.name}</div>,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
@@ -152,7 +152,7 @@ export const RoleProfilePage: React.FC = (): any => {
     onRefresh();
   }, [filter, search]);
 
-  useKey("n", () => alert("Create new Workflow State"), {
+  useKey("n", () => alert("Create new Role Profile"), {
     ctrl: true,
     alt: true,
   });
@@ -173,7 +173,7 @@ export const RoleProfilePage: React.FC = (): any => {
         try {
           setActiveProgress(true);
           for (const item of data) {
-            await GetDataServer(DataAPI.WORKFLOWSTATE).DELETE(item.id);
+            await GetDataServer(DataAPI.ROLEPROFILE).DELETE(item.id);
             const index = data.indexOf(item);
             let percent = (100 / data.length) * (index + 1);
             setCurrentIndex(index);
@@ -205,7 +205,7 @@ export const RoleProfilePage: React.FC = (): any => {
           <>
             <div className=" w-full h-16 flex items-center justify-between">
               <h1 className="font-bold ml-5 text-[1.1em] mr-2 text-gray-700 ">
-                Workflow State List
+                Role Profile List
               </h1>
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
@@ -214,7 +214,7 @@ export const RoleProfilePage: React.FC = (): any => {
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     selectedData.length > 0 && "hidden"
                   } `}
-                  callback={() => navigate("/workflowstate/new")}
+                  callback={() => navigate("/roleprofile/new")}
                 />
 
                 <IconButton
@@ -252,7 +252,7 @@ export const RoleProfilePage: React.FC = (): any => {
               getAllData={getAllData}
               filter={filter}
               setFilter={setFilter}
-              localStorage={LocalStorageType.FILTERWORKFLOWSTATE}
+              localStorage={LocalStorageType.FILTERROLEPROFILE}
               onRefresh={onRefresh}
             />
           </>
