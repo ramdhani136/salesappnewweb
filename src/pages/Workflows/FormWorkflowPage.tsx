@@ -588,14 +588,14 @@ const StateComponent: React.FC<{
         <table className="w-full border mb-3">
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
-              <td className="border border-r-0 h-10 w-[40px] ">
+              <td className="border border-r-0 h-10 w-[20px] ">
                 <input type="checkbox" />
               </td>
-              <td className="border h-10 w-[40px] border-l-0 ">No</td>
-              <td className="border w-[30%]">State</td>
-              <td className="border w-[30%">Doc Status</td>
-              <td className="border w-[30%]">Only Allow Edit For</td>
-              <td className="border w-[80px]">Self Approval</td>
+              <td className="border h-10 w-[30px] border-l-0 ">No</td>
+              <td className="border w-[30%] ">State</td>
+              <td className="border w-[25%]">Doc Status</td>
+              <td className="border w-[25%]">Only Allow Edit For</td>
+              <td className="border w-[20px]">Self Approval</td>
             </tr>
           </thead>
           <tbody>
@@ -1396,6 +1396,5 @@ const TransitionComponent: React.FC<{
     </>
   );
 };
-
 
 export default FormWorkflowPage;
