@@ -100,15 +100,16 @@ export const RoleProfilePage: React.FC = (): any => {
         const genListFilter = result.filters.map((i: any) => {
           let endpoint: DataAPI | undefined;
           switch (i.alias) {
-            case "User":
+            case "CreatedBy":
               endpoint = DataAPI.USERS;
               break;
-
+            case "WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
             default:
               endpoint = undefined;
               break;
           }
-
           if (endpoint) {
             i["infiniteData"] = endpoint;
           }
@@ -210,7 +211,7 @@ export const RoleProfilePage: React.FC = (): any => {
               <div className="flex-1  flex items-center justify-end mr-4">
                 <IconButton
                   Icon={AddIcon}
-                  name="Add State"
+                  name="Add Role Profile"
                   className={`opacity-80 hover:opacity-100 duration-100 ${
                     selectedData.length > 0 && "hidden"
                   } `}
