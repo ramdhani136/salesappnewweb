@@ -23,8 +23,8 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Workflow"} - Sales App Ekatunggal`,
-    description: "Halaman form Workflow - Sales web system",
+    title: `${id ? data.name : "New Role Profile"} - Sales App Ekatunggal`,
+    description: "Halaman form role - Sales web system",
   };
 
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
 
   const getData = async (): Promise<void> => {
     try {
-      const result = await GetDataServer(DataAPI.WORKFLOWSTATE).FINDONE(
+      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(
         `${id}`
       );
 
@@ -77,8 +77,8 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
         valueInput: result.data.name,
       });
       setUser({
-        valueData: result.data.user._id,
-        valueInput: result.data.user.name,
+        valueData: result.data.createdBy._id,
+        valueInput: result.data.createdBy.name,
       });
       setCreatedAt({
         valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
@@ -101,7 +101,7 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
         text: "Data not found!",
       });
 
-      navigate("/workflowstate");
+      navigate("/roleprofile");
     }
   };
 
@@ -110,8 +110,8 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
       const progress = async (): Promise<void> => {
         setLoading(true);
         try {
-          await GetDataServer(DataAPI.WORKFLOWSTATE).DELETE(`${id}`);
-          navigate("/workflowstate");
+          await GetDataServer(DataAPI.ROLEPROFILE).DELETE(`${id}`);
+          navigate("/roleprofile");
         } catch (error: any) {
           setLoading(false);
           Swal.fire(
@@ -145,8 +145,8 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
 
       let Action =
         id && !modal
-          ? GetDataServer(DataAPI.WORKFLOWSTATE).UPDATE({ id: id, data: data })
-          : GetDataServer(DataAPI.WORKFLOWSTATE).CREATE(data);
+          ? GetDataServer(DataAPI.ROLEPROFILE).UPDATE({ id: id, data: data })
+          : GetDataServer(DataAPI.ROLEPROFILE).CREATE(data);
 
       const result = await Action;
 
@@ -165,7 +165,7 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
           })
         );
       } else {
-        navigate(`/workflowstate/${result.data.data._id}`);
+        navigate(`/roleprofile/${result.data.data._id}`);
         navigate(0);
       }
     } catch (error: any) {
@@ -230,14 +230,14 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
             >
               <div className="flex  items-center">
                 <h4
-                  onClick={() => navigate("/workflowstate")}
+                  onClick={() => navigate("/roleprofile")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
                   {!id ? "New State" : data.name}
                 </h4>
                 <div className="text-md">
                   {modal ? (
-                    "Form Workflow State"
+                    "Form Role Profile"
                   ) : (
                     <ButtonStatusComponent
                       // className="text-[0.7em]"
