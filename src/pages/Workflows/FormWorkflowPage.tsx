@@ -1137,10 +1137,10 @@ const TransitionComponent: React.FC<{
                           modal: true,
                           name: item.action?.name ?? "",
                           Callback: (e: any) => {
-                            // item.stateActive._id = e._id;
-                            // item.stateActive.name = e.name;
-                            // const newData = [...transitions];
-                            // setTransition(newData);
+                            item.action._id = e._id;
+                            item.action.name = e.name;
+                            const newData = [...transitions];
+                            setTransition(newData);
                           },
                         },
                         title: "Form Action",

@@ -15,8 +15,11 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
+import { modalSet } from "../../redux/slices/ModalSlice";
+import { useDispatch } from "react-redux";
 
-const FormWorkflowAction: React.FC = () => {
+const FormWorkflowAction: React.FC<any> = ({ props }) => {
+  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -55,6 +58,8 @@ const FormWorkflowAction: React.FC = () => {
     valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
+
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -139,15 +144,27 @@ const FormWorkflowAction: React.FC = () => {
         data.nextState = nextState;
       }
 
-      let Action = id
-        ? GetDataServer(DataAPI.WORKFLOWACTION).UPDATE({ id: id, data: data })
-        : GetDataServer(DataAPI.WORKFLOWACTION).CREATE(data);
+      let Action =
+        id && !modal
+          ? GetDataServer(DataAPI.WORKFLOWACTION).UPDATE({ id: id, data: data })
+          : GetDataServer(DataAPI.WORKFLOWACTION).CREATE(data);
 
       const result = await Action;
 
-      if (id) {
+      if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
+      } else if (modal) {
+        props.Callback(result.data?.data ?? {});
+        dispatch(
+          modalSet({
+            active: false,
+            Children: null,
+            title: "",
+            props: {},
+            className: "",
+          })
+        );
       } else {
         navigate(`/workflowaction/${result.data.data._id}`);
         navigate(0);
@@ -169,12 +186,15 @@ const FormWorkflowAction: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && !modal) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
       setLoading(false);
       setListMoreAction([]);
+    }
+    if (modal) {
+      setName({ valueData: props.name, valueInput: props.name });
     }
   }, []);
 
@@ -216,11 +236,15 @@ const FormWorkflowAction: React.FC = () => {
                   {!id ? "New State" : data.name}
                 </h4>
                 <div className="text-md">
-                  <ButtonStatusComponent
-                    // className="text-[0.7em]"
-                    status={data.status ?? "0"}
-                    name={data.status === "0" ? "Disabled" : "Enabled"}
-                  />
+                  {modal ? (
+                    "Form Workflow State"
+                  ) : (
+                    <ButtonStatusComponent
+                      // className="text-[0.7em]"
+                      status={data.status ?? "0"}
+                      name={data.status === "0" ? "Disabled" : "Enabled"}
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex">
@@ -239,7 +263,7 @@ const FormWorkflowAction: React.FC = () => {
 
                 {isChangeData && (
                   <IconButton
-                    name={id ? "Update" : "Save"}
+                    name={id && !modal ? "Update" : "Save"}
                     callback={() => {
                       AlertModal.confirmation({
                         onConfirm: onSave,
