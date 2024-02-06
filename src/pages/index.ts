@@ -5,7 +5,6 @@ import NotFoundPage from "./NotFoundPage";
 import FormSchedulePage from "./Schedule/FormSchedulePage";
 import ListItemSchedule from "./Schedule/ListItemSchedule";
 import { UsersPage } from "./Users/UsersPage";
-import { RoleProfilePage } from "./Role/RoleProfilePage";
 import { PackingIDPage } from "./PackingID/PackingIDPage";
 import { WorkflowPage } from "./Workflows/WorkflowPage";
 import { CallsheetPage } from "./Callsheet/CallsheetPage";
@@ -55,6 +54,8 @@ import { AssesmentQuestionPage } from "./AssesmentQuestion/AssesmentQuestionPage
 import FormAssesmentQuestionPage from "./AssesmentQuestion/FormAssesmentQuestionPage";
 import ReportViewAssesmentPage from "./Report/ReportViewAssesmentPage";
 import FormWorkflowPage from "./Workflows/FormWorkflowPage";
+import FormRoleProfilePage from "./RoleProfile/FormRoleProfilePage";
+import { RoleProfilePage } from "./RoleProfile/RoleProfilePage";
 
 
 export {
@@ -68,6 +69,7 @@ export {
   ListItemSchedule,
   UsersPage,
   RoleProfilePage,
+  FormRoleProfilePage,
   PackingIDPage,
   WorkflowPage,
   CallsheetPage,

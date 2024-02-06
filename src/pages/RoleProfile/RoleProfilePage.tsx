@@ -16,7 +16,7 @@ import {
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
 
-export const WorkflowStatePage: React.FC = (): any => {
+export const RoleProfilePage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export const WorkflowStatePage: React.FC = (): any => {
 
   const metaData = {
     title: "Workflow State -  Sales App Ekatunggal",
-    description: "Halaman workflow statet - sales web system",
+    description: "Halaman workflow State - sales web system",
   };
 
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export const WorkflowStatePage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Name", accessor: "name" },
-
+      { header: "Status", accessor: "status" },
       { header: "User", accessor: "user" },
       { header: "", accessor: "updatedAt" },
     ],
@@ -70,9 +70,13 @@ export const WorkflowStatePage: React.FC = (): any => {
           return {
             id: item._id,
             name: <Link to={`/workflowstate/${item._id}`}>{item.name}</Link>,
-
+            status: (
+              <ButtonStatusComponent
+                status={item.status}
+                name={item.status==="0"?"Disabled":"Enabled"}
+              />
+            ),
             user: <div>{item.user.name}</div>,
-
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />
