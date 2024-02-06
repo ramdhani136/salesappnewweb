@@ -59,6 +59,7 @@ import {
   FormAssesmentQuestionPage,
   ReportViewAssesmentPage,
   FormWorkflowPage,
+  FormRoleProfilePage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -347,6 +348,18 @@ const App: React.FC = () => {
           <Route
             path="/assesment/question/new"
             element={<LayoutComponent Child={FormAssesmentQuestionPage} />}
+          />
+         <Route
+            path="/roleprofile"
+            element={<LayoutComponent Child={RoleProfilePage} />}
+          />
+          <Route
+            path="/roleprofile/:id"
+            element={<LayoutComponent Child={FormRoleProfilePage} />}
+          />
+          <Route
+            path="/roleprofile/new"
+            element={<LayoutComponent Child={FormRoleProfilePage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />
