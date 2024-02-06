@@ -591,7 +591,7 @@ const StateComponent: React.FC<{
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
               <td className="border border-r-0 h-10 w-[20px] ">
-                <input type="checkbox" />
+                <input type="checkbox" className="accent-slate-600" />
               </td>
               <td className="border h-10 w-[30px] border-l-0 ">No</td>
               <td className="border w-[30%] ">State</td>
@@ -605,7 +605,7 @@ const StateComponent: React.FC<{
               return (
                 <tr key={index} className="text-center text-[0.95em]">
                   <td className=" border border-r-0">
-                    <input type="checkbox" />
+                    <input type="checkbox" className="accent-slate-600" />
                   </td>
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
@@ -778,6 +778,7 @@ const StateComponent: React.FC<{
                   </td>
                   <td className="border">
                     <input
+                      className="accent-slate-600"
                       type="checkbox"
                       value={item.selfApproval}
                       checked={item.selfApproval}
@@ -1043,7 +1044,7 @@ const TransitionComponent: React.FC<{
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
               <td className="border border-r-0 h-10 w-[40px] ">
-                <input type="checkbox" />
+                <input type="checkbox" className="accent-slate-600" />
               </td>
               <td className="border h-10 w-[40px] border-l-0 ">No</td>
               <td className="border w-[20%]">State</td>
@@ -1058,7 +1059,7 @@ const TransitionComponent: React.FC<{
               return (
                 <tr key={index} className="text-center text-[0.95em]">
                   <td className=" border border-r-0">
-                    <input type="checkbox" />
+                    <input type="checkbox" className="accent-slate-600" />
                   </td>
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
@@ -1335,6 +1336,7 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <input
+                      className="accent-slate-600"
                       type="checkbox"
                       name="sa"
                       value={item.selfApproval}

@@ -766,7 +766,7 @@ const RoleContent: React.FC<any> = ({ id }) => {
                 onChange={() => ChangeAction(i._id, i.roleUserId)}
                 checked={i.roleUserId ? true : false}
                 type="checkbox"
-                className="mr-1 h-3 w-3 mt-[1.5px]"
+                className="mr-1 h-3 w-3 mt-[1.5px] accent-slate-600"
               />
               <h4 className="text-md">{i.name}</h4>
             </div>
