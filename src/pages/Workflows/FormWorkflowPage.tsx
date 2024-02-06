@@ -21,6 +21,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
 import FormWorkflowAction from "../WorkflowAction/FormWorkflowAction";
+import FormRoleProfilePage from "../RoleProfile/FormRoleProfilePage";
 
 const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
@@ -709,21 +710,21 @@ const StateComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
-                      // modal={{
-                      //   Children: FromWorkflowState,
-                      //   className: "w-[63%] h-[98%]",
-                      //   props: {
-                      //     modal: true,
-                      //     name: item.roleprofile?.name ?? "",
-                      //     Callback: (e: any) => {
-                      //       item.roleprofile._id = e._id;
-                      //       item.roleprofile.name = e.name;
-                      //       const newData = [...states];
-                      //       setState(newData);
-                      //     },
-                      //   },
-                      //   title: "Form Role",
-                      // }}
+                      modal={{
+                        Children: FormRoleProfilePage,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.roleprofile?.name ?? "",
+                          Callback: (e: any) => {
+                            item.roleprofile._id = e._id;
+                            item.roleprofile.name = e.name;
+                            const newData = [...states];
+                            setState(newData);
+                          },
+                        },
+                        title: "Form Role",
+                      }}
                       inputStyle="bg-white border-none"
                       infiniteScroll={{
                         loading: roleMoreLoading,
@@ -1266,21 +1267,21 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
-                      // modal={{
-                      //   Children: FromWorkflowState,
-                      //   className: "w-[63%] h-[98%]",
-                      //   props: {
-                      //     modal: true,
-                      //     name: item.roleprofile?.name ?? "",
-                      //     Callback: (e: any) => {
-                      //       item.roleprofile._id = e._id;
-                      //       item.roleprofile.name = e.name;
-                      //       const newData = [...states];
-                      //       setState(newData);
-                      //     },
-                      //   },
-                      //   title: "Form Role",
-                      // }}
+                      modal={{
+                        Children: FormRoleProfilePage,
+                        className: "w-[63%] h-[98%]",
+                        props: {
+                          modal: true,
+                          name: item.roleprofile?.name ?? "",
+                          Callback: (e: any) => {
+                            item.roleprofile._id = e._id;
+                            item.roleprofile.name = e.name;
+                            const newData = [...transitions];
+                            setTransition(newData);
+                          },
+                        },
+                        title: "Form Role",
+                      }}
                       inputStyle="bg-white border-none"
                       infiniteScroll={{
                         loading: roleMoreLoading,
