@@ -263,13 +263,20 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     };
     if (
       JSON.stringify(actualData) !== JSON.stringify(prevData) ||
-      changerIsChange
+      changerIsChange ||
+      transitionIsChange
     ) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [status, name.valueData, doc.valueData, changerIsChange]);
+  }, [
+    status,
+    name.valueData,
+    doc.valueData,
+    changerIsChange,
+    transitionIsChange,
+  ]);
   // End
 
   useEffect(() => {
@@ -281,13 +288,29 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
         status: change?.status,
       };
     });
-    console.log(update);
     if (JSON.stringify(update) !== JSON.stringify(prevChanger)) {
       setChangerIsChange(true);
     } else {
       setChangerIsChange(false);
     }
   }, [prevChanger, states]);
+
+  useEffect(() => {
+    const prev = transition.map((change: any) => {
+      return {
+        stateActive: change?.stateActive?._id,
+        action: change?.action?._id,
+        nextState: change?.nextState?._id,
+        roleprofile: change?.roleprofile?._id,
+        selfApproval: change?.selfApproval,
+      };
+    });
+    if (JSON.stringify(prev) !== JSON.stringify(prevTransition)) {
+      setTransitionIsChange(true);
+    } else {
+      setTransitionIsChange(false);
+    }
+  }, [prevTransition, transition]);
 
   return (
     <>
@@ -450,6 +473,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <TransitionComponent
+                        setPrevTransition={setPrevTransition}
                         workflow={id}
                         setTransition={setTransition}
                         transitions={transition}
@@ -924,7 +948,8 @@ const TransitionComponent: React.FC<{
   workflow: String | undefined;
   transitions: any[];
   setTransition: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, transitions, setTransition }) => {
+  setPrevTransition: React.Dispatch<React.SetStateAction<any[]>>;
+}> = ({ workflow, transitions, setTransition, setPrevTransition }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -1105,6 +1130,16 @@ const TransitionComponent: React.FC<{
         return { ...item };
       });
       setTransition(data);
+      const prev = data.map((change: any) => {
+        return {
+          stateActive: change?.stateActive?._id,
+          action: change?.action?._id,
+          nextState: change?.nextState?._id,
+          roleprofile: change?.roleprofile?._id,
+          selfApproval: change?.selfApproval,
+        };
+      });
+      setPrevTransition(prev);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
