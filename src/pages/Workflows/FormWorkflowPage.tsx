@@ -212,7 +212,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
           );
         }
 
-        // await UpdateChanger();
+        await UpdateChanger();
       }
     } catch (error: any) {
       Swal.fire(
@@ -307,10 +307,18 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       const changeData = getChangedData(prevChanger, update);
       // Menghapus
       if (changeData.removed.length > 0) {
+        for (const item of changeData.removed) {
+          console.log(item);
+        }
       }
-      //  Menambahkan
-      if (changeData.added.length > 0) {
-      }
+      // //  Menambahkan
+      // if (changeData.added.length > 0) {
+      //   for (const item of changeData.added) {
+      //     item.workflow = id;
+      //     console.log("Tambah");
+      //     console.log(item);
+      //   }
+      // }
     } catch (error) {}
   };
 
