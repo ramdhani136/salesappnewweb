@@ -604,7 +604,7 @@ const StateComponent: React.FC<{
                   type="checkbox"
                   className="accent-slate-600"
                   onChange={(e) => {
-                    setAllchecked(e.target.checked)
+                    setAllchecked(e.target.checked);
                     const data = states.map((item: any) => {
                       item.checked = e.target.checked;
                       return { ...item };
@@ -635,6 +635,9 @@ const StateComponent: React.FC<{
                       className="accent-slate-600"
                       checked={item.checked}
                       onChange={(e) => {
+                        if (!e.target.checked) {
+                          setAllchecked(false);
+                        }
                         item.checked = e.target.checked;
                         const newData = [...states];
                         setState(newData);
@@ -839,7 +842,7 @@ const StateComponent: React.FC<{
         onClick={() => {
           const data = states.filter((item: any) => !item.checked);
           setState(data);
-          setAllchecked(false)
+          setAllchecked(false);
         }}
         className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
       >
@@ -906,6 +909,8 @@ const TransitionComponent: React.FC<{
   const [actionMoreLoading, setActionMoreLoading] = useState<boolean>(false);
   const [actionHasMore, setActionHasMore] = useState<boolean>(false);
   // End
+
+  const [allChecked, setAllchecked] = useState<boolean>(false);
 
   const getStateList = async (data: {
     search?: string | String;
@@ -1054,7 +1059,11 @@ const TransitionComponent: React.FC<{
         filters: [["workflow", "=", workflow!]],
       });
 
-      setTransition(result.data);
+      const data = result.data.map((item: any) => {
+        item.checked = false;
+        return { ...item };
+      });
+      setTransition(data);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -1085,7 +1094,19 @@ const TransitionComponent: React.FC<{
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
               <td className="border border-r-0 h-12 w-[40px] ">
-                <input type="checkbox" className="accent-slate-600" />
+                <input
+                  type="checkbox"
+                  className="accent-slate-600"
+                  checked={allChecked}
+                  onChange={(e) => {
+                    setAllchecked(e.target.checked);
+                    const data = transitions.map((item: any) => {
+                      item.checked = e.target.checked;
+                      return { ...item };
+                    });
+                    setTransition(data);
+                  }}
+                />
               </td>
               <td className="border h-10 w-[40px] border-l-0 ">No</td>
               <td className="border w-[20%]">State</td>
@@ -1098,9 +1119,26 @@ const TransitionComponent: React.FC<{
           <tbody>
             {transitions.map((item: any, index: number) => {
               return (
-                <tr key={index} className="text-center text-[0.95em]">
+                <tr
+                  key={index}
+                  className={`text-center text-[0.95em] ${
+                    item.checked && "bg-gray-50"
+                  }`}
+                >
                   <td className=" border border-r-0">
-                    <input type="checkbox" className="accent-slate-600" />
+                    <input
+                      type="checkbox"
+                      className="accent-slate-600"
+                      checked={item.checked}
+                      onChange={(e) => {
+                        if (!e.target.checked) {
+                          setAllchecked(false);
+                        }
+                        item.checked = e.target.checked;
+                        const newData = [...transitions];
+                        setTransition(newData);
+                      }}
+                    />
                   </td>
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
@@ -1120,7 +1158,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      } border-none`}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -1188,7 +1228,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Action",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      } border-none `}
                       infiniteScroll={{
                         loading: actionMoreLoading,
                         hasMore: actionHasMore,
@@ -1256,7 +1298,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      } border-none `}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -1324,7 +1368,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Role",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      } border-none `}
                       infiniteScroll={{
                         loading: roleMoreLoading,
                         hasMore: roleHasMore,
@@ -1397,8 +1443,9 @@ const TransitionComponent: React.FC<{
       )}
       <button
         onClick={() => {
-          const newData = [...transitions];
-          setTransition(newData);
+          const data = transitions.filter((item: any) => !item.checked);
+          setTransition(data);
+          setAllchecked(false);
         }}
         className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
       >
