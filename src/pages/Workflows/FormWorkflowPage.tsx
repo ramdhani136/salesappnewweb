@@ -461,6 +461,8 @@ const StateComponent: React.FC<{
   const [roleHasMore, setRoleHasMore] = useState<boolean>(false);
   // End
 
+  const [allChecked, setAllchecked] = useState<boolean>(false);
+
   const getStateList = async (data: {
     search?: string | String;
     refresh?: boolean;
@@ -561,7 +563,12 @@ const StateComponent: React.FC<{
         filters: [["workflow", "=", workflow!]],
       });
 
-      setState(result.data);
+      const data = result.data.map((item: any) => {
+        item.checked = false;
+        return { ...item };
+      });
+
+      setState(data);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -582,6 +589,7 @@ const StateComponent: React.FC<{
   useEffect(() => {
     getState();
   }, []);
+
   return (
     <>
       {loading ? (
@@ -591,7 +599,19 @@ const StateComponent: React.FC<{
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
               <td className="border border-r-0 h-10 w-[20px] ">
-                <input type="checkbox" className="accent-slate-600" />
+                <input
+                  checked={allChecked}
+                  type="checkbox"
+                  className="accent-slate-600"
+                  onChange={(e) => {
+                    setAllchecked(e.target.checked)
+                    const data = states.map((item: any) => {
+                      item.checked = e.target.checked;
+                      return { ...item };
+                    });
+                    setState(data);
+                  }}
+                />
               </td>
               <td className="border h-10 w-[30px] border-l-0 ">No</td>
               <td className="border w-[30%] ">State</td>
@@ -603,9 +623,23 @@ const StateComponent: React.FC<{
           <tbody>
             {states.map((item: any, index: number) => {
               return (
-                <tr key={index} className="text-center text-[0.95em]">
+                <tr
+                  key={index}
+                  className={`text-center text-[0.95em] ${
+                    item.checked && "bg-gray-50"
+                  } `}
+                >
                   <td className=" border border-r-0">
-                    <input type="checkbox" className="accent-slate-600" />
+                    <input
+                      type="checkbox"
+                      className="accent-slate-600"
+                      checked={item.checked}
+                      onChange={(e) => {
+                        item.checked = e.target.checked;
+                        const newData = [...states];
+                        setState(newData);
+                      }}
+                    />
                   </td>
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
@@ -625,7 +659,9 @@ const StateComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`border-none ${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      }`}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -705,7 +741,9 @@ const StateComponent: React.FC<{
                         const newData = [...states];
                         setState(newData);
                       }}
-                      inputStyle="bg-white border-none text-center"
+                      inputStyle={`${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      } border-none text-center`}
                     />
                   </td>
                   <td className="border">
@@ -725,7 +763,9 @@ const StateComponent: React.FC<{
                         },
                         title: "Form Role",
                       }}
-                      inputStyle="bg-white border-none"
+                      inputStyle={`border-none ${
+                        item.checked ? "bg-gray-50" : "bg-white"
+                      }`}
                       infiniteScroll={{
                         loading: roleMoreLoading,
                         hasMore: roleHasMore,
@@ -797,8 +837,9 @@ const StateComponent: React.FC<{
       )}
       <button
         onClick={() => {
-          const newData = [...states];
-          setState(newData);
+          const data = states.filter((item: any) => !item.checked);
+          setState(data);
+          setAllchecked(false)
         }}
         className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
       >
