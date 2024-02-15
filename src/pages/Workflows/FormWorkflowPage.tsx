@@ -44,6 +44,10 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const [transitionIsChange, setTransitionIsChange] = useState<boolean>(false);
+  const [changerIsChange, setChangerIsChange] = useState<boolean>(false);
+  const [prevTransition, setPrevTransition] = useState<any[]>([]);
+  const [prevChanger, setPrevChanger] = useState<any[]>([]);
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -63,6 +67,8 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const [status, setStatus] = useState<String>("1");
   const [prevData, setPrevData] = useState<any>({
     status: status,
+    name: name.valueData,
+    doc: doc.valueData,
   });
 
   const [states, setState] = useState<any[]>([]);
@@ -108,6 +114,8 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
 
       setPrevData({
         status: result.data.status ? "1" : "0",
+        name: result.data.name,
+        doc: result.data.doc,
       });
 
       setLoading(false);
@@ -250,14 +258,36 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const actualData = {
       status: status,
+      name: name.valueData,
+      doc: doc.valueData,
     };
-    if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
+    if (
+      JSON.stringify(actualData) !== JSON.stringify(prevData) ||
+      changerIsChange
+    ) {
       setChangeData(true);
     } else {
       setChangeData(false);
     }
-  }, [status]);
+  }, [status, name.valueData, doc.valueData, changerIsChange]);
   // End
+
+  useEffect(() => {
+    const update = states.map((change: any) => {
+      return {
+        roleprofile: change?.roleprofile?._id,
+        selfApproval: change?.selfApproval,
+        state: change?.state?._id,
+        status: change?.status,
+      };
+    });
+    console.log(update);
+    if (JSON.stringify(update) !== JSON.stringify(prevChanger)) {
+      setChangerIsChange(true);
+    } else {
+      setChangerIsChange(false);
+    }
+  }, [prevChanger, states]);
 
   return (
     <>
@@ -407,6 +437,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <StateComponent
+                        setprevChanger={setPrevChanger}
                         workflow={id}
                         setState={setState}
                         states={states}
@@ -442,7 +473,8 @@ const StateComponent: React.FC<{
   workflow: String | undefined;
   states: any[];
   setState: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, states, setState }) => {
+  setprevChanger: React.Dispatch<React.SetStateAction<any[]>>;
+}> = ({ workflow, states, setState, setprevChanger }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -567,8 +599,17 @@ const StateComponent: React.FC<{
         item.checked = false;
         return { ...item };
       });
-
+      const prev = data.map((change: any) => {
+        return {
+          roleprofile: change?.roleprofile?._id,
+          selfApproval: change?.selfApproval,
+          state: change?.state?._id,
+          status: change?.status,
+        };
+      });
       setState(data);
+      setprevChanger(prev);
+
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
