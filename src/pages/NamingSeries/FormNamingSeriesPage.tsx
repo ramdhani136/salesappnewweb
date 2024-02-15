@@ -39,6 +39,7 @@ const FormNamingSeriesPage: React.FC = () => {
     { title: "Callsheet", value: "callsheet" },
     { title: "Schedule", value: "schedule" },
     { title: "Memo", value: "memo" },
+    { title: "Assesment Schedule", value: "assesmentschedule" },
   ];
   const [doc, setDoc] = useState<String>("visit");
 
