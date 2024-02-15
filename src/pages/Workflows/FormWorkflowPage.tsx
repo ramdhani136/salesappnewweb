@@ -161,41 +161,42 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {
-        status: status,
-      };
-      if (nextState) {
-        data.nextState = nextState;
-      }
+      // let data: any = {
+      //   name: name.valueData,
+      //   status: status,
+      //   doc: doc.valueData,
+      // };
+      // if (nextState) {
+      //   data.nextState = nextState;
+      // }
+      // let Action =
+      //   id && !modal
+      //     ? GetDataServer(DataAPI.WORKFLOW).UPDATE({
+      //         id: id,
+      //         data: data,
+      //       })
+      //     : GetDataServer(DataAPI.WORKFLOW).CREATE(data);
+      // const result = await Action;
+      // if (id && !modal) {
+      //   getData();
+      //   Swal.fire({ icon: "success", text: "Saved" });
+      // } else if (modal) {
+      //   props.Callback(result.data?.data ?? {});
+      //   dispatch(
+      //     modalSet({
+      //       active: false,
+      //       Children: null,
+      //       title: "",
+      //       props: {},
+      //       className: "",
+      //     })
+      //   );
+      // } else {
+      //   navigate(`/workflow/${result.data.data._id}`);
+      //   navigate(0);
+      // }
 
-      let Action =
-        id && !modal
-          ? GetDataServer(DataAPI.WORKFLOW).UPDATE({
-              id: id,
-              data: data,
-            })
-          : GetDataServer(DataAPI.WORKFLOW).CREATE(data);
-
-      const result = await Action;
-
-      if (id && !modal) {
-        getData();
-        Swal.fire({ icon: "success", text: "Saved" });
-      } else if (modal) {
-        props.Callback(result.data?.data ?? {});
-        dispatch(
-          modalSet({
-            active: false,
-            Children: null,
-            title: "",
-            props: {},
-            className: "",
-          })
-        );
-      } else {
-        navigate(`/workflow/${result.data.data._id}`);
-        navigate(0);
-      }
+      await UpdateChanger();
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -212,6 +213,63 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       );
     }
     setLoading(false);
+  };
+
+  const getChangedData = (prev: any[], update: any[]) => {
+    const addedData: any[] = [];
+    const removedData: any[] = [];
+
+    // Mencari data yang ditambahkan
+    update.forEach((updateItem) => {
+      let found = false;
+      prev.forEach((prevItem) => {
+        if (JSON.stringify(prevItem) === JSON.stringify(updateItem)) {
+          found = true;
+        }
+      });
+      if (!found) {
+        addedData.push(updateItem);
+      }
+    });
+
+    // Mencari data yang dihapus
+    prev.forEach((prevItem) => {
+      let found = false;
+      update.forEach((updateItem) => {
+        if (JSON.stringify(prevItem) === JSON.stringify(updateItem)) {
+          found = true;
+        }
+      });
+      if (!found) {
+        removedData.push(prevItem);
+      }
+    });
+
+    return {
+      added: addedData,
+      removed: removedData,
+    };
+  };
+
+  const UpdateChanger = async () => {
+    try {
+      const update = states.map((change: any) => {
+        return {
+          roleprofile: change?.roleprofile?._id,
+          selfApproval: change?.selfApproval,
+          state: change?.state?._id,
+          status: change?.status,
+        };
+      });
+
+      const changeData = getChangedData(prevChanger, update);
+      // Menghapus
+      if (changeData.removed.length > 0) {
+      }
+      //  Menambahkan
+      if (changeData.added.length > 0) {
+      }
+    } catch (error) {}
   };
 
   const type: IListInput[] = [
