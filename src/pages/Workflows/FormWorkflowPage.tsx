@@ -404,7 +404,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                   <ToggleBodyComponent
                     toggle={false}
                     name="States"
-                    className="mt-5 mb-5"
+                    className="mt-7"
                     child={
                       <StateComponent
                         workflow={id}
@@ -416,7 +416,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                   <ToggleBodyComponent
                     toggle={false}
                     name="Transitions"
-                    className="mt-5 mb-5"
+                    className="mt-7"
                     child={
                       <TransitionComponent
                         workflow={id}
