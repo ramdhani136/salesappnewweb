@@ -196,7 +196,24 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       //   navigate(0);
       // }
 
-      await UpdateChanger();
+      if (changerIsChange || transitionIsChange) {
+        const listState = states.map((item: any) => {
+          return item.state._id;
+        });
+
+        const StateNotValid = checkMissingStates(transition, listState);
+
+        if (StateNotValid.length > 0) {
+          setLoading(false);
+          return Swal.fire(
+            "Error!",
+            `${StateNotValid} Tidak ditemukan!`,
+            "error"
+          );
+        }
+
+        // await UpdateChanger();
+      }
     } catch (error: any) {
       Swal.fire(
         "Error!",
@@ -249,6 +266,31 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       added: addedData,
       removed: removedData,
     };
+  };
+
+  const checkMissingStates = (transitions: any[], states: any[]) => {
+    let missingStates: any[] = [];
+
+    transitions.forEach((transition) => {
+      let stateActiveId = transition.stateActive._id;
+      let nextStateId = transition.nextState._id;
+
+      if (!states.includes(stateActiveId)) {
+        let stateName = transition.stateActive.name;
+        if (!missingStates.includes(stateName)) {
+          missingStates.push(stateName);
+        }
+      }
+
+      if (!states.includes(nextStateId)) {
+        let stateName = transition.nextState.name;
+        if (!missingStates.includes(stateName)) {
+          missingStates.push(stateName);
+        }
+      }
+    });
+
+    return missingStates;
   };
 
   const UpdateChanger = async () => {
