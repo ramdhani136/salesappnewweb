@@ -598,7 +598,7 @@ const StateComponent: React.FC<{
         <table className="w-full border mb-3">
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
-              <td className="border border-r-0 h-10 w-[20px] ">
+              <td className="border border-r-0 h-12 w-[20px] ">
                 <input
                   checked={allChecked}
                   type="checkbox"
@@ -1084,7 +1084,7 @@ const TransitionComponent: React.FC<{
         <table className="w-full border mb-3">
           <thead>
             <tr className="text-[0.95em] text-center color-[#7e7c7c] ">
-              <td className="border border-r-0 h-10 w-[40px] ">
+              <td className="border border-r-0 h-12 w-[40px] ">
                 <input type="checkbox" className="accent-slate-600" />
               </td>
               <td className="border h-10 w-[40px] border-l-0 ">No</td>
