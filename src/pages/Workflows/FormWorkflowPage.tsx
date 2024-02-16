@@ -1057,7 +1057,7 @@ const StateComponent: React.FC<{
           setState(data);
           setAllchecked(false);
         }}
-        className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+        className="text-[0.9em] bg-[#eb655d] opacity-60 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
       >
         Delete
       </button>
@@ -1668,7 +1668,7 @@ const TransitionComponent: React.FC<{
           setTransition(data);
           setAllchecked(false);
         }}
-        className="text-[0.9em] bg-[#eb655d] opacity-80 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+        className="text-[0.9em] bg-[#eb655d] opacity-60 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
       >
         Delete
       </button>
