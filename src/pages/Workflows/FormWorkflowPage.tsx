@@ -198,7 +198,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
         }
 
         getData();
-        Swal.fire({ icon: "success", text: "Saved" });
+        return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
         navigate(0);
@@ -304,12 +304,16 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       //  Menambahkan
       if (changeData.added.length > 0) {
         for (const item of changeData.added) {
-          item.workflow = id;
-          console.log("Tambah");
+          console.log("TAMBAH");
           console.log(item);
+          // item.workflow = id;
+          // item.status = `${item.status}`;
+          // await GetDataServer(DataAPI.WORKFLOWCHANGER).CREATE(item);
         }
       }
-    } catch (error) {}
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const type: IListInput[] = [
