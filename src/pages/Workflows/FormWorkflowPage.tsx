@@ -14,17 +14,15 @@ import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
-import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
 import FormWorkflowAction from "../WorkflowAction/FormWorkflowAction";
 import FormRoleProfilePage from "../RoleProfile/FormRoleProfilePage";
+import { modalSet } from "../../redux/slices/ModalSlice";
 
 const FormWorkflowPage: React.FC<any> = ({ props }) => {
-  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -64,7 +62,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     valueInput: "",
   });
 
-  const [status, setStatus] = useState<String>("1");
+  const [status, setStatus] = useState<String>("0");
   const [prevData, setPrevData] = useState<any>({
     status: status,
     name: name.valueData,
@@ -158,61 +156,52 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     }
   };
 
-  const onSave = async (nextState?: String): Promise<any> => {
+  const onSave = async (): Promise<any> => {
     setLoading(true);
     try {
-      // let data: any = {
-      //   name: name.valueData,
-      //   status: status,
-      //   doc: doc.valueData,
-      // };
-      // if (nextState) {
-      //   data.nextState = nextState;
-      // }
-      // let Action =
-      //   id && !modal
-      //     ? GetDataServer(DataAPI.WORKFLOW).UPDATE({
-      //         id: id,
-      //         data: data,
-      //       })
-      //     : GetDataServer(DataAPI.WORKFLOW).CREATE(data);
-      // const result = await Action;
-      // if (id && !modal) {
-      //   getData();
-      //   Swal.fire({ icon: "success", text: "Saved" });
-      // } else if (modal) {
-      //   props.Callback(result.data?.data ?? {});
-      //   dispatch(
-      //     modalSet({
-      //       active: false,
-      //       Children: null,
-      //       title: "",
-      //       props: {},
-      //       className: "",
-      //     })
-      //   );
-      // } else {
-      //   navigate(`/workflow/${result.data.data._id}`);
-      //   navigate(0);
-      // }
+      let data: any = {
+        name: name.valueData,
+        status: status,
+        doc: doc.valueData,
+      };
 
-      if (changerIsChange || transitionIsChange) {
-        const listState = states.map((item: any) => {
-          return item.state._id;
-        });
+      let Action = id
+        ? GetDataServer(DataAPI.WORKFLOW).UPDATE({
+            id: id,
+            data: data,
+          })
+        : GetDataServer(DataAPI.WORKFLOW).CREATE(data);
+      const result = await Action;
+      if (id) {
+        if (changerIsChange || transitionIsChange) {
+          const listState = states.map((item: any) => {
+            return item.state._id;
+          });
 
-        const StateNotValid = checkMissingStates(transition, listState);
+          const StateNotValid = checkMissingStates(transition, listState);
 
-        if (StateNotValid.length > 0) {
-          setLoading(false);
-          return Swal.fire(
-            "Error!",
-            `States ${StateNotValid} Tidak ditemukan!`,
-            "error"
-          );
+          if (StateNotValid.length > 0) {
+            setLoading(false);
+            return Swal.fire(
+              "Error!",
+              `States ${StateNotValid} Tidak ditemukan!`,
+              "error"
+            );
+          }
+
+          if (changerIsChange) {
+            await UpdateChanger();
+          }
+
+          if (transitionIsChange) {
+          }
         }
 
-        await UpdateChanger();
+        getData();
+        Swal.fire({ icon: "success", text: "Saved" });
+      } else {
+        navigate(`/workflow/${result.data.data._id}`);
+        navigate(0);
       }
     } catch (error: any) {
       Swal.fire(
@@ -354,7 +343,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   };
 
   useEffect(() => {
-    if (id && !modal) {
+    if (id) {
       getData();
       setListMoreAction([{ name: "Delete", onClick: onDelete }]);
     } else {
@@ -421,6 +410,45 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     }
   }, [prevTransition, transition]);
 
+  const checkIncompleteDataChanger = (): boolean => {
+    let indexUncomplete: any[] = [];
+    states.forEach((element: any, index: number) => {
+      if (
+        element?.roleprofile?._id == "" ||
+        element?.state?._id == "" ||
+        element?.status === ""
+      ) {
+        indexUncomplete.push(index);
+      }
+    });
+
+    if (indexUncomplete.length > 0) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const checkIncompleteDataTransition = (): boolean => {
+    let indexUncomplete: any[] = [];
+    transition.forEach((element: any, index: number) => {
+      if (
+        element?.stateActive?._id == "" ||
+        element?.action?._id == "" ||
+        element?.nextState?._id == "" ||
+        element?.roleprofile?._id == ""
+      ) {
+        indexUncomplete.push(index);
+      }
+    });
+
+    if (indexUncomplete.length > 0) {
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <>
       {Meta(metaData)}
@@ -449,7 +477,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     // className="text-[0.7em]"
                     status={data.status ?? "0"}
                     name={
-                      id && !modal
+                      id
                         ? data.status == "0"
                           ? "Disabled"
                           : "Active"
@@ -472,20 +500,22 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id && !modal ? "Update" : "Save"}
-                    callback={() => {
-                      AlertModal.confirmation({
-                        onConfirm: onSave,
-                        confirmButtonText: `Yes, ${
-                          !id ? "Save it!" : "Update It"
-                        }`,
-                      });
-                    }}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                {isChangeData &&
+                  checkIncompleteDataChanger() &&
+                  checkIncompleteDataTransition() && (
+                    <IconButton
+                      name={id ? "Update" : "Save"}
+                      callback={() => {
+                        AlertModal.confirmation({
+                          onConfirm: onSave,
+                          confirmButtonText: `Yes, ${
+                            !id ? "Save it!" : "Update It"
+                          }`,
+                        });
+                      }}
+                      className={`opacity-80 hover:opacity-100 duration-100  `}
+                    />
+                  )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -633,11 +663,11 @@ const StateComponent: React.FC<{
     refresh?: boolean;
   }): Promise<void> => {
     try {
-      const duplicate: any[] = states.filter(
-        (item: any) => item.state._id !== ""
-      ).map((a:any)=>{
-          return ["name","!=",`${a.state.name}`]
-      });
+      const duplicate: any[] = states
+        .filter((item: any) => item.state._id !== "")
+        .map((a: any) => {
+          return ["name", "!=", `${a.state.name}`];
+        });
 
       if (data.refresh === undefined) {
         data.refresh = true;
@@ -646,7 +676,7 @@ const StateComponent: React.FC<{
         search: data.search ?? "",
         limit: 10,
         page: `${data.refresh ? 1 : statePage}`,
-        filters: [["status", "=", "1"],...duplicate],
+        filters: [["status", "=", "1"], ...duplicate],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
@@ -752,17 +782,6 @@ const StateComponent: React.FC<{
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
-      Swal.fire(
-        "Error!",
-        `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Delete"
-        }`,
-        "error"
-      );
     }
   };
 
@@ -827,6 +846,7 @@ const StateComponent: React.FC<{
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FromWorkflowState,
                         className: "w-[63%] h-[98%]",
@@ -842,9 +862,9 @@ const StateComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle={`border-none ${
+                      inputStyle={`${item.state._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      }`}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -897,6 +917,7 @@ const StateComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       value={{
                         valueData: item.status ?? 0,
                         valueInput: item.status?.toString() ?? 0,
@@ -924,13 +945,14 @@ const StateComponent: React.FC<{
                         const newData = [...states];
                         setState(newData);
                       }}
-                      inputStyle={`${
+                      inputStyle={`${item.status !== "" && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      } border-none text-center`}
+                      } rounded-none -mt-[2px] text-center `}
                     />
                   </td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FormRoleProfilePage,
                         className: "w-[63%] h-[98%]",
@@ -946,9 +968,9 @@ const StateComponent: React.FC<{
                         },
                         title: "Form Role",
                       }}
-                      inputStyle={`border-none ${
+                      inputStyle={`${item.roleprofile._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      }`}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: roleMoreLoading,
                         hasMore: roleHasMore,
@@ -1033,7 +1055,7 @@ const StateComponent: React.FC<{
           states.push({
             _id: "",
             workflow: {
-              _id: "",
+              _id: workflow,
               name: "",
             },
             state: {
@@ -1258,17 +1280,6 @@ const TransitionComponent: React.FC<{
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
-      Swal.fire(
-        "Error!",
-        `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Delete"
-        }`,
-        "error"
-      );
     }
   };
 
@@ -1334,6 +1345,7 @@ const TransitionComponent: React.FC<{
                   <td className="border border-l-0">{index + 1}</td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FromWorkflowState,
                         className: "w-[63%] h-[98%]",
@@ -1349,9 +1361,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle={`${
+                      inputStyle={`${item.stateActive._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      } border-none`}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -1404,6 +1416,7 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FormWorkflowAction,
                         className: "w-[63%] h-[98%]",
@@ -1419,9 +1432,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Action",
                       }}
-                      inputStyle={`${
+                      inputStyle={`${item.action._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      } border-none `}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: actionMoreLoading,
                         hasMore: actionHasMore,
@@ -1474,6 +1487,7 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FromWorkflowState,
                         className: "w-[63%] h-[98%]",
@@ -1489,9 +1503,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Workflow State",
                       }}
-                      inputStyle={`${
+                      inputStyle={`${item.nextState._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      } border-none `}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: stateMoreLoading,
                         hasMore: stateHasMore,
@@ -1544,6 +1558,7 @@ const TransitionComponent: React.FC<{
                   </td>
                   <td className="border">
                     <InputComponent
+                      mandatoy
                       modal={{
                         Children: FormRoleProfilePage,
                         className: "w-[63%] h-[98%]",
@@ -1559,9 +1574,9 @@ const TransitionComponent: React.FC<{
                         },
                         title: "Form Role",
                       }}
-                      inputStyle={`${
+                      inputStyle={`${item.roleprofile._id && "border-none"} ${
                         item.checked ? "bg-gray-50" : "bg-white"
-                      } border-none `}
+                      } rounded-none -mt-[2px] `}
                       infiniteScroll={{
                         loading: roleMoreLoading,
                         hasMore: roleHasMore,
