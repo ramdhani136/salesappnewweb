@@ -134,7 +134,10 @@ const SeacrhHeaderComponent: React.FC = () => {
           <li
             key={id}
             className="p-2 py-3 my-1 text-md hover:bg-gray-100 rounded-md cursor-pointer"
-            onClick={() => navigate(menu.link)}
+            onClick={() => {
+              navigate(menu.link);
+              setValue("");
+            }}
           >
             {menu.name}
           </li>
