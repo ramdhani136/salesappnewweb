@@ -46,6 +46,8 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const [changerIsChange, setChangerIsChange] = useState<boolean>(false);
   const [prevTransition, setPrevTransition] = useState<any[]>([]);
   const [prevChanger, setPrevChanger] = useState<any[]>([]);
+  const [refreshStateTransition, setRefreshSetTransition] =
+    useState<boolean>(false);
 
   const [user, setUser] = useState<IValue>({
     valueData: LocalStorage.getUser()._id,
@@ -198,6 +200,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
         }
 
         getData();
+
         return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
@@ -221,14 +224,16 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     setLoading(false);
   };
 
-  const getChangedData = (prev: any[], update: any[]) => {
+  const getChangedData = (update: any[]) => {
     const addedData: any[] = [];
     const removedData: any[] = [];
 
+    console.log(prevChanger);
+    console.log(update);
     // Mencari data yang ditambahkan
     update.forEach((updateItem) => {
       let found = false;
-      prev.forEach((prevItem) => {
+      prevChanger.forEach((prevItem) => {
         if (JSON.stringify(prevItem) === JSON.stringify(updateItem)) {
           found = true;
         }
@@ -239,10 +244,10 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     });
 
     // Mencari data yang dihapus
-    prev.forEach((prevItem) => {
+    prevChanger.forEach((prevItem) => {
       let found = false;
       update.forEach((updateItem) => {
-        if (JSON.stringify(prevItem) === JSON.stringify(updateItem)) {
+        if (JSON.stringify(prevItem) == JSON.stringify(updateItem)) {
           found = true;
         }
       });
@@ -286,6 +291,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
     try {
       const update = states.map((change: any) => {
         return {
+          id: change._id,
           roleprofile: change?.roleprofile?._id,
           selfApproval: change?.selfApproval,
           state: change?.state?._id,
@@ -293,25 +299,34 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
         };
       });
 
-      const changeData = getChangedData(prevChanger, update);
+      const changeData = getChangedData(update);
       // Menghapus
       if (changeData.removed.length > 0) {
         for (const item of changeData.removed) {
-          console.log("HAPUS");
-          console.log(item);
+          if (item.id) {
+            await GetDataServer(DataAPI.WORKFLOWCHANGER).DELETE(item.id);
+          }
         }
       }
       //  Menambahkan
       if (changeData.added.length > 0) {
         for (const item of changeData.added) {
-          console.log("TAMBAH");
-          console.log(item);
-          // item.workflow = id;
-          // item.status = `${item.status}`;
-          // await GetDataServer(DataAPI.WORKFLOWCHANGER).CREATE(item);
+          console.log("UBAH");
+          item.workflow = id;
+          item.status = `${item.status}`;
+          if (item.id !== "") {
+            await GetDataServer(DataAPI.WORKFLOWCHANGER).UPDATE({
+              id: item.id,
+              data: item,
+            });
+          } else {
+            delete item.id;
+            await GetDataServer(DataAPI.WORKFLOWCHANGER).CREATE(item);
+          }
         }
       }
     } catch (error: any) {
+      console.log(error);
       throw error;
     }
   };
@@ -384,6 +399,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const update = states.map((change: any) => {
       return {
+        id: change._id,
         roleprofile: change?.roleprofile?._id,
         selfApproval: change?.selfApproval,
         state: change?.state?._id,
@@ -603,6 +619,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <StateComponent
+                        refresh={refreshStateTransition}
                         setprevChanger={setPrevChanger}
                         workflow={id}
                         setState={setState}
@@ -616,6 +633,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <TransitionComponent
+                        // refresh = {refreshStateTransition}
                         setPrevTransition={setPrevTransition}
                         workflow={id}
                         setTransition={setTransition}
@@ -639,9 +657,10 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
 const StateComponent: React.FC<{
   workflow: String | undefined;
   states: any[];
+  refresh: boolean;
   setState: React.Dispatch<React.SetStateAction<any[]>>;
   setprevChanger: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, states, setState, setprevChanger }) => {
+}> = ({ workflow, states, setState, setprevChanger, refresh }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -661,6 +680,10 @@ const StateComponent: React.FC<{
   // End
 
   const [allChecked, setAllchecked] = useState<boolean>(false);
+
+  useEffect(() => {
+    getState();
+  }, [refresh]);
 
   const getStateList = async (data: {
     search?: string | String;
@@ -774,6 +797,7 @@ const StateComponent: React.FC<{
       });
       const prev = data.map((change: any) => {
         return {
+          id: change._id,
           roleprofile: change?.roleprofile?._id,
           selfApproval: change?.selfApproval,
           state: change?.state?._id,
