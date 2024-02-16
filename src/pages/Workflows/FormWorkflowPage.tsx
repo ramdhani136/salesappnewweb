@@ -308,17 +308,18 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
       // Menghapus
       if (changeData.removed.length > 0) {
         for (const item of changeData.removed) {
+          console.log("HAPUS");
           console.log(item);
         }
       }
-      // //  Menambahkan
-      // if (changeData.added.length > 0) {
-      //   for (const item of changeData.added) {
-      //     item.workflow = id;
-      //     console.log("Tambah");
-      //     console.log(item);
-      //   }
-      // }
+      //  Menambahkan
+      if (changeData.added.length > 0) {
+        for (const item of changeData.added) {
+          item.workflow = id;
+          console.log("Tambah");
+          console.log(item);
+        }
+      }
     } catch (error) {}
   };
 
@@ -632,6 +633,12 @@ const StateComponent: React.FC<{
     refresh?: boolean;
   }): Promise<void> => {
     try {
+      const duplicate: any[] = states.filter(
+        (item: any) => item.state._id !== ""
+      ).map((a:any)=>{
+          return ["name","!=",`${a.state.name}`]
+      });
+
       if (data.refresh === undefined) {
         data.refresh = true;
       }
@@ -639,7 +646,7 @@ const StateComponent: React.FC<{
         search: data.search ?? "",
         limit: 10,
         page: `${data.refresh ? 1 : statePage}`,
-        filters: [["status", "=", "1"]],
+        filters: [["status", "=", "1"],...duplicate],
       });
       if (result.data.length > 0) {
         let listInput: IListInput[] = result.data.map((item: any) => {
