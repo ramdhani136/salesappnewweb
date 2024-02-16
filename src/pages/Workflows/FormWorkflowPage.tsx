@@ -202,6 +202,7 @@ const FormWorkflowPage: React.FC<any> = () => {
         }
 
         getData();
+        setSaveHideButton(false)
         return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
