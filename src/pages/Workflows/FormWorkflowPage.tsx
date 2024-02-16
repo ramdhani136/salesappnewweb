@@ -202,7 +202,7 @@ const FormWorkflowPage: React.FC<any> = () => {
         }
 
         getData();
-        setSaveHideButton(false)
+        setSaveHideButton(false);
         return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
@@ -767,7 +767,7 @@ const StateComponent: React.FC<{
 
   const getState = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const result: any = await GetDataServer(DataAPI.WORKFLOWCHANGER).FIND({
         filters: [["workflow", "=", workflow!]],
         limit: 0,
@@ -1051,16 +1051,18 @@ const StateComponent: React.FC<{
           </tbody>
         </table>
       )}
-      <button
-        onClick={() => {
-          const data = states.filter((item: any) => !item.checked);
-          setState(data);
-          setAllchecked(false);
-        }}
-        className="text-[0.9em] bg-[#eb655d] opacity-60 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
-      >
-        Delete
-      </button>
+      {states.filter((item) => item.checked).length > 0 && (
+        <button
+          onClick={() => {
+            const data = states.filter((item: any) => !item.checked);
+            setState(data);
+            setAllchecked(false);
+          }}
+          className="text-[0.9em] bg-[#eb655d] opacity-70 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+        >
+          Delete
+        </button>
+      )}
       <button
         onClick={() => {
           states.push({
@@ -1269,7 +1271,7 @@ const TransitionComponent: React.FC<{
 
   const getTransition = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const result: any = await GetDataServer(DataAPI.WORKFLOWTRANSITION).FIND({
         filters: [["workflow", "=", workflow!]],
         limit: 0,
@@ -1662,16 +1664,18 @@ const TransitionComponent: React.FC<{
           </tbody>
         </table>
       )}
-      <button
-        onClick={() => {
-          const data = transitions.filter((item: any) => !item.checked);
-          setTransition(data);
-          setAllchecked(false);
-        }}
-        className="text-[0.9em] bg-[#eb655d] opacity-60 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
-      >
-        Delete
-      </button>
+      {transitions.filter((item) => item.checked).length > 0 && (
+        <button
+          onClick={() => {
+            const data = transitions.filter((item: any) => !item.checked);
+            setTransition(data);
+            setAllchecked(false);
+          }}
+          className="text-[0.9em] bg-[#eb655d] opacity-70 hover:opacity-100 duration-100 text-white rounded-md py-[2px] px-2 mr-1"
+        >
+          Delete
+        </button>
+      )}
       <button
         onClick={() => {
           transitions.push({
