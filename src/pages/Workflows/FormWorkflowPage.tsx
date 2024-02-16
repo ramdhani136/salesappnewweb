@@ -20,9 +20,8 @@ import { useDispatch } from "react-redux";
 import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
 import FormWorkflowAction from "../WorkflowAction/FormWorkflowAction";
 import FormRoleProfilePage from "../RoleProfile/FormRoleProfilePage";
-import { modalSet } from "../../redux/slices/ModalSlice";
 
-const FormWorkflowPage: React.FC<any> = ({ props }) => {
+const FormWorkflowPage: React.FC<any> = () => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -41,7 +40,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   const [scroll, setScroll] = useState<number>(0);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const dispatch = useDispatch();
+  const [saveHide, setSaveHideButton] = useState<boolean>(false);
   const [transitionIsChange, setTransitionIsChange] = useState<boolean>(false);
   const [changerIsChange, setChangerIsChange] = useState<boolean>(false);
   const [prevTransition, setPrevTransition] = useState<any[]>([]);
@@ -159,7 +158,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   };
 
   const onSave = async (): Promise<any> => {
-    setLoading(true);
+    setSaveHideButton(true);
     try {
       let data: any = {
         name: name.valueData,
@@ -183,12 +182,14 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
           const StateNotValid = checkMissingStates(transition, listState);
 
           if (StateNotValid.length > 0) {
-            setLoading(false);
-            return Swal.fire(
+            setSaveHideButton(false);
+            Swal.fire(
               "Error!",
               `States ${StateNotValid} Tidak ditemukan!`,
               "error"
             );
+
+            return;
           }
 
           if (changerIsChange) {
@@ -196,11 +197,11 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
           }
 
           if (transitionIsChange) {
+            await updateTransition();
           }
         }
 
         getData();
-
         return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
@@ -221,45 +222,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
         "error"
       );
     }
-    setLoading(false);
-  };
-
-  const getChangedData = (update: any[]) => {
-    const addedData: any[] = [];
-    const removedData: any[] = [];
-
-    console.log(prevChanger);
-    console.log(update);
-    // Mencari data yang ditambahkan
-    update.forEach((updateItem) => {
-      let found = false;
-      prevChanger.forEach((prevItem) => {
-        if (JSON.stringify(prevItem) === JSON.stringify(updateItem)) {
-          found = true;
-        }
-      });
-      if (!found) {
-        addedData.push(updateItem);
-      }
-    });
-
-    // Mencari data yang dihapus
-    prevChanger.forEach((prevItem) => {
-      let found = false;
-      update.forEach((updateItem) => {
-        if (JSON.stringify(prevItem) == JSON.stringify(updateItem)) {
-          found = true;
-        }
-      });
-      if (!found) {
-        removedData.push(prevItem);
-      }
-    });
-
-    return {
-      added: addedData,
-      removed: removedData,
-    };
+    setSaveHideButton(false);
   };
 
   const checkMissingStates = (transitions: any[], states: any[]) => {
@@ -289,44 +252,60 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
 
   const UpdateChanger = async () => {
     try {
-      const update = states.map((change: any) => {
+      const update: any[] = states.map((change: any) => {
         return {
-          id: change._id,
           roleprofile: change?.roleprofile?._id,
           selfApproval: change?.selfApproval,
           state: change?.state?._id,
+          name: change?.state?.name,
           status: change?.status,
         };
       });
 
-      const changeData = getChangedData(update);
-      // Menghapus
-      if (changeData.removed.length > 0) {
-        for (const item of changeData.removed) {
-          if (item.id) {
-            await GetDataServer(DataAPI.WORKFLOWCHANGER).DELETE(item.id);
-          }
+      // Hapus data lama
+      prevChanger.forEach(async (item: any) => {
+        if (item.id) {
+          await GetDataServer(DataAPI.WORKFLOWCHANGER).DELETE(item.id);
         }
-      }
-      //  Menambahkan
-      if (changeData.added.length > 0) {
-        for (const item of changeData.added) {
-          console.log("UBAH");
-          item.workflow = id;
-          item.status = `${item.status}`;
-          if (item.id !== "") {
-            await GetDataServer(DataAPI.WORKFLOWCHANGER).UPDATE({
-              id: item.id,
-              data: item,
-            });
-          } else {
-            delete item.id;
-            await GetDataServer(DataAPI.WORKFLOWCHANGER).CREATE(item);
-          }
-        }
+      });
+
+      // Update
+      for (let item of update) {
+        item.workflow = id;
+        item.status = `${item.status}`;
+        await GetDataServer(DataAPI.WORKFLOWCHANGER).CREATE(item);
       }
     } catch (error: any) {
-      console.log(error);
+      throw error;
+    }
+  };
+
+  const updateTransition = async () => {
+    try {
+      const update: any[] = transition.map((item: any) => {
+        return {
+          stateActive: item?.stateActive?._id,
+          action: item?.action?._id,
+          nextState: item?.nextState?._id,
+          roleprofile: item?.roleprofile?._id,
+          selfApproval: item?.selfApproval,
+        };
+      });
+
+      // Hapus data lama
+      prevTransition.forEach(async (item: any) => {
+        if (item.id) {
+          await GetDataServer(DataAPI.WORKFLOWTRANSITION).DELETE(item.id);
+        }
+      });
+
+      // // Update
+      for (let item of update) {
+        item.workflow = id;
+        item.status = `${item.status}`;
+        await GetDataServer(DataAPI.WORKFLOWTRANSITION).CREATE(item);
+      }
+    } catch (error: any) {
       throw error;
     }
   };
@@ -416,6 +395,7 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     const prev = transition.map((change: any) => {
       return {
+        id: change._id,
         stateActive: change?.stateActive?._id,
         action: change?.action?._id,
         nextState: change?.nextState?._id,
@@ -522,7 +502,8 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
 
                 {isChangeData &&
                   checkIncompleteDataChanger() &&
-                  checkIncompleteDataTransition() && (
+                  checkIncompleteDataTransition() &&
+                  !saveHide && (
                     <IconButton
                       name={id ? "Update" : "Save"}
                       callback={() => {
@@ -619,7 +600,6 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <StateComponent
-                        refresh={refreshStateTransition}
                         setprevChanger={setPrevChanger}
                         workflow={id}
                         setState={setState}
@@ -633,7 +613,6 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
                     className="mt-7"
                     child={
                       <TransitionComponent
-                        // refresh = {refreshStateTransition}
                         setPrevTransition={setPrevTransition}
                         workflow={id}
                         setTransition={setTransition}
@@ -650,6 +629,11 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
           <LoadingComponent />
         )}
       </div>
+      {saveHide && (
+        <div className="w-[94%] h-[100vh] z-50 top-0 fixed bg-white flex items-center justify-center">
+          <LoadingComponent />
+        </div>
+      )}
     </>
   );
 };
@@ -657,10 +641,9 @@ const FormWorkflowPage: React.FC<any> = ({ props }) => {
 const StateComponent: React.FC<{
   workflow: String | undefined;
   states: any[];
-  refresh: boolean;
   setState: React.Dispatch<React.SetStateAction<any[]>>;
   setprevChanger: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, states, setState, setprevChanger, refresh }) => {
+}> = ({ workflow, states, setState, setprevChanger }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -680,10 +663,6 @@ const StateComponent: React.FC<{
   // End
 
   const [allChecked, setAllchecked] = useState<boolean>(false);
-
-  useEffect(() => {
-    getState();
-  }, [refresh]);
 
   const getStateList = async (data: {
     search?: string | String;
@@ -787,8 +766,11 @@ const StateComponent: React.FC<{
 
   const getState = async () => {
     try {
+      setLoading(true)
       const result: any = await GetDataServer(DataAPI.WORKFLOWCHANGER).FIND({
         filters: [["workflow", "=", workflow!]],
+        limit: 0,
+        orderBy: { state: "createdAt", sort: 1 },
       });
 
       const data = result.data.map((item: any) => {
@@ -1284,10 +1266,13 @@ const TransitionComponent: React.FC<{
     setActionLoading(true);
   };
 
-  const getState = async () => {
+  const getTransition = async () => {
     try {
+      setLoading(true)
       const result: any = await GetDataServer(DataAPI.WORKFLOWTRANSITION).FIND({
         filters: [["workflow", "=", workflow!]],
+        limit: 0,
+        orderBy: { state: "createdAt", sort: 1 },
       });
 
       const data = result.data.map((item: any) => {
@@ -1297,6 +1282,7 @@ const TransitionComponent: React.FC<{
       setTransition(data);
       const prev = data.map((change: any) => {
         return {
+          id: change._id,
           stateActive: change?.stateActive?._id,
           action: change?.action?._id,
           nextState: change?.nextState?._id,
@@ -1312,7 +1298,7 @@ const TransitionComponent: React.FC<{
   };
 
   useEffect(() => {
-    getState();
+    getTransition();
   }, []);
 
   return (
