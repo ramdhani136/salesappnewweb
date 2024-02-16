@@ -2,17 +2,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {
-  ButtonStatusComponent,
-  IconButton,
-  InputComponent,
-  Select,
-} from "../../components/atoms";
+import { IconButton } from "../../components/atoms";
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
-
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
@@ -293,7 +288,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                       <td className="align-top  py-8">
                         <div className="w-full flex text-[0.95em]">
                           <ul className="flex-1">
-                            <li className="flex items-center mb-2">
+                            <li className="flex items-center mb-3">
                               <input
                                 type="checkbox"
                                 name=""
@@ -301,7 +296,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                               />
                               <h4>Create</h4>
                             </li>
-                            <li className="flex items-center mb-2">
+                            <li className="flex items-center mb-3">
                               <input
                                 type="checkbox"
                                 name=""
@@ -311,7 +306,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                             </li>
                           </ul>
                           <ul className="flex-1">
-                            <li className="flex items-center">
+                            <li className="flex items-center mb-3">
                               <input
                                 type="checkbox"
                                 name=""
@@ -321,7 +316,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                             </li>
                           </ul>
                           <ul className="flex-1">
-                            <li className="flex items-center">
+                            <li className="flex items-center mb-3">
                               <input
                                 type="checkbox"
                                 name=""
@@ -332,7 +327,11 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                           </ul>
                         </div>
                       </td>
-                      <td className="px-3 align-top  py-8"></td>
+                      <td className="px-3 align-top  py-8">
+                        <button className="border bg-[#eb645e] rounded-md flex p-[2px]">
+                          <DeleteForeverIcon style={{fontSize:20}} className="text-white items-center justify-center" />
+                        </button>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
