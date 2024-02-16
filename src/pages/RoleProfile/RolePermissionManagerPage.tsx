@@ -18,13 +18,13 @@ import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 
-const FormRoleProfilePage: React.FC<any> = ({ props }) => {
+const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name : "New Role Profile"} - Sales App Ekatunggal`,
-    description: "Halaman form role - Sales web system",
+    title: `Role Permission Manafer - Sales App Ekatunggal`,
+    description: "Halaman role permission manager - Sales web system",
   };
 
   const navigate = useNavigate();
@@ -66,9 +66,7 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
 
   const getData = async (): Promise<void> => {
     try {
-      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(
-        `${id}`
-      );
+      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(`${id}`);
 
       setStatus(result.data.status);
 
@@ -233,19 +231,8 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
                   onClick={() => navigate("/roleprofile")}
                   className="font-bold text-lg mr-2 cursor-pointer"
                 >
-                  {!id ? "New Role Profile" : data.name}
+                  Role Profile Manager
                 </h4>
-                <div className="text-md">
-                  {modal ? (
-                    "Form Role Profile"
-                  ) : (
-                    <ButtonStatusComponent
-                      // className="text-[0.7em]"
-                      status={data.status ?? "0"}
-                      name={data.status === "0" ? "Disabled" : "Enabled"}
-                    />
-                  )}
-                </div>
               </div>
               <div className="flex">
                 {listMoreAction.length > 0 && (
@@ -261,78 +248,94 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
                   />
                 )}
 
-                {isChangeData && (
-                  <IconButton
-                    name={id && !modal ? "Update" : "Save"}
-                    callback={() => {
-                      AlertModal.confirmation({
-                        onConfirm: onSave,
-                        confirmButtonText: `Yes, ${
-                          !id ? "Save it!" : "Update It"
-                        }`,
-                      });
-                    }}
-                    className={`opacity-80 hover:opacity-100 duration-100  `}
-                  />
-                )}
+                <IconButton
+                  name="Add New Rule"
+                  callback={() => {}}
+                  className={`opacity-80 hover:opacity-100 duration-100  `}
+                />
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
               <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
-                <div className="w-full h-auto  float-left rounded-md p-3 py-5">
-                  <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      mandatoy
-                      label="Name"
-                      value={name}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      // disabled={
-                      //   id != null ? (status !== "Draft" ? true : false) : false
-                      // }
-                    />
-
-                    <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]  mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
-                    <InputComponent
-                      label="Date"
-                      value={createdAt}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <Select
-                      title="Status"
-                      data={statusType}
-                      value={status}
-                      setValue={setStatus}
-                    />
+                <div className="w-full h-auto  float-left rounded-md  py-2">
+                  <div className="py-3 w-full border-b border-gray-100 float-left px-3 text-[0.95em]">
+                    <select
+                      name="doc"
+                      className="w-[230px] border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2"
+                    >
+                      <option value="schedule">Schedule</option>
+                      <option value="visit">Visit</option>
+                    </select>
+                    <select
+                      name="role"
+                      className="w-[230px] ml-2 border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2"
+                    >
+                      <option value="schedule">Schedule</option>
+                      <option value="visit">Visit</option>
+                    </select>
                   </div>
                 </div>
+                <table className="w-[98%] ml-[1%] text-left mb-3 border-collapse">
+                  <thead>
+                    <tr className="bg-gray-100 ">
+                      <th className="w-[20%] px-3 py-3 rounded-tl-md rounded-bl-md">
+                        Document Type
+                      </th>
+                      <th className="w-[20%]">Role</th>
+                      <th className="w-[50%]">Permission</th>
+                      <th className="w-[10%] px-3 rounded-tr-md rounded-br-md "></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-100 border-collapse">
+                      <td className="px-3 py-8 align-top">Visit</td>
+                      <td className="align-top  py-8">Sales Manager</td>
+                      <td className="align-top  py-8">
+                        <div className="w-full flex text-[0.95em]">
+                          <ul className="flex-1">
+                            <li className="flex items-center mb-2">
+                              <input
+                                type="checkbox"
+                                name=""
+                                className="mr-1 mt-1"
+                              />
+                              <h4>Create</h4>
+                            </li>
+                            <li className="flex items-center mb-2">
+                              <input
+                                type="checkbox"
+                                name=""
+                                className="mr-1 mt-1"
+                              />
+                              <h4>Cancel</h4>
+                            </li>
+                          </ul>
+                          <ul className="flex-1">
+                            <li className="flex items-center">
+                              <input
+                                type="checkbox"
+                                name=""
+                                className="mr-1 mt-1"
+                              />
+                              <h4>Read</h4>
+                            </li>
+                          </ul>
+                          <ul className="flex-1">
+                            <li className="flex items-center">
+                              <input
+                                type="checkbox"
+                                name=""
+                                className="mr-1 mt-1"
+                              />
+                              <h4>Write</h4>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td className="px-3 align-top  py-8"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </>
@@ -344,4 +347,4 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
   );
 };
 
-export default FormRoleProfilePage;
+export default RolePermissionManagerPage;

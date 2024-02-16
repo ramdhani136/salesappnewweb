@@ -60,6 +60,7 @@ import {
   ReportViewAssesmentPage,
   FormWorkflowPage,
   FormRoleProfilePage,
+  RolePermissionManagerPage,
 } from "./pages";
 import { store } from "./redux/Store";
 
@@ -360,6 +361,10 @@ const App: React.FC = () => {
           <Route
             path="/roleprofile/new"
             element={<LayoutComponent Child={FormRoleProfilePage} />}
+          />
+          <Route
+            path="/permission-manager"
+            element={<LayoutComponent Child={RolePermissionManagerPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

@@ -56,10 +56,12 @@ import ReportViewAssesmentPage from "./Report/ReportViewAssesmentPage";
 import FormWorkflowPage from "./Workflows/FormWorkflowPage";
 import FormRoleProfilePage from "./RoleProfile/FormRoleProfilePage";
 import { RoleProfilePage } from "./RoleProfile/RoleProfilePage";
+import RolePermissionManagerPage from "./RoleProfile/RolePermissionManagerPage";
 
 
 export {
   AssesmentQuestionPage,
+  RolePermissionManagerPage,
   FormAssesmentQuestionPage,
   LoginPage,
   SchedulePage,

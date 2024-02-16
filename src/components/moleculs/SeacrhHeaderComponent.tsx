@@ -59,6 +59,7 @@ const SeacrhHeaderComponent: React.FC = () => {
     { name: "Assesment Template", link: "/assesment/template" },
     { name: "Assesment Question", link: "/assesment/question" },
     { name: "Role Profile", link: "/roleprofile" },
+    { name: "Role Permission Manager", link: "/permission-manager" },
     // { name: "Whatsapp Account", link: "/whatsapp/account" },
     // { name: "Whatsapp Flowchart", link: "/whatsapp/flowchart" },
   ];
