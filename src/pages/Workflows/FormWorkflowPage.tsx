@@ -16,7 +16,6 @@ import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
-import { useDispatch } from "react-redux";
 import FromWorkflowState from "../WorkflowState/FormWorkflowStatePage";
 import FormWorkflowAction from "../WorkflowAction/FormWorkflowAction";
 import FormRoleProfilePage from "../RoleProfile/FormRoleProfilePage";
@@ -203,6 +202,7 @@ const FormWorkflowPage: React.FC<any> = () => {
 
         getData();
         setSaveHideButton(false);
+        setRefreshSetTransition(!refreshStateTransition);
         return Swal.fire({ icon: "success", text: "Saved" });
       } else {
         navigate(`/workflow/${result.data.data._id}`);
@@ -601,6 +601,7 @@ const FormWorkflowPage: React.FC<any> = () => {
                     className="mt-7"
                     child={
                       <StateComponent
+                        refresh={refreshStateTransition}
                         setprevChanger={setPrevChanger}
                         workflow={id}
                         setState={setState}
@@ -614,6 +615,7 @@ const FormWorkflowPage: React.FC<any> = () => {
                     className="mt-7"
                     child={
                       <TransitionComponent
+                        refresh={refreshStateTransition}
                         setPrevTransition={setPrevTransition}
                         workflow={id}
                         setTransition={setTransition}
@@ -642,9 +644,10 @@ const FormWorkflowPage: React.FC<any> = () => {
 const StateComponent: React.FC<{
   workflow: String | undefined;
   states: any[];
+  refresh: boolean;
   setState: React.Dispatch<React.SetStateAction<any[]>>;
   setprevChanger: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, states, setState, setprevChanger }) => {
+}> = ({ workflow, states, setState, setprevChanger, refresh }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -798,7 +801,7 @@ const StateComponent: React.FC<{
 
   useEffect(() => {
     getState();
-  }, []);
+  }, [refresh]);
 
   return (
     <>
@@ -1097,9 +1100,10 @@ const StateComponent: React.FC<{
 const TransitionComponent: React.FC<{
   workflow: String | undefined;
   transitions: any[];
+  refresh: boolean;
   setTransition: React.Dispatch<React.SetStateAction<any[]>>;
   setPrevTransition: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ workflow, transitions, setTransition, setPrevTransition }) => {
+}> = ({ workflow, transitions, setTransition, setPrevTransition, refresh }) => {
   const [loading, setLoading] = useState<Boolean>(true);
 
   // state
@@ -1302,7 +1306,7 @@ const TransitionComponent: React.FC<{
 
   useEffect(() => {
     getTransition();
-  }, []);
+  }, [refresh]);
 
   return (
     <>
