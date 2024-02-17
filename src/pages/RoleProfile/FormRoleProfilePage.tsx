@@ -11,7 +11,7 @@ import {
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, LocalStorage, LocalStorageType, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
@@ -66,9 +66,7 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
 
   const getData = async (): Promise<void> => {
     try {
-      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(
-        `${id}`
-      );
+      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(`${id}`);
 
       setStatus(result.data.status);
 
@@ -187,7 +185,27 @@ const FormRoleProfilePage: React.FC<any> = ({ props }) => {
   useEffect(() => {
     if (id && !modal) {
       getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
+      setListMoreAction([
+        { name: "Delete", onClick: onDelete },
+        {
+          name: "Permission Manager",
+          onClick: async () => {
+            const localParams: any = await JSON.parse(
+              LocalStorage.loadData(LocalStorageType.FILTERROLEMANAGER) ?? "{}"
+            );
+            const data = {
+              doc: localParams.doc ?? "",
+              role: id,
+            };
+            LocalStorage.saveData(
+              LocalStorageType.FILTERROLEMANAGER,
+              JSON.stringify(data)
+            );
+
+            navigate("/permission-manager");
+          },
+        },
+      ]);
     } else {
       setLoading(false);
       setListMoreAction([]);
