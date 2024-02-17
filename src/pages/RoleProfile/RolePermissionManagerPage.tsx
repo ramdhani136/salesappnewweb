@@ -100,9 +100,10 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     getData();
     // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
-  }, []);
+  }, [role, doc]);
 
   return (
     <>
@@ -189,154 +190,160 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                     </select>
                   </div>
                 </div>
-                <table className="w-[98%] ml-[1%] text-left mb-3 border-collapse">
-                  <thead>
-                    <tr className="bg-gray-100 ">
-                      <th className="w-[20%] px-3 py-3 rounded-tl-md rounded-bl-md">
-                        Document Type
-                      </th>
-                      <th className="w-[20%]">Role</th>
-                      <th className="w-[50%]">Permission</th>
-                      <th className="w-[10%] px-3 rounded-tr-md rounded-br-md "></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.map((item: any, index: number) => (
-                      <tr
-                        className="border-b border-gray-100 border-collapse"
-                        key={index}
-                      >
-                        <td className="px-3 py-8 align-top">{item.doc}</td>
-                        <td className="align-top  py-8">
-                          {item.roleprofile.name}
-                        </td>
-                        <td className="align-top  py-8">
-                          <div className="w-full flex text-[0.95em]">
-                            <ul className="flex-1">
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.create == "1" ? true : false}
-                                  type="checkbox"
-                                  name="create"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Create</h4>
-                              </li>
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.submit == "1" ? true : false}
-                                  type="checkbox"
-                                  name="submit"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Submit</h4>
-                              </li>
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.amend == "1" ? true : false}
-                                  type="checkbox"
-                                  name="amend"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Amend</h4>
-                              </li>
-                            </ul>
-                            <ul className="flex-1">
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.read == "1" ? true : false}
-                                  type="checkbox"
-                                  name="read"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Read</h4>
-                              </li>
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.export == "1" ? true : false}
-                                  type="checkbox"
-                                  name="export"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Export</h4>
-                              </li>
-                            </ul>
-                            <ul className="flex-1">
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.update == "1" ? true : false}
-                                  type="checkbox"
-                                  name="update"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Update</h4>
-                              </li>
-                              <li className="flex items-center mb-4">
-                                <input
-                                  checked={item.delete == "1" ? true : false}
-                                  type="checkbox"
-                                  name="delete"
-                                  className="mr-1 mt-1"
-                                  onChange={(e) => {
-                                    SetPermission(item._id, {
-                                      name: e.target.name,
-                                      value: e.target.checked,
-                                    });
-                                  }}
-                                />
-                                <h4>Delete</h4>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                        <td className="px-3 align-top  py-8">
-                          <button className="border bg-[#eb645e] rounded-md flex p-[4px]">
-                            <DeleteForeverIcon
-                              style={{ fontSize: 18 }}
-                              className="text-white items-center justify-center"
-                            />
-                          </button>
-                        </td>
+                {role === "" && doc === "" ? (
+                  <div className=" w-full  float-left flex items-center justify-center py-40 text-gray-500">
+                    Select Document Type or Role to start.
+                  </div>
+                ) : (
+                  <table className="w-[98%] ml-[1%] text-left mb-3 border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 ">
+                        <th className="w-[20%] px-3 py-3 rounded-tl-md rounded-bl-md">
+                          Document Type
+                        </th>
+                        <th className="w-[20%]">Role</th>
+                        <th className="w-[50%]">Permission</th>
+                        <th className="w-[10%] px-3 rounded-tr-md rounded-br-md "></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {data.map((item: any, index: number) => (
+                        <tr
+                          className="border-b border-gray-100 border-collapse"
+                          key={index}
+                        >
+                          <td className="px-3 py-8 align-top">{item.doc}</td>
+                          <td className="align-top  py-8">
+                            {item.roleprofile.name}
+                          </td>
+                          <td className="align-top  py-8">
+                            <div className="w-full flex text-[0.95em]">
+                              <ul className="flex-1">
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.create == "1" ? true : false}
+                                    type="checkbox"
+                                    name="create"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Create</h4>
+                                </li>
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.submit == "1" ? true : false}
+                                    type="checkbox"
+                                    name="submit"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Submit</h4>
+                                </li>
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.amend == "1" ? true : false}
+                                    type="checkbox"
+                                    name="amend"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Amend</h4>
+                                </li>
+                              </ul>
+                              <ul className="flex-1">
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.read == "1" ? true : false}
+                                    type="checkbox"
+                                    name="read"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Read</h4>
+                                </li>
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.export == "1" ? true : false}
+                                    type="checkbox"
+                                    name="export"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Export</h4>
+                                </li>
+                              </ul>
+                              <ul className="flex-1">
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.update == "1" ? true : false}
+                                    type="checkbox"
+                                    name="update"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Update</h4>
+                                </li>
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    checked={item.delete == "1" ? true : false}
+                                    type="checkbox"
+                                    name="delete"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <h4>Delete</h4>
+                                </li>
+                              </ul>
+                            </div>
+                          </td>
+                          <td className="px-3 align-top  py-8">
+                            <button className="border bg-[#eb645e] rounded-md flex p-[4px]">
+                              <DeleteForeverIcon
+                                style={{ fontSize: 18 }}
+                                className="text-white items-center justify-center"
+                              />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </>
