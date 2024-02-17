@@ -12,6 +12,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import { Alert, Snackbar } from "@mui/material";
 import { ISelectValue } from "../../components/atoms/SelectComponent";
+import { divide } from "lodash";
 
 const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
@@ -29,24 +30,59 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [doc, setDoc] = useState<string>("");
   const [role, setRole] = useState<string>("");
+  const [docSelectOption, setDocSelectOption] = useState<ISelectValue[]>([
+    { title: "Select Document Type", value: "" },
+    { title: "Users", value: "users" },
+    { title: "Branch", value: "branch" },
+    { title: "Permission", value: "permission" },
+    { title: "Customer", value: "customer" },
+    { title: "Customer Group", value: "customergroup" },
+    { title: "Visit", value: "visit" },
+    { title: "Callsheet", value: "callsheet" },
+    { title: "Contact", value: "contact" },
+    { title: "Config", value: "config" },
+    { title: "Naming Series", value: "namingseries" },
+    { title: "User Group", value: "usergroup" },
+    { title: "User Grup List", value: "usergrouplist" },
+    { title: "Schedule", value: "schedule" },
+    { title: "ScheduleList", value: "schedulelist" },
+    { title: "Role Profile", value: "roleprofile" },
+    { title: "Role List", value: "rolelist" },
+    { title: "Role User", value: "roleuser" },
+    { title: "Tag", value: "tag" },
+    { title: "Memo", value: "memo" },
+    { title: "ErpNext", value: "erp" },
+    { title: "Workflow State", value: "workflowstate" },
+    { title: "Workflow Action", value: "workflowaction" },
+    { title: "Workflow", value: "workflow" },
+    { title: "Workflow Transition", value: "workflowtransition" },
+    { title: "Workflow Changer", value: "workflowchanger" },
+    { title: "Topic", value: "topic" },
+    { title: "Notes", value: "Notes" },
+    { title: "Assesment Question", value: "assesmentquestion" },
+    { title: "Assesment Indicator", value: "assesmentindicator" },
+    { title: "Assesment Template", value: "assesmenttemplate" },
+    { title: "Assesment Schedule", value: "assesmentschedule" },
+    { title: "Assesment Schedule List", value: "assesmentschedulelist" },
+    { title: "Assesment Result", value: "assesmentresult" },
+  ]);
 
   const getData = async (): Promise<void> => {
     try {
+      let filters: [String, String, String][] = [];
+      if (doc !== "") {
+        filters.push(["doc", "=", doc]);
+      }
       const result: any = await GetDataServer(DataAPI.ROLELIST).FIND({
         limit: 0,
         orderBy: { state: "createdAt", sort: -1 },
+        filters,
       });
       setData(result.data);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
-      AlertModal.Default({
-        icon: "error",
-        title: "Error",
-        text: "Data not found!",
-      });
-
-      navigate("/roleprofile");
+      setData([]);
     }
   };
 
@@ -99,8 +135,18 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     }
   };
 
+  const GenerateName = (name: string): string => {
+    const isName = docSelectOption.filter((item) => item.value === name);
+    if (isName.length > 0) {
+      return isName[0].title;
+    }
+
+    return "";
+  };
+
   useEffect(() => {
     setLoading(true);
+
     getData();
     // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
   }, [role, doc]);
@@ -174,9 +220,25 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                       }}
                       className="w-[230px] border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
-                      <option value="">Select Document Type</option>
-                      <option value="schedule">Schedule</option>
-                      <option value="visit">Visit</option>
+                      {docSelectOption
+                        .sort((a, b) => {
+                          const titleA = a.title.toUpperCase();
+                          const titleB = b.title.toUpperCase();
+
+                          if (titleA < titleB) {
+                            return -1;
+                          }
+                          if (titleA > titleB) {
+                            return 1;
+                          }
+
+                          return 0;
+                        })
+                        .map((item: ISelectValue, index: number) => (
+                          <option value={item.value} key={index}>
+                            {item.title}
+                          </option>
+                        ))}
                     </select>
                     <select
                       value={role}
@@ -194,7 +256,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                   <div className=" w-full  float-left flex items-center justify-center py-40 text-gray-500">
                     Select Document Type or Role to start.
                   </div>
-                ) : (
+                ) : data.length > 0 ? (
                   <table className="w-[98%] ml-[1%] text-left mb-3 border-collapse">
                     <thead>
                       <tr className="bg-gray-100 ">
@@ -212,7 +274,9 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                           className="border-b border-gray-100 border-collapse"
                           key={index}
                         >
-                          <td className="px-3 py-8 align-top">{item.doc}</td>
+                          <td className="px-3 py-8 align-top">
+                            {GenerateName(item.doc)}
+                          </td>
                           <td className="align-top  py-8">
                             {item.roleprofile.name}
                           </td>
@@ -343,6 +407,10 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                       ))}
                     </tbody>
                   </table>
+                ) : (
+                  <div className=" w-full  float-left flex items-center justify-center py-40 text-gray-500">
+                    No Permissions set for this criteria.
+                  </div>
                 )}
               </div>
             </div>
