@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import { Alert, Snackbar } from "@mui/material";
+import { ISelectValue } from "../../components/atoms/SelectComponent";
 
 const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
@@ -22,13 +23,12 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
 
   const [alert, setAlert] = useState<boolean>(false);
   const navigate = useNavigate();
-
   const [scroll, setScroll] = useState<number>(0);
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
-
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
+  const [doc, setDoc] = useState<string>("");
+  const [role, setRole] = useState<string>("");
 
   const getData = async (): Promise<void> => {
     try {
@@ -104,8 +104,6 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
   }, []);
 
-  console.log(data);
-
   return (
     <>
       {Meta(metaData)}
@@ -168,16 +166,24 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                 <div className="w-full h-auto  float-left rounded-md  py-2">
                   <div className="py-3 w-full border-b border-gray-100 float-left px-3 text-[0.95em]">
                     <select
+                      value={doc}
                       name="doc"
-                      className="w-[230px] border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2"
+                      onChange={(e) => {
+                        setDoc(e.target.value);
+                      }}
+                      className="w-[230px] border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
+                      <option value="">Select Document Type</option>
                       <option value="schedule">Schedule</option>
                       <option value="visit">Visit</option>
                     </select>
                     <select
+                      value={role}
                       name="role"
-                      className="w-[230px] ml-2 border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2"
+                      onChange={(e) => setRole(e.target.value)}
+                      className="w-[230px] ml-2 border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
+                      <option value="">Select Role</option>
                       <option value="schedule">Schedule</option>
                       <option value="visit">Visit</option>
                     </select>
