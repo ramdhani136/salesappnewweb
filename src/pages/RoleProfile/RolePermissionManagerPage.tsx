@@ -91,30 +91,24 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     }
   };
 
-  const onDelete = (): void => {
-    if (id) {
-      const progress = async (): Promise<void> => {
-        setLoading(true);
-        try {
-          await GetDataServer(DataAPI.ROLEPROFILE).DELETE(`${id}`);
-          navigate("/roleprofile");
-        } catch (error: any) {
-          setLoading(false);
-          Swal.fire(
-            "Error!",
-            `${
-              error.response.data.msg
-                ? error.response.data.msg
-                : error.message
-                ? error.message
-                : "Error Delete"
-            }`,
-            "error"
-          );
-        }
-      };
-
-      AlertModal.confirmation({ onConfirm: progress });
+  const onDelete = async (id: string): Promise<void> => {
+    try {
+      setLoading(true);
+      await GetDataServer(DataAPI.ROLELIST).DELETE(`${id}`);
+      getData();
+    } catch (error: any) {
+      setLoading(false);
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Delete"
+        }`,
+        "error"
+      );
     }
   };
 
@@ -447,7 +441,14 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                             </div>
                           </td>
                           <td className="px-3 align-top  py-8">
-                            <button className="border bg-[#eb645e] rounded-md flex p-[4px]">
+                            <button
+                              className="border bg-[#eb645e] rounded-md flex p-[4px]  hover:bg-[#c4534d] duration-300"
+                              onClick={(e) =>
+                                AlertModal.confirmation({
+                                  onConfirm: () => onDelete(item._id),
+                                })
+                              }
+                            >
                               <DeleteForeverIcon
                                 style={{ fontSize: 18 }}
                                 className="text-white items-center justify-center"
