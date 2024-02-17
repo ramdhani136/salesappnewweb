@@ -30,8 +30,8 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [doc, setDoc] = useState<string>("");
   const [role, setRole] = useState<string>("");
-  const [docSelectOption, setDocSelectOption] = useState<ISelectValue[]>([
-    { title: "Select Document Type", value: "" },
+  const docSelectOption: ISelectValue[] = [
+    { title: " Select Document Type", value: "" },
     { title: "Users", value: "users" },
     { title: "Branch", value: "branch" },
     { title: "Permission", value: "permission" },
@@ -65,13 +65,18 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     { title: "Assesment Schedule", value: "assesmentschedule" },
     { title: "Assesment Schedule List", value: "assesmentschedulelist" },
     { title: "Assesment Result", value: "assesmentresult" },
-  ]);
+  ];
+
+  const [roleSelectOption, setRoleSelectOption] = useState<ISelectValue[]>([]);
 
   const getData = async (): Promise<void> => {
     try {
       let filters: [String, String, String][] = [];
       if (doc !== "") {
         filters.push(["doc", "=", doc]);
+      }
+      if (role !== "") {
+        filters.push(["roleprofile", "=", role]);
       }
       const result: any = await GetDataServer(DataAPI.ROLELIST).FIND({
         limit: 0,
@@ -142,6 +147,34 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     }
 
     return "";
+  };
+
+  const GetRole = async () => {
+    try {
+      const role: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
+        limit: 0,
+      });
+      const genOptionRole: ISelectValue[] = role.data.map(
+        (item: any): ISelectValue => {
+          return { title: item.name, value: item._id };
+        }
+      );
+      setRoleSelectOption(genOptionRole);
+    } catch (error: any) {
+      setRoleSelectOption([]);
+      setLoading(false);
+      Swal.fire(
+        "Error!",
+        `${
+          error.response.data.msg
+            ? error.response.data.msg
+            : error.message
+            ? error.message
+            : "Error Delete"
+        }`,
+        "error"
+      );
+    }
   };
 
   useEffect(() => {
@@ -241,14 +274,32 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                         ))}
                     </select>
                     <select
+                      onClick={() => GetRole()}
                       value={role}
                       name="role"
                       onChange={(e) => setRole(e.target.value)}
                       className="w-[230px] ml-2 border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
                       <option value="">Select Role</option>
-                      <option value="schedule">Schedule</option>
-                      <option value="visit">Visit</option>
+                      {roleSelectOption
+                        .sort((a, b) => {
+                          const titleA = a.title.toUpperCase();
+                          const titleB = b.title.toUpperCase();
+
+                          if (titleA < titleB) {
+                            return -1;
+                          }
+                          if (titleA > titleB) {
+                            return 1;
+                          }
+
+                          return 0;
+                        })
+                        .map((item: ISelectValue, index: number) => (
+                          <option key={index} value={item.value}>
+                            {item.title}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 </div>
