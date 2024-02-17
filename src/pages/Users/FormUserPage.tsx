@@ -40,7 +40,7 @@ const FormUserPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
-  const [prevData, setPrevData] = useState<any>({});
+  // const [prevData, setPrevData] = useState<any>({});
   const dataStatus: any[] = [
     { title: "Enabled", value: "1" },
     { title: "Disabled", value: "0" },

@@ -3,18 +3,16 @@ import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IconButton } from "../../components/atoms";
-import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
-import moment from "moment";
 import { AlertModal, LocalStorage, Meta } from "../../utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
 import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
+import { Alert, Snackbar } from "@mui/material";
 
 const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
-  const modal = props ? props.modal ?? false : false;
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
@@ -22,37 +20,10 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     description: "Halaman role permission manager - Sales web system",
   };
 
+  const [alert, setAlert] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const [scroll, setScroll] = useState<number>(0);
-
-  const [isChangeData, setChangeData] = useState<boolean>(false);
-
-  const [user, setUser] = useState<IValue>({
-    valueData: LocalStorage.getUser()._id,
-    valueInput: LocalStorage.getUser().name,
-  });
-  const [name, setName] = useState<IValue>({
-    valueData: "",
-    valueInput: "",
-  });
-
-  const [status, setStatus] = useState<string>("1");
-
-  const statusType: any[] = [
-    { title: "Disabled", value: "0" },
-    { title: "Enabled", value: "1" },
-  ];
-
-  const [prevData, setPrevData] = useState<any>({
-    name: name.valueData,
-    status: status,
-  });
-
-  const [createdAt, setCreatedAt] = useState<IValue>({
-    valueData: moment(Number(new Date())).format("YYYY-MM-DD"),
-    valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
-  });
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
@@ -61,30 +32,11 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
 
   const getData = async (): Promise<void> => {
     try {
-      const result = await GetDataServer(DataAPI.ROLEPROFILE).FINDONE(`${id}`);
-
-      setStatus(result.data.status);
-
-      setName({
-        valueData: result.data.name,
-        valueInput: result.data.name,
+      const result: any = await GetDataServer(DataAPI.ROLELIST).FIND({
+        limit: 0,
+        orderBy: { state: "createdAt", sort: -1 },
       });
-      setUser({
-        valueData: result.data.createdBy._id,
-        valueInput: result.data.createdBy.name,
-      });
-      setCreatedAt({
-        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
-        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
-      });
-
       setData(result.data);
-
-      setPrevData({
-        name: result.data.name,
-        status: result.data.status,
-      });
-
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -125,89 +77,50 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     }
   };
 
-  const onSave = async (nextState?: String): Promise<any> => {
-    setLoading(true);
-    try {
-      let data: any = {
-        name: name.valueData,
-        status: status,
-      };
-      if (nextState) {
-        data.nextState = nextState;
-      }
-
-      let Action =
-        id && !modal
-          ? GetDataServer(DataAPI.ROLEPROFILE).UPDATE({ id: id, data: data })
-          : GetDataServer(DataAPI.ROLEPROFILE).CREATE(data);
-
-      const result = await Action;
-
-      if (id && !modal) {
-        getData();
-        Swal.fire({ icon: "success", text: "Saved" });
-      } else if (modal) {
-        props.Callback(result.data?.data ?? {});
-        dispatch(
-          modalSet({
-            active: false,
-            Children: null,
-            title: "",
-            props: {},
-            className: "",
-          })
-        );
-      } else {
-        navigate(`/roleprofile/${result.data.data._id}`);
-        navigate(0);
-      }
-    } catch (error: any) {
-      Swal.fire(
-        "Error!",
-        `${
-          error.response.data.msg
-            ? error.response.data.msg
-            : error.message
-            ? error.message
-            : "Error Insert"
-        }`,
-        "error"
-      );
+  const SetPermission = async (
+    id: string,
+    data: {
+      name: string;
+      value: boolean;
     }
-    setLoading(false);
+  ) => {
+    try {
+      let up: any = {};
+      up[`${data.name}`] = data.value ? 1 : 0;
+
+      await GetDataServer(DataAPI.ROLELIST).UPDATE({
+        id: id,
+        data: up,
+      });
+      setAlert(true);
+      getData();
+    } catch (error: any) {
+      Swal.fire(error.response.data.msg ?? "Failed, Error update permission!");
+    }
   };
 
   useEffect(() => {
-    if (id && !modal) {
-      getData();
-      setListMoreAction([{ name: "Delete", onClick: onDelete }]);
-    } else {
-      setLoading(false);
-      setListMoreAction([]);
-    }
-
-    if (modal) {
-      setName({ valueData: props.name, valueInput: props.name });
-    }
+    getData();
+    // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
   }, []);
 
-  // Cek perubahan
-  useEffect(() => {
-    const actualData = {
-      name: name.valueData,
-      status: status,
-    };
-    if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
-      setChangeData(true);
-    } else {
-      setChangeData(false);
-    }
-  }, [name, status]);
-  // End
+  console.log(data);
 
   return (
     <>
       {Meta(metaData)}
+      {alert && (
+        <Snackbar
+          open={true}
+          autoHideDuration={1500}
+          onClose={() => setAlert(false)}
+          message="Note archived"
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
+            Permission updated!
+          </Alert>
+        </Snackbar>
+      )}
       <div
         className="  max-h-[calc(100vh-70px)] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-300"
         onScroll={(e: any) => setScroll(e.target.scrollTop)}
@@ -282,57 +195,140 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-gray-100 border-collapse">
-                      <td className="px-3 py-8 align-top">Visit</td>
-                      <td className="align-top  py-8">Sales Manager</td>
-                      <td className="align-top  py-8">
-                        <div className="w-full flex text-[0.95em]">
-                          <ul className="flex-1">
-                            <li className="flex items-center mb-3">
-                              <input
-                                type="checkbox"
-                                name=""
-                                className="mr-1 mt-1"
-                              />
-                              <h4>Create</h4>
-                            </li>
-                            <li className="flex items-center mb-3">
-                              <input
-                                type="checkbox"
-                                name=""
-                                className="mr-1 mt-1"
-                              />
-                              <h4>Cancel</h4>
-                            </li>
-                          </ul>
-                          <ul className="flex-1">
-                            <li className="flex items-center mb-3">
-                              <input
-                                type="checkbox"
-                                name=""
-                                className="mr-1 mt-1"
-                              />
-                              <h4>Read</h4>
-                            </li>
-                          </ul>
-                          <ul className="flex-1">
-                            <li className="flex items-center mb-3">
-                              <input
-                                type="checkbox"
-                                name=""
-                                className="mr-1 mt-1"
-                              />
-                              <h4>Write</h4>
-                            </li>
-                          </ul>
-                        </div>
-                      </td>
-                      <td className="px-3 align-top  py-8">
-                        <button className="border bg-[#eb645e] rounded-md flex p-[2px]">
-                          <DeleteForeverIcon style={{fontSize:20}} className="text-white items-center justify-center" />
-                        </button>
-                      </td>
-                    </tr>
+                    {data.map((item: any, index: number) => (
+                      <tr
+                        className="border-b border-gray-100 border-collapse"
+                        key={index}
+                      >
+                        <td className="px-3 py-8 align-top">{item.doc}</td>
+                        <td className="align-top  py-8">
+                          {item.roleprofile.name}
+                        </td>
+                        <td className="align-top  py-8">
+                          <div className="w-full flex text-[0.95em]">
+                            <ul className="flex-1">
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.create == "1" ? true : false}
+                                  type="checkbox"
+                                  name="create"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Create</h4>
+                              </li>
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.submit == "1" ? true : false}
+                                  type="checkbox"
+                                  name="submit"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Submit</h4>
+                              </li>
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.amend == "1" ? true : false}
+                                  type="checkbox"
+                                  name="amend"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Amend</h4>
+                              </li>
+                            </ul>
+                            <ul className="flex-1">
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.read == "1" ? true : false}
+                                  type="checkbox"
+                                  name="read"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Read</h4>
+                              </li>
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.export == "1" ? true : false}
+                                  type="checkbox"
+                                  name="export"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Export</h4>
+                              </li>
+                            </ul>
+                            <ul className="flex-1">
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.update == "1" ? true : false}
+                                  type="checkbox"
+                                  name="update"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Update</h4>
+                              </li>
+                              <li className="flex items-center mb-4">
+                                <input
+                                  checked={item.delete == "1" ? true : false}
+                                  type="checkbox"
+                                  name="delete"
+                                  className="mr-1 mt-1"
+                                  onChange={(e) => {
+                                    SetPermission(item._id, {
+                                      name: e.target.name,
+                                      value: e.target.checked,
+                                    });
+                                  }}
+                                />
+                                <h4>Delete</h4>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                        <td className="px-3 align-top  py-8">
+                          <button className="border bg-[#eb645e] rounded-md flex p-[4px]">
+                            <DeleteForeverIcon
+                              style={{ fontSize: 18 }}
+                              className="text-white items-center justify-center"
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
