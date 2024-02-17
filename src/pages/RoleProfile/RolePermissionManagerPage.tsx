@@ -4,7 +4,7 @@ import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IconButton } from "../../components/atoms";
 import { LoadingComponent } from "../../components/moleculs";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, LocalStorage, LocalStorageType, Meta } from "../../utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
@@ -12,7 +12,7 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { useDispatch } from "react-redux";
 import { Alert, Snackbar } from "@mui/material";
 import { ISelectValue } from "../../components/atoms/SelectComponent";
-import { divide } from "lodash";
+import { divide, filter } from "lodash";
 
 const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
@@ -69,15 +69,28 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
 
   const [roleSelectOption, setRoleSelectOption] = useState<ISelectValue[]>([]);
 
-  const getData = async (): Promise<void> => {
+  const getData = async (filter?: {
+    role: string;
+    doc: string;
+  }): Promise<void> => {
     try {
       let filters: [String, String, String][] = [];
-      if (doc !== "") {
-        filters.push(["doc", "=", doc]);
+      if (filter) {
+        if (filter.doc !== "") {
+          filters.push(["doc", "=", filter.doc]);
+        }
+        if (filter.role !== "") {
+          filters.push(["roleprofile", "=", filter.role]);
+        }
+      } else {
+        if (doc !== "") {
+          filters.push(["doc", "=", doc]);
+        }
+        if (role !== "") {
+          filters.push(["roleprofile", "=", role]);
+        }
       }
-      if (role !== "") {
-        filters.push(["roleprofile", "=", role]);
-      }
+
       const result: any = await GetDataServer(DataAPI.ROLELIST).FIND({
         limit: 0,
         orderBy: { state: "createdAt", sort: -1 },
@@ -171,12 +184,24 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     }
   };
 
-  useEffect(() => {
-    setLoading(true);
+  const getStorage = async () => {
+    const localParams: any = await JSON.parse(
+      LocalStorage.loadData(LocalStorageType.FILTERROLEMANAGER) ?? "{}"
+    );
+    if (localParams) {
+      if (localParams.role) {
+        GetRole();
+        setRole(localParams.role);
+      }
+      setDoc(localParams.doc);
 
-    getData();
-    // setListMoreAction([{ name: "Delete", onClick: onDelete }]);
-  }, [role, doc]);
+      getData({ doc: localParams.doc, role: localParams.role });
+    }
+  };
+
+  useEffect(() => {
+    getStorage();
+  }, []);
 
   return (
     <>
@@ -243,7 +268,16 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                       value={doc}
                       name="doc"
                       onChange={(e) => {
+                        setLoading(true);
+                        getData({ doc: e.target.value, role: role });
                         setDoc(e.target.value);
+                        LocalStorage.saveData(
+                          LocalStorageType.FILTERROLEMANAGER,
+                          JSON.stringify({
+                            doc: e.target.value,
+                            role: role,
+                          })
+                        );
                       }}
                       className="w-[230px] border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
@@ -271,7 +305,18 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                       onClick={() => GetRole()}
                       value={role}
                       name="role"
-                      onChange={(e) => setRole(e.target.value)}
+                      onChange={(e) => {
+                        setLoading(true);
+                        getData({ role: e.target.value, doc: doc });
+                        setRole(e.target.value);
+                        LocalStorage.saveData(
+                          LocalStorageType.FILTERROLEMANAGER,
+                          JSON.stringify({
+                            doc: doc,
+                            role: e.target.value,
+                          })
+                        );
+                      }}
                       className="w-[230px] ml-2 border border-gray-200 bg-[#f4f5f7] rounded-md py-[2px] px-2 text-sm"
                     >
                       <option value="">Select Role</option>
