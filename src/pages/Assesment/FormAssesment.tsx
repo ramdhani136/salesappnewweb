@@ -178,6 +178,8 @@ const FormAssesmentPage: React.FC = () => {
     getData();
   }, []);
 
+  console.log(details)
+
   return (
     <>
       {Meta(metaData)}
