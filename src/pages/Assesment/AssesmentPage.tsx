@@ -51,7 +51,8 @@ export const AssesmentPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Customer", accessor: "customer", className: "w-auto" },
-      { header: "Status", accessor: "workflowState", className: "w-auto" },
+      { header: "Status", accessor: "status", className: "w-auto" },
+      { header: "Workflow State", accessor: "workState", className: "w-auto" },
       { header: "Schedule", accessor: "schedule", className: "w-auto" },
       { header: "Active Date", accessor: "activeDate", className: "w-auto" },
       {
@@ -95,12 +96,13 @@ export const AssesmentPage: React.FC = (): any => {
             schedule: <div>{item.schedule.name}</div>,
             activeDate: moment(item.activeDate).format("LL"),
             deactiveDate: moment(item.deactiveDate).format("LL"),
-            workflowState: (
+            status: (
               <ButtonStatusComponent
                 status={item.status}
                 name={item.status == 0 ? "Open" : "Closed"}
               />
             ),
+            workState: item.workflowState,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-14" />

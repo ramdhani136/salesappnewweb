@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
+  ButtonStatusComponent,
   IconButton,
   InputComponent,
   TimeLineVertical,
@@ -203,6 +204,13 @@ const FormAssesmentPage: React.FC = () => {
                 >
                   {data.customer.name}
                 </h4>
+                <div className="text-md">
+                  <ButtonStatusComponent
+                    // className="text-[0.7em]"
+                    status={data.status ?? "0"}
+                    name={data.workflowState ?? "Not Save"}
+                  />
+                </div>
               </div>
               <div className="flex">
                 {listMoreAction.length > 0 && (
