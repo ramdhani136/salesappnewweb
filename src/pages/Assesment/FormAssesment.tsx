@@ -236,6 +236,7 @@ const FormAssesmentPage: React.FC = () => {
                     list={workflow}
                     callback={onSave}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
+                    classModal="-mt-[3px]"
                   />
                 )}
               </div>
