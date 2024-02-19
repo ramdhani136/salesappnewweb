@@ -14,7 +14,6 @@ import { AlertModal, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
-import { update } from "lodash";
 
 interface detailModel {
   question: {
@@ -58,16 +57,40 @@ const FormAssesmentPage: React.FC = () => {
     valueInput: moment(Number(new Date())).format("YYYY-MM-DD"),
   });
 
+  const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
+
   const [loading, setLoading] = useState<boolean>(true);
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [details, setDetails] = useState<detailModel[]>([]);
 
   const getData = async (): Promise<void> => {
+    setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
       );
+
+      // set workflow
+      if (result.workflow.length > 0) {
+        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
+          return {
+            name: item.action,
+            onClick: () => {
+              AlertModal.confirmation({
+                onConfirm: () => {
+                  console.log(item);
+                  onSave(item.nextState.id);
+                },
+                confirmButtonText: "Yes, Save it!",
+              });
+            },
+          };
+        });
+
+        setWorkflow(isWorkflow);
+      }
+      // end
 
       setHistory(result.history);
 
@@ -115,39 +138,40 @@ const FormAssesmentPage: React.FC = () => {
     }
   };
 
-  const onSave = async (): Promise<any> => {
-    setLoading(true);
+  const onSave = async (nextState?: String): Promise<any> => {
+    console.log(nextState)
+    // setLoading(true);
 
-    try {
-      const upData: any = {};
-      upData.idScheduleItem = id;
-      upData.customer = { _id: data.customer._id, name: data.customer.name };
-      upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
-      upData.activeDate = data.schedule.activeDate;
-      upData.deactiveDate = data.schedule.deactiveDate;
-      upData.assesmentTemplate = template;
-      upData.details = details;
-      await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
-      Swal.fire("Success!", `Success`, "success");
+    // try {
+    //   const upData: any = {};
+    //   upData.idScheduleItem = id;
+    //   upData.customer = { _id: data.customer._id, name: data.customer.name };
+    //   upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
+    //   upData.activeDate = data.schedule.activeDate;
+    //   upData.deactiveDate = data.schedule.deactiveDate;
+    //   upData.assesmentTemplate = template;
+    //   upData.details = details;
+    //   await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
+    //   Swal.fire("Success!", `Success`, "success");
 
-      navigate(`/assesment`);
-    } catch (error: any) {
-      console.log(error);
-      Swal.fire(
-        "Error!",
-        `${
-          error?.response?.data?.error
-            ? error.response.data.error
-            : error?.response?.data?.msg
-            ? error?.response?.data?.msg
-            : error?.message
-            ? error?.message
-            : error ?? "Error Insert"
-        }`,
-        "error"
-      );
-    }
-    setLoading(false);
+    //   navigate(`/assesment`);
+    // } catch (error: any) {
+    //   console.log(error);
+    //   Swal.fire(
+    //     "Error!",
+    //     `${
+    //       error?.response?.data?.error
+    //         ? error.response.data.error
+    //         : error?.response?.data?.msg
+    //         ? error?.response?.data?.msg
+    //         : error?.message
+    //         ? error?.message
+    //         : error ?? "Error Insert"
+    //     }`,
+    //     "error"
+    //   );
+    // }
+    // setLoading(false);
   };
 
   useEffect(() => {
@@ -205,6 +229,15 @@ const FormAssesmentPage: React.FC = () => {
                       className={`opacity-80 hover:opacity-100 duration-100  `}
                     />
                   )}
+
+                {tab === "Questions" && workflow.length > 0 && (
+                  <IconButton
+                    name="Actions"
+                    list={workflow}
+                    callback={onSave}
+                    className={`opacity-80 hover:opacity-100 duration-100  `}
+                  />
+                )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -331,7 +364,7 @@ const GetQuestion: React.FC<{
           title: "Error",
           text: "Assesment template not active!!",
         });
-  
+
         navigate("/assesment");
       } else {
         setTemplate(response.data);
