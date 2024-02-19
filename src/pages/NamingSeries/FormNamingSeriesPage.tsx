@@ -244,12 +244,13 @@ const FormNamingSeriesPage: React.FC = () => {
     setLoading(true);
     try {
       let updata = {};
-      if (!name.valueData) {
-        throw new Error("Nama wajib diisi!");
-      }
+  
       if (nextState) {
         updata = { nextState: nextState };
       } else {
+        if (!name.valueData) {
+          throw new Error("Nama wajib diisi!");
+        }
         updata = {
           name: name.valueData,
           doc: doc,
