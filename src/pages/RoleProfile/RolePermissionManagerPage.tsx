@@ -255,7 +255,17 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
 
                 <IconButton
                   name="Add New Rule"
-                  callback={() => {}}
+                  callback={() => {
+                    dispatch(
+                      modalSet({
+                        active: true,
+                        Children: FormPermission,
+                        title: "Form Role Permission",
+                        props: {},
+                        className: "",
+                      })
+                    );
+                  }}
                   className={`opacity-80 hover:opacity-100 duration-100  `}
                 />
               </div>
@@ -517,6 +527,150 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
         )}
       </div>
     </>
+  );
+};
+
+const FormPermission = () => {
+  const [doc, setDoc] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+  const [valid, setValid] = useState<boolean>(false);
+  const [roleList, setRoleList] = useState<ISelectValue[]>([]);
+  const docList: ISelectValue[] = [
+    { title: "Users", value: "users" },
+    { title: "Branch", value: "branch" },
+    { title: "Permission", value: "permission" },
+    { title: "Customer", value: "customer" },
+    { title: "Customer Group", value: "customergroup" },
+    { title: "Visit", value: "visit" },
+    { title: "Callsheet", value: "callsheet" },
+    { title: "Contact", value: "contact" },
+    { title: "Config", value: "config" },
+    { title: "Naming Series", value: "namingseries" },
+    { title: "User Group", value: "usergroup" },
+    { title: "User Grup List", value: "usergrouplist" },
+    { title: "Schedule", value: "schedule" },
+    { title: "ScheduleList", value: "schedulelist" },
+    { title: "Role Profile", value: "roleprofile" },
+    { title: "Role List", value: "rolelist" },
+    { title: "Role User", value: "roleuser" },
+    { title: "Tag", value: "tag" },
+    { title: "Memo", value: "memo" },
+    { title: "ErpNext", value: "erp" },
+    { title: "Workflow State", value: "workflowstate" },
+    { title: "Workflow Action", value: "workflowaction" },
+    { title: "Workflow", value: "workflow" },
+    { title: "Workflow Transition", value: "workflowtransition" },
+    { title: "Workflow Changer", value: "workflowchanger" },
+    { title: "Topic", value: "topic" },
+    { title: "Notes", value: "Notes" },
+    { title: "Assesment Question", value: "assesmentquestion" },
+    { title: "Assesment Indicator", value: "assesmentindicator" },
+    { title: "Assesment Template", value: "assesmenttemplate" },
+    { title: "Assesment Schedule", value: "assesmentschedule" },
+    { title: "Assesment Schedule List", value: "assesmentschedulelist" },
+    { title: "Assesment Result", value: "assesmentresult" },
+  ];
+
+  const GetRole = async () => {
+    try {
+      const response: any = await GetDataServer(DataAPI.ROLEPROFILE).FIND({
+        limit: 0,
+      });
+      const gen: ISelectValue[] = response.data.map(
+        (item: any): ISelectValue => {
+          return { title: item.name, value: item._id };
+        }
+      );
+      setRoleList(gen);
+    } catch (error) {
+      setRoleList([]);
+    }
+  };
+
+  useEffect(() => {
+    if (role !== "" && doc !== "") {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
+  }, [role, doc]);
+
+  return (
+    <div className="w-[530px] py-3 px-6 pb-10">
+      <div className="border-b py-2 border-gray-100 font-semibold">
+        Add New Permission Rule
+      </div>
+      <section className="mt-2 mb-2">
+        <label className="block text-[0.9em]">Document Type</label>
+        <select
+          value={doc}
+          className="w-full bg-gray-100 p-2 border border-gray-200 mt-2 text-sm rounded-md"
+          name="Doc"
+          onChange={(e) => setDoc(e.target.value)}
+        >
+          <option value="">Select Doc</option>
+          {docList
+            .sort((a, b) => {
+              const titleA = a.title.toUpperCase();
+              const titleB = b.title.toUpperCase();
+
+              if (titleA < titleB) {
+                return -1;
+              }
+              if (titleA > titleB) {
+                return 1;
+              }
+
+              return 0;
+            })
+            .map((item: ISelectValue, index) => {
+              return (
+                <option key={index} value={item.value}>
+                  {item.title}
+                </option>
+              );
+            })}
+        </select>
+      </section>
+      <section className="mb-2">
+        <label className="block text-[0.9em]">Role</label>
+        <select
+          className="w-full bg-gray-100 p-2 text-sm border border-gray-200 mt-2 rounded-md"
+          name="Role"
+          onClick={() => GetRole()}
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="">Select Role</option>
+          {roleList
+            .sort((a, b) => {
+              const titleA = a.title.toUpperCase();
+              const titleB = b.title.toUpperCase();
+
+              if (titleA < titleB) {
+                return -1;
+              }
+              if (titleA > titleB) {
+                return 1;
+              }
+
+              return 0;
+            })
+            .map((item: ISelectValue, index) => {
+              return (
+                <option key={index} value={item.value}>
+                  {item.title}
+                </option>
+              );
+            })}
+        </select>
+      </section>
+      {valid && (
+        <button className="opacity-80 hover:opacity-100 duration-200 float-right border rounded-md px-2 py-[4px] mt-3 mb-5 text-sm bg-[#2490f0] text-white">
+          Add
+        </button>
+      )}
+    </div>
   );
 };
 
