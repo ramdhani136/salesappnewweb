@@ -330,6 +330,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
           group: item.customerGroup.name,
           branch: item.branch.name,
           status: item.status == "0" ? "Open" : "Closed",
+          workState: item.workflowState,
           closing_date: moment(item.closing.date).format("LLL"),
           score: item.closing?.result?.score,
           grade: item.closing?.result?.grade,

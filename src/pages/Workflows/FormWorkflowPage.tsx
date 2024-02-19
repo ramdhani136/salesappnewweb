@@ -330,6 +330,7 @@ const FormWorkflowPage: React.FC<any> = () => {
     { name: "Tag", value: "tag" },
     { name: "Naming Series", value: "namingseries" },
     { name: "Assesment Schedule", value: "assesmentschedule" },
+    { name: "Assesment", value: "assesmentschedulelist" },
     { name: "Assesment Template", value: "assesmenttemplate" },
   ];
 
