@@ -221,7 +221,7 @@ const FormAssesmentPage: React.FC = () => {
                   </li>
                   <li
                     className={`float-left mx-3 cursor-pointer duration-300  opacity-90 hover:opacity-100 py-3 ${
-                      tab === "Question" &&
+                      tab === "Questions" &&
                       "border-b border-blue-400  font-semibold "
                     }`}
                     onClick={() => setTab("Questions")}
