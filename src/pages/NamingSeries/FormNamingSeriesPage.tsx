@@ -240,11 +240,10 @@ const FormNamingSeriesPage: React.FC = () => {
   }, []);
 
   const onSave = async (nextState?: String): Promise<any> => {
-   
     setLoading(true);
     try {
       let updata = {};
-  
+
       if (nextState) {
         updata = { nextState: nextState };
       } else {
