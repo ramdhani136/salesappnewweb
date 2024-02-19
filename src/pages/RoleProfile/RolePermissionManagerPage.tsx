@@ -261,7 +261,10 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                         active: true,
                         Children: FormPermission,
                         title: "Form Role Permission",
-                        props: {},
+                        props: {
+                          getData: getData,
+                          role: role,
+                        },
                         className: "",
                       })
                     );
@@ -530,9 +533,10 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
   );
 };
 
-const FormPermission = () => {
+const FormPermission: React.FC<any> = ({ props }) => {
   const [doc, setDoc] = useState<string>("");
-  const [role, setRole] = useState<string>("");
+  const dispatch = useDispatch()
+  const [role, setRole] = useState<string>(props.role ?? "");
   const [valid, setValid] = useState<boolean>(false);
   const [roleList, setRoleList] = useState<ISelectValue[]>([]);
   const docList: ISelectValue[] = [
@@ -587,6 +591,39 @@ const FormPermission = () => {
     }
   };
 
+  const onSave = async () => {
+    try {
+      await GetDataServer(DataAPI.ROLELIST).CREATE({
+        roleprofile: role,
+        doc: doc,
+      });
+      dispatch(
+        modalSet({
+          active: false,
+          Children: null,
+          title: "",
+          props: {},
+          className: "",
+        })
+      );
+      props.getData();
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
+        }`,
+        "error"
+      );
+    }
+  };
+
   useEffect(() => {
     if (role !== "" && doc !== "") {
       setValid(true);
@@ -595,11 +632,15 @@ const FormPermission = () => {
     }
   }, [role, doc]);
 
+  useEffect(() => {
+    GetRole();
+  }, []);
+
   return (
     <div className="w-[530px] py-3 px-6 pb-10">
-      <div className="border-b py-2 border-gray-100 font-semibold">
+      <h3 className="border-b font-semibold py-2 border-gray-100 flex items-center justify-between">
         Add New Permission Rule
-      </div>
+      </h3>
       <section className="mt-2 mb-2">
         <label className="block text-[0.9em]">Document Type</label>
         <select
@@ -666,7 +707,15 @@ const FormPermission = () => {
         </select>
       </section>
       {valid && (
-        <button className="opacity-80 hover:opacity-100 duration-200 float-right border rounded-md px-2 py-[4px] mt-3 mb-5 text-sm bg-[#2490f0] text-white">
+        <button
+          onClick={() => {
+            AlertModal.confirmation({
+              confirmButtonText: "Yes, Save",
+              onConfirm: () => onSave(),
+            });
+          }}
+          className="opacity-80 hover:opacity-100 duration-200 float-right border rounded-md px-2 py-[4px] mt-3 mb-5 text-sm bg-[#2490f0] text-white"
+        >
           Add
         </button>
       )}
