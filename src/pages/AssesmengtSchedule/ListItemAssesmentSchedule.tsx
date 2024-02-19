@@ -54,6 +54,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
     (): IColumns[] => [
       { header: "Customer", accessor: "customer", className: "max-w-[250px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
+      { header: "Work State", accessor: "workstate", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Score", accessor: "score", className: "w-auto text-center" },
       { header: "Grade", accessor: "grade", className: "w-auto text-center" },
@@ -187,6 +188,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
                 name={item.status === "0" ? "Open" : "Closed"}
               />
             ),
+            workstate:item.workflowState,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />
