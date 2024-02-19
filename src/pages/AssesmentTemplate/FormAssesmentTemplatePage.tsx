@@ -139,17 +139,18 @@ const FormAssesmentTemplatePage: React.FC = () => {
         valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
+
+      console.log(result.data.desc)
+      setPrevData({
+        name: result.data.name,
+        desc: result.data.notes ?? "",
+        indicators: cekIndicator(result.data.indicators),
+        grades: cekGrades(result.data.grades),
+      });
       setData(result.data);
 
       setIndicators(result.data.indicators ?? []);
       setGrades(result.data.grades ?? []);
-
-      setPrevData({
-        name: result.data.name,
-        desc: result.data.desc ?? "",
-        indicators: cekIndicator(result.data.indicators),
-        grades: cekGrades(result.data.grades),
-      });
 
       if (result.data.notes) {
         setDesc(result.data.notes);
@@ -206,14 +207,16 @@ const FormAssesmentTemplatePage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {
-        name: name.valueData,
-        notes: desc,
-        indicators: indicators,
-        grades: grades,
-      };
+      let data: any = {};
       if (nextState) {
         data.nextState = nextState;
+      } else {
+        data = {
+          name: name.valueData,
+          notes: desc,
+          indicators: indicators,
+          grades: grades,
+        };
       }
 
       let Action = id
