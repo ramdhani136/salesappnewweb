@@ -388,6 +388,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                               <ul className="flex-1">
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`create${item.doc}${item.roleprofile._id}`}
                                     checked={item.create == "1" ? true : false}
                                     type="checkbox"
                                     name="create"
@@ -399,10 +400,15 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Create</h4>
+                                  <label
+                                    htmlFor={`create${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Create
+                                  </label>
                                 </li>
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`submit${item.doc}${item.roleprofile._id}`}
                                     checked={item.submit == "1" ? true : false}
                                     type="checkbox"
                                     name="submit"
@@ -414,10 +420,15 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Submit</h4>
+                                  <label
+                                    htmlFor={`submit${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Submit
+                                  </label>
                                 </li>
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`amend${item.doc}${item.roleprofile._id}`}
                                     checked={item.amend == "1" ? true : false}
                                     type="checkbox"
                                     name="amend"
@@ -429,12 +440,17 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Amend</h4>
+                                  <label
+                                    htmlFor={`amend${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Amend
+                                  </label>
                                 </li>
                               </ul>
                               <ul className="flex-1">
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`read${item.doc}${item.roleprofile._id}`}
                                     checked={item.read == "1" ? true : false}
                                     type="checkbox"
                                     name="read"
@@ -446,10 +462,15 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Read</h4>
+                                  <label
+                                    htmlFor={`read${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Read
+                                  </label>
                                 </li>
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`export${item.doc}${item.roleprofile._id}`}
                                     checked={item.export == "1" ? true : false}
                                     type="checkbox"
                                     name="export"
@@ -461,12 +482,17 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Export</h4>
+                                  <label
+                                    htmlFor={`export${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Export
+                                  </label>
                                 </li>
                               </ul>
                               <ul className="flex-1">
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`update${item.doc}${item.roleprofile._id}`}
                                     checked={item.update == "1" ? true : false}
                                     type="checkbox"
                                     name="update"
@@ -478,10 +504,15 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Update</h4>
+                                  <label
+                                    htmlFor={`update${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Update
+                                  </label>
                                 </li>
                                 <li className="flex items-center mb-4">
                                   <input
+                                    id={`delete${item.doc}${item.roleprofile._id}`}
                                     checked={item.delete == "1" ? true : false}
                                     type="checkbox"
                                     name="delete"
@@ -493,7 +524,11 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                       });
                                     }}
                                   />
-                                  <h4>Delete</h4>
+                                  <label
+                                    htmlFor={`delete${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Delete
+                                  </label>
                                 </li>
                               </ul>
                             </div>
@@ -535,7 +570,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
 
 const FormPermission: React.FC<any> = ({ props }) => {
   const [doc, setDoc] = useState<string>("");
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [role, setRole] = useState<string>(props.role ?? "");
   const [valid, setValid] = useState<boolean>(false);
   const [roleList, setRoleList] = useState<ISelectValue[]>([]);
