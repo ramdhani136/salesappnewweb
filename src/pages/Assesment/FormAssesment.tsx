@@ -37,6 +37,7 @@ const FormAssesmentPage: React.FC = () => {
   const [tab, setTab] = useState<string>("Details");
   const [scroll, setScroll] = useState<number>(0);
   const [history, setHistory] = useState<any[]>([]);
+  const [workflowData, setWorkflowData] = useState<any[]>([]);
   const [template, setTemplate] = useState<any>({});
 
   const [user, setUser] = useState<IValue>({
@@ -77,28 +78,8 @@ const FormAssesmentPage: React.FC = () => {
 
       setDbDetails(result.data.details ?? []);
 
-      // set workflow
-      if (result.workflow.length > 0) {
-        const isWorkflow = result.workflow.map((item: any): IListIconButton => {
-          return {
-            name: item.action,
-            onClick: () => {
-              AlertModal.confirmation({
-                onConfirm: () => {
-                  console.log(item);
-                  onSave(item.nextState.id);
-                },
-                confirmButtonText: "Yes, Save it!",
-              });
-            },
-          };
-        });
-
-        setWorkflow(isWorkflow);
-      }
-      // end
-
       setHistory(result.history);
+      setWorkflowData(result.workflow);
 
       setDesc(result.data.schedule.desc);
 
@@ -131,6 +112,7 @@ const FormAssesmentPage: React.FC = () => {
         setDesc(result.data.desc);
       }
 
+      // end
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -150,13 +132,23 @@ const FormAssesmentPage: React.FC = () => {
       const upData: any = {};
       if (nextState) {
         upData.nextState = nextState;
-        upData.idScheduleItem = id;
-        upData.customer = { _id: data.customer._id, name: data.customer.name };
-        upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
-        upData.activeDate = data.schedule.activeDate;
-        upData.deactiveDate = data.schedule.deactiveDate;
-        upData.assesmentTemplate = template;
-        upData.details = details;
+        upData.result = {
+          idScheduleItem: id,
+          customer: {
+            _id: data?.customer?._id,
+            name: data?.customer?.name,
+          },
+          schedule: {
+            _id: data?.schedule?._id,
+            name: data?.schedule?.name,
+          },
+          activeDate: data?.schedule?.activeDate,
+          deactiveDate: data?.schedule?.deactiveDate,
+          assesmentTemplate: template,
+          details: details,
+        };
+
+        console.log(upData);
       } else {
         upData.details = details;
       }
@@ -218,6 +210,26 @@ const FormAssesmentPage: React.FC = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (workflowData.length > 0) {
+      //  set workflow
+      const isWorkflow = workflowData.map((item: any): IListIconButton => {
+        return {
+          name: item.action,
+          onClick: () => {
+            AlertModal.confirmation({
+              onConfirm: () => {
+                onSave(item.nextState.id);
+              },
+              confirmButtonText: "Yes, Save it!",
+            });
+          },
+        };
+      });
+      setWorkflow(isWorkflow);
+    }
+  }, [workflowData, details, template]);
 
   const compareData = (prev: detailModel[], details: detailModel[]) => {
     // Mengecek panjang array
@@ -548,7 +560,6 @@ const GetQuestion: React.FC<{
                 ${item.questionId.name}`}
                     </h4>
                     {item.options.map((option: any, idOption: any) => {
-                      console.log(details);
                       return (
                         <div
                           key={idOption}
