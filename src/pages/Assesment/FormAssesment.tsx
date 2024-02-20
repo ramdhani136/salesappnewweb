@@ -147,7 +147,6 @@ const FormAssesmentPage: React.FC = () => {
           assesmentTemplate: template,
           details: details,
         };
-
       } else {
         upData.details = details;
       }
@@ -325,6 +324,23 @@ const FormAssesmentPage: React.FC = () => {
                       callback={onSave}
                       className={`opacity-80 hover:opacity-100 duration-100  `}
                       classModal="-mt-[3px]"
+                    />
+                  )}
+
+                {workflow.length == 0 &&
+                  !isChange &&
+                  template &&
+                  template?.indicators?.length === details.length &&
+                  tab === "Questions" && (
+                    <IconButton
+                      name="Submit"
+                      callback={() => {
+                        AlertModal.confirmation({
+                          onConfirm: onSave,
+                          confirmButtonText: `Yes, Save it!`,
+                        });
+                      }}
+                      className={`opacity-80 hover:opacity-100 duration-100  `}
                     />
                   )}
               </div>
