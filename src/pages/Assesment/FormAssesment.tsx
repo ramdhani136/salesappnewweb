@@ -69,14 +69,13 @@ const FormAssesmentPage: React.FC = () => {
   const [isChange, setIsChange] = useState<boolean>(false);
 
   const getData = async (): Promise<void> => {
-    console.log("GETTTT");
     setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
       );
 
-      setDbDetails(result.data.details);
+      setDbDetails(result.data.details ?? []);
 
       // set workflow
       if (result.workflow.length > 0) {
