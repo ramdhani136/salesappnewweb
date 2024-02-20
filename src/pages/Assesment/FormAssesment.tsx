@@ -64,13 +64,19 @@ const FormAssesmentPage: React.FC = () => {
 
   const [listMoreAction, setListMoreAction] = useState<IListIconButton[]>([]);
   const [details, setDetails] = useState<detailModel[]>([]);
+  const [prevDetails, setPrevDetails] = useState<detailModel[]>([]);
+  const [dbDetails, setDbDetails] = useState<detailModel[]>([]);
+  const [isChange, setIsChange] = useState<boolean>(false);
 
   const getData = async (): Promise<void> => {
+    console.log("GETTTT");
     setWorkflow([]);
     try {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
       );
+
+      setDbDetails(result.data.details);
 
       // set workflow
       if (result.workflow.length > 0) {
@@ -140,8 +146,35 @@ const FormAssesmentPage: React.FC = () => {
   };
 
   const onSave = async (nextState?: String): Promise<any> => {
-    console.log(nextState)
-    // setLoading(true);
+    setLoading(true);
+    try {
+      const upData: any = {};
+      if (nextState) {
+      } else {
+        upData.details = details;
+      }
+      await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).UPDATE({
+        id: `${id}`,
+        data: upData,
+      });
+      Swal.fire("Success!", `Success`, "success");
+      getData();
+    } catch (error: any) {
+      Swal.fire(
+        "Error!",
+        `${
+          error?.response?.data?.error
+            ? error.response.data.error
+            : error?.response?.data?.msg
+            ? error?.response?.data?.msg
+            : error?.message
+            ? error?.message
+            : error ?? "Error Insert"
+        }`,
+        "error"
+      );
+    }
+    setLoading(false);
 
     // try {
     //   const upData: any = {};
@@ -179,7 +212,31 @@ const FormAssesmentPage: React.FC = () => {
     getData();
   }, []);
 
-  console.log(details)
+  const compareData = (prev: detailModel[], details: detailModel[]) => {
+    // Mengecek panjang array
+    if (prev.length !== details.length) {
+      return true;
+    }
+
+    // Mengurutkan array berdasarkan nama pertanyaan untuk memastikan urutan yang sama
+    prev.sort((a, b) => (a.question.name > b.question.name ? 1 : -1));
+    details.sort((a, b) => (a.question.name > b.question.name ? 1 : -1));
+
+    // Membandingkan setiap elemen dari kedua array
+    for (let i = 0; i < prev.length; i++) {
+      // Membandingkan isi dari elemen-elemen
+      if (JSON.stringify(prev[i]) !== JSON.stringify(details[i])) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  useEffect(() => {
+    const change = compareData(prevDetails, details);
+    setIsChange(change);
+  }, [details, prevDetails]);
 
   return (
     <>
@@ -226,29 +283,32 @@ const FormAssesmentPage: React.FC = () => {
                   />
                 )}
 
-                {template &&
-                  template?.indicators?.length === details.length && (
-                    <IconButton
-                      name="Submit"
-                      callback={() => {
-                        AlertModal.confirmation({
-                          onConfirm: onSave,
-                          confirmButtonText: `Yes, Submit!`,
-                        });
-                      }}
-                      className={`opacity-80 hover:opacity-100 duration-100  `}
-                    />
-                  )}
-
-                {tab === "Questions" && workflow.length > 0 && (
+                {isChange && (
                   <IconButton
-                    name="Actions"
-                    list={workflow}
-                    callback={onSave}
+                    name="Save"
+                    callback={() => {
+                      AlertModal.confirmation({
+                        onConfirm: onSave,
+                        confirmButtonText: `Yes, Save it!`,
+                      });
+                    }}
                     className={`opacity-80 hover:opacity-100 duration-100  `}
-                    classModal="-mt-[3px]"
                   />
                 )}
+
+                {!isChange &&
+                  template &&
+                  template?.indicators?.length === details.length &&
+                  tab === "Questions" &&
+                  workflow.length > 0 && (
+                    <IconButton
+                      name="Actions"
+                      list={workflow}
+                      callback={onSave}
+                      className={`opacity-80 hover:opacity-100 duration-100  `}
+                      classModal="-mt-[3px]"
+                    />
+                  )}
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
@@ -328,9 +388,12 @@ const FormAssesmentPage: React.FC = () => {
 
                   {tab === "Questions" && (
                     <GetQuestion
+                      dbDetails={dbDetails}
                       data={data}
                       details={details}
                       setDetails={setDetails}
+                      setDbDetails={setDbDetails}
+                      setPrevDetails={setPrevDetails}
                       template={template}
                       setTemplate={setTemplate}
                     />
@@ -353,9 +416,20 @@ const GetQuestion: React.FC<{
   data: any;
   details: detailModel[];
   setDetails: React.Dispatch<React.SetStateAction<detailModel[]>>;
+  setDbDetails: React.Dispatch<React.SetStateAction<detailModel[]>>;
+  setPrevDetails: React.Dispatch<React.SetStateAction<detailModel[]>>;
   template: any[];
   setTemplate: React.Dispatch<React.SetStateAction<any[]>>;
-}> = ({ data, details, setDetails, setTemplate }) => {
+  dbDetails: detailModel[];
+}> = ({
+  data,
+  details,
+  setDetails,
+  setTemplate,
+  dbDetails,
+  setPrevDetails,
+  setDbDetails,
+}) => {
   const [indicators, setIndicators] = useState<any[]>([]);
 
   const navigate = useNavigate();
@@ -424,6 +498,33 @@ const GetQuestion: React.FC<{
     getData();
   }, []);
 
+  const getMatchingAnswers = (answer: detailModel[], indicator: any[]) => {
+    const matchingAnswers: detailModel[] = [];
+
+    // Loop melalui data answer
+    answer.forEach((answerItem) => {
+      // Loop melalui data indicator untuk mencari pertanyaan yang sama
+      indicator.forEach((indicatorItem) => {
+        if (answerItem.question._id === indicatorItem.questionId._id) {
+          // Loop melalui opsi untuk mencocokkan jawaban
+          indicatorItem.options.forEach((option: any) => {
+            if (answerItem.answer === option.name) {
+              matchingAnswers.push(answerItem);
+            }
+          });
+        }
+      });
+    });
+
+    return matchingAnswers;
+  };
+
+  useEffect(() => {
+    const getDetails = getMatchingAnswers(dbDetails, indicators);
+    setPrevDetails(getDetails);
+    setDetails(getDetails);
+  }, [indicators]);
+
   return (
     <>
       {!loading && (
@@ -439,6 +540,7 @@ const GetQuestion: React.FC<{
                 ${item.questionId.name}`}
                     </h4>
                     {item.options.map((option: any, idOption: any) => {
+                      console.log(details);
                       return (
                         <div
                           key={idOption}
@@ -464,6 +566,7 @@ const GetQuestion: React.FC<{
                                 i.answer === option.name
                             )}
                           />
+
                           <label
                             htmlFor={`option_${option._id}`}
                             className="ml-2"
