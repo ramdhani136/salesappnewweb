@@ -82,7 +82,7 @@ const SidebarComponent: React.FC<IProps> = ({ user, getStatusOpen }) => {
           onClick={() => setOpen(!open)}
         >
           <h1 className={`${!open && "hidden duration-500"} ml-1 text-xl`}>
-            CRM Sytem
+            CRM System
           </h1>
 
           {!open ? (
