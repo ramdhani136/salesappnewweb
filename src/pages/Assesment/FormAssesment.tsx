@@ -148,15 +148,14 @@ const FormAssesmentPage: React.FC = () => {
           details: details,
         };
 
-        console.log(upData);
       } else {
         upData.details = details;
       }
-      // await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).UPDATE({
-      //   id: `${id}`,
-      //   data: upData,
-      // });
-      // Swal.fire("Success!", `Success`, "success");
+      await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).UPDATE({
+        id: `${id}`,
+        data: upData,
+      });
+      Swal.fire("Success!", `Success`, "success");
       getData();
     } catch (error: any) {
       Swal.fire(
