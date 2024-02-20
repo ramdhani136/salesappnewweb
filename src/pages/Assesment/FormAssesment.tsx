@@ -149,14 +149,22 @@ const FormAssesmentPage: React.FC = () => {
     try {
       const upData: any = {};
       if (nextState) {
+        upData.nextState = nextState;
+        upData.idScheduleItem = id;
+        upData.customer = { _id: data.customer._id, name: data.customer.name };
+        upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
+        upData.activeDate = data.schedule.activeDate;
+        upData.deactiveDate = data.schedule.deactiveDate;
+        upData.assesmentTemplate = template;
+        upData.details = details;
       } else {
         upData.details = details;
       }
-      await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).UPDATE({
-        id: `${id}`,
-        data: upData,
-      });
-      Swal.fire("Success!", `Success`, "success");
+      // await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).UPDATE({
+      //   id: `${id}`,
+      //   data: upData,
+      // });
+      // Swal.fire("Success!", `Success`, "success");
       getData();
     } catch (error: any) {
       Swal.fire(
@@ -407,6 +415,7 @@ const FormAssesmentPage: React.FC = () => {
           <LoadingComponent />
         )}
       </div>
+      <TimeLineVertical data={history} />
     </>
   );
 };
