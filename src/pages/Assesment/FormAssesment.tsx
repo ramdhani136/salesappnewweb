@@ -172,37 +172,6 @@ const FormAssesmentPage: React.FC = () => {
       );
     }
     setLoading(false);
-
-    // try {
-    //   const upData: any = {};
-    //   upData.idScheduleItem = id;
-    //   upData.customer = { _id: data.customer._id, name: data.customer.name };
-    //   upData.schedule = { _id: data.schedule._id, name: data.schedule.name };
-    //   upData.activeDate = data.schedule.activeDate;
-    //   upData.deactiveDate = data.schedule.deactiveDate;
-    //   upData.assesmentTemplate = template;
-    //   upData.details = details;
-    //   await GetDataServer(DataAPI.ASSESMENTRESULT).CREATE(upData);
-    //   Swal.fire("Success!", `Success`, "success");
-
-    //   navigate(`/assesment`);
-    // } catch (error: any) {
-    //   console.log(error);
-    //   Swal.fire(
-    //     "Error!",
-    //     `${
-    //       error?.response?.data?.error
-    //         ? error.response.data.error
-    //         : error?.response?.data?.msg
-    //         ? error?.response?.data?.msg
-    //         : error?.message
-    //         ? error?.message
-    //         : error ?? "Error Insert"
-    //     }`,
-    //     "error"
-    //   );
-    // }
-    // setLoading(false);
   };
 
 
@@ -222,7 +191,6 @@ const FormAssesmentPage: React.FC = () => {
 
       navigate(`/assesment`);
     } catch (error: any) {
-      console.log(error);
       Swal.fire(
         "Error!",
         `${
