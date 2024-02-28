@@ -64,7 +64,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     { title: "Assesment Template", value: "assesmenttemplate" },
     { title: "Assesment Schedule", value: "assesmentschedule" },
     { title: "Assesment Schedule List", value: "assesmentschedulelist" },
-    { title: "Assesment Result", value: "assesmentresult" },
+    { title: "Assesment Report", value: "assesmentresult" },
   ];
 
   const [roleSelectOption, setRoleSelectOption] = useState<ISelectValue[]>([]);
@@ -96,6 +96,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
         orderBy: { state: "createdAt", sort: -1 },
         filters,
       });
+      console.log(result.data)
       setData(result.data);
       setLoading(false);
     } catch (error: any) {
@@ -488,6 +489,26 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
                                     Export
                                   </label>
                                 </li>
+                                <li className="flex items-center mb-4">
+                                  <input
+                                    id={`report${item.doc}${item.roleprofile._id}`}
+                                    checked={item.report == "1" ? true : false}
+                                    type="checkbox"
+                                    name="report"
+                                    className="mr-1 mt-1"
+                                    onChange={(e) => {
+                                      SetPermission(item._id, {
+                                        name: e.target.name,
+                                        value: e.target.checked,
+                                      });
+                                    }}
+                                  />
+                                  <label
+                                    htmlFor={`report${item.doc}${item.roleprofile._id}`}
+                                  >
+                                    Report
+                                  </label>
+                                </li>
                               </ul>
                               <ul className="flex-1">
                                 <li className="flex items-center mb-4">
@@ -607,7 +628,7 @@ const FormPermission: React.FC<any> = ({ props }) => {
     { title: "Assesment Template", value: "assesmenttemplate" },
     { title: "Assesment Schedule", value: "assesmentschedule" },
     { title: "Assesment Schedule List", value: "assesmentschedulelist" },
-    { title: "Assesment Result", value: "assesmentresult" },
+    { title: "Assesment Report", value: "assesmentresult" },
   ];
 
   const GetRole = async () => {
