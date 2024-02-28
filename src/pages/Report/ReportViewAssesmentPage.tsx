@@ -11,7 +11,7 @@ import {
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import FormAssesmentQuestionPage from "../AssesmentQuestion/FormAssesmentQuestionPage";
@@ -113,13 +113,43 @@ const ReportViewAssesmentPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (id) {
-      getData();
-    } else {
+  const CekPermission = async () => {
+    try {
+      const result: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "assesmentresult", action: "report" }
+      );
+
+      if (result.data.status) {
+        if (id) {
+          getData();
+        } else {
+          setLoading(false);
+          setListMoreAction([]);
+        }
+      } else {
+        setLoading(false);
+        AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: "Permission denied!",
+        });
+
+        navigate("/report/assesment/");
+      }
+    } catch (error) {
       setLoading(false);
-      setListMoreAction([]);
+      AlertModal.Default({
+        icon: "error",
+        title: "Error",
+        text: "Permission denied!",
+      });
+      navigate("/report/assesment/");
     }
+  };
+
+  useEffect(() => {
+    CekPermission();
   }, []);
 
   return (
