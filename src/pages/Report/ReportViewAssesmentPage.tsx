@@ -15,6 +15,7 @@ import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import FormAssesmentQuestionPage from "../AssesmentQuestion/FormAssesmentQuestionPage";
+import * as XLSX from "xlsx";
 
 const ReportViewAssesmentPage: React.FC = () => {
   let { id } = useParams();
@@ -148,6 +149,48 @@ const ReportViewAssesmentPage: React.FC = () => {
     }
   };
 
+  const getPrint = async () => {
+    // const ExportToExcel = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const getExport: any = await GetDataServer(
+    //       DataAPI.ASSESMENTSCHEDULEITEM
+    //     ).FIND({
+    //       limit: 0,
+    //       filters: [...filter, ["schedule", "=", `${docId}`]],
+    //       orderBy: { sort: isOrderBy, state: isSort },
+    //       search: search,
+    //     });
+
+    //     const getDataExport = getExport.data.map((item: any, index: any) => {
+    //       return {
+    //         no: index + 1,
+    //         schedule: item.schedule.name,
+    //         customer: item.customer.name,
+    //         group: item.customerGroup.name,
+    //         branch: item.branch.name,
+    //         status: item.status == "0" ? "Open" : "Closed",
+    //         workState: item.workflowState,
+    //         closing_date: moment(item.closing.date).format("LLL"),
+    //         score: item.closing?.result?.score,
+    //         grade: item.closing?.result?.grade,
+    //         recomendation: item.closing?.result?.notes,
+    //         closing_by: item.closing?.user?.name,
+    //       };
+    //     });
+
+    //     const ws = XLSX.utils.json_to_sheet(getDataExport);
+    //     const wb = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    //     XLSX.writeFile(wb, `${docData.name}.xlsx`);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    //   setLoading(false);
+    // };
+  };
+
   useEffect(() => {
     CekPermission();
   }, []);
@@ -196,6 +239,12 @@ const ReportViewAssesmentPage: React.FC = () => {
                     className={` duration-100 mr-2 px-2 `}
                   />
                 )}
+                <IconButton
+                  name="Print"
+                  // list={workflow}
+                  callback={getPrint}
+                  className={`opacity-80 hover:opacity-100 duration-100  `}
+                />
               </div>
             </div>
             <div className=" px-5 flex flex-col ">
