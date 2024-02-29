@@ -86,6 +86,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     note: notes ?? "",
     task: task ?? "",
     tags: tags,
+    response: response,
   });
 
   const [files, setFiles] = useState<any[]>([]);
@@ -127,7 +128,14 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
-      console.log(result);
+      try {
+        if (result?.data?.topic?._id) {
+          const topic: any = await GetDataServer(DataAPI.TOPIC).FINDONE(
+            result?.data?.topic?._id
+          );
+          setResponseData(topic?.data?.response?.data ?? []);
+        }
+      } catch (error) {}
 
       setData(result.data);
 
@@ -160,6 +168,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
         note: result.data.result,
         task: result.data.task,
         tags: result.data.tags,
+        response: result?.data?.response ?? "",
       });
 
       if (result.data.topic) {
@@ -527,6 +536,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       note: notes ?? "",
       task: task ?? "",
       tags: tags,
+      response: response,
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -534,7 +544,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     } else {
       setChangeData(false);
     }
-  }, [topic, notes, tags, task]);
+  }, [topic, notes, tags, task, response]);
   // End
 
   return (
