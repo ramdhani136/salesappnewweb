@@ -922,9 +922,16 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           className={`h-9 mb-1`}
                         />
                       )}
+
+                      {docData.status != 0 && tags.length > 0 && (
+                        <label className="text-sm text-gray-700 mb-1">
+                          Tags
+                        </label>
+                      )}
                     </div>
+
                     {tags.length > 0 && (
-                      <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%]">
+                      <ul className="border mx-7 px-2  py-3 mb-5 rounded-sm float-left w-[93%] mt-1">
                         {tags.map((item: any, index: any) => (
                           <li
                             onClick={() => {
