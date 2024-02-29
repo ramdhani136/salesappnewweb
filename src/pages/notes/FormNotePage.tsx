@@ -684,6 +684,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       }}
                       onReset={() => {
                         setResponseData([]);
+                        setResponse("");
                         setTopic({
                           valueData: "",
                           valueInput: "",
@@ -789,16 +790,22 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                   {responseData.length > 0 && (
                     <div className="mt-2">
                       <label className="text-sm">
-                        Response (Select one)
-                        {!id ||
-                          (docData.status == "0" && (
-                            <a className="text-red-600">*</a>
-                          ))}
+                        Response{" "}
+                        {response ? (
+                          <strong className="text-yellow-700">
+                            ({response})
+                          </strong>
+                        ) : (
+                          <strong className="text-red-700 text-sm">
+                            (No Selected)
+                          </strong>
+                        )}
                       </label>
                       <ul className="py-3 px-2 border rounded-sm w-full  mt-1 float-left mb-3">
                         {responseData.map((item: any, index: number) => (
                           <li
-                            className="border text-sm text-white bg-green-600 cursor-pointer opacity-90 hover:opacity-100 duration-200 rounded-md px-2 py-1 inline mx-1 float-left"
+                            onClick={() => setResponse(item.name)}
+                            className="border text-sm text-white bg-green-600 cursor-pointer opacity-70 hover:opacity-100 duration-200 rounded-md px-2 py-1 inline mx-1 float-left"
                             key={index}
                           >
                             {item.name}
