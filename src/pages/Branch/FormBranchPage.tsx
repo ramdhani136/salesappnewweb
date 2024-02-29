@@ -164,12 +164,14 @@ const FormBranchPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      let data: any = {
-        name: name.valueData,
-        desc: desc,
-      };
+      let data: any = {};
       if (nextState) {
         data.nextState = nextState;
+      } else {
+        data = {
+          name: name.valueData,
+          desc: desc,
+        };
       }
 
       let Action = id

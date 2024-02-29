@@ -24,7 +24,9 @@ const FormContactPage: React.FC<any> = ({ props }) => {
   let { id } = useParams();
   const [data, setData] = useState<any>({});
   const metaData = {
-    title: `${id ? data.name??"Loading .." : "New Contact"} - Sales App Ekatunggal`,
+    title: `${
+      id ? data.name ?? "Loading .." : "New Contact"
+    } - Sales App Ekatunggal`,
     description: "Halaman form Contact Sales web system",
   };
 
@@ -275,19 +277,19 @@ const FormContactPage: React.FC<any> = ({ props }) => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!name.valueData) {
-        throw new Error("Nama wajib diisi!");
-      }
-      if (!customer.valueData) {
-        throw new Error("Customer wajib diisi!");
-      }
-      if (!phone.valueData) {
-        throw new Error("Phone wajib diisi!");
-      }
       let updata: any = {};
       if (nextState) {
         updata = { nextState: nextState };
       } else {
+        if (!name.valueData) {
+          throw new Error("Nama wajib diisi!");
+        }
+        if (!customer.valueData) {
+          throw new Error("Customer wajib diisi!");
+        }
+        if (!phone.valueData) {
+          throw new Error("Phone wajib diisi!");
+        }
         updata = {
           name: name.valueData,
           position: position,

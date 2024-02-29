@@ -379,27 +379,29 @@ const FormPermissionPage: React.FC = () => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (!user.valueData) {
-        throw new Error("User wajib diisi!");
-      }
-      if (!allow.valueData) {
-        throw new Error("Allow wajib diisi!");
-      }
-      if (!value.valueData) {
-        throw new Error("Value wajib diisi!");
-      }
-      if (!allDoc && !doc.valueData) {
-        throw new Error("Documen Type wajib diisi!");
-      }
-      let data: any = {
-        user: user.valueData,
-        allow: allow.valueData,
-        value: value.valueData,
-        allDoc: allDoc,
-        doc: doc.valueData,
-      };
+      let data: any = {};
       if (nextState) {
         data.nextState = nextState;
+      } else {
+        if (!user.valueData) {
+          throw new Error("User wajib diisi!");
+        }
+        if (!allow.valueData) {
+          throw new Error("Allow wajib diisi!");
+        }
+        if (!value.valueData) {
+          throw new Error("Value wajib diisi!");
+        }
+        if (!allDoc && !doc.valueData) {
+          throw new Error("Documen Type wajib diisi!");
+        }
+        data = {
+          user: user.valueData,
+          allow: allow.valueData,
+          value: value.valueData,
+          allDoc: allDoc,
+          doc: doc.valueData,
+        };
       }
 
       let Action = id
