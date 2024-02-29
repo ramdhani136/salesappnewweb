@@ -48,8 +48,9 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
   const columns: IColumns[] = useMemo(
     (): IColumns[] => [
       { header: "Topic", accessor: "topic", className: "w-[20%]" },
-      { header: "Activity", accessor: "activity", className: "w-[25%]" },
-      { header: "Feedback", accessor: "feedback", className: "w-[25%]" },
+      { header: "Activity", accessor: "activity", className: "w-[20%]" },
+      { header: "Feedback", accessor: "feedback", className: "w-[20%]" },
+      { header: "Response", accessor: "response", className: "w-[10%]" },
       { header: "Tags", accessor: "tags", className: "w-[15%]" },
       { header: "", accessor: "updatedAt", className: "w-[11%]" },
     ],
@@ -106,6 +107,9 @@ const NotesPage: React.FC<IProps> = ({ props, type }) => {
             ),
             feedback: (
               <h4 className="mr-10 py-3 text-[0.95em]">{item.result}</h4>
+            ),
+            response: (
+              <h4 className="mr-10 py-3 text-[0.95em]">{item.response}</h4>
             ),
             tags: (
               <div className="p-2">
