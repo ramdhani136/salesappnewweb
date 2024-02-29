@@ -166,6 +166,7 @@ const FormCallsheetPage: React.FC = () => {
 
       setData(result.data);
 
+
       setCallType(result.data.type);
 
       setBranch({
