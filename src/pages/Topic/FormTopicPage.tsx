@@ -119,6 +119,7 @@ const FormTopicPage: React.FC = () => {
       }
       // end
 
+      console.log(result?.data?.response?.data ?? []);
       setHistory(result.history);
 
       setName({
