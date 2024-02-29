@@ -810,17 +810,19 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                           </strong>
                         )}
                       </label>
-                      <ul className="py-3 px-2 border rounded-sm w-full  mt-1 float-left mb-3">
-                        {responseData.map((item: any, index: number) => (
-                          <li
-                            onClick={() => setResponse(item.name)}
-                            className="border text-sm text-white bg-green-600 cursor-pointer opacity-70 hover:opacity-100 duration-200 rounded-md px-2 py-1 inline mx-1 float-left"
-                            key={index}
-                          >
-                            {item.name}
-                          </li>
-                        ))}
-                      </ul>
+                      {responseData.length > 0 && (
+                        <ul className="py-3 px-2 border rounded-sm w-full  mt-1 float-left mb-3">
+                          {responseData.map((item: any, index: number) => (
+                            <li
+                              onClick={() => setResponse(item.name)}
+                              className="border text-sm text-white bg-green-600 cursor-pointer opacity-70 hover:opacity-100 duration-200 rounded-md px-2 py-1 inline mx-1 float-left"
+                              key={index}
+                            >
+                              {item.name}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   )}
                 </div>
