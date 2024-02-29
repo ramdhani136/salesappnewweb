@@ -127,6 +127,8 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
+      console.log(result);
+
       setData(result.data);
 
       setResponse(result?.data?.response ?? "");
@@ -320,7 +322,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
 
   const onSave = async (): Promise<any> => {
     setLoading(true);
-
+    if (responseMandatory == 1) {
+      if (!response) {
+        setLoading(false);
+        return Swal.fire("Error!", `Response Wajib diisi!`, "error");
+      }
+    }
     if (!task) {
       setLoading(false);
       return Swal.fire("Error!", `Activity Wajib diisi!`, "error");
@@ -333,6 +340,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       setLoading(false);
       return Swal.fire("Error!", `Topic Wajib diisi!`, "error");
     }
+
     try {
       let data: any = {
         topic: topic.valueData,
@@ -345,6 +353,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
           _id: docData._id,
           name: docData.name,
         },
+        response: response ?? "",
       };
 
       let Action = id
@@ -675,7 +684,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                       onSelected={(e) => {
                         setResponseData(e?.data?.response?.data ?? []);
                         setResponseMandatory(
-                          e?.data?.response?.isMandatory ?? []
+                          e?.data?.response?.isMandatory ?? 0
                         );
                         setTopic({ valueData: e.value, valueInput: e.name });
                         setTopicData(e.data);
@@ -787,7 +796,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                     </>
                   )}
 
-                  {responseData.length > 0 && (
+                  {(responseData.length > 0 || response) && (
                     <div className="mt-2">
                       <label className="text-sm">
                         Response{" "}
