@@ -2,12 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   ButtonStatusComponent,
   IconButton,
   InputComponent,
   Select,
   TimeLineVertical,
+  ToggleBodyComponent,
 } from "../../components/atoms";
 import { IListInput, IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
@@ -77,7 +79,7 @@ const FormTopicPage: React.FC = () => {
     valueInput: "",
   });
 
-  const [responseData, setResponseData] = useState<String[]>([]);
+  const [responseData, setResponseData] = useState<any[]>([]);
   const [responseMandatory, setResponseMandatory] = useState<number>(0);
 
   const [status, setStatus] = useState<String>("Draft");
@@ -754,6 +756,11 @@ const FormTopicPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+              <ToggleBodyComponent
+                name="Responses"
+                className="mt-5"
+                child={<ResponseComponent />}
+              />
 
               <TimeLineVertical data={history} />
             </div>
@@ -764,6 +771,61 @@ const FormTopicPage: React.FC = () => {
       </div>
     </>
   );
+
+  function ResponseComponent() {
+    return (
+      <>
+        <div className="w-[48%]">
+          <Select
+            title="Mandatory"
+            data={[
+              { title: "Yes", value: 1 },
+              { title: "No", value: 0 },
+            ]}
+            value={responseMandatory}
+            setValue={setResponseMandatory}
+            disabled={id != null ? (status !== "Draft" ? true : false) : false}
+          />
+        </div>
+        <h4 className="text-sm text-gray-700 mb-2">Data List </h4>
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gray-50">
+              <th className="border-b border-t w-16 h-12">No</th>
+              <th className="border-b border-t ">Name</th>
+              <th className="border-b border-t  w-28">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {responseData.map((item: any, index: number) => (
+              <tr key={index} className="h-10">
+                <td className="border-b text-center">{index + 1}</td>
+                <td className="border-b  px-2">{item.name}</td>
+                <td className="border-b text-center ">
+                  <button>
+                    <CloseIcon
+                      style={{ fontSize: 20 }}
+                      className="text-red-700"
+                    />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button
+          onClick={() => {
+            const newData = [...responseData, { name: "" }];
+            setResponseData(newData);
+            console.log(responseData);
+          }}
+          className="border mt-4 rounded-md p-1 px-2 text-sm bg-gray-100 "
+        >
+          Add Row
+        </button>
+      </>
+    );
+  }
 };
 
 export default FormTopicPage;
