@@ -252,6 +252,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
             data: item,
           };
         });
+
         if (!data.refresh) {
           setTopicList([...topicList, ...listInput]);
         } else {
@@ -667,6 +668,7 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         });
                       }}
                       onSelected={(e) => {
+                        console.log(e);
                         setTopic({ valueData: e.value, valueInput: e.name });
                         setTopicData(e.data);
                         getTagsMandatoryRestrict(e.data);
