@@ -5,7 +5,7 @@ import {
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta } from "../../utils";
+import { LocalStorageType, Meta } from "../../utils";
 import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import { TableComponent } from "../../components/organisme";
@@ -47,15 +47,16 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[13%]" },
+      { header: "Customer", accessor: "customer", className: "w-[10%]" },
       { header: "Type", accessor: "type", className: "w-[4%]" },
       { header: "Doc", accessor: "doc", className: "w-6%]" },
+      { header: "Callsheet Type", accessor: "callType", className: "w-9%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
       { header: "Activity", accessor: "activity", className: "w-[15%]" },
       { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
       { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
       { header: "Group", accessor: "group", className: "w-[5%]" },
-      { header: "Branch", accessor: "branch", className: "w-[10%]" },
+      { header: "Branch", accessor: "branch", className: "w-[8%]" },
       { header: "User", accessor: "user", className: "w-[7.5%]" },
       { header: "", accessor: "updatedAt", className: "w-[5%]" },
     ],
@@ -91,6 +92,7 @@ export const ReportNotesPage: React.FC = (): any => {
             ) : (
               ""
             ),
+            callType: <h4 className="mx-2">{item.doc.callType ?? ""}</h4>,
             type: <h4 className="mx-2">{item.doc.type}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
             branch: item.branch.name,
@@ -233,6 +235,7 @@ export const ReportNotesPage: React.FC = (): any => {
           customer: item.customer.name,
           doc: item.doc.name,
           type: item.doc.type,
+          callType: item.doc.callType ?? "",
           topic: item.topic.name,
           activity: item.task,
           feedback: item.result,
@@ -281,7 +284,7 @@ export const ReportNotesPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[220%]"
+              width="w-[230%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
