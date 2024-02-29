@@ -88,6 +88,8 @@ const FormTopicPage: React.FC = () => {
     allowTaggingItem: allowTaggingItem,
     tagRestrict: tagRestrict,
     tagMandatory: tagMandatory,
+    responseData: responseData,
+    responseMandatory: responseMandatory,
   });
 
   const [createdAt, setCreatedAt] = useState<IValue>({
@@ -125,7 +127,7 @@ const FormTopicPage: React.FC = () => {
       // end
 
       setResponseData(result?.data?.response?.data ?? []);
-      setResponseMandatory(result?.data?.response?.mandatory ?? 0);
+      setResponseMandatory(result?.data?.response?.isMandatory ?? 0);
       setHistory(result.history);
 
       setName({
@@ -158,6 +160,8 @@ const FormTopicPage: React.FC = () => {
         allowTaggingItem: `${result.data.tags.allowTaggingItem}`,
         tagRestrict: result.data.tags.restrict,
         tagMandatory: result.data.tags.mandatory,
+        responseData: result?.data?.response?.data ?? [],
+        responseMandatory: result?.data?.response?.isMandatory ?? 0,
       });
 
       setStatus(
@@ -330,6 +334,10 @@ const FormTopicPage: React.FC = () => {
             restrict: tagRestrict.map((item: any) => item._id),
             allowTaggingItem: allowTaggingItem,
           },
+          response: {
+            data: responseData,
+            isMandatory: responseMandatory,
+          },
         };
       }
 
@@ -372,6 +380,8 @@ const FormTopicPage: React.FC = () => {
       allowTaggingItem: allowTaggingItem,
       tagRestrict: tagRestrict,
       tagMandatory: tagMandatory,
+      responseData: responseData,
+      responseMandatory: parseInt(`${responseMandatory}`),
     };
 
     if (JSON.stringify(actualData) !== JSON.stringify(prevData)) {
@@ -379,7 +389,14 @@ const FormTopicPage: React.FC = () => {
     } else {
       setChangeData(false);
     }
-  }, [name, tagMandatory, tagRestrict, allowTaggingItem]);
+  }, [
+    name,
+    tagMandatory,
+    tagRestrict,
+    allowTaggingItem,
+    responseData,
+    responseMandatory,
+  ]);
   // End
 
   return (
@@ -766,6 +783,7 @@ const FormTopicPage: React.FC = () => {
                     responseMandatory={responseMandatory}
                     setResponseData={setResponseData}
                     setResponseMandatory={setResponseMandatory}
+                    status={status}
                   />
                 }
                 toggle={false}
@@ -788,6 +806,7 @@ interface IResponse {
   setResponseMandatory: React.Dispatch<React.SetStateAction<number>>;
   setResponseData: React.Dispatch<React.SetStateAction<any[]>>;
   id: string;
+  status: String;
 }
 
 const ResponseComponent: React.FC<IResponse> = ({
@@ -796,6 +815,7 @@ const ResponseComponent: React.FC<IResponse> = ({
   responseData,
   setResponseData,
   id,
+  status,
 }) => {
   return (
     <>
@@ -826,7 +846,10 @@ const ResponseComponent: React.FC<IResponse> = ({
               <td className="border-b text-center">{index + 1}</td>
               <td className="border-b  px-2">
                 <input
-                  className="w-full py-1 outline-none"
+                  disabled={
+                    id != null ? (status !== "Draft" ? true : false) : false
+                  }
+                  className="w-full py-1 outline-none bg-white"
                   type="text"
                   value={item.name}
                   onChange={(e) => {
@@ -837,33 +860,38 @@ const ResponseComponent: React.FC<IResponse> = ({
                 />
               </td>
               <td className="border-b text-center ">
-                <button
-                  onClick={() => {
-                    responseData.splice(index, 1);
-                    const newData = [...responseData];
-                    setResponseData(newData);
-                  }}
-                >
-                  <CloseIcon
-                    style={{ fontSize: 20 }}
-                    className="text-red-700"
-                  />
-                </button>
+                {id == null ||
+                  (status === "Draft" && (
+                    <button
+                      onClick={() => {
+                        responseData.splice(index, 1);
+                        const newData = [...responseData];
+                        setResponseData(newData);
+                      }}
+                    >
+                      <CloseIcon
+                        style={{ fontSize: 20 }}
+                        className="text-red-700"
+                      />
+                    </button>
+                  ))}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button
-        onClick={() => {
-          const newData = [...responseData, { name: "" }];
-          setResponseData(newData);
-          console.log(responseData);
-        }}
-        className="border mt-4 rounded-md p-1 px-2 text-sm bg-gray-100 "
-      >
-        Add Row
-      </button>
+      {id == null ||
+        (status == "Draft" && (
+          <button
+            onClick={() => {
+              const newData = [...responseData, { name: "" }];
+              setResponseData(newData);
+            }}
+            className="border mt-4 rounded-md p-1 px-2 text-sm bg-gray-100 "
+          >
+            Add Row
+          </button>
+        ))}
     </>
   );
 };
