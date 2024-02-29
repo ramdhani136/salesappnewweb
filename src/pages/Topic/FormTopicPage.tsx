@@ -77,6 +77,9 @@ const FormTopicPage: React.FC = () => {
     valueInput: "",
   });
 
+  const [responseData, setResponseData] = useState<String[]>([]);
+  const [responseMandatory, setResponseMandatory] = useState<number>(0);
+
   const [status, setStatus] = useState<String>("Draft");
   const [prevData, setPrevData] = useState<any>({
     name: name.valueData,
@@ -119,7 +122,8 @@ const FormTopicPage: React.FC = () => {
       }
       // end
 
-      console.log(result?.data?.response?.data ?? []);
+      setResponseData(result?.data?.response?.data ?? []);
+      setResponseMandatory(result?.data?.response?.mandatory ?? 0);
       setHistory(result.history);
 
       setName({
