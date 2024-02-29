@@ -128,14 +128,12 @@ const FormNotePage: React.FC<any> = ({ props }) => {
     try {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
-      try {
-        if (result?.data?.topic?._id) {
-          const topic: any = await GetDataServer(DataAPI.TOPIC).FINDONE(
-            result?.data?.topic?._id
-          );
-          setResponseData(topic?.data?.response?.data ?? []);
-        }
-      } catch (error) {}
+      if (result?.data?.topic?._id) {
+        const topic: any = await GetDataServer(DataAPI.TOPIC).FINDONE(
+          result?.data?.topic?._id
+        );
+        setResponseData(topic?.data?.response?.data ?? []);
+      }
 
       setData(result.data);
 
