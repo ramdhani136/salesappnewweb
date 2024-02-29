@@ -233,7 +233,7 @@ const ReportViewAssesmentPage: React.FC = () => {
                   />
                 )}
                 <IconButton
-                  name="Print"
+                  name="Generate Pdf"
                   // list={workflow}
                   callback={getPrint}
                   className={`opacity-80 hover:opacity-100 duration-100  `}
