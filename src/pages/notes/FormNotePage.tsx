@@ -63,6 +63,9 @@ const FormNotePage: React.FC<any> = ({ props }) => {
   // End
   const dispatch = useDispatch();
   const [scroll, setScroll] = useState<number>(0);
+  const [responseMandatory, setResponseMandatory] = useState<number>(0);
+  const [responseData, setResponseData] = useState<any[]>([]);
+  const [response, setResponse] = useState<String>("");
   const [workflow, setWorkflow] = useState<IListIconButton[]>([]);
   const [isChangeData, setChangeData] = useState<boolean>(false);
 
@@ -125,6 +128,8 @@ const FormNotePage: React.FC<any> = ({ props }) => {
       const result = await GetDataServer(DataAPI.NOTE).FINDONE(`${id}`);
 
       setData(result.data);
+
+      setResponse(result?.data?.response ?? "");
 
       setTopic({
         valueData: result.data.topic._id,
@@ -668,13 +673,17 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         });
                       }}
                       onSelected={(e) => {
-                        console.log(e);
+                        setResponseData(e?.data?.response?.data ?? []);
+                        setResponseMandatory(
+                          e?.data?.response?.isMandatory ?? []
+                        );
                         setTopic({ valueData: e.value, valueInput: e.name });
                         setTopicData(e.data);
                         getTagsMandatoryRestrict(e.data);
                         setTags([]);
                       }}
                       onReset={() => {
+                        setResponseData([]);
                         setTopic({
                           valueData: "",
                           valueInput: "",
@@ -775,6 +784,28 @@ const FormNotePage: React.FC<any> = ({ props }) => {
                         }
                       />
                     </>
+                  )}
+
+                  {responseData.length > 0 && (
+                    <div className="mt-2">
+                      <label className="text-sm">
+                        Response (Select one)
+                        {!id ||
+                          (docData.status == "0" && (
+                            <a className="text-red-600">*</a>
+                          ))}
+                      </label>
+                      <ul className="py-3 px-2 border rounded-sm w-full  mt-1 float-left mb-3">
+                        {responseData.map((item: any, index: number) => (
+                          <li
+                            className="border text-sm text-white bg-green-600 cursor-pointer opacity-90 hover:opacity-100 duration-200 rounded-md px-2 py-1 inline mx-1 float-left"
+                            key={index}
+                          >
+                            {item.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
 
