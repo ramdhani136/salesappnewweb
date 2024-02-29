@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
@@ -15,7 +15,9 @@ import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 import AddIcon from "@mui/icons-material/Add";
 import { IListIconButton } from "../../components/atoms/IconButton";
 import FormAssesmentQuestionPage from "../AssesmentQuestion/FormAssesmentQuestionPage";
-import * as XLSX from "xlsx";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { Mms } from "@mui/icons-material";
 
 const ReportViewAssesmentPage: React.FC = () => {
   let { id } = useParams();
@@ -28,6 +30,7 @@ const ReportViewAssesmentPage: React.FC = () => {
   };
 
   const navigate = useNavigate();
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   const [scroll, setScroll] = useState<number>(0);
   const [user, setUser] = useState<IValue>({
@@ -149,46 +152,36 @@ const ReportViewAssesmentPage: React.FC = () => {
     }
   };
 
-  const getPrint = async () => {
-    // const ExportToExcel = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const getExport: any = await GetDataServer(
-    //       DataAPI.ASSESMENTSCHEDULEITEM
-    //     ).FIND({
-    //       limit: 0,
-    //       filters: [...filter, ["schedule", "=", `${docId}`]],
-    //       orderBy: { sort: isOrderBy, state: isSort },
-    //       search: search,
-    //     });
+  const getPrint = () => {
+    setLoading(true);
+    const input: any = pdfRef.current;
+    // Get the dimensions of the element
+    const inputWidth = input.offsetWidth;
+    const inputHeight = input.offsetHeight;
 
-    //     const getDataExport = getExport.data.map((item: any, index: any) => {
-    //       return {
-    //         no: index + 1,
-    //         schedule: item.schedule.name,
-    //         customer: item.customer.name,
-    //         group: item.customerGroup.name,
-    //         branch: item.branch.name,
-    //         status: item.status == "0" ? "Open" : "Closed",
-    //         workState: item.workflowState,
-    //         closing_date: moment(item.closing.date).format("LLL"),
-    //         score: item.closing?.result?.score,
-    //         grade: item.closing?.result?.grade,
-    //         recomendation: item.closing?.result?.notes,
-    //         closing_by: item.closing?.user?.name,
-    //       };
-    //     });
-
-    //     const ws = XLSX.utils.json_to_sheet(getDataExport);
-    //     const wb = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
-    //     XLSX.writeFile(wb, `${docData.name}.xlsx`);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    //   setLoading(false);
-    // };
+    html2canvas(input, { width: inputWidth, height: inputHeight }).then(
+      (canvas: HTMLCanvasElement) => {
+        const imgData: any = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "px", [inputWidth, inputHeight], true); // Use the element's dimensions
+        const pdfWidth: number = pdf.internal.pageSize.getWidth();
+        const pdfHeight: number = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = (pdfHeight - imgHeight * ratio) / 2;
+        pdf.addImage(
+          imgData,
+          "PNG",
+          imgX,
+          imgY,
+          imgWidth * ratio,
+          imgHeight * ratio
+        );
+        pdf.save(`${data!.customer!.name}.pdf`);
+        setLoading(false);
+      }
+    );
   };
 
   useEffect(() => {
@@ -247,105 +240,7 @@ const ReportViewAssesmentPage: React.FC = () => {
                 />
               </div>
             </div>
-            <div className=" px-5 flex flex-col ">
-              <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
-                <div className="w-full h-auto  float-left rounded-md p-3 py-5">
-                  <div className=" w-1/2 px-4 float-left ">
-                    <InputComponent
-                      mandatoy
-                      label="Name"
-                      value={name}
-                      className="h-[38px] mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setName({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-
-                    <InputComponent
-                      label="Created By"
-                      value={user}
-                      className="h-[38px]  mb-3"
-                      onChange={(e) =>
-                        setUser({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                    <InputComponent
-                      label="Date"
-                      value={createdAt}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      disabled
-                    />
-                  </div>
-                  <div className=" w-1/2 px-4 float-left  mb-3">
-                    <InputComponent
-                      label="Active At"
-                      value={activeDate}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      disabled
-                    />
-                    <InputComponent
-                      label="Deactive At"
-                      value={deactiveDate}
-                      className="h-[38px]  mb-3"
-                      type="date"
-                      disabled
-                    />
-                    <InputComponent
-                      label="Status"
-                      value={{
-                        valueData: isActive,
-                        valueInput: isActive === "1" ? "Active" : "Expired",
-                      }}
-                      className="h-[38px]  mb-3"
-                      type="text"
-                      onChange={(e) =>
-                        setCreatedAt({
-                          valueData: e,
-                          valueInput: e,
-                        })
-                      }
-                      disabled
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <ToggleBodyComponent
-                name="Indicators"
-                className="mt-5 mb-5"
-                child={
-                  <IndicatorComponent
-                    data={indicators}
-                    setData={setIndicators}
-                    status={status}
-                    result={result}
-                  />
-                }
-              />
-              <ToggleBodyComponent
-                name="Grading"
-                className="mb-5"
-                child={
-                  <GradingComponent
-                    data={grades}
-                    setData={setGrades}
-                    status={status}
-                    score={score}
-                  />
-                }
-              />
-            </div>
+            {PageComponent()}
           </>
         ) : (
           <LoadingComponent />
@@ -353,6 +248,110 @@ const ReportViewAssesmentPage: React.FC = () => {
       </div>
     </>
   );
+
+  function PageComponent() {
+    return (
+      <div className=" px-5 flex flex-col " ref={pdfRef}>
+        <div className="border w-full flex-1  bg-white rounded-md overflow-y-scroll scrollbar-none">
+          <div className="w-full h-auto  float-left rounded-md p-3 py-5">
+            <div className=" w-1/2 px-4 float-left ">
+              <InputComponent
+                mandatoy
+                label="Name"
+                value={name}
+                className="h-[38px] mb-3"
+                type="text"
+                onChange={(e) =>
+                  setName({
+                    valueData: e,
+                    valueInput: e,
+                  })
+                }
+                disabled
+              />
+
+              <InputComponent
+                label="Created By"
+                value={user}
+                className="h-[38px]  mb-3"
+                onChange={(e) =>
+                  setUser({
+                    valueData: e,
+                    valueInput: e,
+                  })
+                }
+                disabled
+              />
+              <InputComponent
+                label="Date"
+                value={createdAt}
+                className="h-[38px]  mb-3"
+                type="date"
+                disabled
+              />
+            </div>
+            <div className=" w-1/2 px-4 float-left  mb-3">
+              <InputComponent
+                label="Active At"
+                value={activeDate}
+                className="h-[38px]  mb-3"
+                type="date"
+                disabled
+              />
+              <InputComponent
+                label="Deactive At"
+                value={deactiveDate}
+                className="h-[38px]  mb-3"
+                type="date"
+                disabled
+              />
+              <InputComponent
+                label="Status"
+                value={{
+                  valueData: isActive,
+                  valueInput: isActive === "1" ? "Active" : "Expired",
+                }}
+                className="h-[38px]  mb-3"
+                type="text"
+                onChange={(e) =>
+                  setCreatedAt({
+                    valueData: e,
+                    valueInput: e,
+                  })
+                }
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+
+        <ToggleBodyComponent
+          name="Indicators"
+          className="mt-5 mb-5"
+          child={
+            <IndicatorComponent
+              data={indicators}
+              setData={setIndicators}
+              status={status}
+              result={result}
+            />
+          }
+        />
+        <ToggleBodyComponent
+          name="Grading"
+          className="mb-5"
+          child={
+            <GradingComponent
+              data={grades}
+              setData={setGrades}
+              status={status}
+              score={score}
+            />
+          }
+        />
+      </div>
+    );
+  }
 };
 
 interface IIndicators {
