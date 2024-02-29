@@ -159,7 +159,7 @@ export const ReportNotesPage: React.FC = (): any => {
             case "Branch":
               endpoint = DataAPI.BRANCH;
               break;
-            case "CreatedBy":
+            case "Created By":
               endpoint = DataAPI.USERS;
               break;
             default:
