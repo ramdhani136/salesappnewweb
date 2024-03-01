@@ -52,8 +52,9 @@ export const ReportNotesPage: React.FC = (): any => {
       { header: "Doc", accessor: "doc", className: "w-6%]" },
       { header: "Callsheet Type", accessor: "callType", className: "w-9%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
-      { header: "Activity", accessor: "activity", className: "w-[15%]" },
-      { header: "Feedback", accessor: "feedback", className: "w-[15%]" },
+      { header: "Activity", accessor: "activity", className: "w-[10%]" },
+      { header: "Feedback", accessor: "feedback", className: "w-[10%]" },
+      { header: "Response", accessor: "response", className: "w-[10%]" },
       { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
       { header: "Group", accessor: "group", className: "w-[5%]" },
       { header: "Branch", accessor: "branch", className: "w-[8%]" },
@@ -74,6 +75,7 @@ export const ReportNotesPage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
+        console.log(result.data)
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -93,6 +95,7 @@ export const ReportNotesPage: React.FC = (): any => {
               ""
             ),
             callType: <h4 className="mx-2">{item.doc.callType ?? ""}</h4>,
+            response: <h4 className="mx-2">{item.response ?? ""}</h4>,
             type: <h4 className="mx-2">{item.doc.type}</h4>,
             group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
             branch: item.branch.name,
