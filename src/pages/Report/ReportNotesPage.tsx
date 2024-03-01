@@ -161,6 +161,9 @@ export const ReportNotesPage: React.FC = (): any => {
             case "Branch":
               endpoint = DataAPI.BRANCH;
               break;
+            case "Schedule":
+              endpoint = DataAPI.SCHEDULE;
+              break;
             case "Created By":
               endpoint = DataAPI.USERS;
               break;
