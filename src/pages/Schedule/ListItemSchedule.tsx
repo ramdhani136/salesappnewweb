@@ -345,31 +345,25 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         search: search,
       });
 
-
-      
       const getDataExport = getExport.data.map((item: any, index: any) => {
         return {
           no: index + 1,
           schedule: item.schedule.name,
+          active_date: moment(item.schedule.actieDate).format("LLL"),
+          closing_date: moment(item.schedule.closingDate).format("LLL"),
           customer: item.customer.name,
           group: item.customerGroup.name,
           branch: item.branch.name,
           status: item.status == "0" ? "Open" : "Closed",
-          // workState: item.workflowState,
-          // closing_date: moment(item.closing.date).format("LLL"),
-          // score: item.closing?.result?.score,
-          // grade: item.closing?.result?.grade,
-          // recomendation: item.closing?.result?.notes,
-          // closing_by: item.closing?.user?.name,
+          createdBy: item.createdBy.name,
         };
       });
-      console.log(getDataExport)
 
-      // const ws = XLSX.utils.json_to_sheet(getDataExport);
-      // const wb = XLSX.utils.book_new();
-      // XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-      // XLSX.writeFile(wb, `${docData.name}.xlsx`);
+      XLSX.writeFile(wb, `${docData.name}.xlsx`);
     } catch (error) {
       console.log(error);
     }
