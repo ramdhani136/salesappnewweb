@@ -75,7 +75,6 @@ export const ReportNotesPage: React.FC = (): any => {
       });
 
       if (result.data.length > 0) {
-        console.log(result.data)
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -238,10 +237,11 @@ export const ReportNotesPage: React.FC = (): any => {
           customer: item.customer.name,
           doc: item.doc.name,
           type: item.doc.type,
-          callType: item.doc.callType ?? "",
+          callType: item?.doc?.callType ?? "",
           topic: item.topic.name,
           activity: item.task,
           feedback: item.result,
+          response: item.response ?? "",
           tags: `${item.tags.map((i: any) => i.name)}`,
           group: item.customerGroup.name,
           branch: item.branch.name,
