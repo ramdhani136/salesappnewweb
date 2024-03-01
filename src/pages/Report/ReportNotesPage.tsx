@@ -82,31 +82,31 @@ export const ReportNotesPage: React.FC = (): any => {
 
             customer: (
               // <Link to={`/report/notes/${item._id}`}>
-              <b className="font-medium mx-2 ">{item.customer.name}</b>
+              <b className="font-medium">{item.customer.name}</b>
               // </Link>
             ),
-            topic: <h4 className="mx-2 min">{item.topic.name}</h4>,
+            topic: <h4>{item.topic.name}</h4>,
             doc: item.doc ? (
               <Link to={`/${item.doc.type}/${item.doc._id}`}>
-                <h4 className="mx-2">{item.doc.name}</h4>
+                <h4 >{item.doc.name}</h4>
               </Link>
             ) : (
               ""
             ),
-            callType: <h4 className="mx-2">{item.doc.callType ?? ""}</h4>,
-            response: <h4 className="mx-2">{item.response ?? ""}</h4>,
-            type: <h4 className="mx-2">{item.doc.type}</h4>,
-            group: <h4 className="mx-2">{item.customerGroup.name}</h4>,
+            callType: <h4>{item.doc.callType ?? ""}</h4>,
+            response: <h4 >{item.response ?? ""}</h4>,
+            type: <h4 >{item.doc.type}</h4>,
+            group: <h4 >{item.customerGroup.name}</h4>,
             branch: item.branch.name,
-            activity: <h4 className="mx-2">{item.task}</h4>,
-            feedback: <h4 className="mx-2">{item.result}</h4>,
+            activity: <h4 >{item.task}</h4>,
+            feedback: <h4 >{item.result}</h4>,
             user: <div>{item.createdBy.name}</div>,
             tag: (
               <ul className="float-left">
                 {item.tags.map((i: any, ind: any) => (
                   <li
                     key={ind}
-                    className=" inline list-none border rounded-md px-2 py-1 mr-1 mb-1 text-white text-sm bg-green-700 float-left"
+                    className=" inline list-none border rounded-md px-1 py-1 mr-1 mb-1 text-white text-sm bg-green-700 float-left"
                   >
                     {i.name}
                   </li>
@@ -122,7 +122,7 @@ export const ReportNotesPage: React.FC = (): any => {
             ),
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt} className="-ml-14" />
+                <InfoDateComponent date={item.updatedAt}  />
               </div>
             ),
           };
