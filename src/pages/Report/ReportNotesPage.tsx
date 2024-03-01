@@ -88,18 +88,18 @@ export const ReportNotesPage: React.FC = (): any => {
             topic: <h4>{item.topic.name}</h4>,
             doc: item.doc ? (
               <Link to={`/${item.doc.type}/${item.doc._id}`}>
-                <h4 >{item.doc.name}</h4>
+                <h4>{item.doc.name}</h4>
               </Link>
             ) : (
               ""
             ),
             callType: <h4>{item.doc.callType ?? ""}</h4>,
-            response: <h4 >{item.response ?? ""}</h4>,
-            type: <h4 >{item.doc.type}</h4>,
-            group: <h4 >{item.customerGroup.name}</h4>,
+            response: <h4>{item.response ?? ""}</h4>,
+            type: <h4>{item.doc.type}</h4>,
+            group: <h4>{item.customerGroup.name}</h4>,
             branch: item.branch.name,
-            activity: <h4 >{item.task}</h4>,
-            feedback: <h4 >{item.result}</h4>,
+            activity: <h4>{item.task}</h4>,
+            feedback: <h4>{item.result}</h4>,
             user: <div>{item.createdBy.name}</div>,
             tag: (
               <ul className="float-left">
@@ -122,7 +122,7 @@ export const ReportNotesPage: React.FC = (): any => {
             ),
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
-                <InfoDateComponent date={item.updatedAt}  />
+                <InfoDateComponent date={item.updatedAt} />
               </div>
             ),
           };
@@ -240,11 +240,11 @@ export const ReportNotesPage: React.FC = (): any => {
           customer: item.customer.name,
           doc: item.doc.name,
           type: item.doc.type,
-          callType: item?.doc?.callType ?? "",
           topic: item.topic.name,
           activity: item.task,
           feedback: item.result,
           response: item.response ?? "",
+          callType: item?.doc?.callType ?? "",
           tags: `${item.tags.map((i: any) => i.name)}`,
           group: item.customerGroup.name,
           branch: item.branch.name,
