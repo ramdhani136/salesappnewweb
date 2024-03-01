@@ -44,7 +44,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
     valueData: currentUser._id,
     valueInput: currentUser.name,
   });
-  const [type, setType] = useState<string>("all");
+  const [type, setType] = useState<string>("callsheet");
   const [notes, setNotes] = useState<string>("");
   const [startDate, setStartDate] = useState<IValue>({
     valueData: null,
@@ -247,7 +247,7 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
   const dataType: any[] = [
     { title: "Visit", value: "visit" },
     { title: "Callsheet", value: "callsheet" },
-    { title: "All", value: "all" },
+    // { title: "All", value: "all" },
   ];
 
   const getNaming = async (): Promise<void> => {
