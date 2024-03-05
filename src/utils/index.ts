@@ -6,6 +6,7 @@ import useKey from "./UseKey";
 import AlertModal from "./AlertModal";
 import FilterKata from "./FilterKata";
 import SocketIO from "./SocketIO";
+import { HitungSelisih } from "./SelisihWaktu";
 
 export {
   Meta,
@@ -16,4 +17,5 @@ export {
   AlertModal,
   FilterKata,
   SocketIO,
+  HitungSelisih,
 };

@@ -5,7 +5,13 @@ import {
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, FetchApi, LocalStorageType, Meta } from "../../utils";
+import {
+  AlertModal,
+  FetchApi,
+  HitungSelisih,
+  LocalStorageType,
+  Meta,
+} from "../../utils";
 import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import { TableComponent } from "../../components/organisme";
@@ -48,8 +54,8 @@ export const ReportNotesPage: React.FC = (): any => {
   const columns: IColumns[] = useMemo(
     () => [
       { header: "Customer", accessor: "customer", className: "w-[10%]" },
-      { header: "Type", accessor: "type", className: "w-[4%]" },
-      { header: "Doc", accessor: "doc", className: "w-6%]" },
+      { header: "Doc", accessor: "doc", className: "w-[4%]" },
+      { header: "Doc Name", accessor: "type", className: "w-6%]" },
       { header: "Doc Type", accessor: "docType", className: "w-[5%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
       { header: "Activity", accessor: "activity", className: "w-[10%]" },
@@ -86,7 +92,7 @@ export const ReportNotesPage: React.FC = (): any => {
               // </Link>
             ),
             topic: <h4>{item.topic.name}</h4>,
-            doc: item.doc ? (
+            type: item.doc ? (
               <Link to={`/${item.doc.type}/${item.doc._id}`}>
                 <h4>{item.doc.name}</h4>
               </Link>
@@ -95,7 +101,7 @@ export const ReportNotesPage: React.FC = (): any => {
             ),
             docType: <h4>{item?.doc?.docType ?? ""}</h4>,
             response: <h4>{item.response ?? ""}</h4>,
-            type: <h4>{item.doc.type}</h4>,
+            doc: <h4>{item.doc.type}</h4>,
             group: <h4>{item.customerGroup.name}</h4>,
             branch: item.branch.name,
             activity: <h4>{item.task}</h4>,
@@ -228,6 +234,7 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const ExportToExcel = async () => {
     setLoading(true);
+
     try {
       const getPermission: any = await FetchApi.post(
         `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
@@ -251,6 +258,16 @@ export const ReportNotesPage: React.FC = (): any => {
       });
 
       const getDataExport = getExport.data.map((item: any, index: any) => {
+        let duration = 0;
+
+        if (item?.doc?.checkIn?.createdAt && item?.doc?.checkOut?.createdAt) {
+          const getSelisih: any = HitungSelisih(
+            moment(item!.doc?.checkIn!.createdAt).format("LLL"),
+            moment(item!.doc?.checkOut!.createdAt).format("LLL")
+          );
+          duration = getSelisih.jam * 60 + getSelisih.menit;
+        }
+
         return {
           No: index + 1,
           date: moment(item.createdAt).format("LLL"),
@@ -265,6 +282,19 @@ export const ReportNotesPage: React.FC = (): any => {
           docStatus: item.doc.status,
           docWorkflowState: item.doc.workflowState,
           tags: `${item.tags.map((i: any) => i.name)}`,
+          checkIn_address: item?.checkIn?.address ?? "",
+          checkInLat: item?.doc?.checkIn?.lat ?? "",
+          checkInlng: item?.doc?.checkIn?.lng ?? "",
+          checkInAt: item?.doc?.checkIn?.createdAt
+            ? moment(item!.doc?.checkIn!.createdAt).format("LLL")
+            : "",
+          checkOut_address: item?.doc?.checkOut?.address ?? "",
+          checkOutLat: item?.doc?.checkOut?.lat ?? "",
+          checkOutlng: item?.doc?.checkOut?.lng ?? "",
+          checkOutAt: item?.doc?.checkOut?.createdAt
+            ? moment(item!.doc?.checkOut!.createdAt).format("LLL")
+            : "",
+          duration: duration,
           group: item.customerGroup.name,
           branch: item.branch.name,
           user: item.createdBy.name,
