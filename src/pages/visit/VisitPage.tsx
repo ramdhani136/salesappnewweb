@@ -30,7 +30,7 @@ export const VisitPage: React.FC = (): any => {
   const [page, setPage] = useState<String>("1");
   const [refresh, setRefresh] = useState<boolean>(false);
   const [sort, setSort] = useState<any[]>([]);
-  const [isSort, setIsort] = useState<string>("createdAt");
+  const [isSort, setIsort] = useState<string>("updatedAt");
   const [isOrderBy, setOrderBy] = useState<number>(-1);
   const [limit, setLimit] = useState<number>(20);
   const [listFilter, setListFilter] = useState<IDataFilter[]>([]);
@@ -222,42 +222,52 @@ export const VisitPage: React.FC = (): any => {
         search: search,
       });
 
-      console.log(getExport);
+      const getDataExport = getExport.data.map((item: any, index: any) => {
+        let schedule: String[] = [];
 
-      // const getDataExport = getExport.data.map((item: any, index: any) => {
-      //   return {
-      //     no: index + 1,
-      //     name: item.name,
-      //     customer: item.customer.name,
-      //     group: item.customerGroup.name,
-      //     branch: item.branch.name,
-      //     contactName: item?.contact?.name ?? "",
-      //     contactNumber: item?.contact?.phone ?? "",
-      //     checkIn_address: item?.checkIn?.address ?? "",
-      //     checkInLat: item?.checkIn?.lat ?? "",
-      //     checkInlng: item?.checkIn?.lng ?? "",
-      //     checkInAt: item?.checkIn?.createdAt
-      //       ? moment(item!.checkIn!.createdAt).format("LLL")
-      //       : "",
-      //     checkOut_address: item?.checkOut?.address ?? "",
-      //     checkOutLat: item?.checkOut?.lat ?? "",
-      //     checkOutlng: item?.checkOut?.lng ?? "",
-      //     checkOutAt: item?.checkOut?.createdAt
-      //       ? moment(item!.checkOut!.createdAt).format("LLL")
-      //       : "",
-      //     status: item.status,
-      //     workState: item.workflowState,
-      //     createdAt: moment(item.createdAt).format("LLL"),
-      //     updatedAt: moment(item.updatedAt).format("LLL"),
-      //     createdBy: item.createdBy.name,
-      //   };
-      // });
+        if (item.schedulelist.length > 0) {
+          schedule = item.schedulelist.map((sch: any) => {
+            return `${
+              sch?.schedule &&
+              `${sch?.schedule?.name} - ${sch?.schedule?.notes}`
+            }`;
+          });
+        }
 
-      // const ws = XLSX.utils.json_to_sheet(getDataExport);
-      // const wb = XLSX.utils.book_new();
-      // XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        return {
+          no: index + 1,
+          name: item.name,
+          customer: item.customer.name,
+          group: item.customerGroup.name,
+          branch: item.branch.name,
+          contactName: item?.contact?.name ?? "",
+          contactNumber: item?.contact?.phone ?? "",
+          schedule: `${schedule}`,
+          checkIn_address: item?.checkIn?.address ?? "",
+          checkInLat: item?.checkIn?.lat ?? "",
+          checkInlng: item?.checkIn?.lng ?? "",
+          checkInAt: item?.checkIn?.createdAt
+            ? moment(item!.checkIn!.createdAt).format("LLL")
+            : "",
+          checkOut_address: item?.checkOut?.address ?? "",
+          checkOutLat: item?.checkOut?.lat ?? "",
+          checkOutlng: item?.checkOut?.lng ?? "",
+          checkOutAt: item?.checkOut?.createdAt
+            ? moment(item!.checkOut!.createdAt).format("LLL")
+            : "",
+          status: item.status,
+          workState: item.workflowState,
+          createdAt: moment(item.createdAt).format("LLL"),
+          updatedAt: moment(item.updatedAt).format("LLL"),
+          createdBy: item.createdBy.name,
+        };
+      });
 
-      // XLSX.writeFile(wb, `visit.xlsx`);
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, `visit.xlsx`);
     } catch (error) {
       console.log(error);
     }
