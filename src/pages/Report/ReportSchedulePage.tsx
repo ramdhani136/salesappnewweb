@@ -5,7 +5,7 @@ import {
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorageType, Meta } from "../../utils";
 import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import { TableComponent } from "../../components/organisme";
@@ -302,6 +302,21 @@ export const ReportSchedulePage: React.FC = (): any => {
   const ExportToExcel = async () => {
     setLoading(true);
     try {
+
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "schedulelist", action: "export" }
+      );
+
+      if (!getPermission?.data?.status) {
+        setLoading(false);
+        return AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: " Permission Denied!",
+        });
+      }
+
       const getExport: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
         limit: 0,
         filters: [...filter, ["schedule.status", "!=", "0"]],

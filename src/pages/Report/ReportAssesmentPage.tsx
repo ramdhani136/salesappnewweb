@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IconButton, InfoDateComponent } from "../../components/atoms";
-import { LocalStorageType, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorageType, Meta } from "../../utils";
 import * as XLSX from "xlsx";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import { TableComponent } from "../../components/organisme";
@@ -196,6 +196,23 @@ export const ReportAssesmentPage: React.FC = (): any => {
   const ExportToExcel = async () => {
     setLoading(true);
     try {
+
+
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "assesmentresult", action: "export" }
+      );
+
+      if (!getPermission?.data?.status) {
+        setLoading(false);
+        return AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: " Permission Denied!",
+        });
+      }
+
+
       const getExport: any = await GetDataServer(DataAPI.ASSESMENTRESULT).FIND({
         limit: 0,
         filters: filter,
