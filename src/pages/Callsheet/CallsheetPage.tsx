@@ -1,11 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 import {
   ButtonStatusComponent,
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
+import {
+  AlertModal,
+  FetchApi,
+  LocalStorageType,
+  Meta,
+  useKey,
+} from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import AddIcon from "@mui/icons-material/Add";
 import { TableComponent } from "../../components/organisme";
@@ -15,6 +22,7 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import moment from "moment";
 export const CallsheetPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -172,6 +180,71 @@ export const CallsheetPage: React.FC = (): any => {
     setRefresh(true);
   };
 
+  const ExportToExcel = async () => {
+    setLoading(true);
+    try {
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "callsheet", action: "export" }
+      );
+
+      if (!getPermission?.data?.status) {
+        setLoading(false);
+        return AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: " Permission Denied!",
+        });
+      }
+
+      const getExport: any = await GetDataServer(DataAPI.CALLSHEET).FIND({
+        limit: 0,
+        filters: [...filter],
+        orderBy: { sort: isOrderBy, state: isSort },
+        search: search,
+      });
+
+      const getDataExport = getExport.data.map((item: any, index: any) => {
+        let schedule: String[] = [];
+
+        if (item.schedulelist.length > 0) {
+          schedule = item.schedulelist.map((sch: any) => {
+            return `${
+              sch?.schedule &&
+              `${sch?.schedule?.name} - ${sch?.schedule?.notes}`
+            }`;
+          });
+        }
+
+        return {
+          no: index + 1,
+          name: item.name,
+          customer: item.customer.name,
+          group: item.customerGroup.name,
+          branch: item.branch.name,
+          type: item.type,
+          contactName: item?.contact?.name ?? "",
+          contactNumber: item?.contact?.phone ?? "",
+          schedule: `${schedule}`,
+          status: item.status,
+          workState: item.workflowState,
+          createdAt: moment(item.createdAt).format("LLL"),
+          updatedAt: moment(item.updatedAt).format("LLL"),
+          createdBy: item.createdBy.name,
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, `callsheet.xlsx`);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (refresh) {
       setLoadingMore(true);
@@ -258,6 +331,15 @@ export const CallsheetPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              customButton={[
+                {
+                  title: "Export",
+                  onCLick: ExportToExcel,
+                  status: true,
+                  className:
+                    "bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900",
+                },
+              ]}
               selectedData={selectedData}
               setSelectedData={setSelectedData}
               loadingMore={loadingMore}
