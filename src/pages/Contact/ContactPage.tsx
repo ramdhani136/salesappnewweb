@@ -5,7 +5,14 @@ import {
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
+import * as XLSX from "xlsx";
+import {
+  AlertModal,
+  FetchApi,
+  LocalStorageType,
+  Meta,
+  useKey,
+} from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import AddIcon from "@mui/icons-material/Add";
 import { TableComponent } from "../../components/organisme";
@@ -15,6 +22,7 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import moment from "moment";
 
 export const ContactPage: React.FC = (): any => {
   const [data, setData] = useState<IDataTables[]>([]);
@@ -180,6 +188,57 @@ export const ContactPage: React.FC = (): any => {
     setRefresh(true);
   };
 
+  const ExportToExcel = async () => {
+    setLoading(true);
+    try {
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "contact", action: "export" }
+      );
+
+      if (!getPermission?.data?.status) {
+        setLoading(false);
+        return AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: " Permission Denied!",
+        });
+      }
+
+      const getExport: any = await GetDataServer(DataAPI.CONTACT).FIND({
+        limit: 0,
+        filters: [...filter],
+        orderBy: { sort: isOrderBy, state: isSort },
+        search: search,
+      });
+
+      const getDataExport = getExport.data.map((item: any, index: any) => {
+        return {
+          no: index + 1,
+          name: item.name,
+          customer: item.customer.name,
+          group: item?.customer?.customerGroup?.name ?? "",
+          branch: item?.customer?.branch?.name ?? "",
+          phone: item?.phone ?? "",
+          status: item.status == "0" ? "Disabled" : "Enabled",
+          workState: item.workflowState,
+          createdAt: moment(item.createdAt).format("LLL"),
+          updatedAt: moment(item.updatedAt).format("LLL"),
+          createdBy: item.createdBy.name,
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, `contact.xlsx`);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
   const onDelete = () => {
     AlertModal.confirmation({
       onConfirm: async (): Promise<void> => {
@@ -242,6 +301,15 @@ export const ContactPage: React.FC = (): any => {
               </div>
             </div>
             <TableComponent
+              customButton={[
+                {
+                  title: "Export",
+                  onCLick: ExportToExcel,
+                  status: true,
+                  className:
+                    "bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900",
+                },
+              ]}
               selectedData={selectedData}
               setSelectedData={setSelectedData}
               loadingMore={loadingMore}
