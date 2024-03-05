@@ -5,7 +5,14 @@ import {
   IconButton,
   InfoDateComponent,
 } from "../../components/atoms";
-import { AlertModal, LocalStorageType, Meta, useKey } from "../../utils";
+import * as XLSX from "xlsx";
+import {
+  AlertModal,
+  FetchApi,
+  LocalStorageType,
+  Meta,
+  useKey,
+} from "../../utils";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
 import AddIcon from "@mui/icons-material/Add";
 import { TableComponent } from "../../components/organisme";
@@ -15,6 +22,7 @@ import {
 } from "../../components/organisme/TableComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import { IDataFilter } from "../../components/moleculs/FilterTableComponent";
+import moment from "moment";
 
 export const CustomerPage: React.FC<any> = ({ props }): any => {
   const modal = props ? props.modal ?? false : false;
@@ -149,6 +157,9 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
             case "Branch":
               endpoint = DataAPI.BRANCH;
               break;
+            case "Workflow State":
+              endpoint = DataAPI.WORKFLOWSTATE;
+              break;
             default:
               endpoint = undefined;
               break;
@@ -208,6 +219,58 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
     setPage("1");
     setLimit(0);
     setRefresh(true);
+  };
+
+  const ExportToExcel = async () => {
+    setLoading(true);
+    try {
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "customer", action: "export" }
+      );
+
+      if (!getPermission?.data?.status) {
+        setLoading(false);
+        return AlertModal.Default({
+          icon: "error",
+          title: "Error",
+          text: " Permission Denied!",
+        });
+      }
+
+      const getExport: any = await GetDataServer(DataAPI.CUSTOMER).FIND({
+        limit: 0,
+        filters: [...filter],
+        orderBy: { sort: isOrderBy, state: isSort },
+        search: search,
+      });
+
+      const getDataExport = getExport.data.map((item: any, index: any) => {
+        return {
+          no: index + 1,
+          name: item.name,
+          group: item.customerGroup.name,
+          branch: item.branch.name,
+          status: item.status == "0" ? "Disabled" : "Enabled",
+          workState: item.workflowState,
+          erpId: item.erpId,
+          createdAt: moment(item.createdAt).format("LLL"),
+          updatedAt: moment(item.updatedAt).format("LLL"),
+          createdBy: item.createdBy.name,
+          latituteCordinate: item?.location?.coordinates[1] ?? "",
+          longituteCordinate: item?.location?.coordinates[0] ?? "",
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(getDataExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      XLSX.writeFile(wb, `customer.xlsx`);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const onDelete = () => {
@@ -287,6 +350,15 @@ export const CustomerPage: React.FC<any> = ({ props }): any => {
               </div>
             </div>
             <TableComponent
+              customButton={[
+                {
+                  title: "Export",
+                  onCLick: ExportToExcel,
+                  status: true,
+                  className:
+                    "bg-green-700 border-green-800 hover:bg-green-800 hover:border-green-900",
+                },
+              ]}
               selectedData={selectedData}
               setSelectedData={setSelectedData}
               loadingMore={loadingMore}

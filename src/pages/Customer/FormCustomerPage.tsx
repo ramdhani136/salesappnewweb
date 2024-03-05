@@ -376,11 +376,11 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
   const onSave = async (nextState?: String): Promise<any> => {
     setLoading(true);
     try {
-      if (lat.valueData) {
-        if (!lng.valueData) {
-          throw "Please select a lng location";
-        }
-      }
+      // if (lat.valueData) {
+      //   if (!lng.valueData) {
+      //     throw "Please select a lng location";
+      //   }
+      // }
 
       const inData = new FormData();
       if (nextState) {
@@ -396,20 +396,20 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
 
       if (name.valueData) {
         inData.append("name", name.valueData);
-      } 
+      }
 
       inData.append("type", type);
       if (branch.valueData) {
         inData.append("branch", branch.valueData);
-      } 
+      }
 
       if (group.valueData) {
         inData.append("customerGroup", group.valueData);
-      } 
+      }
 
       inData.append("erpId", erpId.valueData);
       inData.append("address", address);
-      
+
       if (lat.valueData) {
         inData.append("lat", lat.valueData);
       }
@@ -558,7 +558,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                     className={`opacity-80 hover:opacity-100 duration-100  `}
                   />
                 )}
-              {!isChangeData && id && workflow.length > 0 && (
+                {!isChangeData && id && workflow.length > 0 && (
                   <IconButton
                     name="Actions"
                     list={workflow}
@@ -723,39 +723,39 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
                       onReset={() => {
                         setLat({ valueData: "", valueInput: "" });
                         setLng({ valueData: "", valueInput: "" });
                       }}
                     />
-                    {lat.valueData && (
-                      <InputComponent
-                        mandatoy
-                        label="Lng"
-                        value={lng}
-                        className="h-[38px]   mb-4"
-                        type="number"
-                        onChange={(e) =>
-                          setLng({
-                            valueData: e,
-                            valueInput: e,
-                          })
-                        }
-                        disabled={
-                          id != null
-                            ? status !== "Draft"
-                              ? true
-                              : false
-                            : false
-                        }
-                        onReset={() => {
-                          setLng({ valueData: "", valueInput: "" });
-                        }}
-                      />
-                    )}
+
+                    <InputComponent
+                      // mandatoy
+                      label="Lng"
+                      value={lng}
+                      className="h-[38px]   mb-4"
+                      type="number"
+                      onChange={(e) =>
+                        setLng({
+                          valueData: e,
+                          valueInput: e,
+                        })
+                      }
+                      // disabled={
+                      //   id != null
+                      //     ? status !== "Draft"
+                      //       ? true
+                      //       : false
+                      //     : false
+                      // }
+                      onReset={() => {
+                        setLng({ valueData: "", valueInput: "" });
+                      }}
+                    />
+
                     <label className="text-sm">Address</label>
                     <textarea
                       className="border mt-1 p-2 text-[0.95em] bg-gray-50  w-full rounded-md h-[150px]"
@@ -792,9 +792,9 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
                           valueInput: e,
                         })
                       }
-                      disabled={
-                        id != null ? (status !== "Draft" ? true : false) : false
-                      }
+                      // disabled={
+                      //   id != null ? (status !== "Draft" ? true : false) : false
+                      // }
                       onReset={() => {
                         setErpId({ valueData: "", valueInput: "" });
                       }}
