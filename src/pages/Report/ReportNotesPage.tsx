@@ -50,14 +50,15 @@ export const ReportNotesPage: React.FC = (): any => {
       { header: "Customer", accessor: "customer", className: "w-[10%]" },
       { header: "Type", accessor: "type", className: "w-[4%]" },
       { header: "Doc", accessor: "doc", className: "w-6%]" },
-      { header: "Callsheet Type", accessor: "callType", className: "w-[5%]" },
+      { header: "Callsheet Type", accessor: "callType", className: "w-[3%]" },
+      { header: "Visit Type", accessor: "visitType", className: "w-[3%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
       { header: "Activity", accessor: "activity", className: "w-[10%]" },
       { header: "Feedback", accessor: "feedback", className: "w-[10%]" },
       { header: "Response", accessor: "response", className: "w-[10%]" },
       { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
       { header: "Group", accessor: "group", className: "w-[5%]" },
-      { header: "Branch", accessor: "branch", className: "w-[10%]" },
+      { header: "Branch", accessor: "branch", className: "w-[9%]" },
       { header: "User", accessor: "user", className: "w-[7.5%]" },
       { header: "", accessor: "updatedAt", className: "w-[5%]" },
     ],
@@ -94,6 +95,7 @@ export const ReportNotesPage: React.FC = (): any => {
               ""
             ),
             callType: <h4>{item.doc.callType ?? ""}</h4>,
+            visitType: <h4>{item.doc.visitType ?? ""}</h4>,
             response: <h4>{item.response ?? ""}</h4>,
             type: <h4>{item.doc.type}</h4>,
             group: <h4>{item.customerGroup.name}</h4>,
@@ -145,6 +147,9 @@ export const ReportNotesPage: React.FC = (): any => {
           switch (i.alias) {
             case "Topic":
               endpoint = DataAPI.TOPIC;
+              break;
+            case "Doc WorkflowState":
+              endpoint = DataAPI.WORKFLOWSTATE;
               break;
             case "WorkflowState":
               endpoint = DataAPI.WORKFLOWSTATE;
@@ -259,6 +264,9 @@ export const ReportNotesPage: React.FC = (): any => {
           feedback: item.result,
           response: item.response ?? "",
           callType: item?.doc?.callType ?? "",
+          visitType: item?.doc?.visitType ?? "",
+          docStatus: item.doc.status,
+          docWorkflowState: item.doc.workflowState,
           tags: `${item.tags.map((i: any) => i.name)}`,
           group: item.customerGroup.name,
           branch: item.branch.name,
@@ -304,7 +312,7 @@ export const ReportNotesPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[230%]"
+              width="w-[250%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}
