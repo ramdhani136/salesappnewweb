@@ -55,7 +55,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     (): IColumns[] => [
       { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
-      { header: "Note", accessor: "note", className: "w-auto" },
+      { header: "Task", accessor: "note", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
@@ -260,7 +260,6 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         } else {
           mandatoryNotes = getMandatoryNotes.vis;
         }
-        console.log(mandatoryNotes);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
