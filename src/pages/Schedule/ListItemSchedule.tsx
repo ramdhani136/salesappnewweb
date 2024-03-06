@@ -227,6 +227,22 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     );
   };
 
+  const getConfig = async (): Promise<{ call: boolean; vis: boolean }> => {
+    try {
+      const result: any = await GetDataServer(DataAPI.CONFIG).FIND({});
+
+      return {
+        call: result?.data?.callsheet?.mandatoryCustScheduleNote ?? false,
+        vis: result?.data?.visit?.mandatoryCustScheduleNote ?? false,
+      };
+    } catch (error) {
+      return {
+        call: false,
+        vis: false,
+      };
+    }
+  };
+
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
       const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
@@ -237,6 +253,14 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
+        let mandatoryNotes: boolean = false;
+        const getMandatoryNotes = await getConfig();
+        if (docData.type == "callsheet") {
+          mandatoryNotes = getMandatoryNotes.call;
+        } else {
+          mandatoryNotes = getMandatoryNotes.vis;
+        }
+        console.log(mandatoryNotes);
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
@@ -247,7 +271,9 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                   onClick={() => alert("ddd")}
                   disabled
                   value={item?.notes ?? ""}
-                  className={` relative bg-gray-50 border rounded-md w-[300px] px-2 py-1`}
+                  className={` relative bg-gray-50 border rounded-md w-[300px] px-2 py-1 ${
+                    mandatoryNotes && !item.notes && "border-red-600"
+                  } `}
                 />
                 {docData.status == 0 && (
                   <EditIcon
