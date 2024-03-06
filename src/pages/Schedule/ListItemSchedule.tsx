@@ -271,7 +271,10 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                   disabled
                   value={item?.notes ?? ""}
                   className={` relative bg-gray-50 border rounded-md w-[300px] px-2 py-1 ${
-                    mandatoryNotes && !item.notes && "border-red-600"
+                    mandatoryNotes &&
+                    !item.notes &&
+                    docData.status == 0 &&
+                    "border-red-600"
                   } `}
                 />
                 {docData.status == 0 && (
