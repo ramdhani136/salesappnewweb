@@ -106,6 +106,10 @@ const SettingPage: React.FC = () => {
     valueInput: "0",
   });
 
+  const [visitMandatoryNote, setVisitMandatoryNote] = useState<boolean>(false);
+  const [callsheetMandatoryNote, setCallsheetMandatoryNote] =
+    useState<boolean>(false);
+
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -120,6 +124,14 @@ const SettingPage: React.FC = () => {
       const visit: any = result.data.visit;
       const callsheet: any = result.data.callsheet;
       const customer: any = result.data.customer;
+
+      if (visit?.mandatoryCustScheduleNote) {
+        setVisitMandatoryNote(visit.mandatoryCustScheduleNote);
+      }
+      if (callsheet?.mandatoryCustScheduleNote) {
+        setCallsheetMandatoryNote(callsheet.mandatoryCustScheduleNote);
+      }
+
       setVisitCheckIn({
         valueData: visit.checkInDistance ?? 0,
         valueInput: visit.checkInDistance ?? 0,
@@ -162,11 +174,14 @@ const SettingPage: React.FC = () => {
           notesLength: visit.notesLength ?? 0,
           tagsMandatory: visit.tagsMandatory,
           topicMandatory: visit.topicMandatory,
+          mandatoryCustScheduleNote: visit?.mandatoryCustScheduleNote ?? false,
         },
         callsheet: {
           notesLength: callsheet.notesLength,
           tagsMandatory: callsheet.tagsMandatory,
           topicMandatory: callsheet.topicMandatory,
+          mandatoryCustScheduleNote:
+            callsheet?.mandatoryCustScheduleNote ?? false,
         },
         customer: {
           locationDistance: customer.locationDistance ?? 0,
@@ -294,11 +309,13 @@ const SettingPage: React.FC = () => {
         notesLength: visitNoteLength.valueData,
         tagsMandatory: visitTags,
         topicMandatory: visitTopic,
+        mandatoryCustScheduleNote: visitMandatoryNote,
       },
       callsheet: {
         notesLength: callsheetNoteLength.valueData,
         tagsMandatory: callsheetTags,
         topicMandatory: callsheetTopic,
+        mandatoryCustScheduleNote: callsheetMandatoryNote,
       },
       customer: {
         locationDistance: locationDistance.valueData,
@@ -320,6 +337,8 @@ const SettingPage: React.FC = () => {
     locationDistance,
     visitTopic,
     callsheetTopic,
+    visitMandatoryNote,
+    callsheetMandatoryNote,
   ]);
 
   const getVisitTopic = async (data: {
@@ -426,11 +445,13 @@ const SettingPage: React.FC = () => {
           notesLength: visitNoteLength.valueData,
           tagsMandatory: visitTags,
           topicMandatory: visitTopic.map((item: any) => item._id),
+          mandatoryCustScheduleNote: visitMandatoryNote,
         },
         callsheet: {
           notesLength: callsheetNoteLength.valueData,
           tagsMandatory: callsheetTags,
           topicMandatory: callsheetTopic.map((item: any) => item._id),
+          mandatoryCustScheduleNote: callsheetMandatoryNote,
         },
         customer: {
           locationDistance: locationDistance.valueData,
@@ -443,11 +464,8 @@ const SettingPage: React.FC = () => {
       getData();
       Swal.fire({ icon: "success", title: "Data has been saved" });
     } catch (error: any) {
-      Swal.fire(
-        "Error!",
-        `${error.response.data.msg ?? "Error Delete"}`,
-        "error"
-      );
+      console.log(error);
+      Swal.fire("Error!", `${error.message ?? "Error"}`, "error");
     }
     setLoading(false);
   };
@@ -709,6 +727,40 @@ const SettingPage: React.FC = () => {
                           type="number"
                           className={`h-9 mb-3`}
                         />
+                        <h4 className="text-[0.9em] text-gray-700">
+                          Schedule Note Mandatory
+                        </h4>
+                        <div className="flex text-center">
+                          <input
+                            type="radio"
+                            name="msnc"
+                            onChange={(e) => {
+                              setVisitMandatoryNote(true);
+                            }}
+                            checked={visitMandatoryNote}
+                          />
+                          <label
+                            className="text-sm ml-[1px]"
+                            htmlFor="visitnoteyes"
+                          >
+                            Yes
+                          </label>
+                          <input
+                            type="radio"
+                            name="msnc"
+                            className="ml-2"
+                            onChange={(e) => {
+                              setVisitMandatoryNote(false);
+                            }}
+                            checked={!visitMandatoryNote}
+                          />
+                          <label
+                            className="text-sm ml-[1px]"
+                            htmlFor="visitnoteno"
+                          >
+                            No
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -914,6 +966,30 @@ const SettingPage: React.FC = () => {
                           type="number"
                           className={`h-9 mb-3`}
                         />
+                        <h4 className="text-[0.9em] text-gray-700">
+                          Schedule Note Mandatory
+                        </h4>
+                        <div className="flex text-center">
+                          <input
+                            type="radio"
+                            name="msncc"
+                            onChange={(e) => {
+                              setCallsheetMandatoryNote(true);
+                            }}
+                            checked={callsheetMandatoryNote}
+                          />
+                          <label className="text-sm ml-[1px]">Yes</label>
+                          <input
+                            type="radio"
+                            name="msncc"
+                            className="ml-2"
+                            onChange={(e) => {
+                              setCallsheetMandatoryNote(false);
+                            }}
+                            checked={!callsheetMandatoryNote}
+                          />
+                          <label className="text-sm ml-[1px]">No</label>
+                        </div>
                       </div>
                     </div>
                   </div>
