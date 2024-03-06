@@ -224,6 +224,9 @@ const FormSchedulePage: React.FC<any> = ({ props }) => {
       if (id && !modal) {
         getData();
         Swal.fire({ icon: "success", text: "Saved" });
+        if (nextState) {
+          navigate(0);
+        }
       } else {
         navigate(`/schedule/${result.data.data._id}`);
         navigate(0);

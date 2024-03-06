@@ -183,9 +183,14 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
   const ModalList: React.FC<any> = ({ props }) => {
     const [note, setNote] = useState<string>(props?.data?.notes ?? "");
 
-    const OnSave = () => {
+    const OnSave = async () => {
       try {
-        console.log(note);
+        await GetDataServer(DataAPI.SCHEDULELIST).UPDATE({
+          id: props.data._id,
+          data: {
+            notes: note,
+          },
+        });
         if (props?.onRefresh) {
           props.onRefresh();
           dispatch(
