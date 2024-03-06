@@ -21,7 +21,6 @@ import { CustomerPage } from "../Customer/CustomerPage";
 import Swal from "sweetalert2";
 import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
 import EditIcon from "@mui/icons-material/Edit";
-import { color } from "@chakra-ui/react";
 
 interface IProps {
   props: any;
@@ -187,13 +186,15 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                   value={item?.notes ?? ""}
                   className={` relative bg-gray-50 border rounded-md w-[300px] px-2 py-1`}
                 />
-                <EditIcon
-                  onClick={() => {
-                    alert("dd");
-                  }}
-                  style={{ color: "white" }}
-                  className="absolute border rounded-full p-1 bg-green-800 opacity-80 hover:opacity-100 duration-300"
-                />
+                {docData.status == 0 && (
+                  <EditIcon
+                    onClick={() => {
+                      alert("dd");
+                    }}
+                    style={{ color: "white" }}
+                    className="absolute border rounded-full p-1 bg-green-800 opacity-80 hover:opacity-100 duration-300"
+                  />
+                )}
               </div>
             ),
             customer: <b className="font-medium">{item.customer.name}</b>,
