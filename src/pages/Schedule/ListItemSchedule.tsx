@@ -438,6 +438,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           customer: item.customer.name,
           group: item.customerGroup.name,
           branch: item.branch.name,
+          notes: item?.notes ?? "",
           status: item.status == "0" ? "Open" : "Closed",
           createdBy: item.createdBy.name,
         };
