@@ -192,7 +192,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                     alert("dd");
                   }}
                   style={{ color: "white" }}
-                  className="absolute border rounded-full p-1 bg-green-700 opacity-80 hover:opacity-100 duration-300"
+                  className="absolute border rounded-full p-1 bg-green-800 opacity-80 hover:opacity-100 duration-300"
                 />
               </div>
             ),
