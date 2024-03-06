@@ -164,6 +164,64 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     );
   };
 
+  const ShowEditorList = async (data: any) => {
+    dispatch(
+      modalSet({
+        active: true,
+        Children: ModalList,
+        title: "",
+        props: {
+          modal: true,
+          onRefresh: getData,
+          data: data,
+        },
+        className: "w-[800px] h-[400px]",
+      })
+    );
+  };
+
+  const ModalList: React.FC<any> = ({ props }) => {
+    const [note, setNote] = useState<string>(props?.data?.notes ?? "");
+
+    const OnSave = () => {
+      try {
+        console.log(note);
+        if (props?.onRefresh) {
+          props.onRefresh();
+          dispatch(
+            modalSet({
+              active: false,
+              Children: null,
+              title: "",
+              props: {},
+              className: "",
+            })
+          );
+        }
+      } catch (error) {}
+    };
+
+    return (
+      <div className="p-3">
+        <h4 className="font-semibold">{props?.data?.customer?.name ?? ""}</h4>
+        <textarea
+          value={note}
+          name="note"
+          onChange={(e) => {
+            setNote(e.target.value);
+          }}
+          className="border rounded-md h-[300px] w-full py-1 px-2 mt-2"
+        />
+        <button
+          onClick={OnSave}
+          className="border rounded-md px-2 py-[2px] mt-2 bg-green-600 text-white float-right"
+        >
+          Save
+        </button>
+      </div>
+    );
+  };
+
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
     try {
       const result: any = await GetDataServer(DataAPI.SCHEDULELIST).FIND({
@@ -189,7 +247,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
                 {docData.status == 0 && (
                   <EditIcon
                     onClick={() => {
-                      alert("dd");
+                      ShowEditorList(item);
                     }}
                     style={{ color: "white" }}
                     className="absolute border rounded-full p-1 bg-green-800 opacity-80 hover:opacity-100 duration-300"
