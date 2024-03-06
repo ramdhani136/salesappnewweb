@@ -58,10 +58,10 @@ export const ReportNotesPage: React.FC = (): any => {
       { header: "Doc Name", accessor: "type", className: "w-6%]" },
       { header: "Doc Type", accessor: "docType", className: "w-[5%]" },
       { header: "Topic", accessor: "topic", className: "w-[10%]" },
-      { header: "Activity", accessor: "activity", className: "w-[10%]" },
-      { header: "Feedback", accessor: "feedback", className: "w-[10%]" },
+      { header: "Activity", accessor: "activity", className: "w-[13.7%]" },
+      { header: "Feedback", accessor: "feedback", className: "w-[13.7%]" },
       { header: "Response", accessor: "response", className: "w-[10%]" },
-      { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
+      // { header: "Tags", accessor: "tag", className: "w-[7.5%]" },
       { header: "Group", accessor: "group", className: "w-[5%]" },
       { header: "Branch", accessor: "branch", className: "w-[10%]" },
       { header: "User", accessor: "user", className: "w-[7.5%]" },
@@ -107,18 +107,18 @@ export const ReportNotesPage: React.FC = (): any => {
             activity: <h4>{item.task}</h4>,
             feedback: <h4>{item.result}</h4>,
             user: <div>{item.createdBy.name}</div>,
-            tag: (
-              <ul className="float-left">
-                {item.tags.map((i: any, ind: any) => (
-                  <li
-                    key={ind}
-                    className=" inline list-none border rounded-md px-1 py-1 mr-1 mb-1 text-white text-sm bg-green-700 float-left"
-                  >
-                    {i.name}
-                  </li>
-                ))}
-              </ul>
-            ),
+            // tag: (
+            //   <ul>
+            //     {item.tags.map((i: any, ind: any) => (
+            //       <li
+            //         key={ind}
+            //         className=" inline list-none border rounded-md px-2  py-1 mr-1 mb-1 text-white text-sm bg-green-700 float-left"
+            //       >
+            //         {i.name}
+            //       </li>
+            //     ))}
+            //   </ul>
+            // ),
 
             workflowState: (
               <ButtonStatusComponent
@@ -339,7 +339,7 @@ export const ReportNotesPage: React.FC = (): any => {
               disabledRadio={true}
               loadingMore={loadingMore}
               disabled={true}
-              width="w-[250%]"
+              width="w-[200%]"
               setSearch={setSeacrh}
               setData={setData}
               listFilter={listFilter}

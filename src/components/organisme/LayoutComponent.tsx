@@ -67,7 +67,7 @@ const LayoutComponent: React.FC<IProps> = ({ Child, sideBarWidth = false }) => {
           props={dataModal.props}
           className={dataModal.className ?? ""}
         />
-        {<SidebarComponent user={user} getStatusOpen={GetStatusSB} />}
+        <SidebarComponent user={user} getStatusOpen={GetStatusSB} />
         <div className={`bg-gray-100 flex-1 flex flex-col  ${
               sideBarWidth
                 ? isSideBarStatus
