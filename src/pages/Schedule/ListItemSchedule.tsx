@@ -20,6 +20,8 @@ import { modalSet } from "../../redux/slices/ModalSlice";
 import { CustomerPage } from "../Customer/CustomerPage";
 import Swal from "sweetalert2";
 import { typeInfoDate } from "../../components/atoms/InfoDateComponent";
+import EditIcon from "@mui/icons-material/Edit";
+import { color } from "@chakra-ui/react";
 
 interface IProps {
   props: any;
@@ -54,6 +56,7 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
     (): IColumns[] => [
       { header: "Customer", accessor: "customer", className: "w-[350px]" },
       { header: "Status", accessor: "status", className: "w-auto" },
+      { header: "Note", accessor: "note", className: "w-auto" },
       { header: "Closing Date", accessor: "closingDate", className: "w-auto" },
       { header: "Doc", accessor: "doc", className: "w-auto" },
       { header: "Type", accessor: "docType", className: "w-auto" },
@@ -176,6 +179,23 @@ const ListItemSchedule: React.FC<IProps> = ({ props }) => {
           return {
             id: item._id,
             customerId: item.customer._id,
+            note: (
+              <div className="relative">
+                <textarea
+                  onClick={() => alert("ddd")}
+                  disabled
+                  value={item?.notes ?? ""}
+                  className={` relative bg-gray-50 border rounded-md w-[300px] px-2 py-1`}
+                />
+                <EditIcon
+                  onClick={() => {
+                    alert("dd");
+                  }}
+                  style={{ color: "white" }}
+                  className="absolute border rounded-full p-1 bg-green-700 opacity-80 hover:opacity-100 duration-300"
+                />
+              </div>
+            ),
             customer: <b className="font-medium">{item.customer.name}</b>,
             doc: <h4>{item?.closing?.doc?.name ?? ""}</h4>,
             docType: (
