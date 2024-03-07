@@ -13,7 +13,7 @@ import TableComponent, {
   IDataTables,
 } from "../../components/organisme/TableComponent";
 import GetDataServer, { DataAPI } from "../../utils/GetDataServer";
-import { AlertModal } from "../../utils";
+import { AlertModal, FetchApi } from "../../utils";
 import { LoadingComponent } from "../../components/moleculs";
 import { useDispatch } from "react-redux";
 import { modalSet } from "../../redux/slices/ModalSlice";
@@ -133,7 +133,21 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
     );
   };
 
+  const getPermissionView = async (): Promise<boolean> => {
+    try {
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "assesmentschedulelist", action: "report" }
+      );
+
+      return getPermission?.data?.status ?? false;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const getData = async (props?: { refresh?: boolean }): Promise<any> => {
+   
     try {
       const result: any = await GetDataServer(
         DataAPI.ASSESMENTSCHEDULEITEM
@@ -145,12 +159,14 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
         search: props?.refresh ? "" : search,
       });
       if (result.data.length > 0) {
+        const validReport = await getPermissionView();
         const generateData = result.data.map((item: any): IDataTables => {
           return {
             id: item._id,
             customer:
-              item.closing?.result?._id && item.schedule.status ? (
-                <Link to={`/report/assesment/${item.closing?.result?._id}`}>
+              item.schedule.status == "1" ||
+              (item?.closing?.date && validReport) ? (
+                <Link to={`/assesment/${item._id}`}>
                   <b className="font-medium">{item.customer.name}</b>
                 </Link>
               ) : (
@@ -188,7 +204,7 @@ const ListItemAssesmentSchedule: React.FC<IProps> = ({ props }) => {
                 name={item.status === "0" ? "Open" : "Closed"}
               />
             ),
-            workstate:item.workflowState,
+            workstate: item.workflowState,
             updatedAt: (
               <div className="inline text-gray-600 text-[0.93em]">
                 <InfoDateComponent date={item.updatedAt} className="-ml-9" />

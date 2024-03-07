@@ -96,7 +96,6 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
         orderBy: { state: "createdAt", sort: -1 },
         filters,
       });
-      console.log(result.data)
       setData(result.data);
       setLoading(false);
     } catch (error: any) {

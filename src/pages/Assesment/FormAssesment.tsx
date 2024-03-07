@@ -592,6 +592,7 @@ const GetQuestion: React.FC<{
                           className="flex items-center text-md ml-3"
                         >
                           <input
+                            disabled={data.status != "0"}
                             id={`option_${option._id}`}
                             type="radio"
                             value={option.name}
@@ -642,6 +643,7 @@ const GetQuestion: React.FC<{
                           className="flex items-center text-md ml-3"
                         >
                           <input
+                            disabled={data.status != "0"}
                             id={`option_${option._id}`}
                             type="radio"
                             value={option.name}
