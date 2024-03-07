@@ -53,7 +53,7 @@ export const ReportNotesPage: React.FC = (): any => {
 
   const columns: IColumns[] = useMemo(
     () => [
-      { header: "Customer", accessor: "customer", className: "w-[10%]" },
+      { header: "Customer", accessor: "customer", className: "w-[15%]" },
       { header: "Doc", accessor: "doc", className: "w-[4%]" },
       { header: "Doc Name", accessor: "type", className: "w-6%]" },
       { header: "Doc Type", accessor: "docType", className: "w-[5%]" },
