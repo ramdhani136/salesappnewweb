@@ -64,7 +64,7 @@ const RolePermissionManagerPage: React.FC<any> = ({ props }) => {
     { title: "Assesment Template", value: "assesmenttemplate" },
     { title: "Assesment Schedule", value: "assesmentschedule" },
     { title: "Assesment Schedule List", value: "assesmentschedulelist" },
-    { title: "Assesment Report", value: "assesmentresult" },
+    { title: "Assesment Result", value: "assesmentresult" },
   ];
 
   const [roleSelectOption, setRoleSelectOption] = useState<ISelectValue[]>([]);
@@ -628,7 +628,7 @@ const FormPermission: React.FC<any> = ({ props }) => {
     { title: "Assesment Template", value: "assesmenttemplate" },
     { title: "Assesment Schedule", value: "assesmentschedule" },
     { title: "Assesment Schedule List", value: "assesmentschedulelist" },
-    { title: "Assesment Report", value: "assesmentresult" },
+    { title: "Assesment Result", value: "assesmentresult" },
   ];
 
   const GetRole = async () => {
