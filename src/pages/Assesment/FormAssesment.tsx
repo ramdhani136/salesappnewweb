@@ -11,7 +11,7 @@ import {
 import { IValue } from "../../components/atoms/InputComponent";
 import { LoadingComponent } from "../../components/moleculs";
 import moment from "moment";
-import { AlertModal, LocalStorage, Meta } from "../../utils";
+import { AlertModal, FetchApi, LocalStorage, Meta } from "../../utils";
 
 import { IListIconButton } from "../../components/atoms/IconButton";
 import Swal from "sweetalert2";
@@ -68,6 +68,7 @@ const FormAssesmentPage: React.FC = () => {
   const [prevDetails, setPrevDetails] = useState<detailModel[]>([]);
   const [dbDetails, setDbDetails] = useState<detailModel[]>([]);
   const [isChange, setIsChange] = useState<boolean>(false);
+  const [validSubmit, setValidSubmit] = useState<boolean>(false);
 
   const getData = async (): Promise<void> => {
     setWorkflow([]);
@@ -75,6 +76,13 @@ const FormAssesmentPage: React.FC = () => {
       const result = await GetDataServer(DataAPI.ASSESMENTSCHEDULEITEM).FINDONE(
         `${id}`
       );
+
+      const getPermission: any = await FetchApi.post(
+        `${import.meta.env.VITE_PUBLIC_URI}/users/getpermission`,
+        { doc: "assesmentresult", action: "submit" }
+      );
+
+      setValidSubmit(getPermission?.data?.status ?? false);
 
       setDbDetails(result.data.details ?? []);
 
@@ -174,7 +182,6 @@ const FormAssesmentPage: React.FC = () => {
     setLoading(false);
   };
 
-
   const onSubmit = async (): Promise<any> => {
     setLoading(true);
     try {
@@ -207,7 +214,6 @@ const FormAssesmentPage: React.FC = () => {
     }
     setLoading(false);
   };
-
 
   useEffect(() => {
     getData();
@@ -335,7 +341,8 @@ const FormAssesmentPage: React.FC = () => {
                   !isChange &&
                   template &&
                   template?.indicators?.length === details.length &&
-                  tab === "Questions" && (
+                  tab === "Questions" &&
+                  validSubmit && (
                     <IconButton
                       name="Submit"
                       callback={() => {
