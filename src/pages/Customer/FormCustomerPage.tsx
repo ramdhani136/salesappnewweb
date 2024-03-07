@@ -391,7 +391,7 @@ const FormCustomerPage: React.FC<any> = ({ props }) => {
 
       if (modal) {
         inData.append("status", "1");
-        inData.append("workflowState", "Submitted");
+        inData.append("workflowState", "Lead");
       }
 
       if (name.valueData) {
