@@ -162,8 +162,8 @@ const FormAssesmentPage: React.FC = () => {
         id: `${id}`,
         data: upData,
       });
+      await getData();
       Swal.fire("Success!", `Success`, "success");
-      getData();
     } catch (error: any) {
       Swal.fire(
         "Error!",
