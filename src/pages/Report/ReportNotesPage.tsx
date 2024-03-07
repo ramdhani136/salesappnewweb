@@ -281,6 +281,9 @@ export const ReportNotesPage: React.FC = (): any => {
           docType: item?.doc?.docType ?? "",
           docStatus: item.doc.status,
           docWorkflowState: item.doc.workflowState,
+          docCreatedAt: item?.doc?.createdAt
+            ? moment(item!.doc!.createdAt).format("LLL")
+            : "",
           tags: `${item.tags.map((i: any) => i.name)}`,
           checkIn_address: item?.doc?.checkIn?.address ?? "",
           checkInLat: item?.doc?.checkIn?.lat ?? "",
