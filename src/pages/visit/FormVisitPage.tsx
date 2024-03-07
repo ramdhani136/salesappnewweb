@@ -255,6 +255,11 @@ const FormVisitPage: React.FC = () => {
         contact: result?.data?.contact?._id ?? "",
       });
 
+      setCreatedAt({
+        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
+      });
+
       setLoading(false);
     } catch (error: any) {
       setLoading(false);

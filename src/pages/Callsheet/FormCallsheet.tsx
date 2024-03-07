@@ -166,7 +166,6 @@ const FormCallsheetPage: React.FC = () => {
 
       setData(result.data);
 
-
       setCallType(result.data.type);
 
       setBranch({
@@ -212,6 +211,11 @@ const FormCallsheetPage: React.FC = () => {
         type: result.data.type,
         customer: result.data.customer._id,
         contact: result?.data?.contact?._id ?? "",
+      });
+
+      setCreatedAt({
+        valueData: moment(result.data.createdAt).format("YYYY-MM-DD"),
+        valueInput: moment(result.data.createdAt).format("YYYY-MM-DD"),
       });
 
       setLoading(false);
@@ -1062,12 +1066,12 @@ const FormCallsheetPage: React.FC = () => {
                           value={picPhone}
                           className="h-[38px] mb-4"
                           type="text"
-                          onChange={(e) =>
-                            setCreatedAt({
-                              valueData: e,
-                              valueInput: e,
-                            })
-                          }
+                          // onChange={(e) =>
+                          //   setCreatedAt({
+                          //     valueData: e,
+                          //     valueInput: e,
+                          //   })
+                          // }
                           disabled
                         />
                         <InputComponent
@@ -1075,12 +1079,12 @@ const FormCallsheetPage: React.FC = () => {
                           value={picPosition}
                           className="h-[38px] mb-4"
                           type="text"
-                          onChange={(e) =>
-                            setCreatedAt({
-                              valueData: e,
-                              valueInput: e,
-                            })
-                          }
+                          // onChange={(e) =>
+                          //   setCreatedAt({
+                          //     valueData: e,
+                          //     valueInput: e,
+                          //   })
+                          // }
                           disabled
                         />
                       </>
